@@ -718,3 +718,4 @@ Use Chrome DevTools device emulation during development.
 4. ALWAYS use Ionic Grid system for responsive layouts
 5. NEVER use fixed pixel widths for containers (except max-width)
 6. ALWAYS implement mobile-first CSS (start with mobile, add media queries for larger screens)
+7. The documentation of the project is located under the notes folder
