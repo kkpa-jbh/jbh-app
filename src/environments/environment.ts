@@ -3,7 +3,18 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  environmentName: 'local',
+  api: {
+    // Use relative URL to leverage proxy configuration (avoids CORS in development)
+    baseUrl: '/jbh-api',
+    timeout: 30000,
+    retryAttempts: 3
+  },
+  features: {
+    enableLogging: true,
+    enableDebugMode: true
+  }
 };
 
 /*

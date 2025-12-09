@@ -1,0 +1,84 @@
+/**
+ * Authentication Theme Variables
+ * Customize these variables to match your brand
+ */
+
+:root {
+  // Login Page Background
+  --auth-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --auth-background-overlay: rgba(0, 0, 0, 0.1);
+
+  // Login Card
+  --auth-card-background: #ffffff;
+  --auth-card-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  --auth-card-border-radius: 16px;
+  --auth-card-padding: 2rem;
+
+  // Input Fields
+  --auth-input-background: #f7f8fa;
+  --auth-input-background-focus: #ffffff;
+  --auth-input-border: 1px solid #e1e4e8;
+  --auth-input-border-focus: 2px solid var(--auth-primary-color);
+  --auth-input-border-radius: 12px;
+  --auth-input-padding: 14px 16px;
+  --auth-input-text-color: #2d3748;
+  --auth-input-placeholder-color: #a0aec0;
+  --auth-input-shadow-focus: 0 0 0 4px rgba(102, 126, 234, 0.1);
+
+  // Primary Button
+  --auth-button-primary-background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --auth-button-primary-background-hover: linear-gradient(135deg, #5568d3 0%, #6a4193 100%);
+  --auth-button-primary-text-color: #ffffff;
+  --auth-button-primary-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  --auth-button-primary-shadow-hover: 0 6px 20px rgba(102, 126, 234, 0.5);
+  --auth-button-border-radius: 12px;
+  --auth-button-padding: 14px 24px;
+  --auth-button-font-weight: 600;
+
+  // Colors
+  --auth-primary-color: #667eea;
+  --auth-secondary-color: #764ba2;
+  --auth-text-primary: #2d3748;
+  --auth-text-secondary: #718096;
+  --auth-error-color: #f56565;
+  --auth-error-background: #fff5f5;
+  --auth-success-color: #48bb78;
+
+  // Typography
+  --auth-title-font-size: 2rem;
+  --auth-title-font-weight: 700;
+  --auth-subtitle-font-size: 0.95rem;
+  --auth-subtitle-font-weight: 400;
+  --auth-label-font-size: 0.875rem;
+  --auth-label-font-weight: 500;
+
+  // Spacing
+  --auth-spacing-xs: 0.5rem;
+  --auth-spacing-sm: 1rem;
+  --auth-spacing-md: 1.5rem;
+  --auth-spacing-lg: 2rem;
+  --auth-spacing-xl: 3rem;
+
+  // Animation
+  --auth-transition-speed: 0.3s;
+  --auth-transition-timing: ease-in-out;
+
+  // Logo/Icon
+  --auth-icon-size: 64px;
+  --auth-icon-color: var(--auth-primary-color);
+}
+
+// Dark mode theme (optional - can be customized later)
+@media (prefers-color-scheme: dark) {
+  :root {
+    --auth-card-background: #1a202c;
+    --auth-input-background: #2d3748;
+    --auth-input-background-focus: #2d3748;
+    --auth-input-border: 1px solid #4a5568;
+    --auth-input-text-color: #e2e8f0;
+    --auth-input-placeholder-color: #718096;
+    --auth-text-primary: #e2e8f0;
+    --auth-text-secondary: #a0aec0;
+    --auth-error-background: #742a2a;
+  }
+}

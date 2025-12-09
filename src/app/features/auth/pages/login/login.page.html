@@ -1,0 +1,135 @@
+<ion-content [fullscreen]="true" class="login-content">
+  <div class="login-container">
+
+    <!-- Background Decoration -->
+    <div class="background-decoration">
+      <div class="circle circle-1"></div>
+      <div class="circle circle-2"></div>
+      <div class="circle circle-3"></div>
+    </div>
+
+    <!-- Login Card -->
+    <div class="login-card">
+
+      <!-- Logo/Icon Section -->
+      <div class="login-header">
+        <div class="logo-container">
+          <ion-icon name="shield-checkmark" class="logo-icon"></ion-icon>
+        </div>
+        <h1 class="login-title">Welcome Back</h1>
+        <p class="login-subtitle">Sign in to continue to your account</p>
+      </div>
+
+      <!-- Error Alert -->
+      <ion-card class="error-alert" *ngIf="errorMessage">
+        <ion-card-content>
+          <div class="error-content">
+            <ion-icon name="alert-circle" class="error-icon"></ion-icon>
+            <span class="error-text">{{ errorMessage }}</span>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Login Form -->
+      <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="login-form">
+
+        <!-- Username Field -->
+        <div class="form-field" [class.has-error]="hasError('username')">
+          <label class="field-label">Username</label>
+          <div class="input-wrapper">
+            <ion-icon name="person-outline" class="input-icon"></ion-icon>
+            <input
+              type="text"
+              class="custom-input"
+              formControlName="username"
+              placeholder="Enter your username"
+              [class.error]="hasError('username')"
+              autocomplete="username"
+            />
+          </div>
+          <div class="field-error" *ngIf="hasError('username')">
+            <ion-icon name="information-circle" class="error-icon-small"></ion-icon>
+            <span>{{ getErrorMessage('username') }}</span>
+          </div>
+        </div>
+
+        <!-- Password Field -->
+        <div class="form-field" [class.has-error]="hasError('password')">
+          <label class="field-label">Password</label>
+          <div class="input-wrapper">
+            <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              class="custom-input"
+              formControlName="password"
+              placeholder="Enter your password"
+              [class.error]="hasError('password')"
+              autocomplete="current-password"
+            />
+            <button
+              type="button"
+              class="toggle-password"
+              (click)="togglePasswordVisibility()"
+              tabindex="-1"
+            >
+              <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+            </button>
+          </div>
+          <div class="field-error" *ngIf="hasError('password')">
+            <ion-icon name="information-circle" class="error-icon-small"></ion-icon>
+            <span>{{ getErrorMessage('password') }}</span>
+          </div>
+        </div>
+
+        <!-- Remember Me & Forgot Password -->
+        <div class="form-options">
+          <label class="remember-me">
+            <input type="checkbox" class="custom-checkbox" />
+            <span>Remember me</span>
+          </label>
+          <a href="#" class="forgot-password" (click)="$event.preventDefault()">
+            Forgot password?
+          </a>
+        </div>
+
+        <!-- Login Button -->
+        <button
+          type="submit"
+          class="login-button"
+          [disabled]="isLoading || loginForm.invalid"
+          [class.loading]="isLoading"
+        >
+          <ion-spinner name="crescent" *ngIf="isLoading" class="button-spinner"></ion-spinner>
+          <span *ngIf="!isLoading">Sign In</span>
+          <span *ngIf="isLoading">Signing in...</span>
+        </button>
+
+        <!-- Divider -->
+        <div class="divider">
+          <span>or</span>
+        </div>
+
+        <!-- Social Login Buttons (Optional) -->
+        <div class="social-login">
+          <button type="button" class="social-button google" (click)="$event.preventDefault()">
+            <ion-icon name="logo-google"></ion-icon>
+            <span>Continue with Google</span>
+          </button>
+        </div>
+
+        <!-- Sign Up Link -->
+        <div class="signup-link">
+          <span>Don't have an account?</span>
+          <a href="#" (click)="$event.preventDefault()">Sign up</a>
+        </div>
+      </form>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="login-footer">
+      <p>&copy; 2025 Your Company. All rights reserved.</p>
+    </div>
+
+  </div>
+</ion-content>

@@ -1,0 +1,120 @@
+import { Injectable, inject } from '@angular/core';
+import { Router, CanActivateFn } from '@angular/router';
+import { AuthUseCase } from '../domain/use-cases/auth.use-case';
+import { map, take } from 'rxjs/operators';
+
+/**
+ * Auth Guard
+ * Protects routes that require authentication
+ *
+ * Usage in routes:
+ * {
+ *   path: 'dashboard',
+ *   component: DashboardPage,
+ *   canActivate: [authGuard]
+ * }
+ */
+export const authGuard: CanActivateFn = (route, state) => {
+  const authUseCase = inject(AuthUseCase);
+  const router = inject(Router);
+
+  return authUseCase.isAuthenticated$.pipe(
+    take(1),
+    map(isAuthenticated => {
+      if (isAuthenticated) {
+        return true;
+      }
+
+      // Store the attempted URL for redirecting after login
+      router.navigate(['/login'], {
+        queryParams: { returnUrl: state.url }
+      });
+      return false;
+    })
+  );
+};
+
+/**
+ * Role Guard Factory
+ * Protects routes that require specific roles
+ *
+ * Usage:
+ * {
+ *   path: 'admin',
+ *   component: AdminPage,
+ *   canActivate: [roleGuard(['admin'])]
+ * }
+ */
+export function roleGuard(allowedRoles: string[]): CanActivateFn {
+  return (route, state) => {
+    const authUseCase = inject(AuthUseCase);
+    const router = inject(Router);
+
+    const hasRole = authUseCase.hasAnyRole(allowedRoles);
+
+    if (hasRole) {
+      return true;
+    }
+
+    // Redirect to access denied or home
+    router.navigate(['/access-denied']);
+    return false;
+  };
+}
+
+/**
+ * Permission Guard Factory
+ * Protects routes that require specific permissions
+ *
+ * Usage:
+ * {
+ *   path: 'users/delete',
+ *   component: DeleteUserPage,
+ *   canActivate: [permissionGuard('delete:users')]
+ * }
+ */
+export function permissionGuard(requiredPermission: string): CanActivateFn {
+  return (route, state) => {
+    const authUseCase = inject(AuthUseCase);
+    const router = inject(Router);
+
+    const hasPermission = authUseCase.hasPermission(requiredPermission);
+
+    if (hasPermission) {
+      return true;
+    }
+
+    router.navigate(['/access-denied']);
+    return false;
+  };
+}
+
+/**
+ * Guest Guard
+ * Prevents authenticated users from accessing login/register pages
+ * Redirects to home if already logged in
+ *
+ * Usage:
+ * {
+ *   path: 'login',
+ *   component: LoginPage,
+ *   canActivate: [guestGuard]
+ * }
+ */
+export const guestGuard: CanActivateFn = (route, state) => {
+  const authUseCase = inject(AuthUseCase);
+  const router = inject(Router);
+
+  return authUseCase.isAuthenticated$.pipe(
+    take(1),
+    map(isAuthenticated => {
+      if (!isAuthenticated) {
+        return true;
+      }
+
+      // Already logged in, redirect to home
+      router.navigate(['/home']);
+      return false;
+    })
+  );
+};
