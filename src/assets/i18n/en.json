@@ -1,0 +1,54 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "error": "Error",
+    "loading": "Loading...",
+    "or": "or",
+    "save": "Save",
+    "success": "Success"
+  },
+  "home": {
+    "description": "Start with Ionic",
+    "title": "Home",
+    "titleLarge": "Home",
+    "uiComponents": "UI Components",
+    "welcome": "Ready to create an app?"
+  },
+  "login": {
+    "continueWith": "Continue with {{provider}}",
+    "continueWithGoogle": "Continue with Google",
+    "errors": {
+      "generic": "An error occurred. Please try again later.",
+      "invalidCredentials": "Invalid username or password. Please try again."
+    },
+    "footer": "© 2025 Your Company. All rights reserved.",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "password": {
+      "label": "Password",
+      "minlength": "Password must be at least {{minLength}} characters",
+      "placeholder": "Enter your password",
+      "required": "Password is required"
+    },
+    "rememberMe": "Remember me",
+    "signInButton": "Sign In",
+    "signUp": "Sign up",
+    "signingIn": "Signing in...",
+    "subtitle": "Sign in to continue to your account",
+    "title": "Welcome Back",
+    "username": {
+      "label": "Username",
+      "minlength": "Username must be at least {{minLength}} characters",
+      "placeholder": "Enter your username",
+      "required": "Username is required"
+    }
+  },
+  "validation": {
+    "email": "Please enter a valid email address",
+    "maxlength": "{{field}} must not exceed {{maxLength}} characters",
+    "minlength": "{{field}} must be at least {{minLength}} characters",
+    "pattern": "Invalid format",
+    "required": "{{field}} is required"
+  }
+}

@@ -3,7 +3,9 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
+import { TranslateModule } from '@ngx-translate/core';
 import { AuthUseCase } from '@core/domain/use-cases/auth.use-case';
+import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 
 @Component({
   selector: 'app-login',
@@ -14,7 +16,8 @@ import { AuthUseCase } from '@core/domain/use-cases/auth.use-case';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    IonicModule
+    IonicModule,
+    TranslateModule
   ]
 })
 export class LoginPage implements OnInit {
@@ -27,7 +30,8 @@ export class LoginPage implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private authUseCase: AuthUseCase,
-    private router: Router
+    private router: Router,
+    public translationService: TranslationService
   ) {}
 
   ngOnInit() {
@@ -74,7 +78,7 @@ export class LoginPage implements OnInit {
 
         // Display user-friendly error message
         // 422 errors will have the msg from the API response
-        this.errorMessage = error.message || 'Invalid username or password. Please try again.';
+        this.errorMessage = error.message || this.translationService.instant('login.errors.invalidCredentials');
       }
     });
   }
@@ -121,23 +125,12 @@ export class LoginPage implements OnInit {
     if (!field || !field.errors) return '';
 
     if (field.hasError('required')) {
-      return `${this.getFieldLabel(fieldName)} is required`;
+      return this.translationService.instant(`login.${fieldName}.required`);
     }
     if (field.hasError('minlength')) {
       const minLength = field.errors['minlength'].requiredLength;
-      return `${this.getFieldLabel(fieldName)} must be at least ${minLength} characters`;
+      return this.translationService.instant(`login.${fieldName}.minlength`, { minLength });
     }
-    return 'Invalid value';
-  }
-
-  /**
-   * Get friendly label for field name
-   */
-  private getFieldLabel(fieldName: string): string {
-    const labels: { [key: string]: string } = {
-      username: 'Username',
-      password: 'Password'
-    };
-    return labels[fieldName] || fieldName;
+    return this.translationService.instant('validation.pattern');
   }
 }

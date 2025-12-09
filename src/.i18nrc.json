@@ -1,0 +1,17 @@
+{
+  "srcPaths": ["src/assets/i18n"],
+  "languages": ["en", "es"],
+  "rules": {
+    "valid-json": true,
+    "duplicate-keys": true,
+    "empty-values": true,
+    "identical-keys": false,
+    "max-length": false,
+    "no-untranslated-strings": true,
+    "consistent-keys": true
+  },
+  "duplicateKeys": true,
+  "emptyKeys": true,
+  "missingTranslations": true,
+  "unsupportedPattern": false
+}

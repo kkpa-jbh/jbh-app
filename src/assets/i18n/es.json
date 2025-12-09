@@ -1,0 +1,54 @@
+{
+  "common": {
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "error": "Error",
+    "loading": "Cargando...",
+    "or": "o",
+    "save": "Guardar",
+    "success": "Éxito"
+  },
+  "home": {
+    "description": "Comienza con Ionic",
+    "title": "Inicio",
+    "titleLarge": "Inicio",
+    "uiComponents": "Componentes de UI",
+    "welcome": "¿Listo para crear una aplicación?"
+  },
+  "login": {
+    "continueWith": "Continuar con {{provider}}",
+    "continueWithGoogle": "Continuar con Google",
+    "errors": {
+      "generic": "Ocurrió un error. Por favor intenta más tarde.",
+      "invalidCredentials": "Usuario o contraseña inválidos. Por favor intenta de nuevo."
+    },
+    "footer": "© 2025 Tu Empresa. Todos los derechos reservados.",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "noAccount": "¿No tienes una cuenta?",
+    "password": {
+      "label": "Contraseña",
+      "minlength": "La contraseña debe tener al menos {{minLength}} caracteres",
+      "placeholder": "Ingresa tu contraseña",
+      "required": "La contraseña es requerida"
+    },
+    "rememberMe": "Recordarme",
+    "signInButton": "Iniciar Sesión",
+    "signUp": "Regístrate",
+    "signingIn": "Iniciando sesión...",
+    "subtitle": "Inicia sesión para continuar a tu cuenta",
+    "title": "Bienvenido de Nuevo",
+    "username": {
+      "label": "Usuario",
+      "minlength": "El usuario debe tener al menos {{minLength}} caracteres",
+      "placeholder": "Ingresa tu usuario",
+      "required": "El usuario es requerido"
+    }
+  },
+  "validation": {
+    "email": "Por favor ingresa un correo electrónico válido",
+    "maxlength": "{{field}} no debe exceder {{maxLength}} caracteres",
+    "minlength": "{{field}} debe tener al menos {{minLength}} caracteres",
+    "pattern": "Formato inválido",
+    "required": "{{field}} es requerido"
+  }
+}

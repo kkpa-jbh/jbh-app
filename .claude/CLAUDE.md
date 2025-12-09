@@ -551,90 +551,213 @@ export class ProductListPage implements OnInit {
 }
 ```
 
-## THEME SYSTEM REQUIREMENTS
+## CENTRALIZED THEME SYSTEM - Design System Approach
 
-### ALWAYS Check and Use Theme Variables
-Before creating any component, ALWAYS check and import theme variables from:
-- `src/theme/custom-components.scss` - Component theme variables
-- `src/theme/variables.scss` - Ionic color variables
+### ⚠️ CRITICAL: Single Source of Truth
+**ALL reusable styles MUST be defined in `src/theme/custom-components.scss`**
 
-### Component Theming Pattern
-```typescript
-// ALWAYS reference theme variables, NEVER hardcode styles
-@Component({
-  selector: 'app-custom-input',
-  template: `
-    <ion-input 
-      class="custom-input"
-      [class.has-focus]="isFocused"
-      (ionFocus)="isFocused = true"
-      (ionBlur)="isFocused = false">
-    </ion-input>
-  `,
-  styleUrls: ['./custom-input.component.scss']
-})
-export class CustomInputComponent {
-  isFocused = false;
-}
-```
+**❌ NEVER:**
+- Create feature-specific theme files (NO `auth-theme.scss`, `dashboard-theme.scss`, etc.)
+- Define component-specific styles in component SCSS files
+- Hardcode colors, spacing, or typography values
+- Create custom button/input/card styles per component
+
+**✅ ALWAYS:**
+- Use reusable theme classes from `custom-components.scss`
+- Component SCSS files should ONLY contain page-specific layout
+- Reference CSS variables with `--jbh-*` prefix
+- Check existing theme classes before creating new styles
+
+### Naming Convention: `jbh-[component]-[variant]`
+
+All theme classes use the `jbh-` prefix (JBH App) to avoid conflicts:
+
+#### Buttons
+- `jbh-button-primary` - Primary action button (gradient background)
+- `jbh-button-secondary` - Secondary action button (white with border)
+- `jbh-button-outline` - Outlined button
+- `jbh-button-text` - Text-only button
+- `jbh-button-danger` - Destructive action
+- `jbh-button-success` - Success action
+- **Modifiers:** `jbh-button-small`, `jbh-button-large`, `jbh-button-block`, `jbh-button-loading`
+
+#### Form Elements
+- `jbh-form-field` - Form field container
+- `jbh-label` - Form label
+- `jbh-input` - Text input
+- `jbh-input-wrapper` - Input container with icons
+- `jbh-input-icon` - Icon inside input (use with `.left` or `.right`)
+- `jbh-input-action` - Actionable button inside input (e.g., password toggle)
+- `jbh-field-error` - Error message display
+- `jbh-checkbox` - Checkbox input
+- `jbh-checkbox-label` - Checkbox with label
+- **Modifiers:** `jbh-input-icon-left`, `jbh-input-icon-right`
+
+#### Cards & Containers
+- `jbh-card` - Standard card
+- `jbh-card-elevated` - Card with shadow
+- `jbh-card-flat` - Card without shadow
+- `jbh-container` - Centered content container
+- `jbh-container-wide` - Wide content container
+
+#### Alerts
+- `jbh-alert-error` - Error message
+- `jbh-alert-success` - Success message
+- `jbh-alert-warning` - Warning message
+- `jbh-alert-info` - Info message
+
+#### Typography
+- `jbh-title` - Page title
+- `jbh-subtitle` - Page subtitle
+- `jbh-heading-1` - Section heading
+- `jbh-heading-2` - Subsection heading
+- `jbh-text-muted` - Muted text color
+- `jbh-text-small` - Small text
+
+#### Links
+- `jbh-link` - Standard link
+- `jbh-link-muted` - Muted link
+
+#### Layout Utilities
+- `jbh-divider` - Horizontal divider with text
+- `jbh-icon-container` - Icon container with gradient
+- `jbh-spacer-sm/md/lg/xl` - Spacing utilities
+
+### CSS Variables: `--jbh-*`
+
+All design tokens are defined as CSS variables in `custom-components.scss`:
+
 ```scss
-// custom-input.component.scss
-// ALWAYS use theme variables
-.custom-input {
-  // ✅ CORRECT - Using theme variables
-  background: var(--app-input-background);
-  border: var(--app-input-border-width) solid var(--app-input-border-color);
-  border-radius: var(--app-input-border-radius);
-  
-  // ❌ WRONG - Never hardcode values
-  // background: #ffffff;
-  // border: 1px solid #e0e0e0;
-  
-  &.has-focus {
-    border-color: var(--app-input-focus-border-color);
-    box-shadow: 0 0 0 3px rgba(var(--ion-color-primary-rgb), 0.1);
-  }
-}
+// Colors
+--jbh-primary-color: #667eea;
+--jbh-secondary-color: #764ba2;
+--jbh-error-color: #f56565;
+--jbh-success-color: #48bb78;
+
+// Spacing (use these, not hardcoded values)
+--jbh-spacing-xs: 0.5rem;   // 8px
+--jbh-spacing-sm: 1rem;      // 16px
+--jbh-spacing-md: 1.5rem;    // 24px
+--jbh-spacing-lg: 2rem;      // 32px
+--jbh-spacing-xl: 3rem;      // 48px
+
+// Typography
+--jbh-font-size-sm: 0.875rem;
+--jbh-font-size-base: 1rem;
+--jbh-font-size-lg: 1.125rem;
+--jbh-font-weight-medium: 500;
+--jbh-font-weight-semibold: 600;
+
+// Border Radius
+--jbh-radius-sm: 8px;
+--jbh-radius-md: 12px;
+--jbh-radius-lg: 16px;
+
+// Shadows
+--jbh-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+--jbh-shadow-xl: 0 10px 40px rgba(0, 0, 0, 0.15);
 ```
 
-### Theme Variable Naming Convention
-```scss
-// Component-specific variables should follow this pattern:
-// --app-[component]-[property]: value;
+### Component Implementation Pattern
 
---app-input-background: #ffffff;
---app-button-height: 48px;
---app-card-shadow: 0 2px 4px rgba(0,0,0,0.1);
-
-// State variations:
---app-input-error-border-color: var(--ion-color-danger);
---app-input-disabled-background: #f5f5f5;
---app-button-hover-background: var(--ion-color-primary-shade);
-```
-
-### Form Components Must Use Consistent Theming
+#### ✅ CORRECT - Using Theme Classes
 ```html
-<!-- All form elements must use theme classes -->
-<form [formGroup]="myForm">
-  <ion-item class="form-item">
-    <ion-label position="floating">Name</ion-label>
-    <ion-input class="custom-input" formControlName="name"></ion-input>
-  </ion-item>
-  
-  <ion-item class="form-item">
-    <ion-label position="floating">Description</ion-label>
-    <ion-textarea class="custom-textarea" formControlName="description"></ion-textarea>
-  </ion-item>
-  
-  <ion-checkbox class="custom-checkbox" formControlName="agree">
-    I agree to terms
-  </ion-checkbox>
-  
-  <ion-button class="button-primary" expand="block" type="submit">
-    Submit
-  </ion-button>
-</form>
+<!-- pages/profile/profile.page.html -->
+<div class="jbh-container">
+  <div class="jbh-card-elevated">
+    <h1 class="jbh-title">User Profile</h1>
+    <p class="jbh-subtitle">Manage your account settings</p>
+
+    <form [formGroup]="profileForm">
+      <div class="jbh-form-field">
+        <label class="jbh-label">{{ 'profile.name.label' | translate }}</label>
+        <div class="jbh-input-wrapper">
+          <ion-icon name="person-outline" class="jbh-input-icon left"></ion-icon>
+          <input
+            class="jbh-input jbh-input-icon-left"
+            formControlName="name"
+            [placeholder]="'profile.name.placeholder' | translate"
+          />
+        </div>
+        <div class="jbh-field-error" *ngIf="hasError('name')">
+          <ion-icon name="information-circle"></ion-icon>
+          <span>{{ getErrorMessage('name') }}</span>
+        </div>
+      </div>
+
+      <button type="submit" class="jbh-button-primary jbh-button-block">
+        {{ 'common.save' | translate }}
+      </button>
+    </form>
+  </div>
+</div>
 ```
+
+```scss
+// pages/profile/profile.page.scss
+// ONLY page-specific layout (NO reusable component styles!)
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: var(--jbh-spacing-md);
+  margin-bottom: var(--jbh-spacing-lg);
+}
+
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--jbh-radius-full);
+}
+
+// That's it! All buttons, inputs, cards use theme classes
+```
+
+#### ❌ WRONG - Component-Specific Styles
+```scss
+// ❌ DON'T DO THIS in component SCSS files
+.profile-button {
+  background: #667eea;  // ❌ Hardcoded color
+  padding: 14px 24px;   // ❌ Custom button styling
+  border-radius: 12px;  // ❌ Not using theme
+}
+
+.profile-input {
+  background: #f7f8fa;  // ❌ Component-specific input style
+  border: 1px solid #e1e4e8;
+}
+
+// ❌ NEVER create feature-specific theme files
+// @import '../../../theme/profile-theme.scss';
+```
+
+### Modifying the Theme
+
+To change colors, spacing, or component styles for the ENTIRE app:
+
+1. **Edit ONE file:** `src/theme/custom-components.scss`
+2. **Change CSS variables** in the `:root` block
+3. **Modify component classes** (e.g., `.jbh-button-primary`)
+4. **All components update automatically** ✨
+
+Example - Change primary color globally:
+```scss
+// src/theme/custom-components.scss
+:root {
+  --jbh-primary-color: #4299e1;  // Changed from #667eea
+  --jbh-primary-dark: #3182ce;
+  // All buttons, inputs, links update automatically!
+}
+```
+
+### Critical Theme Rules
+
+1. **NEVER create feature-specific theme files** (auth-theme.scss, dashboard-theme.scss, etc.)
+2. **NEVER define reusable styles in component SCSS** (buttons, inputs, cards belong in custom-components.scss)
+3. **ALWAYS use `jbh-*` theme classes** in HTML templates
+4. **ALWAYS use `--jbh-*` CSS variables** for spacing, colors, typography
+5. **Component SCSS files should be minimal** - Only page-specific layout
+6. **Check `custom-components.scss` BEFORE creating new styles**
+7. **Reuse existing theme classes** - Don't reinvent buttons/inputs per page
 
 ## Responsive Breakpoint Service
 ```typescript
@@ -711,11 +834,218 @@ Always test on:
 
 Use Chrome DevTools device emulation during development.
 
+## INTERNATIONALIZATION (i18n) REQUIREMENTS
+
+### CRITICAL: Every Component MUST Use i18n
+All user-facing text in the application must support internationalization for English and Spanish. NEVER hardcode text strings in templates or components.
+
+### i18n Implementation Pattern
+
+#### 1. Translation Files Structure
+All translations are stored in JSON files under `src/assets/i18n/`:
+- `en.json` - English translations
+- `es.json` - Spanish translations
+
+ALWAYS Sort Keys Alphabetically
+Both at the top-level and within each group.
+
+Organize translations by feature/page with nested structure:
+```json
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete"
+  },
+  "featureName": {
+    "title": "Feature Title",
+    "subtitle": "Feature subtitle",
+    "fieldName": {
+      "label": "Field Label",
+      "placeholder": "Enter value",
+      "required": "Field is required",
+      "minlength": "Must be at least {{minLength}} characters"
+    },
+    "errors": {
+      "generic": "An error occurred"
+    }
+  }
+}
+```
+
+#### 2. Component Implementation
+ALWAYS import and use TranslateModule in components:
+```typescript
+// pages/example/example.page.ts
+import { Component } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
+import { TranslationService } from '@core/infrastructure/i18n/translation.service';
+import { IonicModule } from '@ionic/angular';
+
+@Component({
+  selector: 'app-example',
+  templateUrl: './example.page.html',
+  styleUrls: ['./example.page.scss'],
+  standalone: true,
+  imports: [IonicModule, TranslateModule]  // ALWAYS include TranslateModule
+})
+export class ExamplePage {
+  constructor(public translationService: TranslationService) {}
+
+  // Use translationService.instant() for programmatic translations
+  getMessage(): string {
+    return this.translationService.instant('featureName.message', { param: 'value' });
+  }
+}
+```
+
+#### 3. Template Usage with Translate Pipe
+Use the `translate` pipe for ALL user-facing text:
+```html
+<!-- Static text -->
+<ion-title>{{ 'featureName.title' | translate }}</ion-title>
+
+<!-- With parameters -->
+<p>{{ 'featureName.welcome' | translate:{ name: userName } }}</p>
+
+<!-- Form labels and placeholders -->
+<label>{{ 'featureName.fieldName.label' | translate }}</label>
+<ion-input
+  [placeholder]="'featureName.fieldName.placeholder' | translate"
+  formControlName="fieldName">
+</ion-input>
+
+<!-- Error messages -->
+<div class="error">{{ 'featureName.errors.required' | translate }}</div>
+
+<!-- Buttons -->
+<ion-button>{{ 'common.save' | translate }}</ion-button>
+```
+
+#### 4. Programmatic Translation in TypeScript
+For translations needed in component logic:
+```typescript
+// Using instant (synchronous - use when translations are already loaded)
+const message = this.translationService.instant('featureName.message');
+const messageWithParams = this.translationService.instant(
+  'featureName.greeting',
+  { name: 'John' }
+);
+
+// Using observable (for dynamic translations)
+this.translationService.get('featureName.message').subscribe(
+  translation => console.log(translation)
+);
+```
+
+#### 5. Language Switching
+Users can switch languages using the TranslationService:
+```typescript
+// Switch to specific language
+this.translationService.setLanguage('es');
+
+// Toggle between languages
+this.translationService.toggleLanguage();
+
+// Get current language
+const currentLang = this.translationService.getCurrentLanguage();
+
+// Get available languages
+const languages = this.translationService.availableLanguages;
+// [{ code: 'en', name: 'English' }, { code: 'es', name: 'Español' }]
+```
+
+#### 6. Adding New Languages
+To add a new language:
+1. Create translation file: `src/assets/i18n/[lang-code].json`
+2. Add language to `TranslationService.availableLanguages`:
+```typescript
+readonly availableLanguages = [
+  { code: 'en', name: 'English' },
+  { code: 'es', name: 'Español' },
+  { code: 'fr', name: 'Français' }  // New language
+];
+```
+
+### Form Validation Messages Pattern
+Form error messages MUST use i18n with parameters:
+```typescript
+getErrorMessage(fieldName: string): string {
+  const field = this.form.get(fieldName);
+  if (!field || !field.errors) return '';
+
+  if (field.hasError('required')) {
+    return this.translationService.instant(`featureName.${fieldName}.required`);
+  }
+  if (field.hasError('minlength')) {
+    const minLength = field.errors['minlength'].requiredLength;
+    return this.translationService.instant(
+      `featureName.${fieldName}.minlength`,
+      { minLength }
+    );
+  }
+  return this.translationService.instant('validation.pattern');
+}
+```
+
+### Translation Key Naming Convention
+Follow this pattern for consistency:
+```
+[feature].[component].[element].[property/state]
+
+Examples:
+- login.title
+- login.username.label
+- login.username.placeholder
+- login.username.required
+- login.errors.invalidCredentials
+- common.save
+- common.cancel
+- validation.required
+- validation.email
+```
+
+### Critical i18n Rules
+1. NEVER hardcode user-facing text in templates or components
+2. ALWAYS use the `translate` pipe in templates: `{{ 'key' | translate }}`
+3. ALWAYS import TranslateModule in component imports array
+4. ALWAYS inject TranslationService in components that need programmatic translations
+5. ALWAYS use parameters for dynamic values: `{{ 'key' | translate:{ param: value } }}`
+6. ALWAYS add translations for BOTH English and Spanish when creating new text
+7. ALWAYS organize translation keys by feature/page for maintainability
+8. For common text (buttons, actions), use the `common` namespace
+9. For validation messages, use the `validation` namespace
+10. Test language switching to ensure all text translates correctly
+11. ALWAYS Sort Keys Alphabetically
+12. Don’t Repeat Translations — Use Shared Keys
+
+### Testing i18n
+Before completing any component:
+1. Verify all text is translated (no hardcoded strings)
+2. Switch language to Spanish and verify translations display correctly
+3. Test form validation messages in both languages
+4. Check that dynamic text with parameters works in both languages
+
 ## Critical Rules
-1. NEVER hardcode colors, sizes, or spacing - ALWAYS use theme variables
-2. ALWAYS test responsive behavior on at least 3 viewport sizes
-3. ALWAYS check `src/theme/custom-components.scss` before styling any input component
-4. ALWAYS use Ionic Grid system for responsive layouts
-5. NEVER use fixed pixel widths for containers (except max-width)
-6. ALWAYS implement mobile-first CSS (start with mobile, add media queries for larger screens)
-7. The documentation of the project is located under the notes folder
+
+### Theme System
+1. **NEVER create feature-specific theme files** (auth-theme.scss, dashboard-theme.scss, etc.) - ALL styles in `custom-components.scss`
+2. **NEVER define reusable component styles in component SCSS files** - Only page-specific layout
+3. **ALWAYS use `jbh-*` theme classes** in HTML (jbh-button-primary, jbh-input, jbh-card, etc.)
+4. **ALWAYS use `--jbh-*` CSS variables** for colors, spacing, typography
+5. **ALWAYS check `src/theme/custom-components.scss`** before creating new styles - reuse existing classes
+
+### Responsive Design
+6. **ALWAYS test responsive behavior** on at least 3 viewport sizes (mobile/tablet/desktop)
+7. **ALWAYS use Ionic Grid system** for responsive layouts
+8. **NEVER use fixed pixel widths** for containers (except max-width)
+9. **ALWAYS implement mobile-first CSS** (start with mobile, add media queries for larger screens)
+
+### Internationalization (i18n)
+10. **NEVER hardcode user-facing text** - ALWAYS use i18n with the translate pipe `{{ 'key' | translate }}`
+11. **ALWAYS add translations for BOTH English and Spanish** when creating new components
+12. **ALWAYS sort translation keys alphabetically** (top-level and within each group)
+13. **DON'T repeat translations** - use shared keys in `common` namespace
+
+### Documentation
+14. **The project documentation is located under the notes folder**

@@ -1,0 +1,657 @@
+/**
+ * ============================================
+ * JBH App - Centralized Design System
+ * ============================================
+ *
+ * This file contains ALL reusable component styles.
+ * NEVER create component-specific theme files.
+ * ALWAYS use these classes in your components.
+ *
+ * Naming Convention: jbh-[component]-[variant]
+ * Example: jbh-button-primary, jbh-input-large
+ */
+
+// ============================================
+// 1. CSS VARIABLES - Single Source of Truth
+// ============================================
+
+:root {
+  // Brand Colors
+  --jbh-primary-color: #667eea;
+  --jbh-primary-dark: #5568d3;
+  --jbh-secondary-color: #764ba2;
+  --jbh-secondary-dark: #6a4193;
+
+  // Gradients
+  --jbh-gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --jbh-gradient-primary-hover: linear-gradient(135deg, #5568d3 0%, #6a4193 100%);
+
+  // Semantic Colors
+  --jbh-success-color: #48bb78;
+  --jbh-error-color: #f56565;
+  --jbh-warning-color: #ed8936;
+  --jbh-info-color: #4299e1;
+
+  // Neutral Colors
+  --jbh-text-primary: #2d3748;
+  --jbh-text-secondary: #718096;
+  --jbh-text-tertiary: #a0aec0;
+  --jbh-border-color: #e1e4e8;
+  --jbh-background-light: #f7f8fa;
+  --jbh-background-white: #ffffff;
+
+  // Background Colors
+  --jbh-error-background: #fff5f5;
+  --jbh-success-background: #f0fff4;
+  --jbh-warning-background: #fffaf0;
+  --jbh-info-background: #ebf8ff;
+
+  // Spacing Scale
+  --jbh-spacing-xs: 0.5rem;    // 8px
+  --jbh-spacing-sm: 1rem;      // 16px
+  --jbh-spacing-md: 1.5rem;    // 24px
+  --jbh-spacing-lg: 2rem;      // 32px
+  --jbh-spacing-xl: 3rem;      // 48px
+  --jbh-spacing-2xl: 4rem;     // 64px
+
+  // Typography
+  --jbh-font-size-xs: 0.75rem;     // 12px
+  --jbh-font-size-sm: 0.875rem;    // 14px
+  --jbh-font-size-base: 1rem;      // 16px
+  --jbh-font-size-lg: 1.125rem;    // 18px
+  --jbh-font-size-xl: 1.25rem;     // 20px
+  --jbh-font-size-2xl: 1.5rem;     // 24px
+  --jbh-font-size-3xl: 2rem;       // 32px
+
+  --jbh-font-weight-normal: 400;
+  --jbh-font-weight-medium: 500;
+  --jbh-font-weight-semibold: 600;
+  --jbh-font-weight-bold: 700;
+
+  --jbh-line-height-tight: 1.25;
+  --jbh-line-height-normal: 1.5;
+  --jbh-line-height-relaxed: 1.75;
+
+  // Border Radius
+  --jbh-radius-sm: 8px;
+  --jbh-radius-md: 12px;
+  --jbh-radius-lg: 16px;
+  --jbh-radius-xl: 20px;
+  --jbh-radius-full: 9999px;
+
+  // Shadows
+  --jbh-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --jbh-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --jbh-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --jbh-shadow-xl: 0 10px 40px rgba(0, 0, 0, 0.15);
+  --jbh-shadow-primary: 0 4px 15px rgba(102, 126, 234, 0.4);
+  --jbh-shadow-primary-hover: 0 6px 20px rgba(102, 126, 234, 0.5);
+
+  // Transitions
+  --jbh-transition-fast: 0.15s ease-in-out;
+  --jbh-transition-base: 0.3s ease-in-out;
+  --jbh-transition-slow: 0.5s ease-in-out;
+
+  // Z-index Scale
+  --jbh-z-dropdown: 1000;
+  --jbh-z-sticky: 1020;
+  --jbh-z-modal: 1050;
+  --jbh-z-tooltip: 1070;
+}
+
+// ============================================
+// 2. BUTTONS - Reusable Button Classes
+// ============================================
+
+.jbh-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--jbh-spacing-xs);
+  padding: 14px 24px;
+  border: none;
+  border-radius: var(--jbh-radius-md);
+  font-size: var(--jbh-font-size-base);
+  font-weight: var(--jbh-font-weight-semibold);
+  cursor: pointer;
+  transition: all var(--jbh-transition-base);
+  outline: none;
+  text-decoration: none;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+.jbh-button-primary {
+  @extend .jbh-button;
+  background: var(--jbh-gradient-primary);
+  color: var(--jbh-background-white);
+  box-shadow: var(--jbh-shadow-primary);
+
+  &:hover:not(:disabled) {
+    background: var(--jbh-gradient-primary-hover);
+    box-shadow: var(--jbh-shadow-primary-hover);
+    transform: translateY(-2px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+}
+
+.jbh-button-secondary {
+  @extend .jbh-button;
+  background: var(--jbh-background-white);
+  color: var(--jbh-primary-color);
+  border: 2px solid var(--jbh-border-color);
+  box-shadow: var(--jbh-shadow-sm);
+
+  &:hover:not(:disabled) {
+    background: var(--jbh-background-light);
+    border-color: var(--jbh-primary-color);
+  }
+}
+
+.jbh-button-outline {
+  @extend .jbh-button;
+  background: transparent;
+  color: var(--jbh-primary-color);
+  border: 2px solid var(--jbh-primary-color);
+
+  &:hover:not(:disabled) {
+    background: var(--jbh-primary-color);
+    color: var(--jbh-background-white);
+  }
+}
+
+.jbh-button-text {
+  @extend .jbh-button;
+  background: transparent;
+  color: var(--jbh-primary-color);
+  padding: 8px 16px;
+
+  &:hover:not(:disabled) {
+    background: rgba(102, 126, 234, 0.1);
+  }
+}
+
+.jbh-button-danger {
+  @extend .jbh-button;
+  background: var(--jbh-error-color);
+  color: var(--jbh-background-white);
+
+  &:hover:not(:disabled) {
+    background: #e53e3e;
+    transform: translateY(-2px);
+  }
+}
+
+.jbh-button-success {
+  @extend .jbh-button;
+  background: var(--jbh-success-color);
+  color: var(--jbh-background-white);
+
+  &:hover:not(:disabled) {
+    background: #38a169;
+    transform: translateY(-2px);
+  }
+}
+
+// Button Sizes
+.jbh-button-small {
+  padding: 8px 16px;
+  font-size: var(--jbh-font-size-sm);
+}
+
+.jbh-button-large {
+  padding: 16px 32px;
+  font-size: var(--jbh-font-size-lg);
+}
+
+.jbh-button-block {
+  width: 100%;
+}
+
+.jbh-button-loading {
+  pointer-events: none;
+
+  ion-spinner {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+// ============================================
+// 3. LINKS
+// ============================================
+
+.jbh-link {
+  color: var(--jbh-primary-color);
+  text-decoration: none;
+  font-weight: var(--jbh-font-weight-medium);
+  transition: opacity var(--jbh-transition-base);
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.jbh-link-muted {
+  color: var(--jbh-text-secondary);
+
+  &:hover {
+    color: var(--jbh-primary-color);
+  }
+}
+
+// ============================================
+// 4. FORM ELEMENTS
+// ============================================
+
+.jbh-form-field {
+  margin-bottom: var(--jbh-spacing-md);
+}
+
+.jbh-label {
+  display: block;
+  font-size: var(--jbh-font-size-sm);
+  font-weight: var(--jbh-font-weight-medium);
+  color: var(--jbh-text-primary);
+  margin-bottom: var(--jbh-spacing-xs);
+}
+
+.jbh-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.jbh-input {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--jbh-background-light);
+  border: 1px solid var(--jbh-border-color);
+  border-radius: var(--jbh-radius-md);
+  font-size: var(--jbh-font-size-base);
+  color: var(--jbh-text-primary);
+  transition: all var(--jbh-transition-base);
+  outline: none;
+
+  &::placeholder {
+    color: var(--jbh-text-tertiary);
+  }
+
+  &:focus {
+    background: var(--jbh-background-white);
+    border: 2px solid var(--jbh-primary-color);
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+  }
+
+  &.error {
+    border: 2px solid var(--jbh-error-color);
+  }
+
+  &:disabled {
+    background: #f5f5f5;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+.jbh-input-icon-left {
+  padding-left: 48px;
+}
+
+.jbh-input-icon-right {
+  padding-right: 48px;
+}
+
+.jbh-input-icon {
+  position: absolute;
+  font-size: 20px;
+  color: var(--jbh-text-secondary);
+  pointer-events: none;
+
+  &.left {
+    left: 16px;
+  }
+
+  &.right {
+    right: 16px;
+  }
+}
+
+.jbh-input-action {
+  position: absolute;
+  right: 12px;
+  background: transparent;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--jbh-text-secondary);
+  transition: color var(--jbh-transition-base);
+
+  &:hover {
+    color: var(--jbh-primary-color);
+  }
+
+  ion-icon {
+    font-size: 20px;
+  }
+}
+
+.jbh-field-error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: var(--jbh-spacing-xs);
+  font-size: var(--jbh-font-size-sm);
+  color: var(--jbh-error-color);
+
+  ion-icon {
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+}
+
+.jbh-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--jbh-primary-color);
+}
+
+.jbh-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: var(--jbh-spacing-xs);
+  cursor: pointer;
+  font-size: var(--jbh-font-size-sm);
+  color: var(--jbh-text-secondary);
+}
+
+// ============================================
+// 5. CARDS
+// ============================================
+
+.jbh-card {
+  background: var(--jbh-background-white);
+  border-radius: var(--jbh-radius-lg);
+  padding: var(--jbh-spacing-lg);
+  box-shadow: var(--jbh-shadow-md);
+}
+
+.jbh-card-elevated {
+  @extend .jbh-card;
+  box-shadow: var(--jbh-shadow-xl);
+}
+
+.jbh-card-flat {
+  @extend .jbh-card;
+  box-shadow: none;
+  border: 1px solid var(--jbh-border-color);
+}
+
+// ============================================
+// 6. ALERTS
+// ============================================
+
+.jbh-alert {
+  padding: var(--jbh-spacing-sm);
+  border-radius: var(--jbh-radius-md);
+  display: flex;
+  align-items: center;
+  gap: var(--jbh-spacing-sm);
+  margin-bottom: var(--jbh-spacing-md);
+
+  ion-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  .jbh-alert-content {
+    flex: 1;
+    font-size: var(--jbh-font-size-sm);
+    font-weight: var(--jbh-font-weight-medium);
+  }
+}
+
+.jbh-alert-error {
+  @extend .jbh-alert;
+  background: var(--jbh-error-background);
+  border-left: 4px solid var(--jbh-error-color);
+  color: var(--jbh-error-color);
+}
+
+.jbh-alert-success {
+  @extend .jbh-alert;
+  background: var(--jbh-success-background);
+  border-left: 4px solid var(--jbh-success-color);
+  color: var(--jbh-success-color);
+}
+
+.jbh-alert-warning {
+  @extend .jbh-alert;
+  background: var(--jbh-warning-background);
+  border-left: 4px solid var(--jbh-warning-color);
+  color: var(--jbh-warning-color);
+}
+
+.jbh-alert-info {
+  @extend .jbh-alert;
+  background: var(--jbh-info-background);
+  border-left: 4px solid var(--jbh-info-color);
+  color: var(--jbh-info-color);
+}
+
+// ============================================
+// 7. TYPOGRAPHY
+// ============================================
+
+.jbh-title {
+  font-size: var(--jbh-font-size-3xl);
+  font-weight: var(--jbh-font-weight-bold);
+  color: var(--jbh-text-primary);
+  margin: 0;
+  line-height: var(--jbh-line-height-tight);
+}
+
+.jbh-subtitle {
+  font-size: var(--jbh-font-size-base);
+  font-weight: var(--jbh-font-weight-normal);
+  color: var(--jbh-text-secondary);
+  margin: 0;
+  line-height: var(--jbh-line-height-normal);
+}
+
+.jbh-heading-1 {
+  font-size: var(--jbh-font-size-2xl);
+  font-weight: var(--jbh-font-weight-bold);
+  color: var(--jbh-text-primary);
+  margin: 0 0 var(--jbh-spacing-md) 0;
+}
+
+.jbh-heading-2 {
+  font-size: var(--jbh-font-size-xl);
+  font-weight: var(--jbh-font-weight-semibold);
+  color: var(--jbh-text-primary);
+  margin: 0 0 var(--jbh-spacing-sm) 0;
+}
+
+.jbh-text-muted {
+  color: var(--jbh-text-secondary);
+}
+
+.jbh-text-small {
+  font-size: var(--jbh-font-size-sm);
+}
+
+// ============================================
+// 8. LAYOUT UTILITIES
+// ============================================
+
+.jbh-container {
+  width: 100%;
+  max-width: 440px;
+  margin: 0 auto;
+  padding: var(--jbh-spacing-md);
+}
+
+.jbh-container-wide {
+  max-width: 1200px;
+}
+
+.jbh-divider {
+  position: relative;
+  text-align: center;
+  margin: var(--jbh-spacing-lg) 0;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--jbh-border-color);
+  }
+
+  span {
+    position: relative;
+    display: inline-block;
+    padding: 0 var(--jbh-spacing-md);
+    background: var(--jbh-background-white);
+    color: var(--jbh-text-secondary);
+    font-size: var(--jbh-font-size-sm);
+    z-index: 1;
+  }
+}
+
+.jbh-spacer {
+  &-sm { margin-bottom: var(--jbh-spacing-sm); }
+  &-md { margin-bottom: var(--jbh-spacing-md); }
+  &-lg { margin-bottom: var(--jbh-spacing-lg); }
+  &-xl { margin-bottom: var(--jbh-spacing-xl); }
+}
+
+// ============================================
+// 9. ICONS
+// ============================================
+
+.jbh-icon-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  background: var(--jbh-gradient-primary);
+  border-radius: var(--jbh-radius-lg);
+  box-shadow: var(--jbh-shadow-primary);
+
+  ion-icon {
+    font-size: 32px;
+    color: var(--jbh-background-white);
+  }
+}
+
+// ============================================
+// 10. ANIMATIONS
+// ============================================
+
+@keyframes jbh-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes jbh-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes jbh-float {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-30px) scale(1.05);
+  }
+}
+
+.jbh-animate-fade-in {
+  animation: jbh-fade-in var(--jbh-transition-slow);
+}
+
+.jbh-animate-slide-up {
+  animation: jbh-slide-up var(--jbh-transition-slow);
+}
+
+// ============================================
+// 11. DARK MODE SUPPORT
+// ============================================
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --jbh-text-primary: #e2e8f0;
+    --jbh-text-secondary: #a0aec0;
+    --jbh-text-tertiary: #718096;
+    --jbh-border-color: #4a5568;
+    --jbh-background-light: #2d3748;
+    --jbh-background-white: #1a202c;
+    --jbh-error-background: #742a2a;
+    --jbh-success-background: #22543d;
+    --jbh-warning-background: #7c2d12;
+    --jbh-info-background: #1e3a8a;
+  }
+}
+
+// ============================================
+// 12. RESPONSIVE UTILITIES
+// ============================================
+
+// Mobile First Approach
+@media (min-width: 768px) {
+  .jbh-container {
+    padding: var(--jbh-spacing-lg);
+  }
+
+  .jbh-card {
+    padding: var(--jbh-spacing-xl);
+  }
+}
+
+@media (min-width: 1024px) {
+  .jbh-container {
+    max-width: 480px;
+  }
+}
+
+// Hide on mobile
+.jbh-hide-mobile {
+  @media (max-width: 767px) {
+    display: none !important;
+  }
+}
+
+// Hide on desktop
+.jbh-hide-desktop {
+  @media (min-width: 768px) {
+    display: none !important;
+  }
+}

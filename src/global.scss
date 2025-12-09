@@ -37,8 +37,9 @@
 @import '@ionic/angular/css/palettes/dark.system.css';
 
 /**
- * Custom Theme Variables
+ * JBH App - Centralized Design System
  * -----------------------------------------------------
- * Import custom theme files for authentication and other features
+ * Import the custom components theme - single source of truth for all styles
+ * NEVER create feature-specific theme files
  */
-@import './theme/auth-theme.scss';
+@import './theme/custom-components.scss';
