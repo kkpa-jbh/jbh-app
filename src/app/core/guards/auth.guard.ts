@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Router, CanActivateFn } from '@angular/router';
 import { AuthUseCase } from '../domain/use-cases/auth.use-case';
-import { map, take } from 'rxjs/operators';
+import { map, take, filter, switchMap } from 'rxjs/operators';
 
 /**
  * Auth Guard
@@ -18,7 +18,11 @@ export const authGuard: CanActivateFn = (route, state) => {
   const authUseCase = inject(AuthUseCase);
   const router = inject(Router);
 
-  return authUseCase.isAuthenticated$.pipe(
+  // Wait for auth initialization to complete before checking auth status
+  return authUseCase.authInitialized$.pipe(
+    filter(initialized => initialized), // Wait until initialized
+    take(1),
+    switchMap(() => authUseCase.isAuthenticated$),
     take(1),
     map(isAuthenticated => {
       if (isAuthenticated) {
@@ -105,7 +109,11 @@ export const guestGuard: CanActivateFn = (route, state) => {
   const authUseCase = inject(AuthUseCase);
   const router = inject(Router);
 
-  return authUseCase.isAuthenticated$.pipe(
+  // Wait for auth initialization to complete before checking auth status
+  return authUseCase.authInitialized$.pipe(
+    filter(initialized => initialized), // Wait until initialized
+    take(1),
+    switchMap(() => authUseCase.isAuthenticated$),
     take(1),
     map(isAuthenticated => {
       if (!isAuthenticated) {
@@ -134,7 +142,11 @@ export const rootRedirectGuard: CanActivateFn = (route, state) => {
   const authUseCase = inject(AuthUseCase);
   const router = inject(Router);
 
-  return authUseCase.isAuthenticated$.pipe(
+  // Wait for auth initialization to complete before checking auth status
+  return authUseCase.authInitialized$.pipe(
+    filter(initialized => initialized), // Wait until initialized
+    take(1),
+    switchMap(() => authUseCase.isAuthenticated$),
     take(1),
     map(isAuthenticated => {
       if (isAuthenticated) {

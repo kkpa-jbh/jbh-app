@@ -23,6 +23,9 @@ export class AuthUseCase {
   private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
+  private authInitializedSubject = new BehaviorSubject<boolean>(false);
+  public authInitialized$ = this.authInitializedSubject.asObservable();
+
   constructor(
     private authRepository: AuthRepository,
     private tokenStorage: TokenStorageService
@@ -47,10 +50,12 @@ export class AuthUseCase {
           this.currentUserSubject.next(user);
           this.isAuthenticatedSubject.next(true);
         }
+        this.authInitializedSubject.next(true);
       },
       error: () => {
         // Token might be invalid, clear it
         this.tokenStorage.clearTokens();
+        this.authInitializedSubject.next(true);
       }
     });
   }

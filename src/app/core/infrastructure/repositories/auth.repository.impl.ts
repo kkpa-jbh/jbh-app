@@ -34,7 +34,6 @@ export class AuthRepositoryImpl extends ApiBaseService implements AuthRepository
    * This is a PUBLIC API - no JWT token required
    */
   login(credentials: LoginCredentials): Observable<AuthToken> {
-    debugger;
     return this.post<any>(
       this.AUTH_ENDPOINTS.LOGIN,
       {
