@@ -118,3 +118,31 @@ export const guestGuard: CanActivateFn = (route, state) => {
     })
   );
 };
+
+/**
+ * Root Redirect Guard
+ * Redirects to home if authenticated, login if not
+ * Use this on the root path ('') to handle initial navigation
+ *
+ * Usage:
+ * {
+ *   path: '',
+ *   canActivate: [rootRedirectGuard]
+ * }
+ */
+export const rootRedirectGuard: CanActivateFn = (route, state) => {
+  const authUseCase = inject(AuthUseCase);
+  const router = inject(Router);
+
+  return authUseCase.isAuthenticated$.pipe(
+    take(1),
+    map(isAuthenticated => {
+      if (isAuthenticated) {
+        router.navigate(['/home']);
+      } else {
+        router.navigate(['/login']);
+      }
+      return false; // Don't activate route, just redirect
+    })
+  );
+};
