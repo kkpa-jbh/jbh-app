@@ -11,9 +11,9 @@ import { AuthToken } from '../../domain/models/auth-token.model';
 })
 export class TokenStorageService {
 
-  private readonly TOKEN_KEY = 'auth_token';
-  private readonly REFRESH_TOKEN_KEY = 'refresh_token';
-  private readonly TOKEN_TIMESTAMP_KEY = 'token_timestamp';
+  private readonly TOKEN_KEY = 'jbh_auth_token';
+  private readonly REFRESH_TOKEN_KEY = 'jbh_refresh_token';
+  private readonly TOKEN_TIMESTAMP_KEY = 'jbh_token_timestamp';
 
   /**
    * Save authentication token
