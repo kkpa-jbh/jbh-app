@@ -29,6 +29,10 @@ ng serve
 
 All three commands do the same thing - start the development server.
 
+```
+ionic serve --external
+```
+
 ---
 
 ## 📱 Access the Application

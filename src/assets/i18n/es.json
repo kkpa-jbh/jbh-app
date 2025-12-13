@@ -15,6 +15,46 @@
     "uiComponents": "Componentes de UI",
     "welcome": "¿Listo para crear una aplicación?"
   },
+  "menu": {
+    "appName": "JBH App",
+    "appTagline": "Gestiona tu negocio",
+    "home": "Inicio",
+    "logout": "Cerrar Sesión",
+    "products": {
+      "create": "Crear Producto",
+      "overview": "Resumen",
+      "title": "Productos",
+      "transfer": "Transferir"
+    },
+    "profile": "Perfil",
+    "version": "Versión"
+  },
+  "products": {
+    "create": {
+      "description": "Aquí puedes crear nuevos productos para tu negocio",
+      "title": "Crear Producto",
+      "titleLarge": "Crear Producto",
+      "welcome": "Página de Crear Producto"
+    },
+    "overview": {
+      "description": "Ver y gestionar todos tus productos",
+      "title": "Resumen",
+      "titleLarge": "Resumen de Productos",
+      "welcome": "Página de Resumen de Productos"
+    },
+    "transfer": {
+      "description": "Transferir productos entre ubicaciones",
+      "title": "Transferir",
+      "titleLarge": "Transferencia de Productos",
+      "welcome": "Página de Transferencia de Productos"
+    }
+  },
+  "profile": {
+    "description": "Gestiona la configuración y preferencias de tu cuenta",
+    "title": "Perfil",
+    "titleLarge": "Perfil",
+    "welcome": "Página de Perfil"
+  },
   "login": {
     "continueWith": "Continuar con {{provider}}",
     "continueWithGoogle": "Continuar con Google",

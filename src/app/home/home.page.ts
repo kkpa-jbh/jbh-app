@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonHeader, IonToolbar, IonTitle, IonContent } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 
@@ -7,7 +7,7 @@ import { TranslationService } from '@core/infrastructure/i18n/translation.servic
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, TranslateModule],
+  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, TranslateModule],
 })
 export class HomePage {
   constructor(public translationService: TranslationService) {}

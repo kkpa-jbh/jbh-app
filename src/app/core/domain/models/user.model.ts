@@ -7,6 +7,7 @@ export class User {
     public readonly id: string,
     public readonly email: string,
     public readonly username: string,
+    public readonly nickName: string,
     public readonly firstName?: string,
     public readonly lastName?: string,
     public readonly roles?: string[],
@@ -20,7 +21,7 @@ export class User {
     return this.username;
   }
 
-  hasRole(role: string): boolean {
+  private hasRole(role: string): boolean {
     return this.roles?.includes(role) ?? false;
   }
 
@@ -34,5 +35,13 @@ export class User {
 
   hasAllRoles(roles: string[]): boolean {
     return roles.every(role => this.hasRole(role));
+  }
+
+  isAdmin(): boolean {
+    return this.hasRole('ROLE_ADMIN');
+  }
+
+  isRegularUser(): boolean {
+    return this.hasRole('ROLE_USER');
   }
 }

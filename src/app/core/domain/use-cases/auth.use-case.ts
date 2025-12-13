@@ -187,15 +187,6 @@ export class AuthUseCase {
   }
 
   /**
-   * Check if current user has a specific role
-   * @param role - Role to check
-   */
-  hasRole(role: string): boolean {
-    const user = this.getCurrentUser();
-    return user?.hasRole(role) ?? false;
-  }
-
-  /**
    * Check if current user has any of the specified roles
    * @param roles - Roles to check
    */

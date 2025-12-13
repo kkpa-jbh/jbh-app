@@ -175,6 +175,7 @@ export class AuthRepositoryImpl extends ApiBaseService implements AuthRepository
       response.id,
       response.email,
       response.username,
+      response.nickName,
       response.firstName || response.first_name,
       response.lastName || response.last_name,
       response.roles,
