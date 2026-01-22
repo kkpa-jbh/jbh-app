@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError, BehaviorSubject, from } from 'rxjs';
-import { catchError, filter, take, switchMap } from 'rxjs/operators';
+import { Observable, throwError, BehaviorSubject, from, of, firstValueFrom } from 'rxjs';
+import { catchError, filter, take, switchMap, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { Platform } from '@ionic/angular';
 import { TokenStorageService } from '../persistence/token-storage.service';
+import { AuthRepository } from '../../domain/repositories/auth.repository';
 import { IS_PUBLIC_API } from './jwt.interceptor';
 
 /**
@@ -19,7 +21,9 @@ export class ErrorInterceptor implements HttpInterceptor {
 
   constructor(
     private tokenStorage: TokenStorageService,
-    private router: Router
+    private router: Router,
+    private platform: Platform,
+    private authRepository: AuthRepository
   ) {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -35,7 +39,7 @@ export class ErrorInterceptor implements HttpInterceptor {
         }
 
         if (error.status === 401 && !isPublicApi) {
-          return this.handle401Error(request, next);
+          return this.handle401Error(request, next, error);
         }
 
         if (error.status === 403 && !isPublicApi) {
@@ -49,9 +53,18 @@ export class ErrorInterceptor implements HttpInterceptor {
 
   /**
    * Handle 401 Unauthorized errors
-   * Attempts to refresh the token and retry the request
+   * Checks if token is expired and attempts to refresh it
    */
-  private handle401Error(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  private handle401Error(request: HttpRequest<any>, next: HttpHandler, error: HttpErrorResponse): Observable<HttpEvent<any>> {
+
+    // Check if this is specifically a token expiration error
+    // Gateway responds with: {"error_code": "AUTH_TOKEN_EXPIRED", "message": "...", "timestamp": ...}
+    const isTokenExpired = this.isTokenExpiredError(error);
+
+    if (!isTokenExpired) {
+      // Not a token expiration, just a regular 401 (invalid credentials, etc.)
+      return throwError(() => new Error('Unauthorized'));
+    }
 
     // If we're already refreshing, wait for the new token
     if (this.isRefreshing) {
@@ -67,19 +80,115 @@ export class ErrorInterceptor implements HttpInterceptor {
     this.isRefreshing = true;
     this.refreshTokenSubject.next(null);
 
-    return new Observable(observer => {
-      this.tokenStorage.getRefreshToken().then(refreshToken => {
-        if (refreshToken) {
-          // TODO: Call your refresh token API endpoint here
-          // For now, we'll just clear tokens and redirect to login
-          this.handleLogout();
-          observer.error('Session expired');
+    return from(this.refreshAccessToken()).pipe(
+      switchMap(success => {
+        if (success) {
+          // Token refreshed successfully, notify waiting requests
+          this.isRefreshing = false;
+          this.refreshTokenSubject.next(true);
+
+          // Retry the original request with new token
+          return from(this.addTokenToRequest(request)).pipe(
+            switchMap(req => next.handle(req))
+          );
         } else {
-          this.handleLogout();
-          observer.error('No refresh token available');
+          // Refresh failed, logout user
+          return from(this.handleLogout()).pipe(
+            switchMap(() => throwError(() => new Error('Session expired - please login again')))
+          );
         }
-      });
-    });
+      }),
+      catchError(err => {
+        // Refresh failed, logout user
+        this.isRefreshing = false;
+        return from(this.handleLogout()).pipe(
+          switchMap(() => throwError(() => new Error('Session expired - please login again')))
+        );
+      })
+    );
+  }
+
+  /**
+   * Check if the error is specifically a token expiration error
+   * Gateway responds with: {"error_code": "AUTH_TOKEN_EXPIRED", "message": "...", "timestamp": ...}
+   */
+  private isTokenExpiredError(error: HttpErrorResponse): boolean {
+    // Check if error response body contains error_code === "AUTH_TOKEN_EXPIRED"
+    const errorBody = error.error;
+
+    if (errorBody && typeof errorBody === 'object') {
+      return errorBody.error_code === 'AUTH_TOKEN_EXPIRED';
+    }
+
+    // If we can't determine from error body, assume it's a token expiration
+    // (better to attempt refresh than to immediately logout)
+    return true;
+  }
+
+  /**
+   * Refresh the access token
+   * Uses different strategies for web (cookies) vs mobile (storage)
+   *
+   * Web (PWA/Browser):
+   * - Refresh token is stored in HTTP-only cookie (secure, can't be accessed by JS)
+   * - Don't extract or send refresh token manually
+   * - Backend reads it automatically from cookie (withCredentials: true)
+   *
+   * Mobile (iOS/Android via Capacitor):
+   * - Both tokens stored in secure storage (Keychain/Keystore)
+   * - Refresh token sent explicitly in request body
+   */
+  private async refreshAccessToken(): Promise<boolean> {
+    try {
+      const isMobile = this.platform.is('capacitor'); // Capacitor = native mobile app
+      const isWeb = !isMobile;
+
+      let refreshToken: string | undefined = undefined;
+
+      if (isMobile) {
+        // Mobile: Get refresh token from secure storage (Keychain/Keystore)
+        // and send it explicitly in the request body
+        const storedRefreshToken = await this.tokenStorage.getRefreshToken();
+
+        if (!storedRefreshToken) {
+          console.error('[Mobile] No refresh token found in secure storage');
+          return false;
+        }
+
+        refreshToken = storedRefreshToken;
+        console.log('[Mobile] Using refresh token from secure storage');
+      } else {
+        // Web/PWA: Refresh token comes from HTTP-only cookie automatically
+        // DO NOT extract or send manually - the cookie is sent via withCredentials: true
+        console.log('[Web] Using refresh token from HTTP-only cookie');
+      }
+
+      // Call refresh token endpoint
+      // Mobile: sends refreshToken in body (from secure storage)
+      // Web: refreshToken comes from HTTP-only cookie (withCredentials: true)
+      const newToken = await firstValueFrom(this.authRepository.refreshToken(refreshToken));
+
+      if (newToken) {
+        // Save new tokens
+        if (isMobile) {
+          // Mobile: Save both tokens to secure storage
+          await this.tokenStorage.saveToken(newToken);
+          console.log('[Mobile] New tokens saved to secure storage');
+        } else {
+          // Web: Only save access token to storage (refresh token stays in HTTP-only cookie)
+          // The backend will update the refresh token cookie automatically
+          await this.tokenStorage.saveToken(newToken);
+          console.log('[Web] New access token saved (refresh token remains in cookie)');
+        }
+
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      console.error('Failed to refresh token:', error);
+      return false;
+    }
   }
 
   /**
@@ -124,7 +233,8 @@ export class ErrorInterceptor implements HttpInterceptor {
       return request.clone({
         setHeaders: {
           Authorization: `Bearer ${token}`
-        }
+        },
+        withCredentials: true  // Ensure credentials are sent with retry
       });
     }
     return request;

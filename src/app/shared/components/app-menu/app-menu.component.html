@@ -15,6 +15,9 @@
   <div class="jbh-menu-content">
     <ion-list class="jbh-menu-list">
       <ng-container *ngFor="let item of menuItems">
+        <!-- Install App Button (shown before divider/logout) -->
+        <app-install-app-button *ngIf="item.id === 'divider-1'"></app-install-app-button>
+
         <!-- Divider -->
         <div *ngIf="item.divider" class="jbh-menu-divider"></div>
 

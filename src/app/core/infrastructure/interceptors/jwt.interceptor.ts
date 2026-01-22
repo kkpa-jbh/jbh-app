@@ -24,8 +24,13 @@ export class JwtInterceptor implements HttpInterceptor {
     // Check if this is a public API (no auth required)
     const isPublicApi = request.context.get(IS_PUBLIC_API);
 
+    // Always enable credentials to send cookies (RefreshToken, JWT)
+    request = request.clone({
+      withCredentials: true
+    });
+
     if (isPublicApi) {
-      // Don't add token for public APIs
+      // Don't add token for public APIs, but still send cookies
       return next.handle(request);
     }
 

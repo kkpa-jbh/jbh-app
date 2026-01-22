@@ -3,6 +3,7 @@
     "cancel": "Cancelar",
     "delete": "Eliminar",
     "error": "Error",
+    "gotIt": "Entendido",
     "loading": "Cargando...",
     "or": "o",
     "save": "Guardar",
@@ -20,6 +21,8 @@
     "appTagline": "Gestiona tu negocio",
     "home": "Inicio",
     "logout": "Cerrar Sesión",
+    "logoutError": "Error al cerrar sesión. Por favor intenta de nuevo.",
+    "logoutSuccess": "Has cerrado sesión exitosamente",
     "products": {
       "create": "Crear Producto",
       "overview": "Resumen",
@@ -54,6 +57,29 @@
     "title": "Perfil",
     "titleLarge": "Perfil",
     "welcome": "Página de Perfil"
+  },
+  "pwa": {
+    "addToHomeScreen": "Agregar a Pantalla de Inicio",
+    "appInstalled": "App Instalada",
+    "installApp": "Instalar App",
+    "installDismissed": "Instalación cancelada",
+    "installNotAvailable": "Instalación no disponible",
+    "installSuccess": "¡App instalada exitosamente!",
+    "ios": {
+      "addToHomeScreen": "Agregar a Pantalla de Inicio",
+      "step1": "Toca el botón de Compartir",
+      "step1Hint": "Busca el ícono de compartir en la parte inferior de tu navegador Safari",
+      "step2": "Toca \"Agregar a Pantalla de Inicio\"",
+      "step2Hint": "Desplázate hacia abajo en el menú de compartir para encontrar esta opción",
+      "step3": "Toca \"Agregar\" para confirmar",
+      "step3Hint": "La app aparecerá en tu pantalla de inicio",
+      "subtitle": "Sigue estos sencillos pasos para instalar la app en tu iPhone:",
+      "title": "Instalar App en iOS",
+      "visualGuide": "Guía Visual"
+    },
+    "new": "Nuevo",
+    "updateAvailable": "¡Una nueva versión está disponible!",
+    "updateNow": "Actualizar Ahora"
   },
   "login": {
     "continueWith": "Continuar con {{provider}}",

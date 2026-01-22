@@ -3,6 +3,7 @@
     "cancel": "Cancel",
     "delete": "Delete",
     "error": "Error",
+    "gotIt": "Got it",
     "loading": "Loading...",
     "or": "or",
     "save": "Save",
@@ -20,6 +21,8 @@
     "appTagline": "Manage your business",
     "home": "Home",
     "logout": "Log Out",
+    "logoutError": "Error logging out. Please try again.",
+    "logoutSuccess": "You have been logged out successfully",
     "products": {
       "create": "Create Product",
       "overview": "Overview",
@@ -54,6 +57,29 @@
     "title": "Profile",
     "titleLarge": "Profile",
     "welcome": "Profile Page"
+  },
+  "pwa": {
+    "addToHomeScreen": "Add to Home Screen",
+    "appInstalled": "App Installed",
+    "installApp": "Install App",
+    "installDismissed": "Installation cancelled",
+    "installNotAvailable": "Installation not available",
+    "installSuccess": "App installed successfully!",
+    "ios": {
+      "addToHomeScreen": "Add to Home Screen",
+      "step1": "Tap the Share button",
+      "step1Hint": "Look for the share icon at the bottom of your Safari browser",
+      "step2": "Tap \"Add to Home Screen\"",
+      "step2Hint": "Scroll down in the share menu to find this option",
+      "step3": "Tap \"Add\" to confirm",
+      "step3Hint": "The app will appear on your home screen",
+      "subtitle": "Follow these simple steps to install the app on your iPhone:",
+      "title": "Install App on iOS",
+      "visualGuide": "Visual Guide"
+    },
+    "new": "New",
+    "updateAvailable": "A new version is available!",
+    "updateNow": "Update Now"
   },
   "login": {
     "continueWith": "Continue with {{provider}}",

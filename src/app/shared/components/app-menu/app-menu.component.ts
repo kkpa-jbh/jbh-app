@@ -2,9 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
-import { MenuController } from '@ionic/angular/standalone';
+import { MenuController, ToastController } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
+import { AuthUseCase } from '@core/domain/use-cases/auth.use-case';
+import { InstallAppButtonComponent } from '../install-app-button/install-app-button.component';
 
 export interface MenuItem {
   id: string;
@@ -22,7 +24,7 @@ export interface MenuItem {
   templateUrl: './app-menu.component.html',
   styleUrls: ['./app-menu.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, TranslateModule]
+  imports: [CommonModule, IonicModule, TranslateModule, InstallAppButtonComponent]
 })
 export class AppMenuComponent implements OnInit {
   menuItems: MenuItem[] = [
@@ -81,6 +83,8 @@ export class AppMenuComponent implements OnInit {
   constructor(
     private router: Router,
     private menuController: MenuController,
+    private authUseCase: AuthUseCase,
+    private toastController: ToastController,
     public translationService: TranslationService
   ) {}
 
@@ -122,10 +126,32 @@ export class AppMenuComponent implements OnInit {
     return false;
   }
 
-  private handleLogout(): void {
-    // TODO: Implement logout logic
-    console.log('Logout clicked');
-    // Example: this.authService.logout();
-    // this.router.navigate(['/login']);
+  private async handleLogout(): Promise<void> {
+    this.authUseCase.logout().subscribe({
+      next: async () => {
+        await this.showToast(
+          this.translationService.instant('menu.logoutSuccess'),
+          'success'
+        );
+        await this.router.navigate(['/login']);
+      },
+      error: async (error) => {
+        console.error('Logout error:', error);
+        await this.showToast(
+          this.translationService.instant('menu.logoutError'),
+          'danger'
+        );
+      }
+    });
+  }
+
+  private async showToast(message: string, color: string): Promise<void> {
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000,
+      color,
+      position: 'bottom'
+    });
+    await toast.present();
   }
 }

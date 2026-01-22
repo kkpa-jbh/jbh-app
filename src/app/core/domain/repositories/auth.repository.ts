@@ -18,10 +18,11 @@ export abstract class AuthRepository {
 
   /**
    * Refresh the authentication token
-   * @param refreshToken - Refresh token
+   * @param refreshToken - Optional refresh token (for mobile apps).
+   *                       If not provided, expects refresh token from HTTP-only cookies (web/PWA)
    * @returns Observable of new authentication token
    */
-  abstract refreshToken(refreshToken: string): Observable<AuthToken>;
+  abstract refreshToken(refreshToken?: string): Observable<AuthToken>;
 
   /**
    * Logout the current user

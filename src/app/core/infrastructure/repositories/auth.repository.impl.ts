@@ -51,11 +51,18 @@ export class AuthRepositoryImpl extends ApiBaseService implements AuthRepository
   /**
    * Refresh authentication token
    * This is a PUBLIC API - uses refresh token, not access token
+   *
+   * @param refreshToken - Optional refresh token (for mobile apps)
+   *                       If not provided, expects refresh token from HTTP-only cookies (web/PWA)
    */
-  refreshToken(refreshToken: string): Observable<AuthToken> {
+  refreshToken(refreshToken?: string): Observable<AuthToken> {
+    // For web: refresh token comes from HTTP-only cookie (don't send in body)
+    // For mobile: refresh token comes from secure storage (send in body)
+    const body = refreshToken ? { refreshToken } : {};
+
     return this.post<any>(
       this.AUTH_ENDPOINTS.REFRESH,
-      { refreshToken },
+      body,
       {
         context: new HttpContext().set(IS_PUBLIC_API, true) // Mark as public API
       }

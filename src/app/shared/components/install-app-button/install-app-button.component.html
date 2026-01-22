@@ -1,0 +1,31 @@
+<!-- Show install button only if app is not installed and can be installed -->
+<div class="install-button-wrapper" *ngIf="!isInstalled && canInstall">
+  <ion-item
+    [button]="true"
+    [detail]="false"
+    lines="none"
+    class="jbh-menu-item install-item"
+    (click)="handleInstallClick()">
+    <ion-icon name="download-outline" slot="start" class="jbh-menu-item-icon install-icon"></ion-icon>
+    <ion-label class="jbh-menu-item-label">
+      {{ 'pwa.installApp' | translate }}
+    </ion-label>
+    <div slot="end" class="install-badge">
+      <span>{{ 'pwa.new' | translate }}</span>
+    </div>
+  </ion-item>
+</div>
+
+<!-- Already installed indicator (optional) -->
+<div class="install-button-wrapper" *ngIf="isInstalled">
+  <ion-item
+    [button]="false"
+    [detail]="false"
+    lines="none"
+    class="jbh-menu-item installed-item">
+    <ion-icon name="checkmark-circle" slot="start" class="jbh-menu-item-icon installed-icon"></ion-icon>
+    <ion-label class="jbh-menu-item-label">
+      {{ 'pwa.appInstalled' | translate }}
+    </ion-label>
+  </ion-item>
+</div>

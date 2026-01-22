@@ -1,0 +1,183 @@
+.ios-install-modal {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--jbh-spacing-md);
+  border-bottom: 1px solid var(--jbh-border-color, #e1e4e8);
+
+  .jbh-title {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+
+  ion-button {
+    --padding-start: 0;
+    --padding-end: 0;
+  }
+}
+
+.modal-content {
+  --padding-start: var(--jbh-spacing-md);
+  --padding-end: var(--jbh-spacing-md);
+  --padding-top: var(--jbh-spacing-md);
+  --padding-bottom: var(--jbh-spacing-md);
+
+  .jbh-subtitle {
+    margin-top: 0;
+    margin-bottom: var(--jbh-spacing-lg);
+    color: var(--jbh-text-muted, #6c757d);
+  }
+}
+
+.install-step {
+  display: flex;
+  gap: var(--jbh-spacing-md);
+  margin-bottom: var(--jbh-spacing-lg);
+  padding: var(--jbh-spacing-md);
+  background: var(--jbh-background-light, #f7f8fa);
+  border-radius: var(--jbh-radius-md);
+  border-left: 4px solid var(--jbh-primary-color, #667eea);
+
+  .step-number {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--jbh-primary-color, #667eea), var(--jbh-secondary-color, #764ba2));
+    color: white;
+    border-radius: 50%;
+    font-weight: var(--jbh-font-weight-semibold, 600);
+    font-size: 1.125rem;
+  }
+
+  .step-content {
+    flex: 1;
+  }
+
+  .step-icon-wrapper {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--jbh-spacing-sm);
+  }
+
+  .step-icon {
+    font-size: 1.5rem;
+    margin-right: var(--jbh-spacing-sm);
+
+    &.share-icon {
+      color: var(--jbh-primary-color, #667eea);
+    }
+
+    &.add-icon {
+      color: var(--jbh-success-color, #48bb78);
+    }
+
+    &.check-icon {
+      color: var(--jbh-secondary-color, #764ba2);
+    }
+  }
+
+  .step-text {
+    margin: 0 0 var(--jbh-spacing-xs) 0;
+    font-weight: var(--jbh-font-weight-semibold, 600);
+    color: var(--jbh-text-dark, #2d3748);
+  }
+
+  .step-hint {
+    margin: 0;
+    font-size: var(--jbh-font-size-sm, 0.875rem);
+    color: var(--jbh-text-muted, #6c757d);
+  }
+}
+
+.visual-guide {
+  margin-top: var(--jbh-spacing-xl);
+  padding: var(--jbh-spacing-md);
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+  border-radius: var(--jbh-radius-md);
+
+  .guide-title {
+    margin: 0 0 var(--jbh-spacing-md) 0;
+    font-weight: var(--jbh-font-weight-semibold, 600);
+    text-align: center;
+    color: var(--jbh-primary-color, #667eea);
+  }
+
+  .guide-diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--jbh-spacing-sm);
+  }
+
+  .safari-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 200px;
+    height: 48px;
+    background: white;
+    border-radius: var(--jbh-radius-sm);
+    box-shadow: var(--jbh-shadow-md);
+
+    .diagram-icon {
+      font-size: 1.5rem;
+      color: var(--jbh-primary-color, #667eea);
+    }
+  }
+
+  .arrow-down {
+    ion-icon {
+      font-size: 2rem;
+      color: var(--jbh-primary-color, #667eea);
+    }
+  }
+
+  .share-menu {
+    width: 240px;
+    background: white;
+    border-radius: var(--jbh-radius-md);
+    box-shadow: var(--jbh-shadow-xl);
+    padding: var(--jbh-spacing-sm);
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: var(--jbh-spacing-sm);
+      padding: var(--jbh-spacing-sm);
+      background: var(--jbh-background-light, #f7f8fa);
+      border-radius: var(--jbh-radius-sm);
+
+      ion-icon {
+        font-size: 1.25rem;
+        color: var(--jbh-success-color, #48bb78);
+      }
+
+      span {
+        font-size: var(--jbh-font-size-sm, 0.875rem);
+        font-weight: var(--jbh-font-weight-medium, 500);
+      }
+    }
+  }
+}
+
+.modal-footer {
+  padding: var(--jbh-spacing-md);
+  border-top: 1px solid var(--jbh-border-color, #e1e4e8);
+}
+
+// Responsive adjustments
+@media (min-width: 768px) {
+  .ios-install-modal {
+    max-width: 600px;
+    margin: 0 auto;
+  }
+}
