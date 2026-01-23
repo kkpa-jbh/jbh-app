@@ -12,6 +12,8 @@ import { JwtInterceptor } from './app/core/infrastructure/interceptors/jwt.inter
 import { ErrorInterceptor } from './app/core/infrastructure/interceptors/error.interceptor';
 import { AuthRepository } from './app/core/domain/repositories/auth.repository';
 import { AuthRepositoryImpl } from './app/core/infrastructure/repositories/auth.repository.impl';
+import { ProductRepository } from './app/core/domain/repositories/product.repository';
+import { ProductRepositoryImpl } from './app/core/infrastructure/repositories/product.repository.impl';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -37,5 +39,6 @@ bootstrapApplication(AppComponent, {
 
     // Repository implementations (Dependency Injection for Hexagonal Architecture)
     { provide: AuthRepository, useClass: AuthRepositoryImpl },
+    { provide: ProductRepository, useClass: ProductRepositoryImpl },
   ],
 });

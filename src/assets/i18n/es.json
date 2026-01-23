@@ -35,6 +35,19 @@
   "products": {
     "create": {
       "description": "Aquí puedes crear nuevos productos para tu negocio",
+      "errors": {
+        "loadTypes": "Error al cargar los tipos de producto. Por favor intenta de nuevo."
+      },
+      "formSubtitle": "Completa los detalles a continuación para agregar un nuevo producto a tu inventario",
+      "formTitle": "Nuevo Producto",
+      "productType": {
+        "label": "Tipo de Producto",
+        "placeholder": "Selecciona un tipo de producto",
+        "required": "Por favor selecciona un tipo de producto"
+      },
+      "saveButton": "Guardar Producto",
+      "saving": "Guardando...",
+      "success": "¡Producto creado exitosamente!",
       "title": "Crear Producto",
       "titleLarge": "Crear Producto",
       "welcome": "Página de Crear Producto"

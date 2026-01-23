@@ -1026,6 +1026,399 @@ Before completing any component:
 3. Test form validation messages in both languages
 4. Check that dynamic text with parameters works in both languages
 
+## FORM CREATION STANDARDS (iOS & Android Mobile Apps)
+
+### Overview
+All forms in this application MUST follow these standards to ensure consistency, proper validation, native mobile experience, and i18n support. Forms are built using Angular Reactive Forms with Ionic components for native mobile experience.
+
+### Form Page Structure
+
+#### TypeScript Component Pattern
+```typescript
+// pages/[feature]/[feature].page.ts
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { IonicModule, ToastController } from '@ionic/angular';
+import { TranslateModule } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
+import { TranslationService } from '@core/infrastructure/i18n/translation.service';
+
+@Component({
+  selector: 'app-feature',
+  templateUrl: './feature.page.html',
+  styleUrls: ['./feature.page.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    IonicModule,
+    TranslateModule
+  ]
+})
+export class FeaturePage implements OnInit, OnDestroy {
+
+  myForm!: FormGroup;
+  isLoading = false;
+  isSubmitting = false;
+  currentLanguage = 'en';
+  private destroy$ = new Subject<void>();
+
+  constructor(
+    private formBuilder: FormBuilder,
+    private translationService: TranslationService,
+    private toastController: ToastController
+  ) {}
+
+  ngOnInit(): void {
+    this.initForm();
+    this.subscribeToLanguageChanges();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private initForm(): void {
+    this.myForm = this.formBuilder.group({
+      fieldName: ['', [Validators.required]],
+      // Add more fields with validators
+    });
+  }
+
+  private subscribeToLanguageChanges(): void {
+    this.translationService.getCurrentLanguage$()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(lang => this.currentLanguage = lang);
+  }
+
+  async onSubmit(): Promise<void> {
+    if (this.myForm.invalid) {
+      this.markFormGroupTouched(this.myForm);
+      return;
+    }
+    this.isSubmitting = true;
+    // Handle submission...
+  }
+
+  private markFormGroupTouched(formGroup: FormGroup): void {
+    Object.keys(formGroup.controls).forEach(key => {
+      formGroup.get(key)?.markAsTouched();
+    });
+  }
+
+  hasError(fieldName: string, errorType?: string): boolean {
+    const field = this.myForm.get(fieldName);
+    if (!field) return false;
+    if (errorType) {
+      return field.hasError(errorType) && (field.dirty || field.touched);
+    }
+    return field.invalid && (field.dirty || field.touched);
+  }
+
+  getErrorMessage(fieldName: string): string {
+    const field = this.myForm.get(fieldName);
+    if (!field || !field.errors) return '';
+    if (field.hasError('required')) {
+      return this.translationService.instant(`feature.${fieldName}.required`);
+    }
+    if (field.hasError('minlength')) {
+      const minLength = field.errors['minlength'].requiredLength;
+      return this.translationService.instant(`feature.${fieldName}.minlength`, { minLength });
+    }
+    return this.translationService.instant('validation.pattern');
+  }
+
+  private async showToast(message: string, color: 'success' | 'danger' | 'warning'): Promise<void> {
+    const toast = await this.toastController.create({
+      message,
+      duration: 3000,
+      color,
+      position: 'bottom',
+      buttons: [{ icon: 'close', role: 'cancel' }]
+    });
+    await toast.present();
+  }
+}
+```
+
+#### HTML Template Pattern (Mobile-First)
+```html
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>{{ 'feature.title' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="feature-content">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">{{ 'feature.titleLarge' | translate }}</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="jbh-container">
+    <div class="jbh-form-card">
+
+      <!-- Form Header -->
+      <div class="jbh-form-header">
+        <div class="jbh-form-icon">
+          <ion-icon name="icon-name-outline"></ion-icon>
+        </div>
+        <h1 class="jbh-form-title">{{ 'feature.formTitle' | translate }}</h1>
+        <p class="jbh-form-subtitle">{{ 'feature.formSubtitle' | translate }}</p>
+      </div>
+
+      <!-- Form -->
+      <form [formGroup]="myForm" (ngSubmit)="onSubmit()" class="jbh-form-animated">
+
+        <!-- Text Input Field -->
+        <div class="jbh-form-field">
+          <label class="jbh-label">{{ 'feature.fieldName.label' | translate }}</label>
+          <div class="jbh-input-wrapper">
+            <ion-icon name="icon-outline" class="jbh-input-icon left"></ion-icon>
+            <input
+              type="text"
+              class="jbh-input jbh-input-icon-left"
+              formControlName="fieldName"
+              [placeholder]="'feature.fieldName.placeholder' | translate"
+              [class.error]="hasError('fieldName')"
+            />
+          </div>
+          @if (hasError('fieldName')) {
+            <div class="jbh-field-error">
+              <ion-icon name="information-circle"></ion-icon>
+              <span>{{ getErrorMessage('fieldName') }}</span>
+            </div>
+          }
+        </div>
+
+        <!-- Select/Dropdown Field (Native Mobile) -->
+        <div class="jbh-form-field">
+          <label class="jbh-label">{{ 'feature.selectField.label' | translate }}</label>
+          @if (isLoadingOptions) {
+            <div class="jbh-skeleton jbh-skeleton-select"></div>
+          }
+          @if (!isLoadingOptions) {
+            <div class="jbh-ion-select-wrapper" [class.error]="hasError('selectField')">
+              <ion-icon name="icon-outline" class="jbh-ion-select-icon"></ion-icon>
+              <ion-select
+                formControlName="selectField"
+                [placeholder]="'feature.selectField.placeholder' | translate"
+                interface="action-sheet"
+                [interfaceOptions]="{ header: ('feature.selectField.label' | translate) }"
+                class="jbh-ion-select"
+              >
+                @for (option of options; track option.value) {
+                  <ion-select-option [value]="option.value">
+                    {{ option.label }}
+                  </ion-select-option>
+                }
+              </ion-select>
+            </div>
+          }
+          @if (hasError('selectField')) {
+            <div class="jbh-field-error">
+              <ion-icon name="information-circle"></ion-icon>
+              <span>{{ getErrorMessage('selectField') }}</span>
+            </div>
+          }
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="jbh-button-primary jbh-button-block"
+          [disabled]="isSubmitting || myForm.invalid || isLoading"
+          [class.jbh-button-loading]="isSubmitting"
+        >
+          @if (isSubmitting) {
+            <ion-spinner name="crescent"></ion-spinner>
+            <span>{{ 'feature.saving' | translate }}</span>
+          } @else {
+            <ion-icon name="save-outline" class="button-icon"></ion-icon>
+            <span>{{ 'feature.saveButton' | translate }}</span>
+          }
+        </button>
+
+      </form>
+    </div>
+  </div>
+</ion-content>
+```
+
+#### SCSS Pattern (Minimal - Page Layout Only)
+```scss
+// pages/feature/feature.page.scss
+.feature-content {
+  --background: var(--jbh-background-light);
+}
+
+.button-icon {
+  margin-right: var(--jbh-spacing-xs);
+}
+
+// ONLY add page-specific layout styles here
+// All form components use jbh-* theme classes
+```
+
+### Form Theme Classes Reference
+
+#### Container Classes
+- `jbh-container` - Centered responsive container
+- `jbh-form-card` - Elevated card with slide-up animation
+- `jbh-form-header` - Centered header section
+- `jbh-form-icon` - Gradient icon container
+- `jbh-form-title` - Form title typography
+- `jbh-form-subtitle` - Form subtitle typography
+- `jbh-form-animated` - Staggered field entrance animations
+
+#### Input Classes
+- `jbh-form-field` - Field container with bottom margin
+- `jbh-label` - Field label
+- `jbh-input-wrapper` - Input with icon support
+- `jbh-input` - Standard text input
+- `jbh-input-icon` - Icon inside input (use with `.left` or `.right`)
+- `jbh-input-icon-left` / `jbh-input-icon-right` - Input padding modifiers
+
+#### Select Classes (Native Mobile)
+- `jbh-ion-select-wrapper` - Wrapper with icon support
+- `jbh-ion-select-icon` - Icon for select
+- `jbh-ion-select` - Styled ion-select
+
+#### Error & Loading States
+- `jbh-field-error` - Error message container
+- `jbh-skeleton` - Loading skeleton base
+- `jbh-skeleton-select` - Skeleton for select fields
+- `.error` class modifier - Add to inputs/selects for error state
+
+#### Button Classes
+- `jbh-button-primary` - Primary action button
+- `jbh-button-block` - Full-width button
+- `jbh-button-loading` - Loading state modifier
+
+### Mobile-Specific Requirements
+
+#### Use ion-select for Dropdowns
+ALWAYS use `ion-select` instead of native `<select>` for mobile apps:
+- Provides native iOS picker wheel
+- Provides native Android dialog
+- Better touch handling
+- Consistent across platforms
+
+```html
+<!-- ✅ CORRECT for mobile apps -->
+<ion-select interface="action-sheet" ...>
+  <ion-select-option ...>
+
+<!-- ❌ WRONG for mobile apps -->
+<select class="jbh-select">
+  <option>
+```
+
+#### Interface Options for ion-select
+- `action-sheet` - Bottom sheet (recommended for mobile)
+- `alert` - Modal dialog
+- `popover` - Popover (better for tablets/desktop)
+
+#### Touch Target Sizes
+All interactive elements must have minimum 44px touch targets (iOS HIG / Material Design guidelines). The theme classes already handle this.
+
+### Angular Control Flow Syntax
+ALWAYS use Angular's new control flow syntax (`@if`, `@for`, `@switch`) instead of deprecated directives:
+
+```html
+<!-- ✅ CORRECT -->
+@if (isLoading) {
+  <div class="jbh-skeleton"></div>
+}
+
+@for (item of items; track item.id) {
+  <ion-select-option [value]="item.id">{{ item.name }}</ion-select-option>
+}
+
+<!-- ❌ DEPRECATED -->
+<div *ngIf="isLoading" class="jbh-skeleton"></div>
+<ion-select-option *ngFor="let item of items" [value]="item.id">
+```
+
+### Form Validation Pattern
+
+#### Standard Validators
+```typescript
+this.myForm = this.formBuilder.group({
+  required: ['', [Validators.required]],
+  email: ['', [Validators.required, Validators.email]],
+  minLength: ['', [Validators.required, Validators.minLength(3)]],
+  maxLength: ['', [Validators.maxLength(100)]],
+  pattern: ['', [Validators.pattern(/^[a-zA-Z]+$/)]],
+});
+```
+
+#### Error Message Translation Keys
+```json
+{
+  "feature": {
+    "fieldName": {
+      "label": "Field Label",
+      "placeholder": "Enter value",
+      "required": "This field is required",
+      "minlength": "Must be at least {{minLength}} characters",
+      "email": "Please enter a valid email"
+    },
+    "errors": {
+      "loadData": "Failed to load data. Please try again."
+    },
+    "saveButton": "Save",
+    "saving": "Saving...",
+    "success": "Saved successfully!"
+  }
+}
+```
+
+### Form Creation Checklist
+
+When creating a new form, verify:
+
+1. **Structure**
+   - [ ] Uses `jbh-form-card` container
+   - [ ] Has form header with icon, title, subtitle
+   - [ ] Uses `jbh-form-animated` for animations
+   - [ ] Submit button at bottom with loading state
+
+2. **Mobile Experience**
+   - [ ] Uses `ion-select` for dropdowns (NOT native select)
+   - [ ] `interface="action-sheet"` for mobile pickers
+   - [ ] Loading skeletons while fetching data
+   - [ ] Touch targets are 44px minimum
+
+3. **Validation**
+   - [ ] Reactive form with proper validators
+   - [ ] `hasError()` and `getErrorMessage()` methods
+   - [ ] Error messages show after touch/dirty
+   - [ ] Shake animation on error (automatic with `.error` class)
+
+4. **i18n**
+   - [ ] ALL text uses translate pipe
+   - [ ] Translations in both en.json and es.json
+   - [ ] Translation keys follow naming convention
+   - [ ] Dynamic values use parameters
+
+5. **State Management**
+   - [ ] `isLoading` for data fetching
+   - [ ] `isSubmitting` for form submission
+   - [ ] Proper cleanup with `destroy$` subject
+   - [ ] Toast notifications for success/error
+
+6. **Styling**
+   - [ ] Uses only `jbh-*` theme classes
+   - [ ] Component SCSS has minimal page-specific styles only
+   - [ ] Uses CSS variables (`--jbh-*`) for any custom spacing
+
 ## Critical Rules
 
 ### Theme System
