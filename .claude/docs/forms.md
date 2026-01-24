@@ -221,3 +221,4 @@ this.form = this.formBuilder.group({
 - [ ] Loading states: `isLoading`, `isSubmitting`
 - [ ] Cleanup with `destroy$` subject
 - [ ] ALL text uses translate pipe
+- [ ] In Ionic standlone components, icons must be explicitly registered using addIcons from ionicons.

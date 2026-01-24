@@ -35,11 +35,26 @@
   "products": {
     "create": {
       "description": "Aquí puedes crear nuevos productos para tu negocio",
+      "dynamicFields": {
+        "max": "El valor no debe exceder {{max}}",
+        "maxHint": "Máximo: {{max}}",
+        "min": "El valor debe ser al menos {{min}}",
+        "minHint": "Mínimo: {{min}}",
+        "range": "El valor debe estar entre {{min}} y {{max}}",
+        "required": "Este campo es requerido"
+      },
       "errors": {
+        "create": "Error al crear el producto. Por favor intenta de nuevo.",
+        "loadMetadata": "Error al cargar la configuración del producto. Por favor intenta de nuevo.",
         "loadTypes": "Error al cargar los tipos de producto. Por favor intenta de nuevo."
       },
       "formSubtitle": "Completa los detalles a continuación para agregar un nuevo producto a tu inventario",
       "formTitle": "Nuevo Producto",
+      "name": {
+        "label": "Nombre del Producto",
+        "placeholder": "Ingresa el nombre del producto"
+      },
+      "productDetails": "Detalles del Producto",
       "productType": {
         "label": "Tipo de Producto",
         "placeholder": "Selecciona un tipo de producto",

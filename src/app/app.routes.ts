@@ -24,7 +24,7 @@ export const routes: Routes = [
   },
   {
     path: 'products/create',
-    loadComponent: () => import('./features/products/pages/create/create.page').then(m => m.CreatePage),
+    loadComponent: () => import('./features/products/pages/create/create-product.page').then(m => m.CreateProductPage),
     canActivate: [authGuard] // Requires authentication
   },
   {

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { BehaviorSubject, Observable, interval } from 'rxjs';
 import { filter } from 'rxjs/operators';
+import { EnvironmentConfig } from '../config/environment.config';
 
 export interface UpdateStatus {
   available: boolean;
@@ -23,7 +24,10 @@ export class SwUpdateService {
   private registration: ServiceWorkerRegistration | null = null;
   private checkInterval = 60000; // Check every 60 seconds
 
-  constructor(private platform: Platform) {}
+  constructor(
+    private platform: Platform,
+    private envConfig: EnvironmentConfig
+  ) {}
 
   /**
    * Initialize service worker and set up automatic update checks
@@ -33,6 +37,12 @@ export class SwUpdateService {
     // Only initialize for web (not native apps)
     if (this.platform.is('hybrid')) {
       console.log('[SW Update] Skipping - running as native app');
+      return;
+    }
+
+    // Skip in development mode
+    if (!this.envConfig.isProduction) {
+      console.log('[SW Update] Skipping - development mode');
       return;
     }
 

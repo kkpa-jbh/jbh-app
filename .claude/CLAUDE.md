@@ -45,10 +45,17 @@ src/app/
 13. **Standalone components** with proper imports
 14. **Always include** `TranslateModule` in imports
 
+#### File Naming Convention
+15. **Kebab-case with context**: Include feature context in generic page names
+    - `create-product.page.ts` (NOT `create.page.ts`)
+    - `edit-user.page.ts` (NOT `edit.page.ts`)
+    - `list-orders.page.ts` (NOT `list.page.ts`)
+16. **Pattern**: `[action]-[entity].page.ts` for clarity across features
+
 #### Responsive
-15. **Mobile-first CSS**
-16. **Ionic Grid** for layouts
-17. **Test** on 3+ viewport sizes
+17. **Mobile-first CSS**
+18. **Ionic Grid** for layouts
+19. **Test** on 3+ viewport sizes
 
 ### Common Classes
 

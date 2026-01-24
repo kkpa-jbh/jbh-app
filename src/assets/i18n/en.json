@@ -35,11 +35,26 @@
   "products": {
     "create": {
       "description": "Here you can create new products for your business",
+      "dynamicFields": {
+        "max": "Value must not exceed {{max}}",
+        "maxHint": "Maximum: {{max}}",
+        "min": "Value must be at least {{min}}",
+        "minHint": "Minimum: {{min}}",
+        "range": "Value must be between {{min}} and {{max}}",
+        "required": "This field is required"
+      },
       "errors": {
+        "create": "Failed to create product. Please try again.",
+        "loadMetadata": "Failed to load product configuration. Please try again.",
         "loadTypes": "Failed to load product types. Please try again."
       },
       "formSubtitle": "Fill in the details below to add a new product to your inventory",
       "formTitle": "New Product",
+      "name": {
+        "label": "Product Name",
+        "placeholder": "Enter product name"
+      },
+      "productDetails": "Product Details",
       "productType": {
         "label": "Product Type",
         "placeholder": "Select a product type",
