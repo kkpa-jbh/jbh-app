@@ -163,11 +163,11 @@
                     @if (config.valueType === MetadataValueType.INT || config.valueType === MetadataValueType.BIGDECIMAL) {
                       <ion-icon name="calculator-outline" class="jbh-input-icon left"></ion-icon>
                       <input
-                        type="number"
+                        type="text"
+                        inputmode="decimal"
                         class="jbh-input jbh-input-icon-left"
                         [formControlName]="config.key"
                         [placeholder]="getFieldLabel(config)"
-                        [step]="getInputStep(config.valueType)"
                         [jbhDecimalFormat]="getMaxDecimals(config.valueType)!"
                         [class.error]="hasError(config.key)"
                       />
