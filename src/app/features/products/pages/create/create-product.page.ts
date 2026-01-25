@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, ValidatorFn } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
-import { IonicModule, ToastController } from '@ionic/angular';
+import { IonicModule, ToastController, ViewWillEnter } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil, distinctUntilChanged, filter } from 'rxjs';
 import { addIcons } from 'ionicons';
@@ -21,6 +21,7 @@ import { ProductType } from '@core/domain/models/product-type.model';
 import { ProductMetadataConfig, MetadataValueType } from '@core/domain/models/product-metadata-config.model';
 import { CreateProductRequest } from '@core/domain/models/product.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
+import { DecimalFormatDirective } from '@shared/directives';
 
 @Component({
   selector: 'app-create-product',
@@ -31,10 +32,11 @@ import { TranslationService } from '@core/infrastructure/i18n/translation.servic
     CommonModule,
     ReactiveFormsModule,
     IonicModule,
-    TranslateModule
+    TranslateModule,
+    DecimalFormatDirective
   ]
 })
-export class CreateProductPage implements OnInit, OnDestroy {
+export class CreateProductPage implements OnInit, OnDestroy, ViewWillEnter {
 
   productForm!: FormGroup;
   productTypes: ProductType[] = [];
@@ -79,6 +81,17 @@ export class CreateProductPage implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  ionViewWillEnter(): void {
+    this.resetForm();
+  }
+
+  private resetForm(): void {
+    this.clearDynamicFields();
+    this.productForm.reset();
+    this.productForm.markAsPristine();
+    this.productForm.markAsUntouched();
   }
 
   private initForm(): void {
@@ -177,7 +190,38 @@ export class CreateProductPage implements OnInit, OnDestroy {
       validators.push(Validators.max(config.maxValue));
     }
 
+    if (config.valueType === MetadataValueType.INT) {
+      validators.push(this.integerValidator());
+    }
+
+    if (config.valueType === MetadataValueType.BIGDECIMAL) {
+      validators.push(this.maxDecimalsValidator(2));
+    }
+
     return validators;
+  }
+
+  private integerValidator(): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (control.value === null || control.value === '') return null;
+      const value = Number(control.value);
+      if (!Number.isInteger(value)) {
+        return { integer: true };
+      }
+      return null;
+    };
+  }
+
+  private maxDecimalsValidator(maxDecimals: number): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (control.value === null || control.value === '') return null;
+      const value = String(control.value);
+      const decimalPart = value.split('.')[1];
+      if (decimalPart && decimalPart.length > maxDecimals) {
+        return { maxDecimals: { max: maxDecimals, actual: decimalPart.length } };
+      }
+      return null;
+    };
   }
 
   private getDefaultValue(valueType: MetadataValueType): any {
@@ -224,6 +268,17 @@ export class CreateProductPage implements OnInit, OnDestroy {
         return '1';
       default:
         return 'any';
+    }
+  }
+
+  getMaxDecimals(valueType: MetadataValueType): number | null {
+    switch (valueType) {
+      case MetadataValueType.INT:
+        return 0;
+      case MetadataValueType.BIGDECIMAL:
+        return 2;
+      default:
+        return null;
     }
   }
 
@@ -306,6 +361,13 @@ export class CreateProductPage implements OnInit, OnDestroy {
     if (field.hasError('max')) {
       const maxValue = field.errors['max'].max;
       return this.translationService.instant('products.create.dynamicFields.max', { max: maxValue });
+    }
+    if (field.hasError('integer')) {
+      return this.translationService.instant('products.create.dynamicFields.integer');
+    }
+    if (field.hasError('maxDecimals')) {
+      const maxDecimals = field.errors['maxDecimals'].max;
+      return this.translationService.instant('products.create.dynamicFields.maxDecimals', { max: maxDecimals });
     }
     return this.translationService.instant('validation.pattern');
   }

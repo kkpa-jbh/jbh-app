@@ -36,7 +36,9 @@
     "create": {
       "description": "Aquí puedes crear nuevos productos para tu negocio",
       "dynamicFields": {
+        "integer": "Solo se permiten números enteros (sin decimales)",
         "max": "El valor no debe exceder {{max}}",
+        "maxDecimals": "Máximo {{max}} decimales permitidos",
         "maxHint": "Máximo: {{max}}",
         "min": "El valor debe ser al menos {{min}}",
         "minHint": "Mínimo: {{min}}",

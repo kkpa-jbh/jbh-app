@@ -152,18 +152,26 @@
                   <div class="jbh-input-wrapper">
                     @if (config.valueType === MetadataValueType.STRING) {
                       <ion-icon name="text-outline" class="jbh-input-icon left"></ion-icon>
+                      <input
+                        type="text"
+                        class="jbh-input jbh-input-icon-left"
+                        [formControlName]="config.key"
+                        [placeholder]="getFieldLabel(config)"
+                        [class.error]="hasError(config.key)"
+                      />
                     }
                     @if (config.valueType === MetadataValueType.INT || config.valueType === MetadataValueType.BIGDECIMAL) {
                       <ion-icon name="calculator-outline" class="jbh-input-icon left"></ion-icon>
+                      <input
+                        type="number"
+                        class="jbh-input jbh-input-icon-left"
+                        [formControlName]="config.key"
+                        [placeholder]="getFieldLabel(config)"
+                        [step]="getInputStep(config.valueType)"
+                        [jbhDecimalFormat]="getMaxDecimals(config.valueType)!"
+                        [class.error]="hasError(config.key)"
+                      />
                     }
-                    <input
-                      [type]="getInputType(config.valueType)"
-                      class="jbh-input jbh-input-icon-left"
-                      [formControlName]="config.key"
-                      [placeholder]="getFieldLabel(config)"
-                      [step]="getInputStep(config.valueType)"
-                      [class.error]="hasError(config.key)"
-                    />
                   </div>
                 }
 
