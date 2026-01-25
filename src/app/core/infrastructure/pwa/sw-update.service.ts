@@ -3,6 +3,7 @@ import { Platform } from '@ionic/angular';
 import { BehaviorSubject, Observable, interval } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { EnvironmentConfig } from '../config/environment.config';
+import { LoggerService } from '../logging/logger.service';
 
 export interface UpdateStatus {
   available: boolean;
@@ -26,7 +27,8 @@ export class SwUpdateService {
 
   constructor(
     private platform: Platform,
-    private envConfig: EnvironmentConfig
+    private envConfig: EnvironmentConfig,
+    private logger: LoggerService
   ) {}
 
   /**
@@ -36,19 +38,19 @@ export class SwUpdateService {
   async initialize(): Promise<void> {
     // Only initialize for web (not native apps)
     if (this.platform.is('hybrid')) {
-      console.log('[SW Update] Skipping - running as native app');
+      this.logger.info('Skipping - running as native app', 'SwUpdate');
       return;
     }
 
     // Skip in development mode
     if (!this.envConfig.isProduction) {
-      console.log('[SW Update] Skipping - development mode');
+      this.logger.info('Skipping - development mode', 'SwUpdate');
       return;
     }
 
     // Check if service workers are supported
     if (!('serviceWorker' in navigator)) {
-      console.warn('[SW Update] Service Workers not supported');
+      this.logger.warn('Service Workers not supported', 'SwUpdate');
       return;
     }
 
@@ -58,7 +60,7 @@ export class SwUpdateService {
         scope: '/'
       });
 
-      console.log('[SW Update] Service Worker registered');
+      this.logger.info('Service Worker registered', 'SwUpdate');
 
       // Set up listeners
       this.setupListeners();
@@ -67,7 +69,7 @@ export class SwUpdateService {
       this.startUpdateChecks();
 
     } catch (error) {
-      console.error('[SW Update] Registration failed:', error);
+      this.logger.error('Registration failed:', 'SwUpdate', error);
     }
   }
 
@@ -79,7 +81,7 @@ export class SwUpdateService {
 
     // Listen for updates
     this.registration.addEventListener('updatefound', () => {
-      console.log('[SW Update] Update found, installing...');
+      this.logger.info('Update found, installing...', 'SwUpdate');
 
       const newWorker = this.registration?.installing;
       if (!newWorker) return;
@@ -94,7 +96,7 @@ export class SwUpdateService {
         if (newWorker.state === 'installed') {
           if (navigator.serviceWorker.controller) {
             // New update available
-            console.log('[SW Update] New version available');
+            this.logger.info('New version available', 'SwUpdate');
             this.updateAvailableSubject.next({
               available: true,
               installing: false,
@@ -102,7 +104,7 @@ export class SwUpdateService {
             });
           } else {
             // First install
-            console.log('[SW Update] App ready for offline use');
+            this.logger.info('App ready for offline use', 'SwUpdate');
           }
         }
       });
@@ -110,7 +112,7 @@ export class SwUpdateService {
 
     // Listen for controller change (update activated)
     navigator.serviceWorker.addEventListener('controllerchange', () => {
-      console.log('[SW Update] New service worker activated, reloading...');
+      this.logger.info('New service worker activated, reloading...', 'SwUpdate');
       window.location.reload();
     });
   }
@@ -144,15 +146,15 @@ export class SwUpdateService {
    */
   async checkForUpdate(): Promise<void> {
     if (!this.registration) {
-      console.warn('[SW Update] No service worker registered');
+      this.logger.warn('No service worker registered', 'SwUpdate');
       return;
     }
 
     try {
       await this.registration.update();
-      console.log('[SW Update] Update check completed');
+      this.logger.debug('Update check completed', 'SwUpdate');
     } catch (error) {
-      console.error('[SW Update] Update check failed:', error);
+      this.logger.error('Update check failed:', 'SwUpdate', error);
     }
   }
 
@@ -162,7 +164,7 @@ export class SwUpdateService {
    */
   applyUpdate(): void {
     if (!this.registration?.waiting) {
-      console.warn('[SW Update] No update waiting');
+      this.logger.warn('No update waiting', 'SwUpdate');
       return;
     }
 

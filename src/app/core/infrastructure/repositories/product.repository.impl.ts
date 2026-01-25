@@ -8,6 +8,7 @@ import { CreateProductRequest, CreateProductResponse } from '@core/domain/models
 import { ApiBaseService } from '@core/infrastructure/api/api-base.service';
 import { HttpClient } from '@angular/common/http';
 import { EnvironmentConfig } from '@core/infrastructure/config/environment.config';
+import { LoggerService } from '@core/infrastructure/logging/logger.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,8 +19,8 @@ export class ProductRepositoryImpl extends ApiBaseService implements ProductRepo
   private readonly PRODUCT_TYPES_ENDPOINT = '/finance/product-types';
   private readonly METADATA_CONFIG_ENDPOINT = '/finance/products/metadata-config';
 
-  constructor(http: HttpClient, envConfig: EnvironmentConfig) {
-    super(http, envConfig);
+  constructor(http: HttpClient, envConfig: EnvironmentConfig, logger: LoggerService) {
+    super(http, envConfig, logger);
   }
 
   getProductTypes(): Observable<ProductType[]> {

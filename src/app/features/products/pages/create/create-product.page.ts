@@ -21,6 +21,7 @@ import { ProductType } from '@core/domain/models/product-type.model';
 import { ProductMetadataConfig, MetadataValueType } from '@core/domain/models/product-metadata-config.model';
 import { CreateProductRequest } from '@core/domain/models/product.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
+import { LoggerService } from '@core/infrastructure/logging/logger.service';
 import { DecimalFormatDirective } from '@shared/directives';
 
 @Component({
@@ -57,7 +58,8 @@ export class CreateProductPage implements OnInit, OnDestroy, ViewWillEnter {
     private router: Router,
     private productUseCase: ProductUseCase,
     private translationService: TranslationService,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private logger: LoggerService
   ) {
     addIcons({
       cubeOutline,
@@ -111,7 +113,7 @@ export class CreateProductPage implements OnInit, OnDestroy, ViewWillEnter {
           this.isLoadingTypes = false;
         },
         error: (error) => {
-          console.error('Error loading product types:', error);
+          this.logger.error('Error loading product types:', 'CreateProductPage', error);
           this.isLoadingTypes = false;
           this.showToast(this.translationService.instant('products.create.errors.loadTypes'), 'danger');
         }
@@ -151,7 +153,7 @@ export class CreateProductPage implements OnInit, OnDestroy, ViewWillEnter {
           this.isLoadingMetadata = false;
         },
         error: (error) => {
-          console.error('Error loading metadata config:', error);
+          this.logger.error('Error loading metadata config:', 'CreateProductPage', error);
           this.isLoadingMetadata = false;
           this.showToast(this.translationService.instant('products.create.errors.loadMetadata'), 'danger');
         }
@@ -314,7 +316,7 @@ export class CreateProductPage implements OnInit, OnDestroy, ViewWillEnter {
           this.router.navigate(['/products/overview']);
         },
         error: async (error) => {
-          console.error('Error creating product:', error);
+          this.logger.error('Error creating product:', 'CreateProductPage', error);
           this.isSubmitting = false;
           const errorMessage = error?.error?.message || this.translationService.instant('products.create.errors.create');
           await this.showToast(errorMessage, 'danger');

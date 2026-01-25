@@ -4,7 +4,21 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { MenuController, ToastController } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import {
+  appsOutline,
+  homeOutline,
+  personOutline,
+  cubeOutline,
+  addCircleOutline,
+  listOutline,
+  swapHorizontalOutline,
+  logOutOutline,
+  chevronUpOutline,
+  chevronDownOutline
+} from 'ionicons/icons';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
+import { LoggerService } from '@core/infrastructure/logging/logger.service';
 import { AuthUseCase } from '@core/domain/use-cases/auth.use-case';
 import { InstallAppButtonComponent } from '../install-app-button/install-app-button.component';
 
@@ -85,8 +99,22 @@ export class AppMenuComponent implements OnInit {
     private menuController: MenuController,
     private authUseCase: AuthUseCase,
     private toastController: ToastController,
-    public translationService: TranslationService
-  ) {}
+    public translationService: TranslationService,
+    private logger: LoggerService
+  ) {
+    addIcons({
+      appsOutline,
+      homeOutline,
+      personOutline,
+      cubeOutline,
+      addCircleOutline,
+      listOutline,
+      swapHorizontalOutline,
+      logOutOutline,
+      chevronUpOutline,
+      chevronDownOutline
+    });
+  }
 
   ngOnInit(): void {}
 
@@ -136,7 +164,7 @@ export class AppMenuComponent implements OnInit {
         await this.router.navigate(['/login']);
       },
       error: async (error) => {
-        console.error('Logout error:', error);
+        this.logger.error('Logout error:', 'AppMenu', error);
         await this.showToast(
           this.translationService.instant('menu.logoutError'),
           'danger'

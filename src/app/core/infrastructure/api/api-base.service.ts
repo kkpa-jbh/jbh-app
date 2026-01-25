@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders, HttpParams, HttpErrorResponse } from '@angular
 import { Observable, throwError, TimeoutError } from 'rxjs';
 import { catchError, retry, timeout } from 'rxjs/operators';
 import { EnvironmentConfig } from '../config/environment.config';
+import { LoggerService } from '../logging/logger.service';
 
 export interface HttpOptions {
   headers?: HttpHeaders | { [header: string]: string | string[] };
@@ -21,7 +22,8 @@ export class ApiBaseService {
 
   constructor(
     private http: HttpClient,
-    private envConfig: EnvironmentConfig
+    private envConfig: EnvironmentConfig,
+    private logger: LoggerService
   ) {
     // Log environment info on service initialization
     this.envConfig.logEnvironmentInfo();
@@ -105,9 +107,7 @@ export class ApiBaseService {
 
     if (error instanceof TimeoutError) {
       errorMessage = 'Request timeout - please try again';
-      if (this.envConfig.isLoggingEnabled) {
-        console.error('API Timeout Error:', errorMessage);
-      }
+      this.logger.error('API Timeout Error:', 'ApiBase', errorMessage);
     } else if (error instanceof HttpErrorResponse) {
       if (error.error instanceof ErrorEvent) {
         // Client-side error
@@ -142,14 +142,12 @@ export class ApiBaseService {
         }
       }
 
-      if (this.envConfig.isLoggingEnabled) {
-        console.error('API Error:', {
+      this.logger.error('API Error:', 'ApiBase', {
           status: error.status,
           message: errorMessage,
           error: error.error,
           url: error.url
         });
-      }
     }
 
     return throwError(() => new Error(errorMessage));

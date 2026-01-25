@@ -6,6 +6,7 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { AuthUseCase } from '@core/domain/use-cases/auth.use-case';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
+import { LoggerService } from '@core/infrastructure/logging/logger.service';
 
 @Component({
   selector: 'app-login',
@@ -31,7 +32,8 @@ export class LoginPage implements OnInit {
     private formBuilder: FormBuilder,
     private authUseCase: AuthUseCase,
     private router: Router,
-    public translationService: TranslationService
+    public translationService: TranslationService,
+    private logger: LoggerService
   ) {}
 
   ngOnInit() {
@@ -66,14 +68,14 @@ export class LoginPage implements OnInit {
 
     this.authUseCase.login(username, password).subscribe({
       next: (user) => {
-        console.log('✅ Login successful:', user);
+        this.logger.info('Login successful', 'LoginPage', user);
         this.isLoading = false;
 
         // Navigate to home or dashboard
         this.router.navigate(['/home']);
       },
       error: (error) => {
-        console.error('❌ Login failed:', error);
+        this.logger.error('Login failed:', 'LoginPage', error);
         this.isLoading = false;
 
         // Display user-friendly error message

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { LoggerService } from '../logging/logger.service';
 
 export interface InstallPromptEvent extends Event {
   prompt(): Promise<void>;
@@ -15,7 +16,10 @@ export class PwaInstallService {
   private installableSubject = new BehaviorSubject<boolean>(false);
   public installable$: Observable<boolean> = this.installableSubject.asObservable();
 
-  constructor(private platform: Platform) {
+  constructor(
+    private platform: Platform,
+    private logger: LoggerService
+  ) {
     this.initInstallPrompt();
   }
 
@@ -29,12 +33,12 @@ export class PwaInstallService {
         e.preventDefault();
         this.deferredPrompt = e as InstallPromptEvent;
         this.installableSubject.next(true);
-        console.log('PWA: beforeinstallprompt event captured');
+        this.logger.info('beforeinstallprompt event captured', 'PwaInstall');
       });
 
       // Listen for successful install
       window.addEventListener('appinstalled', () => {
-        console.log('PWA: App installed successfully');
+        this.logger.info('App installed successfully', 'PwaInstall');
         this.deferredPrompt = null;
         this.installableSubject.next(false);
       });
@@ -92,7 +96,7 @@ export class PwaInstallService {
    */
   async promptInstall(): Promise<'accepted' | 'dismissed' | 'not-available'> {
     if (!this.deferredPrompt) {
-      console.log('PWA: No install prompt available');
+      this.logger.debug('No install prompt available', 'PwaInstall');
       return 'not-available';
     }
 
@@ -100,7 +104,7 @@ export class PwaInstallService {
       await this.deferredPrompt.prompt();
       const { outcome } = await this.deferredPrompt.userChoice;
 
-      console.log(`PWA: User ${outcome} the install prompt`);
+      this.logger.info(`User ${outcome} the install prompt`, 'PwaInstall');
 
       if (outcome === 'accepted') {
         this.deferredPrompt = null;
@@ -109,7 +113,7 @@ export class PwaInstallService {
 
       return outcome;
     } catch (error) {
-      console.error('PWA: Error showing install prompt', error);
+      this.logger.error('Error showing install prompt', 'PwaInstall', error);
       return 'dismissed';
     }
   }

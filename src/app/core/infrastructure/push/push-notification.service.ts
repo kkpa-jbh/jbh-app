@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { PushNotifications, Token, PushNotificationSchema, ActionPerformed } from '@capacitor/push-notifications';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { LoggerService } from '../logging/logger.service';
 
 export interface NotificationPayload {
   title: string;
@@ -19,7 +20,10 @@ export class PushNotificationService {
   private lastNotification = new BehaviorSubject<PushNotificationSchema | null>(null);
   public lastNotification$: Observable<PushNotificationSchema | null> = this.lastNotification.asObservable();
 
-  constructor(private platform: Platform) {}
+  constructor(
+    private platform: Platform,
+    private logger: LoggerService
+  ) {}
 
   /**
    * Initialize push notifications (call this on app startup)
@@ -28,7 +32,7 @@ export class PushNotificationService {
   async initialize(): Promise<void> {
     // Only initialize on native platforms
     if (!this.platform.is('hybrid')) {
-      console.log('Push Notifications: Skipping initialization (not a native app)');
+      this.logger.info('Push Notifications: Skipping initialization (not a native app)');
       return;
     }
 
@@ -43,12 +47,12 @@ export class PushNotificationService {
         // Set up listeners
         this.setupListeners();
 
-        console.log('Push Notifications: Initialized successfully');
+        this.logger.info('Push Notifications: Initialized successfully');
       } else {
-        console.warn('Push Notifications: Permission denied');
+        this.logger.warn('Push Notifications: Permission denied', 'PushNotification');
       }
     } catch (error) {
-      console.error('Push Notifications: Initialization error', error);
+      this.logger.error('Push Notifications: Initialization error', 'PushNotification', error);
     }
   }
 
@@ -58,7 +62,7 @@ export class PushNotificationService {
   private setupListeners(): void {
     // On successful registration, get FCM token
     PushNotifications.addListener('registration', (token: Token) => {
-      console.log('Push Notifications: FCM Token received:', token.value);
+      this.logger.info('Push Notifications: FCM Token received', 'PushNotification', token.value);
       this.fcmToken.next(token.value);
 
       // TODO: Send this token to your Java microservice
@@ -67,12 +71,12 @@ export class PushNotificationService {
 
     // Handle registration errors
     PushNotifications.addListener('registrationError', (error: any) => {
-      console.error('Push Notifications: Registration error:', error);
+      this.logger.error('Push Notifications: Registration error', 'PushNotification', error);
     });
 
     // Handle notification received while app is in foreground
     PushNotifications.addListener('pushNotificationReceived', (notification: PushNotificationSchema) => {
-      console.log('Push Notifications: Received in foreground:', notification);
+      this.logger.info('Push Notifications: Received in foreground', 'PushNotification', notification);
       this.lastNotification.next(notification);
 
       // Show local notification or update UI
@@ -81,7 +85,7 @@ export class PushNotificationService {
 
     // Handle notification action (user tapped on notification)
     PushNotifications.addListener('pushNotificationActionPerformed', (action: ActionPerformed) => {
-      console.log('Push Notifications: Action performed:', action);
+      this.logger.info('Push Notifications: Action performed', 'PushNotification', action);
       this.lastNotification.next(action.notification);
 
       // Navigate to specific screen based on notification data
@@ -96,7 +100,7 @@ export class PushNotificationService {
   private handleForegroundNotification(notification: PushNotificationSchema): void {
     // Default behavior: just log
     // You can show a toast, alert, or update UI here
-    console.log('Foreground notification:', notification.title, notification.body);
+    this.logger.debug('Foreground notification:', 'PushNotification', notification.title, notification.body);
   }
 
   /**
@@ -108,15 +112,15 @@ export class PushNotificationService {
 
     // Example: Navigate based on notification type
     if (data.type === 'order') {
-      console.log('Navigate to order:', data.orderId);
+      this.logger.debug('Navigate to order:', 'PushNotification', data.orderId);
       // this.router.navigate(['/orders', data.orderId]);
     } else if (data.type === 'message') {
-      console.log('Navigate to messages');
+      this.logger.debug('Navigate to messages', 'PushNotification');
       // this.router.navigate(['/messages']);
     }
 
     // Default: open home screen
-    console.log('Notification action performed with data:', data);
+    this.logger.debug('Notification action performed with data:', 'PushNotification', data);
   }
 
   /**
@@ -139,9 +143,9 @@ export class PushNotificationService {
       //   platform: this.platform.is('ios') ? 'ios' : 'android'
       // }).toPromise();
 
-      console.log('TODO: Send token to backend:', token);
+      this.logger.debug('TODO: Send token to backend:', 'PushNotification', token);
     } catch (error) {
-      console.error('Error sending token to backend:', error);
+      this.logger.error('Error sending token to backend:', 'PushNotification', error);
     }
   }
 

@@ -25,7 +25,7 @@ bootstrapApplication(AppComponent, {
     // i18n Configuration
     importProvidersFrom(
       TranslateModule.forRoot({
-        defaultLanguage: 'en',
+        fallbackLang: 'en',
       })
     ),
     provideTranslateHttpLoader({

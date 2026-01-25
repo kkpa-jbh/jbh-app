@@ -23,6 +23,8 @@ src/app/
 
 ### Critical Rules
 
+- Do not use any function from console. Use the servie `private logger: LoggerService` instead.
+
 #### Theme System
 1. **ALL styles** in `src/theme/custom-components.scss` - NO feature-specific theme files
 2. **Use `jbh-*` classes**: `jbh-button-primary`, `jbh-input`, `jbh-card`, etc.

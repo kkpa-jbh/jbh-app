@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { environment } from '../../../../environments/environment';
+import { LoggerService } from '../logging/logger.service';
 
 export interface ApiConfig {
   baseUrl: string;
@@ -18,6 +19,16 @@ export interface FeatureConfig {
 export class EnvironmentConfig {
 
   private readonly env = environment;
+  private _logger: LoggerService | null = null;
+
+  constructor(private injector: Injector) {}
+
+  private get logger(): LoggerService {
+    if (!this._logger) {
+      this._logger = this.injector.get(LoggerService);
+    }
+    return this._logger;
+  }
 
   get isProduction(): boolean {
     return this.env.production;
@@ -69,13 +80,11 @@ export class EnvironmentConfig {
    * Log environment information (useful for debugging)
    */
   logEnvironmentInfo(): void {
-    if (this.isLoggingEnabled) {
-      console.log('=== Environment Configuration ===');
-      console.log('Environment:', this.environmentName);
-      console.log('Production:', this.isProduction);
-      console.log('API Base URL:', this.apiBaseUrl);
-      console.log('Debug Mode:', this.isDebugModeEnabled);
-      console.log('================================');
-    }
+    this.logger.info('=== Environment Configuration ===', 'EnvConfig');
+    this.logger.info(`Environment: ${this.environmentName}`, 'EnvConfig');
+    this.logger.info(`Production: ${this.isProduction}`, 'EnvConfig');
+    this.logger.info(`API Base URL: ${this.apiBaseUrl}`, 'EnvConfig');
+    this.logger.info(`Debug Mode: ${this.isDebugModeEnabled}`, 'EnvConfig');
+    this.logger.info('================================', 'EnvConfig');
   }
 }

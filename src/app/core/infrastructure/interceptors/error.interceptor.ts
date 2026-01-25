@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, BehaviorSubject, from, of, firstValueFrom } from 'rxjs';
 import { catchError, filter, take, switchMap, tap } from 'rxjs/operators';
@@ -7,6 +7,7 @@ import { Platform } from '@ionic/angular';
 import { TokenStorageService } from '../persistence/token-storage.service';
 import { AuthRepository } from '../../domain/repositories/auth.repository';
 import { IS_PUBLIC_API } from './jwt.interceptor';
+import { LoggerService } from '../logging/logger.service';
 
 /**
  * Error Interceptor
@@ -18,13 +19,22 @@ export class ErrorInterceptor implements HttpInterceptor {
 
   private isRefreshing = false;
   private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  private _logger: LoggerService | null = null;
 
   constructor(
     private tokenStorage: TokenStorageService,
     private router: Router,
     private platform: Platform,
-    private authRepository: AuthRepository
+    private authRepository: AuthRepository,
+    private injector: Injector
   ) {}
+
+  private get logger(): LoggerService {
+    if (!this._logger) {
+      this._logger = this.injector.get(LoggerService);
+    }
+    return this._logger;
+  }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(request).pipe(
@@ -151,16 +161,16 @@ export class ErrorInterceptor implements HttpInterceptor {
         const storedRefreshToken = await this.tokenStorage.getRefreshToken();
 
         if (!storedRefreshToken) {
-          console.error('[Mobile] No refresh token found in secure storage');
+          this.logger.error('No refresh token found in secure storage', 'ErrorInterceptor');
           return false;
         }
 
         refreshToken = storedRefreshToken;
-        console.log('[Mobile] Using refresh token from secure storage');
+        this.logger.debug('Using refresh token from secure storage', 'ErrorInterceptor');
       } else {
         // Web/PWA: Refresh token comes from HTTP-only cookie automatically
         // DO NOT extract or send manually - the cookie is sent via withCredentials: true
-        console.log('[Web] Using refresh token from HTTP-only cookie');
+        this.logger.debug('Using refresh token from HTTP-only cookie', 'ErrorInterceptor');
       }
 
       // Call refresh token endpoint
@@ -173,12 +183,12 @@ export class ErrorInterceptor implements HttpInterceptor {
         if (isMobile) {
           // Mobile: Save both tokens to secure storage
           await this.tokenStorage.saveToken(newToken);
-          console.log('[Mobile] New tokens saved to secure storage');
+          this.logger.debug('New tokens saved to secure storage', 'ErrorInterceptor');
         } else {
           // Web: Only save access token to storage (refresh token stays in HTTP-only cookie)
           // The backend will update the refresh token cookie automatically
           await this.tokenStorage.saveToken(newToken);
-          console.log('[Web] New access token saved (refresh token remains in cookie)');
+          this.logger.debug('New access token saved (refresh token remains in cookie)', 'ErrorInterceptor');
         }
 
         return true;
@@ -186,7 +196,7 @@ export class ErrorInterceptor implements HttpInterceptor {
 
       return false;
     } catch (error) {
-      console.error('Failed to refresh token:', error);
+      this.logger.error('Failed to refresh token:', 'ErrorInterceptor', error);
       return false;
     }
   }
@@ -200,7 +210,7 @@ export class ErrorInterceptor implements HttpInterceptor {
 
     if (this.tokenStorage) {
       // Log for debugging (only in non-production)
-      console.warn('Business exception (422):', errorMessage);
+      this.logger.warn('Business exception (422):', 'ErrorInterceptor', errorMessage);
     }
 
     // Create a user-friendly error with the message from API
@@ -216,7 +226,7 @@ export class ErrorInterceptor implements HttpInterceptor {
    * User doesn't have permission to access the resource
    */
   private handle403Error(error: HttpErrorResponse): Observable<never> {
-    console.error('Access forbidden:', error);
+    this.logger.error('Access forbidden:', 'ErrorInterceptor', error);
 
     // Optionally navigate to an access denied page
     // this.router.navigate(['/access-denied']);

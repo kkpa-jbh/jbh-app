@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 import { ApiBaseService } from '../api/api-base.service';
+import { EnvironmentConfig } from '../config/environment.config';
+import { LoggerService } from '../logging/logger.service';
 
 /**
  * Example repository implementation showing how to use ApiBaseService
@@ -13,6 +16,10 @@ import { ApiBaseService } from '../api/api-base.service';
   providedIn: 'root'
 })
 export class ExampleRepositoryImpl extends ApiBaseService {
+
+  constructor(http: HttpClient, envConfig: EnvironmentConfig, logger: LoggerService) {
+    super(http, envConfig, logger);
+  }
 
   // Example: GET request
   getItems<T>(): Observable<T[]> {

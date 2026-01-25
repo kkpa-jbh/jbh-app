@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { LoggerService } from '../logging/logger.service';
 
 /**
  * Service for managing application internationalization (i18n)
@@ -20,7 +21,10 @@ export class TranslationService {
     { code: 'es', name: 'Español' }
   ];
 
-  constructor(private translate: TranslateService) {
+  constructor(
+    private translate: TranslateService,
+    private logger: LoggerService
+  ) {
     this.initializeLanguage();
   }
 
@@ -48,7 +52,7 @@ export class TranslationService {
    */
   setLanguage(language: string): void {
     if (!this.isLanguageSupported(language)) {
-      console.warn(`Language ${language} is not supported. Falling back to English.`);
+      this.logger.warn(`Language ${language} is not supported. Falling back to English.`, 'Translation');
       language = 'en';
     }
 

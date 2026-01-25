@@ -8,6 +8,9 @@ import { AuthToken } from '../../domain/models/auth-token.model';
 import { LoginCredentials } from '../../domain/models/login-credentials.model';
 import { ApiBaseService } from '../api/api-base.service';
 import { IS_PUBLIC_API } from '../interceptors/jwt.interceptor';
+import { HttpClient } from '@angular/common/http';
+import { EnvironmentConfig } from '../config/environment.config';
+import { LoggerService } from '../logging/logger.service';
 
 /**
  * Authentication repository implementation
@@ -28,6 +31,10 @@ export class AuthRepositoryImpl extends ApiBaseService implements AuthRepository
     REQUEST_PASSWORD_RESET: '/auth/request-password-reset',
     RESET_PASSWORD: '/auth/reset-password'
   };
+
+  constructor(http: HttpClient, envConfig: EnvironmentConfig, logger: LoggerService) {
+    super(http, envConfig, logger);
+  }
 
   /**
    * Login with credentials

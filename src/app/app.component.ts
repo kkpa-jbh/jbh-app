@@ -3,6 +3,7 @@ import { IonApp, IonRouterOutlet, IonMenu, ToastController } from '@ionic/angula
 import { TranslationService } from './core/infrastructure/i18n/translation.service';
 import { PushNotificationService } from './core/infrastructure/push/push-notification.service';
 import { SwUpdateService } from './core/infrastructure/pwa/sw-update.service';
+import { LoggerService } from './core/infrastructure/logging/logger.service';
 import { AppMenuComponent } from './shared/components/app-menu/app-menu.component';
 
 @Component({
@@ -15,7 +16,8 @@ export class AppComponent implements OnInit {
     private translationService: TranslationService,
     private pushNotificationService: PushNotificationService,
     private swUpdateService: SwUpdateService,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private logger: LoggerService
   ) {
     // Initialize translation service (it will auto-detect/load saved language)
   }
@@ -27,7 +29,7 @@ export class AppComponent implements OnInit {
     // Subscribe to FCM token changes
     this.pushNotificationService.fcmToken$.subscribe(token => {
       if (token) {
-        console.log('FCM Token ready to send to backend:', token);
+        this.logger.debug('FCM Token ready to send to backend:', 'AppComponent', token);
         // Send token to your Java microservice
         this.pushNotificationService.sendTokenToBackend(token);
       }

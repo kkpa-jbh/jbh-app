@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Preferences } from '@capacitor/preferences';
 import { AuthToken } from '../../domain/models/auth-token.model';
+import { LoggerService } from '../logging/logger.service';
 
 /**
  * Token storage service
@@ -14,6 +15,8 @@ export class TokenStorageService {
   private readonly TOKEN_KEY = 'jbh_auth_token';
   private readonly REFRESH_TOKEN_KEY = 'jbh_refresh_token';
   private readonly TOKEN_TIMESTAMP_KEY = 'jbh_token_timestamp';
+
+  constructor(private logger: LoggerService) {}
 
   /**
    * Save authentication token
@@ -38,7 +41,7 @@ export class TokenStorageService {
         value: Date.now().toString()
       });
     } catch (error) {
-      console.error('Error saving token:', error);
+      this.logger.error('Error saving token:', 'TokenStorage', error);
       throw error;
     }
   }
@@ -52,7 +55,7 @@ export class TokenStorageService {
       const result = await Preferences.get({ key: this.TOKEN_KEY });
       return result.value;
     } catch (error) {
-      console.error('Error getting access token:', error);
+      this.logger.error('Error getting access token:', 'TokenStorage', error);
       return null;
     }
   }
@@ -66,7 +69,7 @@ export class TokenStorageService {
       const result = await Preferences.get({ key: this.REFRESH_TOKEN_KEY });
       return result.value;
     } catch (error) {
-      console.error('Error getting refresh token:', error);
+      this.logger.error('Error getting refresh token:', 'TokenStorage', error);
       return null;
     }
   }
@@ -80,7 +83,7 @@ export class TokenStorageService {
       const result = await Preferences.get({ key: this.TOKEN_TIMESTAMP_KEY });
       return result.value ? parseInt(result.value, 10) : null;
     } catch (error) {
-      console.error('Error getting token timestamp:', error);
+      this.logger.error('Error getting token timestamp:', 'TokenStorage', error);
       return null;
     }
   }
@@ -99,7 +102,7 @@ export class TokenStorageService {
       const refreshToken = await this.getRefreshToken();
       return new AuthToken(accessToken, refreshToken || undefined);
     } catch (error) {
-      console.error('Error getting auth token:', error);
+      this.logger.error('Error getting auth token:', 'TokenStorage', error);
       return null;
     }
   }
@@ -113,7 +116,7 @@ export class TokenStorageService {
       await Preferences.remove({ key: this.REFRESH_TOKEN_KEY });
       await Preferences.remove({ key: this.TOKEN_TIMESTAMP_KEY });
     } catch (error) {
-      console.error('Error clearing tokens:', error);
+      this.logger.error('Error clearing tokens:', 'TokenStorage', error);
       throw error;
     }
   }
