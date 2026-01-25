@@ -64,4 +64,18 @@ export abstract class AuthRepository {
    * @returns Observable of void
    */
   abstract resetPassword(token: string, newPassword: string): Observable<void>;
+
+  /**
+   * Check if username/nickname is available
+   * @param username - Username to check
+   * @returns Observable of availability status
+   */
+  abstract checkUsernameAvailability(username: string): Observable<{ available: boolean }>;
+
+  /**
+   * Check if email is available
+   * @param email - Email to check
+   * @returns Observable of availability status
+   */
+  abstract checkEmailAvailability(email: string): Observable<{ available: boolean }>;
 }

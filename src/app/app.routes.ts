@@ -13,6 +13,11 @@ export const routes: Routes = [
     canActivate: [guestGuard] // Redirect to home if already logged in
   },
   {
+    path: 'signup',
+    loadComponent: () => import('./features/auth/pages/signup/signup.page').then((m) => m.SignupPage),
+    canActivate: [guestGuard] // Redirect to home if already logged in
+  },
+  {
     path: 'home',
     loadComponent: () => import('./home/home.page').then((m) => m.HomePage),
     canActivate: [authGuard] // Requires authentication

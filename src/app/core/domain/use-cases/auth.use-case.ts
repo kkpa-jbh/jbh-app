@@ -117,6 +117,22 @@ export class AuthUseCase {
   }
 
   /**
+   * Check if username/nickname is available
+   * @param username - Username to check
+   */
+  checkUsernameAvailability(username: string): Observable<{ available: boolean }> {
+    return this.authRepository.checkUsernameAvailability(username);
+  }
+
+  /**
+   * Check if email is available
+   * @param email - Email to check
+   */
+  checkEmailAvailability(email: string): Observable<{ available: boolean }> {
+    return this.authRepository.checkEmailAvailability(email);
+  }
+
+  /**
    * Load current user profile
    */
   loadCurrentUser(): Observable<User> {

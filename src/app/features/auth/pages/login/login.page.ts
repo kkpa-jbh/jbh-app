@@ -4,6 +4,17 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import {
+  shieldCheckmark,
+  alertCircle,
+  personOutline,
+  informationCircle,
+  lockClosedOutline,
+  eyeOutline,
+  eyeOffOutline,
+  logoGoogle
+} from 'ionicons/icons';
 import { AuthUseCase } from '@core/domain/use-cases/auth.use-case';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
@@ -34,7 +45,18 @@ export class LoginPage implements OnInit {
     private router: Router,
     public translationService: TranslationService,
     private logger: LoggerService
-  ) {}
+  ) {
+    addIcons({
+      shieldCheckmark,
+      alertCircle,
+      personOutline,
+      informationCircle,
+      lockClosedOutline,
+      eyeOutline,
+      eyeOffOutline,
+      logoGoogle
+    });
+  }
 
   ngOnInit() {
     this.initForm();
@@ -134,5 +156,9 @@ export class LoginPage implements OnInit {
       return this.translationService.instant(`login.${fieldName}.minlength`, { minLength });
     }
     return this.translationService.instant('validation.pattern');
+  }
+
+  goToSignup(): void {
+    this.router.navigate(['/signup']);
   }
 }

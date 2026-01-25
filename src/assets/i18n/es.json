@@ -140,6 +140,53 @@
       "required": "El usuario es requerido"
     }
   },
+  "signup": {
+    "confirmPassword": {
+      "label": "Confirmar Contraseña",
+      "mismatch": "Las contraseñas no coinciden",
+      "placeholder": "Confirma tu contraseña",
+      "required": "Por favor confirma tu contraseña"
+    },
+    "createAccountButton": "Crear Cuenta",
+    "creating": "Creando cuenta...",
+    "email": {
+      "available": "El correo está disponible",
+      "label": "Correo Electrónico",
+      "placeholder": "Ingresa tu correo electrónico",
+      "required": "El correo electrónico es requerido",
+      "unavailable": "Este correo ya está registrado"
+    },
+    "errors": {
+      "generic": "Ocurrió un error durante el registro. Por favor intenta de nuevo."
+    },
+    "haveAccount": "¿Ya tienes una cuenta?",
+    "name": {
+      "label": "Nombre Completo",
+      "maxlength": "El nombre no debe exceder {{maxLength}} caracteres",
+      "minlength": "El nombre debe tener al menos {{minLength}} caracteres",
+      "placeholder": "Ingresa tu nombre completo",
+      "required": "El nombre completo es requerido"
+    },
+    "password": {
+      "label": "Contraseña",
+      "minlength": "La contraseña debe tener al menos {{minLength}} caracteres",
+      "placeholder": "Crea una contraseña",
+      "required": "La contraseña es requerida"
+    },
+    "signIn": "Iniciar sesión",
+    "subtitle": "Crea tu cuenta para comenzar",
+    "title": "Crear Cuenta",
+    "username": {
+      "available": "El nombre de usuario está disponible",
+      "label": "Nombre de Usuario (Apodo)",
+      "maxlength": "El nombre de usuario no debe exceder {{maxLength}} caracteres",
+      "minlength": "El nombre de usuario debe tener al menos {{minLength}} caracteres",
+      "pattern": "El nombre de usuario solo puede contener letras, números y guiones bajos",
+      "placeholder": "Elige un nombre de usuario único",
+      "required": "El nombre de usuario es requerido",
+      "unavailable": "Este nombre de usuario ya está en uso"
+    }
+  },
   "validation": {
     "email": "Por favor ingresa un correo electrónico válido",
     "maxlength": "{{field}} no debe exceder {{maxLength}} caracteres",

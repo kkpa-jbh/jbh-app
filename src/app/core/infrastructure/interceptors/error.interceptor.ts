@@ -127,7 +127,7 @@ export class ErrorInterceptor implements HttpInterceptor {
     const errorBody = error.error;
 
     if (errorBody && typeof errorBody === 'object') {
-      return errorBody.error_code === 'AUTH_TOKEN_EXPIRED';
+      return errorBody.error_code === 'AUTH_TOKEN_EXPIRED' || errorBody.errorCode === 'AUTH_TOKEN_EXPIRED';
     }
 
     // If we can't determine from error body, assume it's a token expiration

@@ -1,0 +1,211 @@
+/**
+ * ============================================
+ * Signup Page - Page-Specific Styles Only
+ * ============================================
+ *
+ * This file contains ONLY signup page-specific layout.
+ * All reusable styles (buttons, inputs, cards) are in:
+ * src/theme/custom-components.scss
+ *
+ * Use theme classes: jbh-button-primary, jbh-input, jbh-card, etc.
+ */
+
+.signup-content {
+  --background: var(--jbh-gradient-primary);
+}
+
+.signup-container {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--jbh-spacing-md);
+  overflow: hidden;
+}
+
+// ============================================
+// Background Decorative Circles
+// ============================================
+
+.background-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+
+  .circle {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(80px);
+    animation: jbh-float 20s ease-in-out infinite;
+
+    &.circle-1 {
+      width: 300px;
+      height: 300px;
+      top: -150px;
+      right: -100px;
+      animation-delay: 0s;
+    }
+
+    &.circle-2 {
+      width: 400px;
+      height: 400px;
+      bottom: -200px;
+      left: -150px;
+      animation-delay: 5s;
+    }
+
+    &.circle-3 {
+      width: 250px;
+      height: 250px;
+      top: 50%;
+      right: -50px;
+      animation-delay: 10s;
+    }
+  }
+}
+
+// ============================================
+// Signup Card Container
+// ============================================
+
+.signup-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 440px;
+  animation: jbh-slide-up 0.5s ease-out;
+}
+
+// ============================================
+// Signup Header Section
+// ============================================
+
+.signup-header {
+  text-align: center;
+  margin-bottom: var(--jbh-spacing-lg);
+}
+
+.logo-container {
+  display: inline-flex;
+  margin-bottom: var(--jbh-spacing-md);
+}
+
+// ============================================
+// Form Layout
+// ============================================
+
+.signup-form {
+  .login-link {
+    text-align: center;
+    font-size: var(--jbh-font-size-base);
+    color: var(--jbh-text-secondary);
+    margin-top: var(--jbh-spacing-md);
+
+    span {
+      margin-right: 6px;
+    }
+
+    .jbh-link {
+      cursor: pointer;
+    }
+  }
+}
+
+// ============================================
+// Input Status Icons
+// ============================================
+
+.jbh-input-status {
+  display: flex;
+  align-items: center;
+  padding-right: 12px;
+
+  ion-icon {
+    font-size: 20px;
+
+    &[color="success"] {
+      color: var(--jbh-success-color);
+    }
+
+    &[color="danger"] {
+      color: var(--jbh-error-color);
+    }
+  }
+}
+
+.jbh-input-action {
+  ion-spinner {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+// ============================================
+// Success Field Message
+// ============================================
+
+.jbh-field-success {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: var(--jbh-font-size-sm);
+  color: var(--jbh-success-color);
+
+  ion-icon {
+    font-size: 16px;
+  }
+}
+
+// ============================================
+// Input Success State
+// ============================================
+
+.jbh-input.success {
+  border-color: var(--jbh-success-color);
+
+  &:focus {
+    box-shadow: 0 0 0 3px rgba(var(--jbh-success-color-rgb, 34, 197, 94), 0.15);
+  }
+}
+
+// ============================================
+// Footer
+// ============================================
+
+.signup-footer {
+  position: relative;
+  z-index: 1;
+  margin-top: var(--jbh-spacing-lg);
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: var(--jbh-font-size-sm);
+
+  p {
+    margin: 0;
+  }
+}
+
+// ============================================
+// Responsive Adjustments
+// ============================================
+
+@media (max-width: 375px) {
+  .signup-container {
+    padding: var(--jbh-spacing-sm);
+  }
+}
+
+@media (min-width: 1024px) {
+  .signup-card {
+    max-width: 480px;
+  }
+}

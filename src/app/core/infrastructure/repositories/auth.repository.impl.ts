@@ -25,11 +25,13 @@ export class AuthRepositoryImpl extends ApiBaseService implements AuthRepository
     LOGIN: '/auth/signin',
     LOGOUT: '/auth/logout',
     REFRESH: '/auth/refresh',
-    REGISTER: '/auth/register',
+    REGISTER: '/auth/signup',
     PROFILE: '/users/userinfo',
     VERIFY_EMAIL: '/auth/verify-email',
     REQUEST_PASSWORD_RESET: '/auth/request-password-reset',
-    RESET_PASSWORD: '/auth/reset-password'
+    RESET_PASSWORD: '/auth/reset-password',
+    CHECK_USERNAME: '/auth/checkUsernameAvailability',
+    CHECK_EMAIL: '/auth/checkEmailAvailability'
   };
 
   constructor(http: HttpClient, envConfig: EnvironmentConfig, logger: LoggerService) {
@@ -150,6 +152,32 @@ export class AuthRepositoryImpl extends ApiBaseService implements AuthRepository
       { token, newPassword },
       {
         context: new HttpContext().set(IS_PUBLIC_API, true) // Mark as public API
+      }
+    );
+  }
+
+  /**
+   * Check username availability
+   * This is a PUBLIC API - no JWT token required
+   */
+  checkUsernameAvailability(username: string): Observable<{ available: boolean }> {
+    return this.get<{ available: boolean }>(
+      `${this.AUTH_ENDPOINTS.CHECK_USERNAME}?nickName=${encodeURIComponent(username)}`,
+      {
+        context: new HttpContext().set(IS_PUBLIC_API, true)
+      }
+    );
+  }
+
+  /**
+   * Check email availability
+   * This is a PUBLIC API - no JWT token required
+   */
+  checkEmailAvailability(email: string): Observable<{ available: boolean }> {
+    return this.get<{ available: boolean }>(
+      `${this.AUTH_ENDPOINTS.CHECK_EMAIL}?email=${encodeURIComponent(email)}`,
+      {
+        context: new HttpContext().set(IS_PUBLIC_API, true)
       }
     );
   }

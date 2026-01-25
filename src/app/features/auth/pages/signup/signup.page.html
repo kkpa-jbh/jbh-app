@@ -1,0 +1,205 @@
+<ion-content [fullscreen]="true" class="signup-content">
+  <div class="signup-container">
+
+    <!-- Background Decoration -->
+    <div class="background-decoration">
+      <div class="circle circle-1"></div>
+      <div class="circle circle-2"></div>
+      <div class="circle circle-3"></div>
+    </div>
+
+    <!-- Signup Card -->
+    <div class="signup-card jbh-card-elevated">
+
+      <!-- Logo/Icon Section -->
+      <div class="signup-header">
+        <div class="logo-container jbh-icon-container">
+          <ion-icon name="person-add"></ion-icon>
+        </div>
+        <h1 class="jbh-title">{{ 'signup.title' | translate }}</h1>
+        <p class="jbh-subtitle">{{ 'signup.subtitle' | translate }}</p>
+      </div>
+
+      <!-- Error Alert -->
+      <div class="jbh-alert-error" *ngIf="errorMessage">
+        <ion-icon name="alert-circle"></ion-icon>
+        <div class="jbh-alert-content">{{ errorMessage }}</div>
+      </div>
+
+      <!-- Signup Form -->
+      <form [formGroup]="signupForm" (ngSubmit)="onSignup()" class="signup-form">
+
+        <!-- Full Name Field -->
+        <div class="jbh-form-field">
+          <label class="jbh-label">{{ 'signup.name.label' | translate }}</label>
+          <div class="jbh-input-wrapper">
+            <ion-icon name="person-outline" class="jbh-input-icon left"></ion-icon>
+            <input
+              type="text"
+              class="jbh-input jbh-input-icon-left"
+              formControlName="name"
+              [placeholder]="'signup.name.placeholder' | translate"
+              [class.error]="hasError('name')"
+              autocomplete="name"
+            />
+          </div>
+          <div class="jbh-field-error" *ngIf="hasError('name')">
+            <ion-icon name="information-circle"></ion-icon>
+            <span>{{ getErrorMessage('name') }}</span>
+          </div>
+        </div>
+
+        <!-- Username/Nickname Field -->
+        <div class="jbh-form-field">
+          <label class="jbh-label">{{ 'signup.username.label' | translate }}</label>
+          <div class="jbh-input-wrapper">
+            <ion-icon name="at-outline" class="jbh-input-icon left"></ion-icon>
+            <input
+              type="text"
+              class="jbh-input jbh-input-icon-left jbh-input-icon-right"
+              formControlName="username"
+              [placeholder]="'signup.username.placeholder' | translate"
+              [class.error]="hasError('username') || usernameAvailable === false"
+              [class.success]="usernameAvailable === true && !hasError('username')"
+              (input)="onUsernameInput()"
+              autocomplete="username"
+            />
+            <span class="jbh-input-action" *ngIf="checkingUsername">
+              <ion-spinner name="crescent"></ion-spinner>
+            </span>
+            <span class="jbh-input-status" *ngIf="!checkingUsername && usernameAvailable === true && !hasError('username')">
+              <ion-icon name="checkmark-circle" color="success"></ion-icon>
+            </span>
+            <span class="jbh-input-status" *ngIf="!checkingUsername && usernameAvailable === false">
+              <ion-icon name="close-circle" color="danger"></ion-icon>
+            </span>
+          </div>
+          <div class="jbh-field-error" *ngIf="hasError('username')">
+            <ion-icon name="information-circle"></ion-icon>
+            <span>{{ getErrorMessage('username') }}</span>
+          </div>
+          <div class="jbh-field-success" *ngIf="usernameAvailable === true && !hasError('username')">
+            <ion-icon name="checkmark-circle"></ion-icon>
+            <span>{{ 'signup.username.available' | translate }}</span>
+          </div>
+        </div>
+
+        <!-- Email Field -->
+        <div class="jbh-form-field">
+          <label class="jbh-label">{{ 'signup.email.label' | translate }}</label>
+          <div class="jbh-input-wrapper">
+            <ion-icon name="mail-outline" class="jbh-input-icon left"></ion-icon>
+            <input
+              type="email"
+              class="jbh-input jbh-input-icon-left jbh-input-icon-right"
+              formControlName="email"
+              [placeholder]="'signup.email.placeholder' | translate"
+              [class.error]="hasError('email') || emailAvailable === false"
+              [class.success]="emailAvailable === true && !hasError('email')"
+              (input)="onEmailInput()"
+              autocomplete="email"
+            />
+            <span class="jbh-input-action" *ngIf="checkingEmail">
+              <ion-spinner name="crescent"></ion-spinner>
+            </span>
+            <span class="jbh-input-status" *ngIf="!checkingEmail && emailAvailable === true && !hasError('email')">
+              <ion-icon name="checkmark-circle" color="success"></ion-icon>
+            </span>
+            <span class="jbh-input-status" *ngIf="!checkingEmail && emailAvailable === false">
+              <ion-icon name="close-circle" color="danger"></ion-icon>
+            </span>
+          </div>
+          <div class="jbh-field-error" *ngIf="hasError('email')">
+            <ion-icon name="information-circle"></ion-icon>
+            <span>{{ getErrorMessage('email') }}</span>
+          </div>
+          <div class="jbh-field-success" *ngIf="emailAvailable === true && !hasError('email')">
+            <ion-icon name="checkmark-circle"></ion-icon>
+            <span>{{ 'signup.email.available' | translate }}</span>
+          </div>
+        </div>
+
+        <!-- Password Field -->
+        <div class="jbh-form-field">
+          <label class="jbh-label">{{ 'signup.password.label' | translate }}</label>
+          <div class="jbh-input-wrapper">
+            <ion-icon name="lock-closed-outline" class="jbh-input-icon left"></ion-icon>
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              class="jbh-input jbh-input-icon-left jbh-input-icon-right"
+              formControlName="password"
+              [placeholder]="'signup.password.placeholder' | translate"
+              [class.error]="hasError('password')"
+              autocomplete="new-password"
+            />
+            <button
+              type="button"
+              class="jbh-input-action"
+              (click)="togglePasswordVisibility()"
+              tabindex="-1"
+            >
+              <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+            </button>
+          </div>
+          <div class="jbh-field-error" *ngIf="hasError('password')">
+            <ion-icon name="information-circle"></ion-icon>
+            <span>{{ getErrorMessage('password') }}</span>
+          </div>
+        </div>
+
+        <!-- Confirm Password Field -->
+        <div class="jbh-form-field">
+          <label class="jbh-label">{{ 'signup.confirmPassword.label' | translate }}</label>
+          <div class="jbh-input-wrapper">
+            <ion-icon name="lock-closed-outline" class="jbh-input-icon left"></ion-icon>
+            <input
+              [type]="showConfirmPassword ? 'text' : 'password'"
+              class="jbh-input jbh-input-icon-left jbh-input-icon-right"
+              formControlName="confirmPassword"
+              [placeholder]="'signup.confirmPassword.placeholder' | translate"
+              [class.error]="hasError('confirmPassword')"
+              autocomplete="new-password"
+            />
+            <button
+              type="button"
+              class="jbh-input-action"
+              (click)="toggleConfirmPasswordVisibility()"
+              tabindex="-1"
+            >
+              <ion-icon [name]="showConfirmPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+            </button>
+          </div>
+          <div class="jbh-field-error" *ngIf="hasError('confirmPassword')">
+            <ion-icon name="information-circle"></ion-icon>
+            <span>{{ getErrorMessage('confirmPassword') }}</span>
+          </div>
+        </div>
+
+        <!-- Signup Button -->
+        <button
+          type="submit"
+          class="jbh-button-primary jbh-button-block"
+          [disabled]="isLoading || signupForm.invalid || usernameAvailable === false || emailAvailable === false"
+          [class.jbh-button-loading]="isLoading"
+        >
+          <ion-spinner name="crescent" *ngIf="isLoading"></ion-spinner>
+          <span *ngIf="!isLoading">{{ 'signup.createAccountButton' | translate }}</span>
+          <span *ngIf="isLoading">{{ 'signup.creating' | translate }}</span>
+        </button>
+
+        <!-- Login Link -->
+        <div class="login-link">
+          <span>{{ 'signup.haveAccount' | translate }}</span>
+          <a class="jbh-link" (click)="goToLogin()">{{ 'signup.signIn' | translate }}</a>
+        </div>
+      </form>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="signup-footer">
+      <p>{{ 'login.footer' | translate }}</p>
+    </div>
+
+  </div>
+</ion-content>
