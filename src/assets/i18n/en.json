@@ -2,6 +2,7 @@
   "common": {
     "cancel": "Cancel",
     "delete": "Delete",
+    "edit": "Edit",
     "error": "Error",
     "gotIt": "Got it",
     "loading": "Loading...",
@@ -30,6 +31,12 @@
       "transfer": "Transfer"
     },
     "profile": "Profile",
+    "teams": {
+      "create": "Create Team",
+      "invite": "Invite Member",
+      "overview": "Overview",
+      "title": "Teams"
+    },
     "version": "Version"
   },
   "products": {
@@ -138,6 +145,124 @@
       "minlength": "Username must be at least {{minLength}} characters",
       "placeholder": "Enter your username or email",
       "required": "Username is required"
+    }
+  },
+  "teams": {
+    "create": {
+      "errors": {
+        "create": "Failed to create team. Please try again."
+      },
+      "formSubtitle": "Fill in the details below to create a new team",
+      "formTitle": "New Team",
+      "limitReached": {
+        "backButton": "Go to Teams Overview",
+        "message": "You have reached the maximum number of teams allowed ({{max}}). Please delete an existing team to create a new one.",
+        "title": "Team Limit Reached"
+      },
+      "name": {
+        "label": "Team Name",
+        "maxlength": "Team name must not exceed {{maxLength}} characters",
+        "minlength": "Team name must be at least {{minLength}} characters",
+        "placeholder": "Enter team name",
+        "required": "Team name is required"
+      },
+      "saveButton": "Create Team",
+      "saving": "Creating...",
+      "shortName": {
+        "label": "Short Name",
+        "maxlength": "Short name must not exceed {{maxLength}} characters",
+        "minlength": "Short name must be at least {{minLength}} characters",
+        "placeholder": "Enter short name (e.g., TEAM1)",
+        "required": "Short name is required"
+      },
+      "success": "Team created successfully!",
+      "title": "Create Team",
+      "titleLarge": "Create Team"
+    },
+    "overview": {
+      "createButton": "Create Team",
+      "deleteMember": {
+        "error": "Failed to remove member. Please try again.",
+        "message": "Are you sure you want to remove {{name}} from this team?",
+        "success": "Member removed successfully",
+        "title": "Remove Member"
+      },
+      "deleteTeam": {
+        "error": "Failed to delete team. Please try again.",
+        "message": "Are you sure you want to delete the team \"{{name}}\"? This action cannot be undone.",
+        "success": "Team deleted successfully",
+        "title": "Delete Team"
+      },
+      "empty": {
+        "createButton": "Create Your First Team",
+        "message": "You don't have any teams yet. Create one to start collaborating with others.",
+        "title": "No Teams Yet"
+      },
+      "errors": {
+        "load": "Failed to load teams. Please try again."
+      },
+      "formSubtitle": "View and manage all your teams",
+      "formTitle": "My Teams",
+      "limitReached": "Max {{max}} teams",
+      "members": "members",
+      "noMembers": "No members in this team",
+      "reinviteMember": {
+        "confirm": "Send Invitation",
+        "error": "Failed to send invitation. Please try again.",
+        "message": "Send a new invitation to {{name}}?",
+        "success": "Invitation sent successfully",
+        "title": "Re-invite Member"
+      },
+      "role": {
+        "member": "Member",
+        "owner": "Owner"
+      },
+      "status": {
+        "ACCEPTED": "Accepted",
+        "DECLINED": "Declined",
+        "PENDING_TO_ACCEPT": "Pending"
+      },
+      "table": {
+        "actions": "Actions",
+        "email": "Email",
+        "role": "Role",
+        "status": "Status",
+        "user": "User"
+      },
+      "title": "Teams Overview",
+      "titleLarge": "Teams Overview"
+    },
+    "invite": {
+      "emailOrUsername": {
+        "label": "Email or Username",
+        "minlength": "Must be at least {{minLength}} characters",
+        "placeholder": "Enter email or username",
+        "required": "Email or username is required"
+      },
+      "errors": {
+        "invite": "Failed to send invitation. Please try again.",
+        "loadTeams": "Failed to load teams. Please try again."
+      },
+      "formSubtitle": "Enter the email or username of the person you want to invite",
+      "formTitle": "Send Invitation",
+      "sendButton": "Send Invitation",
+      "sending": "Sending...",
+      "success": "Invitation sent successfully!",
+      "teamId": {
+        "label": "Select Team",
+        "placeholder": "Choose a team",
+        "required": "Please select a team"
+      },
+      "title": "Invite Member",
+      "titleLarge": "Invite Member",
+      "userFound": {
+        "email": "User found with this email",
+        "username": "User found with this username"
+      },
+      "userNotFound": {
+        "email": "No user found with this email",
+        "username": "No user found with this username"
+      }
     }
   },
   "signup": {

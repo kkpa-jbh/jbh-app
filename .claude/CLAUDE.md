@@ -2,6 +2,11 @@
 
 Expert guidance for Ionic/Angular hybrid mobile apps using Clean Architecture, DDD, responsive design, and consistent theming.
 
+## Hybrid APP
+
+- Ionic Framework + Angular to build cross-platform mobile apps
+- Changes should work on iOS and Android along with the desktop web version
+
 ## Detailed Documentation
 - [Architecture](docs/architecture.md) - Hexagonal/DDD/Clean Architecture, project structure
 - [Theming](docs/theming.md) - CSS classes, variables, design system

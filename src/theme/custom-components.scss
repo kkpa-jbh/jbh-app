@@ -361,6 +361,39 @@
   }
 }
 
+.jbh-field-success {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: var(--jbh-spacing-xs);
+  font-size: var(--jbh-font-size-sm);
+  color: var(--jbh-success-color);
+
+  ion-icon {
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+}
+
+.jbh-input-status-icon {
+  position: absolute;
+  right: 12px;
+  font-size: 20px;
+  color: var(--jbh-text-secondary);
+
+  &.success {
+    color: var(--jbh-success-color);
+  }
+
+  &.error {
+    color: var(--jbh-error-color);
+  }
+}
+
+.jbh-input.success {
+  border: 2px solid var(--jbh-success-color);
+}
+
 .jbh-checkbox {
   width: 18px;
   height: 18px;
@@ -1315,4 +1348,611 @@ ion-menu::part(backdrop) {
   @media (min-width: 768px) {
     font-size: 11px;
   }
+}
+
+// ============================================
+// 18. PAGE HEADER
+// ============================================
+
+.jbh-page-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--jbh-spacing-md);
+  margin-bottom: var(--jbh-spacing-lg);
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.jbh-page-header-content {
+  display: flex;
+  align-items: center;
+  gap: var(--jbh-spacing-md);
+}
+
+.jbh-page-header-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: var(--jbh-gradient-primary);
+  border-radius: var(--jbh-radius-lg);
+  box-shadow: var(--jbh-shadow-primary);
+  flex-shrink: 0;
+
+  ion-icon {
+    font-size: 28px;
+    color: var(--jbh-background-white);
+  }
+}
+
+.jbh-page-title {
+  font-size: var(--jbh-font-size-xl);
+  font-weight: var(--jbh-font-weight-bold);
+  color: var(--jbh-text-primary);
+  margin: 0;
+
+  @media (min-width: 768px) {
+    font-size: var(--jbh-font-size-2xl);
+  }
+}
+
+.jbh-page-subtitle {
+  font-size: var(--jbh-font-size-sm);
+  color: var(--jbh-text-secondary);
+  margin: 4px 0 0 0;
+}
+
+// ============================================
+// 19. EMPTY STATE
+// ============================================
+
+.jbh-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--jbh-spacing-2xl) var(--jbh-spacing-md);
+  text-align: center;
+}
+
+.jbh-empty-state-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: var(--jbh-background-light);
+  border-radius: var(--jbh-radius-full);
+  margin-bottom: var(--jbh-spacing-md);
+
+  ion-icon {
+    font-size: 40px;
+    color: var(--jbh-text-tertiary);
+  }
+}
+
+.jbh-empty-state-title {
+  font-size: var(--jbh-font-size-xl);
+  font-weight: var(--jbh-font-weight-semibold);
+  color: var(--jbh-text-primary);
+  margin: 0 0 var(--jbh-spacing-xs) 0;
+}
+
+.jbh-empty-state-message {
+  font-size: var(--jbh-font-size-base);
+  color: var(--jbh-text-secondary);
+  margin: 0 0 var(--jbh-spacing-lg) 0;
+  max-width: 300px;
+}
+
+// Limit Error State
+.jbh-limit-error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--jbh-spacing-2xl) var(--jbh-spacing-md);
+  text-align: center;
+}
+
+.jbh-limit-error-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background: rgba(245, 158, 11, 0.1);
+  border-radius: var(--jbh-radius-full);
+  margin-bottom: var(--jbh-spacing-md);
+
+  ion-icon {
+    font-size: 40px;
+    color: #f59e0b;
+  }
+}
+
+.jbh-limit-error-title {
+  font-size: var(--jbh-font-size-xl);
+  font-weight: var(--jbh-font-weight-semibold);
+  color: var(--jbh-text-primary);
+  margin: 0 0 var(--jbh-spacing-xs) 0;
+}
+
+.jbh-limit-error-message {
+  font-size: var(--jbh-font-size-base);
+  color: var(--jbh-text-secondary);
+  margin: 0 0 var(--jbh-spacing-lg) 0;
+  max-width: 350px;
+}
+
+// Limit Badge
+.jbh-limit-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--jbh-spacing-xs) var(--jbh-spacing-sm);
+  background: rgba(245, 158, 11, 0.1);
+  color: #b45309;
+  font-size: var(--jbh-font-size-sm);
+  font-weight: var(--jbh-font-weight-medium);
+  border-radius: var(--jbh-radius-md);
+  white-space: nowrap;
+}
+
+// Page Header Actions
+.jbh-page-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--jbh-spacing-sm);
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+// ============================================
+// 20. TEAM CARDS
+// ============================================
+
+.jbh-teams-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--jbh-spacing-md);
+}
+
+.jbh-team-card {
+  background: var(--jbh-background-white);
+  border-radius: var(--jbh-radius-lg);
+  box-shadow: var(--jbh-shadow-md);
+  overflow: hidden;
+  transition: all var(--jbh-transition-base);
+
+  &:hover {
+    box-shadow: var(--jbh-shadow-lg);
+  }
+
+  &.expanded {
+    box-shadow: var(--jbh-shadow-xl);
+  }
+}
+
+.jbh-team-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--jbh-spacing-md);
+  cursor: pointer;
+  transition: background var(--jbh-transition-base);
+
+  &:hover {
+    background: var(--jbh-background-light);
+  }
+}
+
+.jbh-team-info {
+  display: flex;
+  align-items: center;
+  gap: var(--jbh-spacing-sm);
+  flex: 1;
+  min-width: 0;
+}
+
+.jbh-team-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: var(--jbh-gradient-primary);
+  border-radius: var(--jbh-radius-md);
+  flex-shrink: 0;
+
+  span {
+    font-size: var(--jbh-font-size-base);
+    font-weight: var(--jbh-font-weight-bold);
+    color: var(--jbh-background-white);
+    text-transform: uppercase;
+  }
+}
+
+.jbh-team-details {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.jbh-team-name {
+  font-size: var(--jbh-font-size-base);
+  font-weight: var(--jbh-font-weight-semibold);
+  color: var(--jbh-text-primary);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  @media (min-width: 768px) {
+    font-size: var(--jbh-font-size-lg);
+  }
+}
+
+.jbh-team-shortname {
+  font-size: var(--jbh-font-size-xs);
+  color: var(--jbh-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.jbh-team-members-count {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--jbh-font-size-xs);
+  color: var(--jbh-text-secondary);
+  margin-top: 2px;
+
+  ion-icon {
+    font-size: 12px;
+  }
+}
+
+.jbh-team-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--jbh-spacing-xs);
+}
+
+.jbh-team-chevron {
+  font-size: 20px;
+  color: var(--jbh-text-secondary);
+  margin-left: var(--jbh-spacing-xs);
+  transition: transform var(--jbh-transition-base);
+}
+
+.jbh-team-body {
+  border-top: 1px solid var(--jbh-border-color);
+  padding: var(--jbh-spacing-md);
+  background: var(--jbh-background-light);
+  animation: jbh-slide-up 0.3s ease-out;
+}
+
+.jbh-no-members {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--jbh-spacing-xs);
+  padding: var(--jbh-spacing-lg);
+  color: var(--jbh-text-tertiary);
+
+  ion-icon {
+    font-size: 20px;
+  }
+}
+
+// ============================================
+// 21. ICON BUTTONS
+// ============================================
+
+.jbh-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: none;
+  border-radius: var(--jbh-radius-sm);
+  background: transparent;
+  color: var(--jbh-text-secondary);
+  cursor: pointer;
+  transition: all var(--jbh-transition-base);
+
+  ion-icon {
+    font-size: 20px;
+  }
+
+  &:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: var(--jbh-primary-color);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.jbh-icon-button-small {
+  width: 32px;
+  height: 32px;
+
+  ion-icon {
+    font-size: 18px;
+  }
+}
+
+.jbh-icon-button-danger {
+  &:hover {
+    background: rgba(245, 101, 101, 0.1);
+    color: var(--jbh-error-color);
+  }
+}
+
+.jbh-icon-button-primary {
+  color: var(--jbh-primary-color);
+
+  &:hover {
+    background: rgba(99, 102, 241, 0.1);
+    color: var(--jbh-primary-color);
+  }
+}
+
+// ============================================
+// 22. MEMBERS TABLE
+// ============================================
+
+.jbh-members-table {
+  background: var(--jbh-background-white);
+  border-radius: var(--jbh-radius-md);
+  overflow: hidden;
+}
+
+.jbh-table-header {
+  display: flex;
+  background: var(--jbh-background-light);
+  border-bottom: 1px solid var(--jbh-border-color);
+  padding: var(--jbh-spacing-sm) var(--jbh-spacing-md);
+
+  .jbh-table-cell {
+    font-size: var(--jbh-font-size-xs);
+    font-weight: var(--jbh-font-weight-semibold);
+    color: var(--jbh-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+.jbh-table-row {
+  display: flex;
+  align-items: center;
+  padding: var(--jbh-spacing-sm) var(--jbh-spacing-md);
+  border-bottom: 1px solid var(--jbh-border-color);
+  transition: background var(--jbh-transition-base);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: var(--jbh-background-light);
+  }
+}
+
+.jbh-table-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--jbh-spacing-xs);
+}
+
+.jbh-cell-user {
+  flex: 2;
+  min-width: 0;
+}
+
+.jbh-cell-email {
+  flex: 2;
+  min-width: 0;
+}
+
+.jbh-cell-status {
+  flex: 1.5;
+}
+
+.jbh-cell-role {
+  flex: 1;
+}
+
+.jbh-cell-actions {
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.jbh-member-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--jbh-gradient-primary);
+  border-radius: var(--jbh-radius-sm);
+  font-size: var(--jbh-font-size-sm);
+  font-weight: var(--jbh-font-weight-semibold);
+  color: var(--jbh-background-white);
+  flex-shrink: 0;
+}
+
+.jbh-member-name {
+  font-size: var(--jbh-font-size-sm);
+  font-weight: var(--jbh-font-weight-medium);
+  color: var(--jbh-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.jbh-member-email {
+  font-size: var(--jbh-font-size-sm);
+  color: var(--jbh-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// ============================================
+// 23. STATUS BADGES
+// ============================================
+
+.jbh-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--jbh-radius-full);
+  font-size: var(--jbh-font-size-xs);
+  font-weight: var(--jbh-font-weight-medium);
+
+  ion-icon {
+    font-size: 14px;
+  }
+}
+
+.status-accepted {
+  background: var(--jbh-success-background);
+  color: var(--jbh-success-color);
+}
+
+.status-pending {
+  background: var(--jbh-warning-background);
+  color: var(--jbh-warning-color);
+}
+
+.status-declined {
+  background: var(--jbh-error-background);
+  color: var(--jbh-error-color);
+}
+
+// ============================================
+// 24. ROLE BADGES
+// ============================================
+
+.jbh-role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: var(--jbh-radius-sm);
+  font-size: var(--jbh-font-size-xs);
+  font-weight: var(--jbh-font-weight-medium);
+
+  ion-icon {
+    font-size: 12px;
+  }
+}
+
+.jbh-role-owner {
+  background: var(--jbh-info-background);
+  color: var(--jbh-info-color);
+}
+
+.jbh-role-member {
+  background: var(--jbh-background-light);
+  color: var(--jbh-text-secondary);
+}
+
+// ============================================
+// 25. ACTION BUTTONS
+// ============================================
+
+.jbh-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+// ============================================
+// 26. MEMBER CARDS (MOBILE)
+// ============================================
+
+.jbh-members-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--jbh-spacing-sm);
+}
+
+.jbh-member-card {
+  background: var(--jbh-background-white);
+  border-radius: var(--jbh-radius-md);
+  padding: var(--jbh-spacing-sm);
+}
+
+.jbh-member-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--jbh-spacing-sm);
+}
+
+.jbh-member-card-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+
+  .jbh-member-name {
+    font-size: var(--jbh-font-size-base);
+  }
+
+  .jbh-member-email {
+    font-size: var(--jbh-font-size-xs);
+  }
+}
+
+.jbh-member-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--jbh-spacing-sm);
+  padding-top: var(--jbh-spacing-sm);
+  border-top: 1px solid var(--jbh-border-color);
+}
+
+// ============================================
+// 27. LOADING SKELETONS (TEAMS)
+// ============================================
+
+.jbh-loading-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--jbh-spacing-md);
+}
+
+.jbh-team-card-skeleton {
+  background: var(--jbh-background-white);
+  border-radius: var(--jbh-radius-lg);
+  padding: var(--jbh-spacing-md);
+}
+
+.jbh-skeleton-header {
+  height: 48px;
+  width: 100%;
+  margin-bottom: var(--jbh-spacing-md);
+}
+
+.jbh-skeleton-table {
+  height: 120px;
+  width: 100%;
+}
+
+.jbh-skeleton-input {
+  height: 52px;
+  width: 100%;
 }

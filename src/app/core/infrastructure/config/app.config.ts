@@ -5,14 +5,22 @@ export interface NumberFormatConfig {
   thousandsSeparator: string;
 }
 
+export interface TeamsConfig {
+  maxTeamsPerUser: number;
+}
+
 export interface AppConfig {
   numberFormat: NumberFormatConfig;
+  teams: TeamsConfig;
 }
 
 export const APP_CONFIG: AppConfig = {
   numberFormat: {
     decimalSeparator: '.',
     thousandsSeparator: ','
+  },
+  teams: {
+    maxTeamsPerUser: 2
   }
 };
 

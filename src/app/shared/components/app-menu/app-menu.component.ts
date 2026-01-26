@@ -15,7 +15,9 @@ import {
   swapHorizontalOutline,
   logOutOutline,
   chevronUpOutline,
-  chevronDownOutline
+  chevronDownOutline,
+  peopleOutline,
+  personAddOutline
 } from 'ionicons/icons';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
@@ -81,6 +83,32 @@ export class AppMenuComponent implements OnInit {
       ]
     },
     {
+      id: 'teams',
+      translationKey: 'menu.teams.title',
+      icon: 'people-outline',
+      expanded: false,
+      children: [
+        {
+          id: 'create-team',
+          translationKey: 'menu.teams.create',
+          icon: 'add-circle-outline',
+          route: '/teams/create'
+        },
+        {
+          id: 'teams-overview',
+          translationKey: 'menu.teams.overview',
+          icon: 'list-outline',
+          route: '/teams/overview'
+        },
+        {
+          id: 'teams-invite',
+          translationKey: 'menu.teams.invite',
+          icon: 'person-add-outline',
+          route: '/teams/invite'
+        }
+      ]
+    },
+    {
       id: 'divider-1',
       translationKey: '',
       icon: '',
@@ -112,7 +140,9 @@ export class AppMenuComponent implements OnInit {
       swapHorizontalOutline,
       logOutOutline,
       chevronUpOutline,
-      chevronDownOutline
+      chevronDownOutline,
+      peopleOutline,
+      personAddOutline
     });
   }
 

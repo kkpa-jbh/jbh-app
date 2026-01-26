@@ -42,4 +42,19 @@ export const routes: Routes = [
     loadComponent: () => import('./features/products/pages/transfer/transfer.page').then(m => m.TransferPage),
     canActivate: [authGuard] // Requires authentication
   },
+  {
+    path: 'teams/create',
+    loadComponent: () => import('./features/teams/pages/create/create-team.page').then(m => m.CreateTeamPage),
+    canActivate: [authGuard] // Requires authentication
+  },
+  {
+    path: 'teams/overview',
+    loadComponent: () => import('./features/teams/pages/overview/overview-team.page').then(m => m.OverviewTeamPage),
+    canActivate: [authGuard] // Requires authentication
+  },
+  {
+    path: 'teams/invite',
+    loadComponent: () => import('./features/teams/pages/invite/invite-member.page').then(m => m.InviteMemberPage),
+    canActivate: [authGuard] // Requires authentication
+  },
 ];

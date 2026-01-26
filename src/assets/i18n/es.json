@@ -2,6 +2,7 @@
   "common": {
     "cancel": "Cancelar",
     "delete": "Eliminar",
+    "edit": "Editar",
     "error": "Error",
     "gotIt": "Entendido",
     "loading": "Cargando...",
@@ -30,6 +31,12 @@
       "transfer": "Transferir"
     },
     "profile": "Perfil",
+    "teams": {
+      "create": "Crear Equipo",
+      "invite": "Invitar Miembro",
+      "overview": "Resumen",
+      "title": "Equipos"
+    },
     "version": "Versión"
   },
   "products": {
@@ -138,6 +145,124 @@
       "minlength": "El usuario debe tener al menos {{minLength}} caracteres",
       "placeholder": "Ingresa tu usuario",
       "required": "El usuario es requerido"
+    }
+  },
+  "teams": {
+    "create": {
+      "errors": {
+        "create": "Error al crear el equipo. Por favor intenta de nuevo."
+      },
+      "formSubtitle": "Completa los detalles a continuación para crear un nuevo equipo",
+      "formTitle": "Nuevo Equipo",
+      "limitReached": {
+        "backButton": "Ir a Resumen de Equipos",
+        "message": "Has alcanzado el número máximo de equipos permitidos ({{max}}). Por favor elimina un equipo existente para crear uno nuevo.",
+        "title": "Límite de Equipos Alcanzado"
+      },
+      "name": {
+        "label": "Nombre del Equipo",
+        "maxlength": "El nombre del equipo no debe exceder {{maxLength}} caracteres",
+        "minlength": "El nombre del equipo debe tener al menos {{minLength}} caracteres",
+        "placeholder": "Ingresa el nombre del equipo",
+        "required": "El nombre del equipo es requerido"
+      },
+      "saveButton": "Crear Equipo",
+      "saving": "Creando...",
+      "shortName": {
+        "label": "Nombre Corto",
+        "maxlength": "El nombre corto no debe exceder {{maxLength}} caracteres",
+        "minlength": "El nombre corto debe tener al menos {{minLength}} caracteres",
+        "placeholder": "Ingresa el nombre corto (ej., EQUIPO1)",
+        "required": "El nombre corto es requerido"
+      },
+      "success": "¡Equipo creado exitosamente!",
+      "title": "Crear Equipo",
+      "titleLarge": "Crear Equipo"
+    },
+    "overview": {
+      "createButton": "Crear Equipo",
+      "deleteMember": {
+        "error": "Error al eliminar miembro. Por favor intenta de nuevo.",
+        "message": "¿Estás seguro de que deseas eliminar a {{name}} de este equipo?",
+        "success": "Miembro eliminado exitosamente",
+        "title": "Eliminar Miembro"
+      },
+      "deleteTeam": {
+        "error": "Error al eliminar equipo. Por favor intenta de nuevo.",
+        "message": "¿Estás seguro de que deseas eliminar el equipo \"{{name}}\"? Esta acción no se puede deshacer.",
+        "success": "Equipo eliminado exitosamente",
+        "title": "Eliminar Equipo"
+      },
+      "empty": {
+        "createButton": "Crear Tu Primer Equipo",
+        "message": "Aún no tienes ningún equipo. Crea uno para comenzar a colaborar con otros.",
+        "title": "Sin Equipos Aún"
+      },
+      "errors": {
+        "load": "Error al cargar equipos. Por favor intenta de nuevo."
+      },
+      "formSubtitle": "Ver y gestionar todos tus equipos",
+      "formTitle": "Mis Equipos",
+      "limitReached": "Máx {{max}} equipos",
+      "members": "miembros",
+      "noMembers": "No hay miembros en este equipo",
+      "reinviteMember": {
+        "confirm": "Enviar Invitación",
+        "error": "Error al enviar invitación. Por favor intenta de nuevo.",
+        "message": "¿Enviar una nueva invitación a {{name}}?",
+        "success": "Invitación enviada exitosamente",
+        "title": "Re-invitar Miembro"
+      },
+      "role": {
+        "member": "Miembro",
+        "owner": "Propietario"
+      },
+      "status": {
+        "ACCEPTED": "Aceptado",
+        "DECLINED": "Rechazado",
+        "PENDING_TO_ACCEPT": "Pendiente"
+      },
+      "table": {
+        "actions": "Acciones",
+        "email": "Correo",
+        "role": "Rol",
+        "status": "Estado",
+        "user": "Usuario"
+      },
+      "title": "Resumen de Equipos",
+      "titleLarge": "Resumen de Equipos"
+    },
+    "invite": {
+      "emailOrUsername": {
+        "label": "Correo o Nombre de Usuario",
+        "minlength": "Debe tener al menos {{minLength}} caracteres",
+        "placeholder": "Ingresa correo o nombre de usuario",
+        "required": "El correo o nombre de usuario es requerido"
+      },
+      "errors": {
+        "invite": "Error al enviar la invitación. Por favor intenta de nuevo.",
+        "loadTeams": "Error al cargar equipos. Por favor intenta de nuevo."
+      },
+      "formSubtitle": "Ingresa el correo o nombre de usuario de la persona que deseas invitar",
+      "formTitle": "Enviar Invitación",
+      "sendButton": "Enviar Invitación",
+      "sending": "Enviando...",
+      "success": "¡Invitación enviada exitosamente!",
+      "teamId": {
+        "label": "Seleccionar Equipo",
+        "placeholder": "Elige un equipo",
+        "required": "Por favor selecciona un equipo"
+      },
+      "title": "Invitar Miembro",
+      "titleLarge": "Invitar Miembro",
+      "userFound": {
+        "email": "Usuario encontrado con este correo",
+        "username": "Usuario encontrado con este nombre de usuario"
+      },
+      "userNotFound": {
+        "email": "No se encontró usuario con este correo",
+        "username": "No se encontró usuario con este nombre de usuario"
+      }
     }
   },
   "signup": {

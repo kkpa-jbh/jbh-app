@@ -14,6 +14,8 @@ import { AuthRepository } from './app/core/domain/repositories/auth.repository';
 import { AuthRepositoryImpl } from './app/core/infrastructure/repositories/auth.repository.impl';
 import { ProductRepository } from './app/core/domain/repositories/product.repository';
 import { ProductRepositoryImpl } from './app/core/infrastructure/repositories/product.repository.impl';
+import { TeamRepository } from './app/core/domain/repositories/team.repository';
+import { TeamRepositoryImpl } from './app/core/infrastructure/repositories/team.repository.impl';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -40,5 +42,6 @@ bootstrapApplication(AppComponent, {
     // Repository implementations (Dependency Injection for Hexagonal Architecture)
     { provide: AuthRepository, useClass: AuthRepositoryImpl },
     { provide: ProductRepository, useClass: ProductRepositoryImpl },
+    { provide: TeamRepository, useClass: TeamRepositoryImpl },
   ],
 });
