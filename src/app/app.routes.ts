@@ -57,4 +57,9 @@ export const routes: Routes = [
     loadComponent: () => import('./features/teams/pages/invite/invite-member.page').then(m => m.InviteMemberPage),
     canActivate: [authGuard] // Requires authentication
   },
+  {
+    path: 'teams/:teamId/accept-invitation',
+    loadComponent: () => import('./features/teams/pages/accept-invitation/accept-invitation.page').then(m => m.AcceptInvitationPage),
+    canActivate: [authGuard] // Requires authentication - will redirect to login with returnUrl if not authenticated
+  },
 ];

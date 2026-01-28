@@ -20,6 +20,7 @@ import { AuthUseCase } from '@core/domain/use-cases/auth.use-case';
 import { TeamWithMembers } from '@core/domain/models/team.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
+import { InviteMemberRequest } from '../../../../core/domain/repositories/team.repository';
 
 @Component({
   selector: 'app-invite-member',
@@ -82,6 +83,7 @@ export class InviteMemberPage implements OnInit, OnDestroy, ViewWillEnter {
   }
 
   ionViewWillEnter(): void {
+    this.loadTeams();
     this.resetForm();
     this.checkPreselectedTeam();
   }
@@ -208,8 +210,11 @@ export class InviteMemberPage implements OnInit, OnDestroy, ViewWillEnter {
     this.isSubmitting = true;
 
     const { emailOrUsername, teamId } = this.inviteForm.value;
-
-    this.teamUseCase.inviteMember(teamId, emailOrUsername)
+    const teamName = this.teams.find(t => t.id === teamId)?.name || '';
+    const request: InviteMemberRequest = { emailOrUsername, teamName , teamID: teamId };
+    this.teamUseCase.inviteMember(
+      request
+    )
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: async () => {
@@ -220,7 +225,7 @@ export class InviteMemberPage implements OnInit, OnDestroy, ViewWillEnter {
         error: async (error) => {
           this.logger.error('Error inviting member:', 'InviteMemberPage', error);
           this.isSubmitting = false;
-          const errorMessage = error?.error?.message || this.translationService.instant('teams.invite.errors.invite');
+          const errorMessage = error?.error || this.translationService.instant('teams.invite.errors.invite');
           await this.showToast(errorMessage, 'danger');
         }
       });

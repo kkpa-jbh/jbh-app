@@ -1,7 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpContextToken } from '@angular/common/http';
 import { Observable, from, switchMap } from 'rxjs';
 import { TokenStorageService } from '../persistence/token-storage.service';
+import { LoggerService } from '../logging/logger.service';
 
 /**
  * HTTP Context Token to mark requests as public (no auth required)
@@ -16,6 +17,8 @@ export const IS_PUBLIC_API = new HttpContextToken<boolean>(() => false);
  */
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
+
+  private logger = inject(LoggerService);
 
   constructor(private tokenStorage: TokenStorageService) {}
 
@@ -37,13 +40,19 @@ export class JwtInterceptor implements HttpInterceptor {
     // For protected APIs, add JWT token
     return from(this.tokenStorage.getAccessToken()).pipe(
       switchMap(token => {
+        this.logger.debug('JWT Interceptor - Token retrieved:', 'JwtInterceptor', {
+          hasToken: !!token,
+          tokenLength: token?.length,
+          url: request.url
+        });
         if (token) {
-          // Clone request and add Authorization header
           request = request.clone({
             setHeaders: {
               Authorization: `Bearer ${token}`
             }
           });
+        } else {
+          this.logger.warn('JWT Interceptor - No token available for protected request:', 'JwtInterceptor', request.url);
         }
         return next.handle(request);
       })

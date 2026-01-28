@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject, shareReplay, tap } from 'rxjs';
 import { TeamRepository, InviteMemberRequest } from '../repositories/team.repository';
-import { CreateTeamRequest, CreateTeamResponse, Team, TeamWithMembers } from '../models/team.model';
+import { AcceptInvitationResponse, CreateTeamRequest, CreateTeamResponse, Team, TeamWithMembers } from '../models/team.model';
 
 @Injectable({
   providedIn: 'root'
@@ -61,9 +61,15 @@ export class TeamUseCase {
     );
   }
 
-  inviteMember(groupId: string, emailOrUsername: string): Observable<void> {
-    const request: InviteMemberRequest = { emailOrUsername };
-    return this.teamRepository.inviteMember(groupId, request).pipe(
+  inviteMember(invitationRequest: InviteMemberRequest): Observable<void> {
+   
+    return this.teamRepository.inviteMember(invitationRequest.teamID, invitationRequest).pipe(
+      tap(() => this.clearCache())
+    );
+  }
+
+  acceptInvitation(groupId: string): Observable<AcceptInvitationResponse> {
+    return this.teamRepository.acceptInvitation(groupId).pipe(
       tap(() => this.clearCache())
     );
   }

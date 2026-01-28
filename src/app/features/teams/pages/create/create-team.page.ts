@@ -111,10 +111,17 @@ export class CreateTeamPage implements OnInit, OnDestroy, ViewWillEnter {
     this.teamForm.markAsUntouched();
   }
 
+  private readonly TEAM_NAME_PATTERN = /^[^?&#\/\\<>"']+$/;
+
   private initForm(): void {
     this.teamForm = this.formBuilder.group({
       shortName: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(20)]],
-      name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]]
+      name: ['', [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(100),
+        Validators.pattern(this.TEAM_NAME_PATTERN)
+      ]]
     });
   }
 
@@ -179,6 +186,9 @@ export class CreateTeamPage implements OnInit, OnDestroy, ViewWillEnter {
     if (field.hasError('maxlength')) {
       const maxLength = field.errors['maxlength'].requiredLength;
       return this.translationService.instant(`teams.create.${fieldName}.maxlength`, { maxLength });
+    }
+    if (field.hasError('pattern')) {
+      return this.translationService.instant(`teams.create.${fieldName}.pattern`);
     }
     return this.translationService.instant('validation.pattern');
   }

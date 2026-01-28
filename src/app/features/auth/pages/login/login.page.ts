@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
@@ -38,11 +38,13 @@ export class LoginPage implements OnInit {
   isLoading = false;
   errorMessage = '';
   showPassword = false;
+  private returnUrl: string = '/home';
 
   constructor(
     private formBuilder: FormBuilder,
     private authUseCase: AuthUseCase,
     private router: Router,
+    private route: ActivatedRoute,
     public translationService: TranslationService,
     private logger: LoggerService
   ) {
@@ -60,6 +62,15 @@ export class LoginPage implements OnInit {
 
   ngOnInit() {
     this.initForm();
+    this.captureReturnUrl();
+  }
+
+  private captureReturnUrl(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['returnUrl']) {
+        this.returnUrl = params['returnUrl'];
+      }
+    });
   }
 
   /**
@@ -93,8 +104,8 @@ export class LoginPage implements OnInit {
         this.logger.info('Login successful', 'LoginPage', user);
         this.isLoading = false;
 
-        // Navigate to home or dashboard
-        this.router.navigate(['/home']);
+        // Navigate to returnUrl or home
+        this.router.navigateByUrl(this.returnUrl);
       },
       error: (error) => {
         this.logger.error('Login failed:', 'LoginPage', error);

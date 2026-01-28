@@ -102,7 +102,12 @@ export class ApiBaseService {
    * Handle HTTP errors
    * @param error - HTTP error response
    */
-  private handleError(error: HttpErrorResponse | TimeoutError): Observable<never> {
+  private handleError(error: HttpErrorResponse | TimeoutError | Error): Observable<never> {
+    // Check if error was already processed by ErrorInterceptor (e.g., 422 business errors)
+    if (error instanceof Error && (error as any).status === 422) {
+      return throwError(() => error);
+    }
+
     let errorMessage = 'An unknown error occurred';
 
     if (error instanceof TimeoutError) {
@@ -132,6 +137,9 @@ export class ApiBaseService {
             break;
           case 404:
             errorMessage = 'Resource not found';
+            break;
+            case 422:
+            errorMessage = error.message;
             break;
           case 500:
             errorMessage = 'Internal server error';

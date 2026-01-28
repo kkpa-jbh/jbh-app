@@ -327,7 +327,7 @@ To enable these features:
 - Verify API endpoint is correct in environment config
 
 ### 422 Error Not Showing Message
-- Verify API response has `msg` field
+- Verify API response has `msg` or `message` field
 - Check error interceptor is handling 422
 - Check browser Network tab for API response
 

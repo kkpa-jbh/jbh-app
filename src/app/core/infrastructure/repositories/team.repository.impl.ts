@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { TeamRepository, InviteMemberRequest } from '@core/domain/repositories/team.repository';
 import {
+  AcceptInvitationResponse,
   CreateTeamRequest,
   CreateTeamResponse,
   Team,
@@ -56,5 +57,9 @@ export class TeamRepositoryImpl extends ApiBaseService implements TeamRepository
 
   inviteMember(groupId: string, request: InviteMemberRequest): Observable<void> {
     return this.post<void>(`${this.TEAMS_ENDPOINT}/${groupId}/invitations`, request);
+  }
+
+  acceptInvitation(groupId: string): Observable<AcceptInvitationResponse> {
+    return this.post<AcceptInvitationResponse>(`${this.TEAMS_ENDPOINT}/${groupId}/invitations/accept`, {});
   }
 }

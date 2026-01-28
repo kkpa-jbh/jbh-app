@@ -163,6 +163,7 @@
         "label": "Nombre del Equipo",
         "maxlength": "El nombre del equipo no debe exceder {{maxLength}} caracteres",
         "minlength": "El nombre del equipo debe tener al menos {{minLength}} caracteres",
+        "pattern": "El nombre del equipo no puede contener caracteres especiales: ? & # / \\ < > \" '",
         "placeholder": "Ingresa el nombre del equipo",
         "required": "El nombre del equipo es requerido"
       },
@@ -263,6 +264,38 @@
         "email": "No se encontró usuario con este correo",
         "username": "No se encontró usuario con este nombre de usuario"
       }
+    },
+    "acceptInvitation": {
+      "acceptButton": "Aceptar Invitación",
+      "accepting": "Aceptando Invitación...",
+      "clickToJoin": "Haz clic abajo para unirte al equipo",
+      "errorHelp": "Esto pudo haber ocurrido porque:",
+      "errorHelpItem1": "El enlace de invitación ha expirado",
+      "errorHelpItem2": "Ya eres miembro de este equipo",
+      "errorHelpItem3": "La invitación fue revocada o el equipo ya no existe",
+      "errorTitle": "No se Puede Unir al Equipo",
+      "errors": {
+        "alreadyMember": "Ya eres miembro de este equipo.",
+        "generic": "No se pudo aceptar la invitación. Por favor intenta de nuevo o contacta al dueño del equipo.",
+        "invalidLink": "Este enlace de invitación es inválido. Por favor solicita una nueva invitación.",
+        "invitationExpired": "Esta invitación ha expirado. Por favor solicita una nueva invitación al dueño del equipo.",
+        "invitationNotFound": "Invitación no encontrada. Puede haber sido revocada o ya utilizada."
+      },
+      "formSubtitle": "Has sido invitado a unirte a un equipo",
+      "formSubtitleWithTeam": "Has sido invitado a unirte a \"{{teamName}}\"",
+      "formTitle": "Invitación al Equipo",
+      "goHome": "Ir al Inicio",
+      "notice": "Al aceptar esta invitación, te convertirás en miembro de este equipo y podrás colaborar con otros miembros del equipo.",
+      "pendingInvitation": "Invitación al Equipo",
+      "pleaseWait": "Por favor espera mientras procesamos tu solicitud...",
+      "success": "¡Te has unido al equipo exitosamente!",
+      "successMessage": "Ahora eres miembro del equipo. Puedes comenzar a colaborar con tus compañeros.",
+      "successMessageWithTeam": "Ahora eres miembro de \"{{teamName}}\". Puedes comenzar a colaborar con tus compañeros.",
+      "successTitle": "¡Bienvenido al Equipo!",
+      "teamLabel": "Equipo",
+      "title": "Aceptar Invitación",
+      "titleLarge": "Aceptar Invitación",
+      "viewTeams": "Ver Mis Equipos"
     }
   },
   "signup": {

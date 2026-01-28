@@ -163,6 +163,7 @@
         "label": "Team Name",
         "maxlength": "Team name must not exceed {{maxLength}} characters",
         "minlength": "Team name must be at least {{minLength}} characters",
+        "pattern": "Team name cannot contain special characters: ? & # / \\ < > \" '",
         "placeholder": "Enter team name",
         "required": "Team name is required"
       },
@@ -263,6 +264,38 @@
         "email": "No user found with this email",
         "username": "No user found with this username"
       }
+    },
+    "acceptInvitation": {
+      "acceptButton": "Accept Invitation",
+      "accepting": "Accepting Invitation...",
+      "clickToJoin": "Click below to join the team",
+      "errorHelp": "This might have happened because:",
+      "errorHelpItem1": "The invitation link has expired",
+      "errorHelpItem2": "You are already a member of this team",
+      "errorHelpItem3": "The invitation was revoked or the team no longer exists",
+      "errorTitle": "Unable to Join Team",
+      "errors": {
+        "alreadyMember": "You are already a member of this team.",
+        "generic": "Unable to accept the invitation. Please try again or contact the team owner.",
+        "invalidLink": "This invitation link is invalid. Please request a new invitation.",
+        "invitationExpired": "This invitation has expired. Please request a new invitation from the team owner.",
+        "invitationNotFound": "Invitation not found. It may have been revoked or already used."
+      },
+      "formSubtitle": "You've been invited to join a team",
+      "formSubtitleWithTeam": "You've been invited to join \"{{teamName}}\"",
+      "formTitle": "Team Invitation",
+      "goHome": "Go to Home",
+      "notice": "By accepting this invitation, you will become a member of this team and will be able to collaborate with other team members.",
+      "pendingInvitation": "Team Invitation",
+      "pleaseWait": "Please wait while we process your request...",
+      "success": "You have successfully joined the team!",
+      "successMessage": "You are now a team member. You can start collaborating with your teammates.",
+      "successMessageWithTeam": "You are now a member of \"{{teamName}}\". You can start collaborating with your teammates.",
+      "successTitle": "Welcome to the Team!",
+      "teamLabel": "Team",
+      "title": "Accept Invitation",
+      "titleLarge": "Accept Invitation",
+      "viewTeams": "View My Teams"
     }
   },
   "signup": {

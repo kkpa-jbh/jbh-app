@@ -1,0 +1,164 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>{{ 'teams.acceptInvitation.title' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="accept-invitation-content">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">{{ 'teams.acceptInvitation.titleLarge' | translate }}</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="jbh-container">
+    <div class="jbh-form-card">
+
+      <!-- Loading State -->
+      @if (pageState === 'loading') {
+        <div class="jbh-loading-container">
+          <ion-spinner name="crescent" color="primary"></ion-spinner>
+          <p>{{ 'common.loading' | translate }}</p>
+        </div>
+      }
+
+      <!-- Ready State - Show invitation details -->
+      @if (pageState === 'ready') {
+        <div class="jbh-form-header">
+          <div class="jbh-form-icon invitation-icon">
+            <ion-icon name="mail-outline"></ion-icon>
+          </div>
+          <h1 class="jbh-form-title">{{ 'teams.acceptInvitation.formTitle' | translate }}</h1>
+          @if (teamName) {
+            <p class="jbh-form-subtitle">
+              {{ 'teams.acceptInvitation.formSubtitleWithTeam' | translate:{ teamName: teamName } }}
+            </p>
+          } @else {
+            <p class="jbh-form-subtitle">{{ 'teams.acceptInvitation.formSubtitle' | translate }}</p>
+          }
+        </div>
+
+        <div class="invitation-info">
+          <div class="info-card">
+            <ion-icon name="people-outline" class="info-icon"></ion-icon>
+            <div class="info-content">
+              @if (teamName) {
+                <span class="info-label">{{ 'teams.acceptInvitation.teamLabel' | translate }}</span>
+                <span class="info-value">{{ teamName }}</span>
+              } @else {
+                <span class="info-label">{{ 'teams.acceptInvitation.pendingInvitation' | translate }}</span>
+                <span class="info-value">{{ 'teams.acceptInvitation.clickToJoin' | translate }}</span>
+              }
+            </div>
+          </div>
+        </div>
+
+        <div class="invitation-notice">
+          <ion-icon name="alert-circle-outline"></ion-icon>
+          <p>{{ 'teams.acceptInvitation.notice' | translate }}</p>
+        </div>
+
+        <button
+          type="button"
+          class="jbh-button-primary jbh-button-block"
+          (click)="acceptInvitation()"
+        >
+          <ion-icon name="checkmark-circle-outline" class="button-icon"></ion-icon>
+          <span>{{ 'teams.acceptInvitation.acceptButton' | translate }}</span>
+        </button>
+      }
+
+      <!-- Accepting State -->
+      @if (pageState === 'accepting') {
+        <div class="jbh-form-header">
+          <div class="jbh-form-icon accepting-icon">
+            <ion-spinner name="crescent" color="primary"></ion-spinner>
+          </div>
+          <h1 class="jbh-form-title">{{ 'teams.acceptInvitation.accepting' | translate }}</h1>
+          <p class="jbh-form-subtitle">{{ 'teams.acceptInvitation.pleaseWait' | translate }}</p>
+        </div>
+      }
+
+      <!-- Success State -->
+      @if (pageState === 'success') {
+        <div class="jbh-form-header">
+          <div class="jbh-form-icon success-icon">
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
+          </div>
+          <h1 class="jbh-form-title">{{ 'teams.acceptInvitation.successTitle' | translate }}</h1>
+          @if (successTeamName) {
+            <p class="jbh-form-subtitle">
+              {{ 'teams.acceptInvitation.successMessageWithTeam' | translate:{ teamName: successTeamName } }}
+            </p>
+          } @else {
+            <p class="jbh-form-subtitle">{{ 'teams.acceptInvitation.successMessage' | translate }}</p>
+          }
+        </div>
+
+        <div class="success-actions">
+          <button
+            type="button"
+            class="jbh-button-primary jbh-button-block"
+            (click)="navigateToTeams()"
+          >
+            <ion-icon name="people-outline" class="button-icon"></ion-icon>
+            <span>{{ 'teams.acceptInvitation.viewTeams' | translate }}</span>
+          </button>
+
+          <button
+            type="button"
+            class="jbh-button-secondary jbh-button-block"
+            (click)="navigateToHome()"
+          >
+            <ion-icon name="home-outline" class="button-icon"></ion-icon>
+            <span>{{ 'teams.acceptInvitation.goHome' | translate }}</span>
+          </button>
+        </div>
+      }
+
+      <!-- Error State -->
+      @if (pageState === 'error') {
+        <div class="jbh-form-header">
+          <div class="jbh-form-icon error-icon">
+            <ion-icon name="close-circle-outline"></ion-icon>
+          </div>
+          <h1 class="jbh-form-title">{{ 'teams.acceptInvitation.errorTitle' | translate }}</h1>
+          <p class="jbh-form-subtitle error-message">{{ errorMessage }}</p>
+        </div>
+
+        <div class="error-help">
+          <p>{{ 'teams.acceptInvitation.errorHelp' | translate }}</p>
+          <ul>
+            <li>{{ 'teams.acceptInvitation.errorHelpItem1' | translate }}</li>
+            <li>{{ 'teams.acceptInvitation.errorHelpItem2' | translate }}</li>
+            <li>{{ 'teams.acceptInvitation.errorHelpItem3' | translate }}</li>
+          </ul>
+        </div>
+
+        <div class="error-actions">
+          <button
+            type="button"
+            class="jbh-button-primary jbh-button-block"
+            (click)="navigateToTeams()"
+          >
+            <ion-icon name="people-outline" class="button-icon"></ion-icon>
+            <span>{{ 'teams.acceptInvitation.viewTeams' | translate }}</span>
+          </button>
+
+          <button
+            type="button"
+            class="jbh-button-secondary jbh-button-block"
+            (click)="navigateToHome()"
+          >
+            <ion-icon name="home-outline" class="button-icon"></ion-icon>
+            <span>{{ 'teams.acceptInvitation.goHome' | translate }}</span>
+          </button>
+        </div>
+      }
+
+    </div>
+  </div>
+</ion-content>

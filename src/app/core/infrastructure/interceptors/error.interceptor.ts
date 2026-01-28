@@ -8,6 +8,7 @@ import { TokenStorageService } from '../persistence/token-storage.service';
 import { AuthRepository } from '../../domain/repositories/auth.repository';
 import { IS_PUBLIC_API } from './jwt.interceptor';
 import { LoggerService } from '../logging/logger.service';
+import { TranslationService } from '../i18n/translation.service';
 
 /**
  * Error Interceptor
@@ -20,6 +21,7 @@ export class ErrorInterceptor implements HttpInterceptor {
   private isRefreshing = false;
   private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   private _logger: LoggerService | null = null;
+  private _translationService: TranslationService | null = null;
 
   constructor(
     private tokenStorage: TokenStorageService,
@@ -34,6 +36,13 @@ export class ErrorInterceptor implements HttpInterceptor {
       this._logger = this.injector.get(LoggerService);
     }
     return this._logger;
+  }
+
+  private get translationService(): TranslationService {
+    if (!this._translationService) {
+      this._translationService = this.injector.get(TranslationService);
+    }
+    return this._translationService;
   }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -204,21 +213,43 @@ export class ErrorInterceptor implements HttpInterceptor {
   /**
    * Handle 422 Unprocessable Entity (Business Exceptions)
    * Return user-friendly error message from API response
+   * Supports localized messages in format: {"en": "...", "es": "..."}
    */
   private handle422Error(error: HttpErrorResponse): Observable<never> {
-    const errorMessage = error.error?.msg || error.error?.message || 'Invalid request';
+    const rawMessage = error.error?.msg || error.error?.message || 'Invalid request';
+    const errorMessage = this.extractLocalizedMessage(rawMessage);
 
-    if (this.tokenStorage) {
-      // Log for debugging (only in non-production)
-      this.logger.warn('Business exception (422):', 'ErrorInterceptor', errorMessage);
-    }
+    this.logger.warn('Business exception (422):', 'ErrorInterceptor', errorMessage);
 
-    // Create a user-friendly error with the message from API
     const businessError = new Error(errorMessage);
     (businessError as any).status = 422;
+    (businessError as any).error =  errorMessage;
     (businessError as any).originalError = error;
 
     return throwError(() => businessError);
+  }
+
+  /**
+   * Extract localized message based on current language
+   * If message is a JSON string with 'en' and 'es' keys, returns the appropriate translation
+   * Otherwise returns the original message
+   */
+  private extractLocalizedMessage(message: string): string {
+    if (!message || typeof message !== 'string') {
+      return 'Invalid request';
+    }
+
+    try {
+      const parsed = JSON.parse(message);
+      if (parsed && typeof parsed === 'object' && ('en' in parsed || 'es' in parsed)) {
+        const currentLang = this.translationService.getCurrentLanguage();
+        return parsed[currentLang] || parsed['en'] || parsed['es'] || message;
+      }
+    } catch {
+      // Not a JSON string, return as-is
+    }
+
+    return message;
   }
 
   /**
