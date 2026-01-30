@@ -16,6 +16,8 @@ import { ProductRepository } from './app/core/domain/repositories/product.reposi
 import { ProductRepositoryImpl } from './app/core/infrastructure/repositories/product.repository.impl';
 import { TeamRepository } from './app/core/domain/repositories/team.repository';
 import { TeamRepositoryImpl } from './app/core/infrastructure/repositories/team.repository.impl';
+import { PreferencesRepository } from './app/core/domain/repositories/preferences.repository';
+import { PreferencesRepositoryImpl } from './app/core/infrastructure/repositories/preferences.repository.impl';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -43,5 +45,6 @@ bootstrapApplication(AppComponent, {
     { provide: AuthRepository, useClass: AuthRepositoryImpl },
     { provide: ProductRepository, useClass: ProductRepositoryImpl },
     { provide: TeamRepository, useClass: TeamRepositoryImpl },
+    { provide: PreferencesRepository, useClass: PreferencesRepositoryImpl },
   ],
 });

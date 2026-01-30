@@ -13,7 +13,7 @@ export abstract class TeamRepository {
   abstract getMyTeams(): Observable<TeamWithMembers[]>;
   abstract deleteTeam(teamId: string): Observable<void>;
   abstract deleteMember(teamId: string, email: string): Observable<void>;
-  abstract reinviteMember(teamId: string, email: string): Observable<void>;
+  abstract reinviteMember(teamId: string, request: InviteMemberRequest): Observable<void>;
   abstract inviteMember(groupId: string, request: InviteMemberRequest): Observable<void>;
   abstract acceptInvitation(groupId: string): Observable<AcceptInvitationResponse>;
 }

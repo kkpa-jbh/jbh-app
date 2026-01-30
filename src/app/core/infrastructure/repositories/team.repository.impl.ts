@@ -51,8 +51,8 @@ export class TeamRepositoryImpl extends ApiBaseService implements TeamRepository
     return this.delete<void>(`${this.TEAMS_ENDPOINT}/${teamId}/members/${encodeURIComponent(email)}`);
   }
 
-  reinviteMember(teamId: string, email: string): Observable<void> {
-    return this.post<void>(`${this.TEAMS_ENDPOINT}/${teamId}/members/${encodeURIComponent(email)}/reinvite`, {});
+  reinviteMember(teamId: string, request: InviteMemberRequest): Observable<void> {
+    return this.post<void>(`${this.TEAMS_ENDPOINT}/${teamId}/reinvite`, request);
   }
 
   inviteMember(groupId: string, request: InviteMemberRequest): Observable<void> {

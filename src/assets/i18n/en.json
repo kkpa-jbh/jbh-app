@@ -90,7 +90,39 @@
     }
   },
   "profile": {
+    "currency": {
+      "COP": "Colombian Peso (COP)",
+      "label": "Default Currency",
+      "placeholder": "Select currency",
+      "USD": "US Dollar (USD)"
+    },
+    "defaultProduct": {
+      "label": "Default Product",
+      "none": "None",
+      "placeholder": "Select a product"
+    },
     "description": "Manage your account settings and preferences",
+    "errors": {
+      "load": "Failed to load preferences. Please try again.",
+      "loadProducts": "Failed to load products. Please try again.",
+      "update": "Failed to update preferences. Please try again."
+    },
+    "formSubtitle": "Customize your app experience",
+    "formTitle": "My Preferences",
+    "language": {
+      "EN": "English",
+      "ES": "Spanish",
+      "label": "Default Language",
+      "placeholder": "Select language"
+    },
+    "saveButton": "Save Preferences",
+    "saving": "Saving...",
+    "savingsGoal": {
+      "label": "Savings Goal",
+      "min": "Savings goal must be 0 or greater",
+      "placeholder": "Enter your savings goal"
+    },
+    "success": "Preferences updated successfully!",
     "title": "Profile",
     "titleLarge": "Profile",
     "welcome": "Profile Page"

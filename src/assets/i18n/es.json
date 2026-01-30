@@ -90,7 +90,39 @@
     }
   },
   "profile": {
+    "currency": {
+      "COP": "Peso Colombiano (COP)",
+      "label": "Moneda Predeterminada",
+      "placeholder": "Selecciona moneda",
+      "USD": "Dólar Estadounidense (USD)"
+    },
+    "defaultProduct": {
+      "label": "Producto Predeterminado",
+      "none": "Ninguno",
+      "placeholder": "Selecciona un producto"
+    },
     "description": "Gestiona la configuración y preferencias de tu cuenta",
+    "errors": {
+      "load": "Error al cargar preferencias. Por favor intenta de nuevo.",
+      "loadProducts": "Error al cargar productos. Por favor intenta de nuevo.",
+      "update": "Error al actualizar preferencias. Por favor intenta de nuevo."
+    },
+    "formSubtitle": "Personaliza tu experiencia en la app",
+    "formTitle": "Mis Preferencias",
+    "language": {
+      "EN": "Inglés",
+      "ES": "Español",
+      "label": "Idioma Predeterminado",
+      "placeholder": "Selecciona idioma"
+    },
+    "saveButton": "Guardar Preferencias",
+    "saving": "Guardando...",
+    "savingsGoal": {
+      "label": "Meta de Ahorro",
+      "min": "La meta de ahorro debe ser 0 o mayor",
+      "placeholder": "Ingresa tu meta de ahorro"
+    },
+    "success": "¡Preferencias actualizadas exitosamente!",
     "title": "Perfil",
     "titleLarge": "Perfil",
     "welcome": "Página de Perfil"

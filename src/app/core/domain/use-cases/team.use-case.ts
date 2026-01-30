@@ -55,8 +55,8 @@ export class TeamUseCase {
     );
   }
 
-  reinviteMember(teamId: string, email: string): Observable<void> {
-    return this.teamRepository.reinviteMember(teamId, email).pipe(
+  reinviteMember(teamId: string, invitationRequest: InviteMemberRequest): Observable<void> {
+    return this.teamRepository.reinviteMember(teamId, invitationRequest).pipe(
       tap(() => this.clearCache())
     );
   }

@@ -5,6 +5,7 @@ import { ProductRepository } from '@core/domain/repositories/product.repository'
 import { ProductType, ProductTypeApiResponse } from '@core/domain/models/product-type.model';
 import { ProductMetadataConfig, ProductMetadataConfigApiResponse } from '@core/domain/models/product-metadata-config.model';
 import { CreateProductRequest, CreateProductResponse } from '@core/domain/models/product.model';
+import { ProductListItem, ProductListItemApiResponse } from '@core/domain/models/product-list-item.model';
 import { ApiBaseService } from '@core/infrastructure/api/api-base.service';
 import { HttpClient } from '@angular/common/http';
 import { EnvironmentConfig } from '@core/infrastructure/config/environment.config';
@@ -40,5 +41,11 @@ export class ProductRepositoryImpl extends ApiBaseService implements ProductRepo
 
   createProduct(request: CreateProductRequest): Observable<CreateProductResponse> {
     return this.post<CreateProductResponse>(this.PRODUCTS_ENDPOINT, request);
+  }
+
+  getProducts(): Observable<ProductListItem[]> {
+    return this.get<ProductListItemApiResponse[]>(this.PRODUCTS_ENDPOINT).pipe(
+      map(responses => responses.map(response => ProductListItem.fromApiResponse(response)))
+    );
   }
 }

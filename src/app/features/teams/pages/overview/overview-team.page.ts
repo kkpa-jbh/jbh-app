@@ -26,6 +26,7 @@ import { TeamUseCase } from '@core/domain/use-cases/team.use-case';
 import { TeamWithMembers, TeamMember, MemberStatus } from '@core/domain/models/team.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
+import { InviteMemberRequest } from '../../../../core/domain/repositories/team.repository';
 
 @Component({
   selector: 'app-overview-team',
@@ -242,7 +243,8 @@ export class OverviewTeamPage implements OnInit, OnDestroy, ViewWillEnter {
   }
 
   private reinviteMember(team: TeamWithMembers, member: TeamMember): void {
-    this.teamUseCase.reinviteMember(team.id, member.email)
+     const request: InviteMemberRequest = { emailOrUsername: member.email, teamName: team.name, teamID: team.id };
+    this.teamUseCase.reinviteMember(team.id, request)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {

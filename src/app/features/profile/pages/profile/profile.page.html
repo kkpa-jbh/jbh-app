@@ -7,7 +7,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="profile-content">
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large">{{ 'profile.titleLarge' | translate }}</ion-title>
@@ -15,9 +15,152 @@
   </ion-header>
 
   <div class="jbh-container">
-    <div class="jbh-card-elevated">
-      <h1 class="jbh-title">{{ 'profile.welcome' | translate }}</h1>
-      <p class="jbh-subtitle">{{ 'profile.description' | translate }}</p>
-    </div>
+    <!-- Loading State -->
+    @if (isLoading) {
+      <div class="jbh-form-card">
+        <div class="jbh-loading-container">
+          <ion-spinner name="crescent"></ion-spinner>
+        </div>
+      </div>
+    }
+
+    <!-- Form Card -->
+    @if (!isLoading) {
+      <div class="jbh-form-card">
+
+        <!-- Form Header -->
+        <div class="jbh-form-header">
+          <div class="jbh-form-icon">
+            <ion-icon name="person-outline"></ion-icon>
+          </div>
+          <h1 class="jbh-form-title">{{ 'profile.formTitle' | translate }}</h1>
+          <p class="jbh-form-subtitle">{{ 'profile.formSubtitle' | translate }}</p>
+        </div>
+
+        <!-- Form -->
+        <form [formGroup]="preferencesForm" (ngSubmit)="onSubmit()" class="jbh-form-animated">
+
+          <!-- Language Field -->
+          <div class="jbh-form-field">
+            <label class="jbh-label">
+              {{ 'profile.language.label' | translate }}
+              <span class="required-indicator">*</span>
+            </label>
+            <div class="jbh-ion-select-wrapper" [class.error]="hasError('defaultLang')">
+              <ion-icon name="language-outline" class="jbh-ion-select-icon"></ion-icon>
+              <ion-select
+                formControlName="defaultLang"
+                [placeholder]="'profile.language.placeholder' | translate"
+                interface="action-sheet"
+                [interfaceOptions]="{ header: ('profile.language.label' | translate) }"
+                class="jbh-ion-select"
+              >
+                <ion-select-option [value]="Language.EN">
+                  {{ 'profile.language.EN' | translate }}
+                </ion-select-option>
+                <ion-select-option [value]="Language.ES">
+                  {{ 'profile.language.ES' | translate }}
+                </ion-select-option>
+              </ion-select>
+            </div>
+          </div>
+
+          <!-- Currency Field -->
+          <div class="jbh-form-field">
+            <label class="jbh-label">
+              {{ 'profile.currency.label' | translate }}
+              <span class="required-indicator">*</span>
+            </label>
+            <div class="jbh-ion-select-wrapper" [class.error]="hasError('defaultCurrency')">
+              <ion-icon name="cash-outline" class="jbh-ion-select-icon"></ion-icon>
+              <ion-select
+                formControlName="defaultCurrency"
+                [placeholder]="'profile.currency.placeholder' | translate"
+                interface="action-sheet"
+                [interfaceOptions]="{ header: ('profile.currency.label' | translate) }"
+                class="jbh-ion-select"
+              >
+                <ion-select-option [value]="Currency.COP">
+                  {{ 'profile.currency.COP' | translate }}
+                </ion-select-option>
+                <ion-select-option [value]="Currency.USD">
+                  {{ 'profile.currency.USD' | translate }}
+                </ion-select-option>
+              </ion-select>
+            </div>
+          </div>
+
+          <!-- Savings Goal Field -->
+          <div class="jbh-form-field">
+            <label class="jbh-label">
+              {{ 'profile.savingsGoal.label' | translate }}
+              <span class="required-indicator">*</span>
+            </label>
+            <div class="jbh-input-wrapper">
+              <ion-icon name="wallet-outline" class="jbh-input-icon left"></ion-icon>
+              <input
+                type="text"
+                inputmode="decimal"
+                class="jbh-input jbh-input-icon-left"
+                formControlName="savingsGoal"
+                [placeholder]="'profile.savingsGoal.placeholder' | translate"
+                [jbhDecimalFormat]="2"
+                [class.error]="hasError('savingsGoal')"
+              />
+            </div>
+            @if (hasError('savingsGoal')) {
+              <div class="jbh-field-error">
+                <ion-icon name="information-circle"></ion-icon>
+                <span>{{ getErrorMessage('savingsGoal') }}</span>
+              </div>
+            }
+          </div>
+
+          <!-- Default Product Field -->
+          <div class="jbh-form-field">
+            <label class="jbh-label">
+              {{ 'profile.defaultProduct.label' | translate }}
+            </label>
+            <div class="jbh-ion-select-wrapper">
+              <ion-icon name="cube-outline" class="jbh-ion-select-icon"></ion-icon>
+              <ion-select
+                formControlName="defaultProductId"
+                [placeholder]="'profile.defaultProduct.placeholder' | translate"
+                interface="action-sheet"
+                [interfaceOptions]="{ header: ('profile.defaultProduct.label' | translate) }"
+                class="jbh-ion-select"
+              >
+                <ion-select-option [value]="null">
+                  {{ 'profile.defaultProduct.none' | translate }}
+                </ion-select-option>
+                @for (product of products; track product.id) {
+                  <ion-select-option [value]="product.id">
+                    {{ product.name }}
+                  </ion-select-option>
+                }
+              </ion-select>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            class="jbh-button-primary jbh-button-block"
+            [disabled]="isSubmitting || preferencesForm.invalid"
+            [class.jbh-button-loading]="isSubmitting"
+          >
+            @if (isSubmitting) {
+              <ion-spinner name="crescent"></ion-spinner>
+              <span>{{ 'profile.saving' | translate }}</span>
+            } @else {
+              <ion-icon name="save-outline" class="button-icon"></ion-icon>
+              <span>{{ 'profile.saveButton' | translate }}</span>
+            }
+          </button>
+
+        </form>
+
+      </div>
+    }
   </div>
 </ion-content>
