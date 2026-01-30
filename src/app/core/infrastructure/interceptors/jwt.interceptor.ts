@@ -1,60 +1,72 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpContextToken } from '@angular/common/http';
-import { Observable, from, switchMap } from 'rxjs';
+import { Observable, from, switchMap, throwError } from 'rxjs';
 import { TokenStorageService } from '../persistence/token-storage.service';
+import { TokenRefreshService } from '../auth/token-refresh.service';
 import { LoggerService } from '../logging/logger.service';
 
-/**
- * HTTP Context Token to mark requests as public (no auth required)
- * Usage: httpClient.get(url, { context: new HttpContext().set(IS_PUBLIC_API, true) })
- */
 export const IS_PUBLIC_API = new HttpContextToken<boolean>(() => false);
 
-/**
- * JWT Interceptor
- * Automatically adds JWT token to outgoing HTTP requests
- * Skips token for requests marked as public using IS_PUBLIC_API context token
- */
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
 
   private logger = inject(LoggerService);
+  private tokenRefreshService = inject(TokenRefreshService);
 
   constructor(private tokenStorage: TokenStorageService) {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-
-    // Check if this is a public API (no auth required)
     const isPublicApi = request.context.get(IS_PUBLIC_API);
 
-    // Always enable credentials to send cookies (RefreshToken, JWT)
-    request = request.clone({
-      withCredentials: true
-    });
+    request = request.clone({ withCredentials: true });
 
     if (isPublicApi) {
-      // Don't add token for public APIs, but still send cookies
       return next.handle(request);
     }
 
-    // For protected APIs, add JWT token
-    return from(this.tokenStorage.getAccessToken()).pipe(
+    return this.tokenRefreshService.waitForRefresh().pipe(
+      switchMap(() => from(this.tokenStorage.getAccessToken())),
       switchMap(token => {
-        this.logger.debug('JWT Interceptor - Token retrieved:', 'JwtInterceptor', {
-          hasToken: !!token,
-          tokenLength: token?.length,
-          url: request.url
-        });
         if (token) {
-          request = request.clone({
-            setHeaders: {
-              Authorization: `Bearer ${token}`
-            }
+          this.logger.debug('Token retrieved', 'JwtInterceptor', {
+            hasToken: true,
+            tokenLength: token.length,
+            url: request.url
           });
-        } else {
-          this.logger.warn('JWT Interceptor - No token available for protected request:', 'JwtInterceptor', request.url);
+          request = request.clone({
+            setHeaders: { Authorization: `Bearer ${token}` }
+          });
+          return next.handle(request);
         }
-        return next.handle(request);
+
+        this.logger.warn('No access token - attempting proactive refresh', 'JwtInterceptor', request.url);
+        return this.attemptProactiveRefresh(request, next);
+      })
+    );
+  }
+
+  private attemptProactiveRefresh(
+    request: HttpRequest<any>,
+    next: HttpHandler
+  ): Observable<HttpEvent<any>> {
+    return this.tokenRefreshService.refreshToken().pipe(
+      switchMap(success => {
+        if (success) {
+          return from(this.tokenStorage.getAccessToken()).pipe(
+            switchMap(newToken => {
+              if (newToken) {
+                this.logger.debug('Proactive refresh successful, retrying request', 'JwtInterceptor', request.url);
+                request = request.clone({
+                  setHeaders: { Authorization: `Bearer ${newToken}` }
+                });
+              }
+              return next.handle(request);
+            })
+          );
+        }
+        return from(this.tokenRefreshService.handleLogout()).pipe(
+          switchMap(() => throwError(() => new Error('Session expired - please login again')))
+        );
       })
     );
   }

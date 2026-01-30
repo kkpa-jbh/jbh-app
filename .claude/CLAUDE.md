@@ -26,6 +26,20 @@ src/app/
 └── theme/                # custom-components.scss (single source)
 ```
 
+### Key Auth Files
+```
+src/app/core/infrastructure/
+├── auth/
+│   └── token-refresh.service.ts # Centralized token refresh logic
+├── interceptors/
+│   ├── jwt.interceptor.ts       # Adds Authorization header, proactive refresh
+│   └── error.interceptor.ts     # Handles 401, 403, 422 errors
+├── persistence/
+│   └── token-storage.service.ts # Secure token storage (Capacitor Preferences)
+└── repositories/
+    └── auth.repository.impl.ts  # Auth API calls with IS_PUBLIC_API
+```
+
 ### Critical Rules
 
 - Do not use any function from console. Use the servie `private logger: LoggerService` instead.
@@ -71,6 +85,28 @@ src/app/
 21. **Mobile-first CSS**
 22. **Ionic Grid** for layouts
 23. **Test** on 3+ viewport sizes
+
+#### Authentication & JWT (CRITICAL)
+24. **Three-Layer JWT Architecture**:
+    - `TokenRefreshService`: Centralized refresh logic, prevents duplicate refreshes
+    - `JwtInterceptor` (first): Adds Authorization header, proactive refresh if token missing
+    - `ErrorInterceptor` (second): Handles 401/403/422, reactive refresh on token errors
+25. **Public APIs**: Mark with `IS_PUBLIC_API` context token:
+    ```typescript
+    import { IS_PUBLIC_API } from '../interceptors/jwt.interceptor';
+    context: new HttpContext().set(IS_PUBLIC_API, true)
+    ```
+26. **Token Storage**: Uses `TokenStorageService` with Capacitor Preferences
+27. **Token Refresh Flow**:
+    - **Proactive** (JwtInterceptor): When access token is missing from storage, attempts refresh BEFORE sending request
+    - **Reactive** (ErrorInterceptor): On 401 with `AUTH_TOKEN_EXPIRED` or `AUTH_MISSING_TOKEN`, attempts refresh and retries
+    - **Coordination**: `TokenRefreshService.waitForRefresh()` prevents concurrent refresh attempts
+28. **Platform Differences**:
+    - Web/PWA: Refresh token in HTTP-only cookie (sent via `withCredentials: true`)
+    - Mobile: Refresh token in secure storage (Keychain/Keystore), sent in request body
+29. **Error Codes Handled**:
+    - `AUTH_TOKEN_EXPIRED`: Access token expired → refresh and retry
+    - `AUTH_MISSING_TOKEN`: No Authorization header sent → refresh and retry
 
 ### Common Classes
 
