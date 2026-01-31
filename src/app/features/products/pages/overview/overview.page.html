@@ -4,20 +4,80 @@
       <ion-menu-button></ion-menu-button>
     </ion-buttons>
     <ion-title>{{ 'products.overview.title' | translate }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="refreshProducts()">
+        <ion-icon slot="icon-only" name="refresh-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">{{ 'products.overview.titleLarge' | translate }}</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="overview-content">
+  <div class="jbh-container jbh-container-wide">
 
-  <div class="jbh-container">
-    <div class="jbh-card-elevated">
-      <h1 class="jbh-title">{{ 'products.overview.welcome' | translate }}</h1>
-      <p class="jbh-subtitle">{{ 'products.overview.description' | translate }}</p>
+    <!-- Page Header with Actions -->
+    <div class="jbh-page-header">
+      <div class="jbh-page-header-content">
+        <div class="jbh-page-header-icon">
+          <ion-icon name="wallet-outline"></ion-icon>
+        </div>
+        <div>
+          <h1 class="jbh-page-title">{{ 'products.overview.formTitle' | translate }}</h1>
+          <p class="jbh-page-subtitle">{{ 'products.overview.formSubtitle' | translate }}</p>
+        </div>
+      </div>
+      <button class="jbh-button-primary" (click)="navigateToCreate()">
+        <ion-icon name="add-outline"></ion-icon>
+        <span>{{ 'products.overview.createButton' | translate }}</span>
+      </button>
     </div>
+
+    <!-- Loading State -->
+    @if (isLoading) {
+      <div class="jbh-loading-container">
+        @for (i of [1, 2, 3]; track i) {
+          <div class="jbh-product-card-skeleton">
+            <div class="jbh-skeleton-product-header">
+              <div class="jbh-skeleton jbh-skeleton-product-icon"></div>
+              <div class="jbh-skeleton-product-info">
+                <div class="jbh-skeleton jbh-skeleton-product-name"></div>
+                <div class="jbh-skeleton jbh-skeleton-product-type"></div>
+              </div>
+            </div>
+            <div class="jbh-skeleton-product-balances">
+              @for (j of [1, 2, 3, 4]; track j) {
+                <div class="jbh-skeleton jbh-skeleton-balance"></div>
+              }
+            </div>
+            <div class="jbh-skeleton jbh-skeleton-product-footer"></div>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Empty State -->
+    @if (!isLoading && products.length === 0) {
+      <div class="jbh-empty-state">
+        <div class="jbh-empty-state-icon">
+          <ion-icon name="wallet-outline"></ion-icon>
+        </div>
+        <h2 class="jbh-empty-state-title">{{ 'products.overview.empty.title' | translate }}</h2>
+        <p class="jbh-empty-state-message">{{ 'products.overview.empty.message' | translate }}</p>
+        <button class="jbh-button-primary" (click)="navigateToCreate()">
+          <ion-icon name="add-outline"></ion-icon>
+          <span>{{ 'products.overview.empty.createButton' | translate }}</span>
+        </button>
+      </div>
+    }
+
+    <!-- Products List -->
+    @if (!isLoading && products.length > 0) {
+      <div class="jbh-products-list">
+        @for (product of products; track trackByProductId($index, product)) {
+          <app-product-card [product]="product"></app-product-card>
+        }
+      </div>
+    }
+
   </div>
 </ion-content>

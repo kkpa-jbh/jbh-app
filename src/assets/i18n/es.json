@@ -40,6 +40,14 @@
     "version": "Versión"
   },
   "products": {
+    "card": {
+      "currentBalance": "Saldo Actual",
+      "fullyWithdrawn": "Retirado Completamente",
+      "growthRate": "Tasa de Crecimiento",
+      "lastUpdated": "Última Actualización",
+      "movementBalance": "Balance de Movimientos",
+      "netProfit": "Ganancia Neta"
+    },
     "create": {
       "description": "Aquí puedes crear nuevos productos para tu negocio",
       "dynamicFields": {
@@ -77,16 +85,34 @@
       "welcome": "Página de Crear Producto"
     },
     "overview": {
+      "createButton": "Crear Producto",
       "description": "Ver y gestionar todos tus productos",
-      "title": "Resumen",
-      "titleLarge": "Resumen de Productos",
-      "welcome": "Página de Resumen de Productos"
+      "empty": {
+        "createButton": "Agregar Tu Primer Producto",
+        "message": "No has creado ningún producto. Comienza agregando tu primera cuenta o inversión.",
+        "title": "Sin Productos Aún"
+      },
+      "errors": {
+        "load": "Error al cargar productos. Por favor intenta de nuevo."
+      },
+      "formSubtitle": "Rastrea y administra tus productos financieros",
+      "formTitle": "Mis Productos",
+      "title": "Productos",
+      "titleLarge": "Mis Productos"
     },
     "transfer": {
       "description": "Transferir productos entre ubicaciones",
       "title": "Transferir",
       "titleLarge": "Transferencia de Productos",
       "welcome": "Página de Transferencia de Productos"
+    },
+    "types": {
+      "CDT": "CDT",
+      "CREDIT_CARD": "Tarjeta de Crédito",
+      "INVESTMENT": "Inversión",
+      "LOAN": "Préstamo",
+      "REAL_ESTATE_INVESTMENT": "Inversión Inmobiliaria",
+      "SAVINGS": "Ahorros"
     }
   },
   "profile": {

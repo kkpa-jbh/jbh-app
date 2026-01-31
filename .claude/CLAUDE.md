@@ -8,6 +8,7 @@ Expert guidance for Ionic/Angular hybrid mobile apps using Clean Architecture, D
 - Changes should work on iOS and Android along with the desktop web version
 
 ## Detailed Documentation
+
 - [Architecture](docs/architecture.md) - Hexagonal/DDD/Clean Architecture, project structure
 - [Theming](docs/theming.md) - CSS classes, variables, design system
 - [Forms](docs/forms.md) - Reactive forms, validation, mobile patterns
@@ -17,17 +18,19 @@ Expert guidance for Ionic/Angular hybrid mobile apps using Clean Architecture, D
 ## Quick Reference
 
 ### Project Structure
-```
+
+```diagram
 src/app/
 ├── core/domain/          # Models, repositories, use-cases
 ├── core/infrastructure/  # API, persistence, implementations
-├── features/             # Lazy-loaded feature modules
-├── shared/               # Reusable components, pipes, utilities
+├── features/             # Lazy-loaded feature modules (pages,components)
+├── shared/               # Reusable components, pipes, directives, utilities
 └── theme/                # custom-components.scss (single source)
 ```
 
 ### Key Auth Files
-```
+
+```diagram
 src/app/core/infrastructure/
 ├── auth/
 │   └── token-refresh.service.ts # Centralized token refresh logic
@@ -45,66 +48,77 @@ src/app/core/infrastructure/
 - Do not use any function from console. Use the servie `private logger: LoggerService` instead.
 
 #### Theme System
+
 1. **ALL styles** in `src/theme/custom-components.scss` - NO feature-specific theme files
 2. **Use `jbh-*` classes**: `jbh-button-primary`, `jbh-input`, `jbh-card`, etc.
 3. **Use `--jbh-*` variables** for colors, spacing, typography
 4. Component SCSS = page layout only
 
 #### i18n
-5. **NEVER hardcode text** - use `{{ 'key' | translate }}`
-6. **Both languages**: en.json AND es.json
-7. **Sort keys alphabetically**
-8. **Use `common`** namespace for shared text
+
+1. **NEVER hardcode text** - use `{{ 'key' | translate }}`
+2. **Both languages**: en.json AND es.json
+3. **Sort keys alphabetically**
+4. **Use `common`** namespace for shared text
 
 #### Forms
-9. **Use `ion-select`** (not native `<select>`) with `interface="action-sheet"`
-10. **Angular control flow**: `@if`, `@for` (not `*ngIf`, `*ngFor`)
-11. **Reactive Forms** with `hasError()`, `getErrorMessage()` methods
+
+1. **Use `ion-select`** (not native `<select>`) with `interface="action-sheet"`
+2. **Angular control flow**: `@if`, `@for` (not `*ngIf`, `*ngFor`)
+3. **Reactive Forms** with `hasError()`, `getErrorMessage()` methods
 
 #### Components
-12. **Separate files**: HTML, TS, SCSS (never inline)
-13. **Standalone components** with proper imports
-14. **Always include** `TranslateModule` in imports
+
+1. **Separate files**: HTML, TS, SCSS (never inline). NOT generate the `spec.ts` files
+2. **Standalone components** with proper imports
+3. **Always include** `TranslateModule` in imports
 
 #### Ionic Lifecycle (CRITICAL)
-15. **NEVER call APIs in `ngOnInit()`** - Ionic reuses component instances when navigating
-16. **Use `ionViewWillEnter()`** for API calls and data loading - this runs every time the page is displayed
-17. **Implement `ViewWillEnter`** interface: `implements OnInit, OnDestroy, ViewWillEnter`
-18. **Pattern**:
+
+1. **NEVER call APIs in `ngOnInit()`** - Ionic reuses component instances when navigating
+2. **Use `ionViewWillEnter()`** for API calls and data loading - this runs every time the page is displayed
+3. **Implement `ViewWillEnter`** interface: `implements OnInit, OnDestroy, ViewWillEnter`
+4. **Pattern**:
     - `ngOnInit()`: Form initialization, static setup, event subscriptions
     - `ionViewWillEnter()`: API calls, data refresh, dynamic state reset
 
 #### File Naming Convention
-19. **Kebab-case with context**: Include feature context in generic page names
+
+1. **Kebab-case with context**: Include feature context in generic page names
     - `create-product.page.ts` (NOT `create.page.ts`)
     - `edit-user.page.ts` (NOT `edit.page.ts`)
     - `list-orders.page.ts` (NOT `list.page.ts`)
-20. **Pattern**: `[action]-[entity].page.ts` for clarity across features
+2. **Pattern**: `[action]-[entity].page.ts` for clarity across features
 
 #### Responsive
-21. **Mobile-first CSS**
-22. **Ionic Grid** for layouts
-23. **Test** on 3+ viewport sizes
+
+1. **Mobile-first CSS**
+2. **Ionic Grid** for layouts
+3. **Test** on 3+ viewport sizes
 
 #### Authentication & JWT (CRITICAL)
-24. **Three-Layer JWT Architecture**:
+
+1. **Three-Layer JWT Architecture**:
     - `TokenRefreshService`: Centralized refresh logic, prevents duplicate refreshes
     - `JwtInterceptor` (first): Adds Authorization header, proactive refresh if token missing
     - `ErrorInterceptor` (second): Handles 401/403/422, reactive refresh on token errors
-25. **Public APIs**: Mark with `IS_PUBLIC_API` context token:
-    ```typescript
+
+2. **Public APIs**: Mark with `IS_PUBLIC_API` context token:
+
+```typescript
     import { IS_PUBLIC_API } from '../interceptors/jwt.interceptor';
     context: new HttpContext().set(IS_PUBLIC_API, true)
-    ```
-26. **Token Storage**: Uses `TokenStorageService` with Capacitor Preferences
-27. **Token Refresh Flow**:
+```
+
+3.  **Token Storage**: Uses `TokenStorageService` with Capacitor Preferences
+4.  **Token Refresh Flow**:
     - **Proactive** (JwtInterceptor): When access token is missing from storage, attempts refresh BEFORE sending request
     - **Reactive** (ErrorInterceptor): On 401 with `AUTH_TOKEN_EXPIRED` or `AUTH_MISSING_TOKEN`, attempts refresh and retries
     - **Coordination**: `TokenRefreshService.waitForRefresh()` prevents concurrent refresh attempts
-28. **Platform Differences**:
+5.  **Platform Differences**:
     - Web/PWA: Refresh token in HTTP-only cookie (sent via `withCredentials: true`)
     - Mobile: Refresh token in secure storage (Keychain/Keystore), sent in request body
-29. **Error Codes Handled**:
+6.  **Error Codes Handled**:
     - `AUTH_TOKEN_EXPIRED`: Access token expired → refresh and retry
     - `AUTH_MISSING_TOKEN`: No Authorization header sent → refresh and retry
 
@@ -118,6 +132,7 @@ src/app/core/infrastructure/
 | `jbh-button-loading` | `jbh-field-error` | `jbh-form-card` |
 
 ### CSS Variables
+
 ```scss
 --jbh-primary-color    --jbh-spacing-sm (16px)    --jbh-radius-md (12px)
 --jbh-error-color      --jbh-spacing-md (24px)    --jbh-shadow-md
@@ -125,6 +140,7 @@ src/app/core/infrastructure/
 ```
 
 ### Build Commands
+
 ```bash
 ionic serve              # Web dev
 ionic cap run ios -l     # iOS live reload
@@ -133,4 +149,5 @@ ionic build --prod       # Production
 ```
 
 ## Documentation
+
 Project docs: `notes/` folder

@@ -1,0 +1,53 @@
+<div class="jbh-product-card" [class.withdrawn]="product.isFullyWithdrawn">
+  <div class="jbh-product-card-header">
+    <div class="jbh-product-info">
+      <div class="jbh-product-type-icon" [style.background]="product.getTypeColor()">
+        <ion-icon [name]="product.getTypeIcon()"></ion-icon>
+      </div>
+      <div class="jbh-product-details">
+        <h3 class="jbh-product-name">{{ product.name }}</h3>
+        <span class="jbh-product-type">{{ productTypeLabel }}</span>
+      </div>
+    </div>
+    <div class="jbh-product-badges">
+      @if (product.isFullyWithdrawn) {
+        <span class="jbh-withdrawn-badge">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+          {{ 'products.card.fullyWithdrawn' | translate }}
+        </span>
+      }
+    </div>
+  </div>
+
+  <div class="jbh-product-card-body">
+    <div class="jbh-product-balances">
+      <div class="jbh-balance-item">
+        <span class="jbh-balance-label">{{ 'products.card.currentBalance' | translate }}</span>
+        <span class="jbh-balance-value">{{ formattedCurrentBalance }}</span>
+      </div>
+      <div class="jbh-balance-item">
+        <span class="jbh-balance-label">{{ 'products.card.movementBalance' | translate }}</span>
+        <span class="jbh-balance-value">{{ formattedMovementBalance }}</span>
+      </div>
+      <div class="jbh-balance-item">
+        <span class="jbh-balance-label">{{ 'products.card.netProfit' | translate }}</span>
+        <span class="jbh-balance-value" [ngClass]="profitClass">{{ formattedNetProfit }}</span>
+      </div>
+      <div class="jbh-balance-item">
+        <span class="jbh-balance-label">{{ 'products.card.growthRate' | translate }}</span>
+        <span class="jbh-balance-value" [ngClass]="growthRateClass">{{ formattedGrowthRate }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="jbh-product-card-footer">
+    <div class="jbh-product-growth" [ngClass]="growthRateClass">
+      <ion-icon [name]="growthIcon"></ion-icon>
+      <span>{{ formattedGrowthRate }}</span>
+    </div>
+    <div class="jbh-product-updated">
+      <ion-icon name="time-outline"></ion-icon>
+      {{ relativeUpdatedTime }}
+    </div>
+  </div>
+</div>

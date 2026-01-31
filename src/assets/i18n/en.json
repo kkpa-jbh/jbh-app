@@ -40,6 +40,14 @@
     "version": "Version"
   },
   "products": {
+    "card": {
+      "currentBalance": "Current Balance",
+      "fullyWithdrawn": "Fully Withdrawn",
+      "growthRate": "Growth Rate",
+      "lastUpdated": "Last Updated",
+      "movementBalance": "Movement Balance",
+      "netProfit": "Net Profit"
+    },
     "create": {
       "description": "Here you can create new products for your business",
       "dynamicFields": {
@@ -77,16 +85,34 @@
       "welcome": "Create Product Page"
     },
     "overview": {
+      "createButton": "Create Product",
       "description": "View and manage all your products",
-      "title": "Overview",
-      "titleLarge": "Products Overview",
-      "welcome": "Products Overview Page"
+      "empty": {
+        "createButton": "Add Your First Product",
+        "message": "You haven't created any products. Start by adding your first account or investment.",
+        "title": "No Products Yet"
+      },
+      "errors": {
+        "load": "Failed to load products. Please try again."
+      },
+      "formSubtitle": "Track and manage your financial products",
+      "formTitle": "My Products",
+      "title": "Products",
+      "titleLarge": "My Products"
     },
     "transfer": {
       "description": "Transfer products between locations",
       "title": "Transfer",
       "titleLarge": "Product Transfer",
       "welcome": "Product Transfer Page"
+    },
+    "types": {
+      "CDT": "Certificate of Deposit",
+      "CREDIT_CARD": "Credit Card",
+      "INVESTMENT": "Investment",
+      "LOAN": "Loan",
+      "REAL_ESTATE_INVESTMENT": "Real Estate Investment",
+      "SAVINGS": "Savings"
     }
   },
   "profile": {
