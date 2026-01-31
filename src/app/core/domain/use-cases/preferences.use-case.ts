@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { PreferencesRepository } from '../repositories/preferences.repository';
 import { ProductRepository } from '../repositories/product.repository';
-import { Preferences, UpdatePreferencesRequest } from '../models/preferences.model';
+import { Preferences, UpdatePreferencesDto } from '../models/preferences.model';
 import { ProductListItem } from '../models/product-list-item.model';
 
 @Injectable({
@@ -19,7 +19,7 @@ export class PreferencesUseCase {
     return this.preferencesRepository.getPreferences();
   }
 
-  updatePreferences(request: UpdatePreferencesRequest): Observable<Preferences> {
+  updatePreferences(request: UpdatePreferencesDto): Observable<Preferences> {
     return this.preferencesRepository.updatePreferences(request);
   }
 

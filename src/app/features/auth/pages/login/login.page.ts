@@ -16,6 +16,7 @@ import {
   logoGoogle
 } from 'ionicons/icons';
 import { AuthUseCase } from '@core/domain/use-cases/auth.use-case';
+import { JBHError } from '@core/domain/models/jbh-error.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
 
@@ -111,9 +112,9 @@ export class LoginPage implements OnInit {
         this.logger.error('Login failed:', 'LoginPage', error);
         this.isLoading = false;
 
-        // Display user-friendly error message
-        // 422 errors will have the msg from the API response
-        this.errorMessage = error.message || this.translationService.instant('login.errors.invalidCredentials');
+        this.errorMessage = (error instanceof JBHError && error.isValidationError)
+          ? error.message
+          : this.translationService.instant('login.errors.invalidCredentials');
       }
     });
   }

@@ -19,6 +19,7 @@ import {
   informationCircle
 } from 'ionicons/icons';
 import { AuthUseCase } from '@core/domain/use-cases/auth.use-case';
+import { JBHError } from '@core/domain/models/jbh-error.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
 import { Subject, Observable, of } from 'rxjs';
@@ -206,7 +207,9 @@ export class SignupPage implements OnInit, OnDestroy {
       error: (error) => {
         this.logger.error('Registration failed:', 'SignupPage', error);
         this.isLoading = false;
-        this.errorMessage = error.message || this.translationService.instant('signup.errors.generic');
+        this.errorMessage = (error instanceof JBHError && error.isValidationError)
+          ? error.message
+          : this.translationService.instant('signup.errors.generic');
       }
     });
   }

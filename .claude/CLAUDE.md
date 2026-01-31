@@ -36,7 +36,7 @@ src/app/core/infrastructure/
 │   └── token-refresh.service.ts # Centralized token refresh logic
 ├── interceptors/
 │   ├── jwt.interceptor.ts       # Adds Authorization header, proactive refresh
-│   └── error.interceptor.ts     # Handles 401, 403, 422 errors
+│   └── error.interceptor.ts     # Handles 401, 403, 422, any status errors.
 ├── persistence/
 │   └── token-storage.service.ts # Secure token storage (Capacitor Preferences)
 └── repositories/
@@ -121,6 +121,22 @@ src/app/core/infrastructure/
 6.  **Error Codes Handled**:
     - `AUTH_TOKEN_EXPIRED`: Access token expired → refresh and retry
     - `AUTH_MISSING_TOKEN`: No Authorization header sent → refresh and retry
+
+#### Error Handling
+
+1. **All HTTP errors are `JBHError`**: The `ErrorInterceptor` wraps all errors in `JBHError`
+2. **Type errors as `JBHError`** in API error handlers (not `any` or `unknown`):
+
+```typescript
+error: (error: JBHError) => {
+  const message = error.isValidationError
+    ? error.message  // Show server message for 422
+    : this.translationService.instant('feature.errors.generic');
+}
+```
+
+3. **422 = validation errors**: Show server message to user (`error.isValidationError`)
+4. **Other errors**: Show generic fallback message (401/403/500 are technical errors)
 
 ### Common Classes
 

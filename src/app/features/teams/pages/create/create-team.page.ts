@@ -17,6 +17,7 @@ import {
 } from 'ionicons/icons';
 import { TeamUseCase } from '@core/domain/use-cases/team.use-case';
 import { CreateTeamRequest } from '@core/domain/models/team.model';
+import { JBHError } from '@core/domain/models/jbh-error.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
 import { APP_CONFIG_TOKEN, AppConfig } from '@core/infrastructure/config/app.config';
@@ -149,7 +150,9 @@ export class CreateTeamPage implements OnInit, OnDestroy, ViewWillEnter {
         error: async (error) => {
           this.logger.error('Error creating team:', 'CreateTeamPage', error);
           this.isSubmitting = false;
-          const errorMessage = error?.error?.message || this.translationService.instant('teams.create.errors.create');
+          const errorMessage = (error instanceof JBHError && error.isValidationError)
+            ? error.message
+            : this.translationService.instant('teams.create.errors.create');
           await this.showToast(errorMessage, 'danger');
         }
       });

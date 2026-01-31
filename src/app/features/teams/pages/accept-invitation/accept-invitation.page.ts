@@ -15,6 +15,7 @@ import {
   homeOutline
 } from 'ionicons/icons';
 import { TeamUseCase } from '@core/domain/use-cases/team.use-case';
+import { JBHError } from '@core/domain/models/jbh-error.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
 
@@ -125,23 +126,19 @@ export class AcceptInvitationPage implements OnInit, OnDestroy {
   }
 
   private getErrorMessage(error: unknown): string {
-    const err = error as { status?: number; error?: { message?: string } | string };
-
-    if (err?.status === 404) {
-      return this.translationService.instant('teams.acceptInvitation.errors.invitationNotFound');
-    }
-    if (err?.status === 409) {
-      return this.translationService.instant('teams.acceptInvitation.errors.alreadyMember');
-    }
-    if (err?.status === 410) {
-      return this.translationService.instant('teams.acceptInvitation.errors.invitationExpired');
-    }
-
-    if (typeof err?.error === 'string') {
-      return err.error;
-    }
-    if (err?.error?.message) {
-      return err.error.message;
+    if (error instanceof JBHError) {
+      if (error.status === 404) {
+        return this.translationService.instant('teams.acceptInvitation.errors.invitationNotFound');
+      }
+      if (error.status === 409) {
+        return this.translationService.instant('teams.acceptInvitation.errors.alreadyMember');
+      }
+      if (error.status === 410) {
+        return this.translationService.instant('teams.acceptInvitation.errors.invitationExpired');
+      }
+      if (error.isValidationError) {
+        return error.message;
+      }
     }
 
     return this.translationService.instant('teams.acceptInvitation.errors.generic');

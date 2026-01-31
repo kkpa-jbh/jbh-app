@@ -20,6 +20,7 @@ import { ProductUseCase } from '@core/domain/use-cases/product.use-case';
 import { ProductType } from '@core/domain/models/product-type.model';
 import { ProductMetadataConfig, MetadataValueType } from '@core/domain/models/product-metadata-config.model';
 import { CreateProductRequest } from '@core/domain/models/product.model';
+import { JBHError } from '@core/domain/models/jbh-error.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
 import { DecimalFormatDirective } from '@shared/directives';
@@ -316,10 +317,12 @@ export class CreateProductPage implements OnInit, OnDestroy, ViewWillEnter {
           await this.showToast(this.translationService.instant('products.create.success'), 'success');
           this.router.navigate(['/products/overview']);
         },
-        error: async (error) => {
+        error: async (error: JBHError) => {
           this.logger.error('Error creating product:', 'CreateProductPage', error);
           this.isSubmitting = false;
-          const errorMessage = error?.error?.message || this.translationService.instant('products.create.errors.create');
+          const errorMessage = (error.isValidationError)
+            ? error.message
+            : this.translationService.instant('products.create.errors.create');
           await this.showToast(errorMessage, 'danger');
         }
       });

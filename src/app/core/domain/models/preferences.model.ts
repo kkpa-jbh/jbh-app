@@ -21,18 +21,34 @@ export enum Currency {
 }
 
 export interface PreferencesApiResponse {
-  id: string;
-  defaultLang: string;
+  id: { value: string };
+  defaultLang: { code: string };
   defaultCurrency: string;
   savingsGoal: number;
-  defaultProductId: string | null;
+  defaultAccountId: string | null;
 }
 
-export interface UpdatePreferencesRequest {
+export interface UpdatePreferencesDto {
   defaultLang: Language;
   defaultCurrency: Currency;
   savingsGoal: number;
   defaultProductId: string | null;
+}
+
+export interface UpdatePreferencesApiRequest {
+  defaultLang: string;
+  defaultCurrency: string;
+  savingsGoal: number;
+  defaultAccountId: string | null;
+}
+
+export function toApiRequest(dto: UpdatePreferencesDto): UpdatePreferencesApiRequest {
+  return {
+    defaultLang: dto.defaultLang.toLowerCase(),
+    defaultCurrency: dto.defaultCurrency,
+    savingsGoal: dto.savingsGoal,
+    defaultAccountId: dto.defaultProductId
+  };
 }
 
 export class Preferences {
@@ -45,12 +61,13 @@ export class Preferences {
   ) {}
 
   static fromApiResponse(response: PreferencesApiResponse): Preferences {
+    const langCode = response.defaultLang.code.toUpperCase() as Language;
     return new Preferences(
-      new PreferencesId(response.id),
-      response.defaultLang as Language,
+      new PreferencesId(response.id.value),
+      langCode,
       response.defaultCurrency as Currency,
       response.savingsGoal,
-      response.defaultProductId
+      response.defaultAccountId
     );
   }
 }

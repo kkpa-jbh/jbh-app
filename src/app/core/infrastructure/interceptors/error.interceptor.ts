@@ -7,6 +7,7 @@ import { TokenRefreshService } from '../auth/token-refresh.service';
 import { IS_PUBLIC_API } from './jwt.interceptor';
 import { LoggerService } from '../logging/logger.service';
 import { TranslationService } from '../i18n/translation.service';
+import { JBHError } from '@core/domain/models/jbh-error.model';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
@@ -41,7 +42,7 @@ export class ErrorInterceptor implements HttpInterceptor {
     return this._tokenRefreshService;
   }
 
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<JBHError>> {
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
         const isPublicApi = request.context.get(IS_PUBLIC_API);
@@ -58,7 +59,11 @@ export class ErrorInterceptor implements HttpInterceptor {
           return this.handle403Error(error);
         }
 
-        return throwError(() => error);
+        return throwError(() => new JBHError(
+          error.message || 'An unexpected error occurred',
+          error.status,
+          error
+        ));
       })
     );
   }
@@ -67,7 +72,7 @@ export class ErrorInterceptor implements HttpInterceptor {
     const isTokenError = this.isTokenRelatedError(error);
 
     if (!isTokenError) {
-      return throwError(() => new Error('Unauthorized'));
+      return throwError(() => new JBHError('Unauthorized', 401, error));
     }
 
     return this.tokenRefreshService.refreshToken().pipe(
@@ -78,12 +83,12 @@ export class ErrorInterceptor implements HttpInterceptor {
           );
         }
         return from(this.tokenRefreshService.handleLogout()).pipe(
-          switchMap(() => throwError(() => new Error('Session expired - please login again')))
+          switchMap(() => throwError(() => new JBHError('Session expired - please login again', 401, error)))
         );
       }),
       catchError(() => {
         return from(this.tokenRefreshService.handleLogout()).pipe(
-          switchMap(() => throwError(() => new Error('Session expired - please login again')))
+          switchMap(() => throwError(() => new JBHError('Session expired - please login again', 401, error)))
         );
       })
     );
@@ -106,12 +111,7 @@ export class ErrorInterceptor implements HttpInterceptor {
 
     this.logger.warn('Business exception (422):', 'ErrorInterceptor', errorMessage);
 
-    const businessError = new Error(errorMessage);
-    (businessError as any).status = 422;
-    (businessError as any).error = errorMessage;
-    (businessError as any).originalError = error;
-
-    return throwError(() => businessError);
+    return throwError(() => new JBHError(errorMessage, 422, error));
   }
 
   private extractLocalizedMessage(message: string): string {
@@ -134,7 +134,11 @@ export class ErrorInterceptor implements HttpInterceptor {
 
   private handle403Error(error: HttpErrorResponse): Observable<never> {
     this.logger.error('Access forbidden:', 'ErrorInterceptor', error);
-    return throwError(() => new Error('Access forbidden - you do not have permission to access this resource'));
+    return throwError(() => new JBHError(
+      'Access forbidden - you do not have permission to access this resource',
+      403,
+      error
+    ));
   }
 
   private async addTokenToRequest(request: HttpRequest<any>): Promise<HttpRequest<any>> {
