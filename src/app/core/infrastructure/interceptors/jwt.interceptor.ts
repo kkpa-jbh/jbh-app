@@ -1,9 +1,10 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor, HttpContextToken } from '@angular/common/http';
-import { Observable, from, switchMap, throwError } from 'rxjs';
+import { Observable, from, switchMap } from 'rxjs';
 import { TokenStorageService } from '../persistence/token-storage.service';
 import { TokenRefreshService } from '../auth/token-refresh.service';
 import { LoggerService } from '../logging/logger.service';
+import { environment } from 'src/environments/environment';
 
 export const IS_PUBLIC_API = new HttpContextToken<boolean>(() => false);
 
@@ -17,6 +18,10 @@ export class JwtInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const isPublicApi = request.context.get(IS_PUBLIC_API);
+
+    if (!this.isApiRequest(request.url)) {
+      return next.handle(request);
+    }
 
     request = request.clone({ withCredentials: true });
 
@@ -36,38 +41,14 @@ export class JwtInterceptor implements HttpInterceptor {
           request = request.clone({
             setHeaders: { Authorization: `Bearer ${token}` }
           });
-          return next.handle(request);
         }
-
-        this.logger.warn('No access token - attempting proactive refresh', 'JwtInterceptor', request.url);
-        return this.attemptProactiveRefresh(request, next);
+        return next.handle(request);
       })
     );
   }
 
-  private attemptProactiveRefresh(
-    request: HttpRequest<any>,
-    next: HttpHandler
-  ): Observable<HttpEvent<any>> {
-    return this.tokenRefreshService.refreshToken().pipe(
-      switchMap(success => {
-        if (success) {
-          return from(this.tokenStorage.getAccessToken()).pipe(
-            switchMap(newToken => {
-              if (newToken) {
-                this.logger.debug('Proactive refresh successful, retrying request', 'JwtInterceptor', request.url);
-                request = request.clone({
-                  setHeaders: { Authorization: `Bearer ${newToken}` }
-                });
-              }
-              return next.handle(request);
-            })
-          );
-        }
-        return from(this.tokenRefreshService.handleLogout()).pipe(
-          switchMap(() => throwError(() => new Error('Session expired - please login again')))
-        );
-      })
-    );
+  private isApiRequest(url: string): boolean {
+    const apiBaseUrl = environment.api.baseUrl;
+    return url.startsWith(apiBaseUrl) || url.includes(apiBaseUrl);
   }
 }

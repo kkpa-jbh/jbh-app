@@ -92,15 +92,17 @@
                 </div>
               </div>
               <div class="jbh-team-actions">
-                <button class="jbh-icon-button jbh-icon-button-primary" (click)="navigateToInvite(team.id); $event.stopPropagation()" [title]="'menu.teams.invite' | translate">
-                  <ion-icon name="person-add-outline"></ion-icon>
-                </button>
-                <button class="jbh-icon-button" (click)="editTeam(team); $event.stopPropagation()" [title]="'common.edit' | translate">
-                  <ion-icon name="create-outline"></ion-icon>
-                </button>
-                <button class="jbh-icon-button jbh-icon-button-danger" (click)="confirmDeleteTeam(team); $event.stopPropagation()" [title]="'common.delete' | translate">
-                  <ion-icon name="trash-outline"></ion-icon>
-                </button>
+                @if (isTeamOwner(team)) {
+                  <button class="jbh-icon-button jbh-icon-button-primary" (click)="navigateToInvite(team.id); $event.stopPropagation()" [title]="'menu.teams.invite' | translate">
+                    <ion-icon name="person-add-outline"></ion-icon>
+                  </button>
+                  <button class="jbh-icon-button" (click)="editTeam(team); $event.stopPropagation()" [title]="'common.edit' | translate">
+                    <ion-icon name="create-outline"></ion-icon>
+                  </button>
+                  <button class="jbh-icon-button jbh-icon-button-danger" (click)="confirmDeleteTeam(team); $event.stopPropagation()" [title]="'common.delete' | translate">
+                    <ion-icon name="trash-outline"></ion-icon>
+                  </button>
+                }
                 <ion-icon
                   [name]="isTeamExpanded(team.id) ? 'chevron-up-outline' : 'chevron-down-outline'"
                   class="jbh-team-chevron">

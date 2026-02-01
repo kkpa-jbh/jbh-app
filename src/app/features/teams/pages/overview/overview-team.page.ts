@@ -27,6 +27,7 @@ import { TeamWithMembers, TeamMember, MemberStatus } from '@core/domain/models/t
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
 import { InviteMemberRequest } from '../../../../core/domain/repositories/team.repository';
+import { AuthUseCase } from '@core/domain/use-cases/auth.use-case';
 
 @Component({
   selector: 'app-overview-team',
@@ -52,6 +53,7 @@ export class OverviewTeamPage implements OnInit, OnDestroy, ViewWillEnter {
   constructor(
     private router: Router,
     private teamUseCase: TeamUseCase,
+    private authUseCase: AuthUseCase,
     private translationService: TranslationService,
     private toastController: ToastController,
     private alertController: AlertController,
@@ -290,6 +292,12 @@ export class OverviewTeamPage implements OnInit, OnDestroy, ViewWillEnter {
 
   canDelete(member: TeamMember): boolean {
     return !member.isGroupOwner;
+  }
+
+  isTeamOwner(team: TeamWithMembers): boolean {
+    const currentUser = this.authUseCase.getCurrentUser();
+    if (!currentUser) return false;
+    return team.owner?.email === currentUser.email;
   }
 
   private async showToast(message: string, color: 'success' | 'danger' | 'warning'): Promise<void> {

@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { AcceptInvitationResponse, CreateTeamRequest, CreateTeamResponse, Team, TeamWithMembers } from '../models/team.model';
+import { AcceptInvitationResponse, CreateTeamRequest, CreateTeamResponse, Team, TeamWithMembers, UpdateTeamRequest } from '../models/team.model';
 
 export interface InviteMemberRequest {
   emailOrUsername: string;
@@ -9,6 +9,7 @@ export interface InviteMemberRequest {
 
 export abstract class TeamRepository {
   abstract createTeam(request: CreateTeamRequest): Observable<CreateTeamResponse>;
+  abstract updateTeam(teamId: string, request: UpdateTeamRequest): Observable<void>;
   abstract getTeams(): Observable<Team[]>;
   abstract getMyTeams(): Observable<TeamWithMembers[]>;
   abstract deleteTeam(teamId: string): Observable<void>;

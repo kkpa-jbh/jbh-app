@@ -238,6 +238,35 @@
       "title": "Crear Equipo",
       "titleLarge": "Crear Equipo"
     },
+    "edit": {
+      "errors": {
+        "load": "Error al cargar el equipo. Por favor intenta de nuevo.",
+        "notFound": "Equipo no encontrado.",
+        "update": "Error al actualizar el equipo. Por favor intenta de nuevo."
+      },
+      "formSubtitle": "Actualiza los detalles de tu equipo a continuación",
+      "formTitle": "Editar Equipo",
+      "name": {
+        "label": "Nombre del Equipo",
+        "maxlength": "El nombre del equipo no debe exceder {{maxLength}} caracteres",
+        "minlength": "El nombre del equipo debe tener al menos {{minLength}} caracteres",
+        "pattern": "El nombre del equipo no puede contener caracteres especiales: ? & # / \\ < > \" '",
+        "placeholder": "Ingresa el nombre del equipo",
+        "required": "El nombre del equipo es requerido"
+      },
+      "saveButton": "Guardar Cambios",
+      "saving": "Guardando...",
+      "shortName": {
+        "label": "Nombre Corto",
+        "maxlength": "El nombre corto no debe exceder {{maxLength}} caracteres",
+        "minlength": "El nombre corto debe tener al menos {{minLength}} caracteres",
+        "placeholder": "Ingresa el nombre corto (ej., EQUIPO1)",
+        "required": "El nombre corto es requerido"
+      },
+      "success": "¡Equipo actualizado exitosamente!",
+      "title": "Editar Equipo",
+      "titleLarge": "Editar Equipo"
+    },
     "overview": {
       "createButton": "Crear Equipo",
       "deleteMember": {

@@ -238,6 +238,35 @@
       "title": "Create Team",
       "titleLarge": "Create Team"
     },
+    "edit": {
+      "errors": {
+        "load": "Failed to load team. Please try again.",
+        "notFound": "Team not found.",
+        "update": "Failed to update team. Please try again."
+      },
+      "formSubtitle": "Update your team details below",
+      "formTitle": "Edit Team",
+      "name": {
+        "label": "Team Name",
+        "maxlength": "Team name must not exceed {{maxLength}} characters",
+        "minlength": "Team name must be at least {{minLength}} characters",
+        "pattern": "Team name cannot contain special characters: ? & # / \\ < > \" '",
+        "placeholder": "Enter team name",
+        "required": "Team name is required"
+      },
+      "saveButton": "Save Changes",
+      "saving": "Saving...",
+      "shortName": {
+        "label": "Short Name",
+        "maxlength": "Short name must not exceed {{maxLength}} characters",
+        "minlength": "Short name must be at least {{minLength}} characters",
+        "placeholder": "Enter short name (e.g., TEAM1)",
+        "required": "Short name is required"
+      },
+      "success": "Team updated successfully!",
+      "title": "Edit Team",
+      "titleLarge": "Edit Team"
+    },
     "overview": {
       "createButton": "Create Team",
       "deleteMember": {

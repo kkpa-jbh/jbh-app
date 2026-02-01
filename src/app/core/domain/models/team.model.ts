@@ -3,6 +3,11 @@ export interface CreateTeamRequest {
   name: string;
 }
 
+export interface UpdateTeamRequest {
+  shortName: string;
+  name: string;
+}
+
 export interface CreateTeamResponse {
   id: string;
   shortName: string;

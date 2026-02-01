@@ -8,7 +8,8 @@ import {
   CreateTeamResponse,
   Team,
   TeamWithMembers,
-  TeamWithMembersApiResponse
+  TeamWithMembersApiResponse,
+  UpdateTeamRequest
 } from '@core/domain/models/team.model';
 import { ApiBaseService } from '@core/infrastructure/api/api-base.service';
 import { HttpClient } from '@angular/common/http';
@@ -29,6 +30,10 @@ export class TeamRepositoryImpl extends ApiBaseService implements TeamRepository
 
   createTeam(request: CreateTeamRequest): Observable<CreateTeamResponse> {
     return this.post<CreateTeamResponse>(this.TEAMS_ENDPOINT, request);
+  }
+
+  updateTeam(teamId: string, request: UpdateTeamRequest): Observable<void> {
+    return this.put<void>(`${this.TEAMS_ENDPOINT}/${teamId}`, request);
   }
 
   getTeams(): Observable<Team[]> {

@@ -53,6 +53,11 @@ export const routes: Routes = [
     canActivate: [authGuard] // Requires authentication
   },
   {
+    path: 'teams/edit/:id',
+    loadComponent: () => import('./features/teams/pages/edit/edit-team.page').then(m => m.EditTeamPage),
+    canActivate: [authGuard] // Requires authentication
+  },
+  {
     path: 'teams/invite',
     loadComponent: () => import('./features/teams/pages/invite/invite-member.page').then(m => m.InviteMemberPage),
     canActivate: [authGuard] // Requires authentication

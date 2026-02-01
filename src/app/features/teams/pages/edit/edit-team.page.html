@@ -1,0 +1,114 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="navigateToOverview()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ 'teams.edit.title' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="edit-team-content">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">{{ 'teams.edit.titleLarge' | translate }}</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="jbh-container">
+    <!-- Loading State -->
+    @if (isLoading) {
+      <div class="jbh-form-card">
+        <div class="jbh-loading-container">
+          <ion-spinner name="crescent"></ion-spinner>
+        </div>
+      </div>
+    }
+
+    <!-- Form Card -->
+    @if (!isLoading && team) {
+      <div class="jbh-form-card">
+
+        <!-- Form Header -->
+        <div class="jbh-form-header">
+          <div class="jbh-form-icon">
+            <ion-icon name="people-outline"></ion-icon>
+          </div>
+          <h1 class="jbh-form-title">{{ 'teams.edit.formTitle' | translate }}</h1>
+          <p class="jbh-form-subtitle">{{ 'teams.edit.formSubtitle' | translate }}</p>
+        </div>
+
+        <!-- Form -->
+        <form [formGroup]="teamForm" (ngSubmit)="onSubmit()" class="jbh-form-animated">
+
+        <!-- Short Name Field -->
+        <div class="jbh-form-field">
+          <label class="jbh-label">
+            {{ 'teams.edit.shortName.label' | translate }}
+            <span class="required-indicator">*</span>
+          </label>
+          <div class="jbh-input-wrapper">
+            <ion-icon name="text-outline" class="jbh-input-icon left"></ion-icon>
+            <input
+              type="text"
+              class="jbh-input jbh-input-icon-left"
+              formControlName="shortName"
+              [placeholder]="'teams.edit.shortName.placeholder' | translate"
+              [class.error]="hasError('shortName')"
+            />
+          </div>
+          @if (hasError('shortName')) {
+            <div class="jbh-field-error">
+              <ion-icon name="information-circle"></ion-icon>
+              <span>{{ getErrorMessage('shortName') }}</span>
+            </div>
+          }
+        </div>
+
+        <!-- Team Name Field -->
+        <div class="jbh-form-field">
+          <label class="jbh-label">
+            {{ 'teams.edit.name.label' | translate }}
+            <span class="required-indicator">*</span>
+          </label>
+          <div class="jbh-input-wrapper">
+            <ion-icon name="people-outline" class="jbh-input-icon left"></ion-icon>
+            <input
+              type="text"
+              class="jbh-input jbh-input-icon-left"
+              formControlName="name"
+              [placeholder]="'teams.edit.name.placeholder' | translate"
+              [class.error]="hasError('name')"
+            />
+          </div>
+          @if (hasError('name')) {
+            <div class="jbh-field-error">
+              <ion-icon name="information-circle"></ion-icon>
+              <span>{{ getErrorMessage('name') }}</span>
+            </div>
+          }
+        </div>
+
+        <!-- Submit Button -->
+        <button
+          type="submit"
+          class="jbh-button-primary jbh-button-block"
+          [disabled]="isSubmitting || teamForm.invalid"
+          [class.jbh-button-loading]="isSubmitting"
+        >
+          @if (isSubmitting) {
+            <ion-spinner name="crescent"></ion-spinner>
+            <span>{{ 'teams.edit.saving' | translate }}</span>
+          } @else {
+            <ion-icon name="save-outline" class="button-icon"></ion-icon>
+            <span>{{ 'teams.edit.saveButton' | translate }}</span>
+          }
+        </button>
+
+        </form>
+
+      </div>
+    }
+  </div>
+</ion-content>
