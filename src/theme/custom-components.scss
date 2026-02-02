@@ -302,6 +302,18 @@
   }
 }
 
+.jbh-input-readonly {
+  background: var(--jbh-background-light);
+  color: var(--jbh-text-secondary);
+  cursor: default;
+
+  &:focus {
+    border: 1px solid var(--jbh-border-color);
+    box-shadow: none;
+    background: var(--jbh-background-light);
+  }
+}
+
 .jbh-input-icon-left {
   padding-left: 48px;
 }
@@ -2047,6 +2059,19 @@ ion-menu::part(backdrop) {
   gap: var(--jbh-spacing-xs);
 }
 
+.jbh-product-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--jbh-spacing-sm);
+  flex-shrink: 0;
+}
+
+.jbh-product-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--jbh-spacing-xs);
+}
+
 .jbh-withdrawn-badge {
   display: inline-flex;
   align-items: center;
@@ -2073,7 +2098,7 @@ ion-menu::part(backdrop) {
   gap: var(--jbh-spacing-sm);
 
   @media (min-width: 768px) {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
   }
 }
 

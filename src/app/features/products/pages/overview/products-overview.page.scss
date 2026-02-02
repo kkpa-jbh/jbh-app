@@ -1,0 +1,7 @@
+// Component-specific layout styles only
+// All theming is in custom-components.scss
+
+.products-overview-content {
+  --padding-top: var(--jbh-spacing-md);
+  --padding-bottom: var(--jbh-spacing-md);
+}

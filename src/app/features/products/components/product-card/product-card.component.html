@@ -9,18 +9,38 @@
         <span class="jbh-product-type">{{ productTypeLabel }}</span>
       </div>
     </div>
-    <div class="jbh-product-badges">
+    <div class="jbh-product-header-actions">
       @if (product.isFullyWithdrawn) {
         <span class="jbh-withdrawn-badge">
           <ion-icon name="checkmark-circle-outline"></ion-icon>
           {{ 'products.card.fullyWithdrawn' | translate }}
         </span>
       }
+      <div class="jbh-product-actions">
+        <button
+          class="jbh-icon-button"
+          (click)="onEdit($event)"
+          [title]="'common.edit' | translate"
+        >
+          <ion-icon name="create-outline"></ion-icon>
+        </button>
+        <button
+          class="jbh-icon-button jbh-icon-button-danger"
+          (click)="onDelete($event)"
+          [title]="'common.delete' | translate"
+        >
+          <ion-icon name="trash-outline"></ion-icon>
+        </button>
+      </div>
     </div>
   </div>
 
   <div class="jbh-product-card-body">
     <div class="jbh-product-balances">
+      <div class="jbh-balance-item">
+        <span class="jbh-balance-label">{{ 'products.card.initialBalance' | translate }}</span>
+        <span class="jbh-balance-value">{{ formattedInitialBalance }}</span>
+      </div>
       <div class="jbh-balance-item">
         <span class="jbh-balance-label">{{ 'products.card.currentBalance' | translate }}</span>
         <span class="jbh-balance-value">{{ formattedCurrentBalance }}</span>

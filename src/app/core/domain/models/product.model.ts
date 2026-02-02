@@ -11,3 +11,8 @@ export interface CreateProductResponse {
   metadata: Record<string, any>;
   createdAt: string;
 }
+
+export interface UpdateProductRequest {
+  name: string;
+  metadata: Record<string, any>;
+}

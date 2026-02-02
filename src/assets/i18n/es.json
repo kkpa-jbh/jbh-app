@@ -44,6 +44,7 @@
       "currentBalance": "Saldo Actual",
       "fullyWithdrawn": "Retirado Completamente",
       "growthRate": "Tasa de Crecimiento",
+      "initialBalance": "Saldo Inicial",
       "lastUpdated": "Última Actualización",
       "movementBalance": "Balance de Movimientos",
       "netProfit": "Ganancia Neta"
@@ -83,6 +84,47 @@
       "title": "Crear Producto",
       "titleLarge": "Crear Producto",
       "welcome": "Página de Crear Producto"
+    },
+    "deleteProduct": {
+      "error": "Error al eliminar el producto. Por favor intenta de nuevo.",
+      "message": "¿Estás seguro de que deseas eliminar \"{{name}}\"? Esta acción no se puede deshacer.",
+      "success": "¡Producto eliminado exitosamente!",
+      "title": "Eliminar Producto"
+    },
+    "edit": {
+      "dynamicFields": {
+        "integer": "Solo se permiten números enteros (sin decimales)",
+        "max": "El valor no debe exceder {{max}}",
+        "maxDecimals": "Máximo {{max}} decimales permitidos",
+        "maxHint": "Máximo: {{max}}",
+        "min": "El valor debe ser al menos {{min}}",
+        "minHint": "Mínimo: {{min}}",
+        "range": "El valor debe estar entre {{min}} y {{max}}",
+        "required": "Este campo es requerido"
+      },
+      "errors": {
+        "load": "Error al cargar el producto. Por favor intenta de nuevo.",
+        "loadMetadata": "Error al cargar la configuración del producto. Por favor intenta de nuevo.",
+        "loadTypes": "Error al cargar los tipos de producto. Por favor intenta de nuevo.",
+        "notFound": "Producto no encontrado.",
+        "update": "Error al actualizar el producto. Por favor intenta de nuevo."
+      },
+      "formSubtitle": "Actualiza los detalles a continuación para modificar tu producto",
+      "formTitle": "Editar Producto",
+      "name": {
+        "label": "Nombre del Producto",
+        "placeholder": "Ingresa el nombre del producto"
+      },
+      "productDetails": "Detalles del Producto",
+      "productType": {
+        "label": "Tipo de Producto",
+        "readonly": "El tipo de producto no se puede cambiar después de la creación"
+      },
+      "saveButton": "Guardar Cambios",
+      "saving": "Guardando...",
+      "success": "¡Producto actualizado exitosamente!",
+      "title": "Editar Producto",
+      "titleLarge": "Editar Producto"
     },
     "overview": {
       "createButton": "Crear Producto",

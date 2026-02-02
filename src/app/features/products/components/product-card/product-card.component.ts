@@ -1,7 +1,22 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { addIcons } from 'ionicons';
+import {
+  createOutline,
+  trashOutline,
+  walletOutline,
+  homeOutline,
+  cashOutline,
+  cardOutline,
+  trendingUpOutline,
+  trendingDownOutline,
+  timeOutline,
+  cubeOutline,
+  checkmarkCircleOutline,
+  removeOutline
+} from 'ionicons/icons';
 import { ProductListItem } from '@core/domain/models/product-list-item.model';
 
 @Component({
@@ -14,8 +29,41 @@ import { ProductListItem } from '@core/domain/models/product-list-item.model';
 export class ProductCardComponent {
   @Input({ required: true }) product!: ProductListItem;
   @Input() currency = 'USD';
+  @Output() edit = new EventEmitter<void>();
+  @Output() delete = new EventEmitter<void>();
 
-  constructor(private translateService: TranslateService) {}
+  constructor(private translateService: TranslateService) {
+    addIcons({
+      createOutline,
+      trashOutline,
+      walletOutline,
+      homeOutline,
+      cashOutline,
+      cardOutline,
+      trendingUpOutline,
+      trendingDownOutline,
+      timeOutline,
+      cubeOutline,
+      checkmarkCircleOutline,
+      removeOutline
+    });
+  }
+
+  onEdit(event: Event): void {
+    event.stopPropagation();
+    this.edit.emit();
+  }
+
+  onDelete(event: Event): void {
+    event.stopPropagation();
+    this.delete.emit();
+  }
+
+  get formattedInitialBalance(): string {
+    return this.product.initialBalance !== null
+      ? this.formatCurrency(this.product.initialBalance)
+      : '--';
+  }
 
   get formattedCurrentBalance(): string {
     return this.formatCurrency(this.product.currentBalance);

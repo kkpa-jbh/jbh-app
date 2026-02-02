@@ -34,7 +34,12 @@ export const routes: Routes = [
   },
   {
     path: 'products/overview',
-    loadComponent: () => import('./features/products/pages/overview/overview.page').then(m => m.OverviewPage),
+    loadComponent: () => import('./features/products/pages/overview/products-overview.page').then(m => m.ProductsOverviewPage),
+    canActivate: [authGuard] // Requires authentication
+  },
+  {
+    path: 'products/edit/:id',
+    loadComponent: () => import('./features/products/pages/edit/edit-product.page').then(m => m.EditProductPage),
     canActivate: [authGuard] // Requires authentication
   },
   {

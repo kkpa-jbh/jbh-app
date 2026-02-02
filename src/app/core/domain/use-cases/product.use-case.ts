@@ -3,7 +3,7 @@ import { Observable, BehaviorSubject, shareReplay, tap } from 'rxjs';
 import { ProductRepository } from '../repositories/product.repository';
 import { ProductType } from '../models/product-type.model';
 import { ProductMetadataConfig } from '../models/product-metadata-config.model';
-import { CreateProductRequest, CreateProductResponse } from '../models/product.model';
+import { CreateProductRequest, CreateProductResponse, UpdateProductRequest } from '../models/product.model';
 import { ProductListItem } from '../models/product-list-item.model';
 
 @Injectable({
@@ -62,6 +62,22 @@ export class ProductUseCase {
   refreshProducts(): Observable<ProductListItem[]> {
     this.clearProductsCache();
     return this.getProducts();
+  }
+
+  getProductById(id: string): Observable<ProductListItem> {
+    return this.productRepository.getProductById(id);
+  }
+
+  updateProduct(id: string, request: UpdateProductRequest): Observable<void> {
+    return this.productRepository.updateProduct(id, request).pipe(
+      tap(() => this.clearProductsCache())
+    );
+  }
+
+  deleteProduct(id: string): Observable<void> {
+    return this.productRepository.deleteProduct(id).pipe(
+      tap(() => this.clearProductsCache())
+    );
   }
 
   clearProductsCache(): void {

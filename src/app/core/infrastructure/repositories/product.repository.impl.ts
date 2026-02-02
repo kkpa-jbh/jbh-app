@@ -4,7 +4,7 @@ import { map } from 'rxjs/operators';
 import { ProductRepository } from '@core/domain/repositories/product.repository';
 import { ProductType, ProductTypeApiResponse } from '@core/domain/models/product-type.model';
 import { ProductMetadataConfig, ProductMetadataConfigApiResponse } from '@core/domain/models/product-metadata-config.model';
-import { CreateProductRequest, CreateProductResponse } from '@core/domain/models/product.model';
+import { CreateProductRequest, CreateProductResponse, UpdateProductRequest } from '@core/domain/models/product.model';
 import { ProductListItem, ProductListItemApiResponse } from '@core/domain/models/product-list-item.model';
 import { ApiBaseService } from '@core/infrastructure/api/api-base.service';
 import { HttpClient } from '@angular/common/http';
@@ -47,5 +47,19 @@ export class ProductRepositoryImpl extends ApiBaseService implements ProductRepo
     return this.get<ProductListItemApiResponse[]>(this.PRODUCTS_ENDPOINT).pipe(
       map(responses => responses.map(response => ProductListItem.fromApiResponse(response)))
     );
+  }
+
+  getProductById(id: string): Observable<ProductListItem> {
+    return this.get<ProductListItemApiResponse>(`${this.PRODUCTS_ENDPOINT}/${id}`).pipe(
+      map(response => ProductListItem.fromApiResponse(response))
+    );
+  }
+
+  updateProduct(id: string, request: UpdateProductRequest): Observable<void> {
+    return this.put<void>(`${this.PRODUCTS_ENDPOINT}/${id}`, request);
+  }
+
+  deleteProduct(id: string): Observable<void> {
+    return this.delete<void>(`${this.PRODUCTS_ENDPOINT}/${id}`);
   }
 }
