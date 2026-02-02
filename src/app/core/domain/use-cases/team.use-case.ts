@@ -86,7 +86,7 @@ export class TeamUseCase {
   }
 
   refreshMyTeams(): Observable<TeamWithMembers[]> {
-    this.myTeams$ = null;
-    return this.getMyTeams();
+    this.clearCache();
+    return this.teamRepository.getMyTeams();
   }
 }
