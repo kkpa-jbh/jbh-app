@@ -62,4 +62,8 @@ export class ProductRepositoryImpl extends ApiBaseService implements ProductRepo
   deleteProduct(id: string): Observable<void> {
     return this.delete<void>(`${this.PRODUCTS_ENDPOINT}/${id}`);
   }
+
+  updateProductStatus(id: string, active: boolean): Observable<void> {
+    return this.patch<void>(`${this.PRODUCTS_ENDPOINT}/${id}/status`, { active });
+  }
 }

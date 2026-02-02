@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -31,8 +31,14 @@ export class ProductCardComponent {
   @Input() currency = 'USD';
   @Output() edit = new EventEmitter<void>();
   @Output() delete = new EventEmitter<void>();
+  @Output() statusChange = new EventEmitter<boolean>();
 
-  constructor(private translateService: TranslateService) {
+  isTogglingStatus = false;
+
+  constructor(
+    private translateService: TranslateService,
+    private cdr: ChangeDetectorRef
+  ) {
     addIcons({
       createOutline,
       trashOutline,
@@ -57,6 +63,18 @@ export class ProductCardComponent {
   onDelete(event: Event): void {
     event.stopPropagation();
     this.delete.emit();
+  }
+
+  onStatusToggle(event: Event): void {
+    event.stopPropagation();
+    const customEvent = event as CustomEvent;
+    const newStatus = customEvent.detail.checked;
+    this.statusChange.emit(newStatus);
+  }
+
+  setTogglingStatus(value: boolean): void {
+    this.isTogglingStatus = value;
+    this.cdr.markForCheck();
   }
 
   get formattedInitialBalance(): string {

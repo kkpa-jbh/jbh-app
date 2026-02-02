@@ -47,7 +47,13 @@
       "initialBalance": "Saldo Inicial",
       "lastUpdated": "Última Actualización",
       "movementBalance": "Balance de Movimientos",
-      "netProfit": "Ganancia Neta"
+      "netProfit": "Ganancia Neta",
+      "status": {
+        "active": "Activo",
+        "error": "Error al actualizar el estado del producto. Por favor intenta de nuevo.",
+        "inactive": "Inactivo",
+        "toggle": "Cambiar estado del producto"
+      }
     },
     "create": {
       "description": "Aquí puedes crear nuevos productos para tu negocio",

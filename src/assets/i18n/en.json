@@ -47,7 +47,13 @@
       "initialBalance": "Initial Balance",
       "lastUpdated": "Last Updated",
       "movementBalance": "Movement Balance",
-      "netProfit": "Net Profit"
+      "netProfit": "Net Profit",
+      "status": {
+        "active": "Active",
+        "error": "Failed to update product status. Please try again.",
+        "inactive": "Inactive",
+        "toggle": "Toggle product status"
+      }
     },
     "create": {
       "description": "Here you can create new products for your business",

@@ -80,6 +80,12 @@ export class ProductUseCase {
     );
   }
 
+  updateProductStatus(id: string, active: boolean): Observable<void> {
+    return this.productRepository.updateProductStatus(id, active).pipe(
+      tap(() => this.clearProductsCache())
+    );
+  }
+
   clearProductsCache(): void {
     this.products$ = null;
   }

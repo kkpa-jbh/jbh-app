@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChildren, QueryList } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { IonicModule, ViewWillEnter, ToastController, AlertController } from '@ionic/angular';
@@ -24,6 +24,8 @@ import { ProductCardComponent } from '../../components/product-card/product-card
   ]
 })
 export class ProductsOverviewPage implements OnInit, OnDestroy, ViewWillEnter {
+  @ViewChildren(ProductCardComponent) productCards!: QueryList<ProductCardComponent>;
+
   products: ProductListItem[] = [];
   isLoading = true;
   private destroy$ = new Subject<void>();
@@ -133,6 +135,54 @@ export class ProductsOverviewPage implements OnInit, OnDestroy, ViewWillEnter {
           const errorMessage = error.isValidationError
             ? error.message
             : this.translationService.instant('products.deleteProduct.error');
+          this.showToast(errorMessage, 'danger');
+        }
+      });
+  }
+
+  onStatusChange(product: ProductListItem, newStatus: boolean): void {
+    const cardComponent = this.productCards.find(
+      card => card.product.id === product.id
+    );
+
+    if (cardComponent) {
+      cardComponent.setTogglingStatus(true);
+    }
+
+    this.productUseCase.updateProductStatus(product.id, newStatus)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          const index = this.products.findIndex(p => p.id === product.id);
+          if (index !== -1) {
+            this.products[index] = new ProductListItem(
+              product.id,
+              product.name,
+              product.type,
+              product.userId,
+              product.movementBalance,
+              product.currentBalance,
+              product.netProfitBalance,
+              newStatus,
+              product.createdAt,
+              product.updatedAt,
+              product.netGrowthRate,
+              product.metadata
+            );
+            this.products = [...this.products];
+          }
+          if (cardComponent) {
+            cardComponent.setTogglingStatus(false);
+          }
+        },
+        error: (error: JBHError) => {
+          this.logger.error('Error updating product status:', 'ProductsOverviewPage', error);
+          if (cardComponent) {
+            cardComponent.setTogglingStatus(false);
+          }
+          const errorMessage = error.isValidationError
+            ? error.message
+            : this.translationService.instant('products.card.status.error');
           this.showToast(errorMessage, 'danger');
         }
       });

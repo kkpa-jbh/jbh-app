@@ -1994,6 +1994,15 @@ ion-menu::part(backdrop) {
   &.withdrawn {
     opacity: 0.7;
   }
+
+  &.inactive {
+    opacity: 0.6;
+
+    .jbh-product-card-body,
+    .jbh-product-card-footer {
+      filter: grayscale(0.5);
+    }
+  }
 }
 
 .jbh-product-card-header {
@@ -2085,6 +2094,50 @@ ion-menu::part(backdrop) {
 
   ion-icon {
     font-size: 12px;
+  }
+}
+
+.jbh-status-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  border-radius: var(--jbh-radius-md);
+  background: var(--jbh-background-secondary);
+  position: relative;
+
+  &.toggling {
+    opacity: 0.7;
+    pointer-events: none;
+  }
+
+  .jbh-status-label {
+    font-size: var(--jbh-font-size-xs);
+    color: var(--jbh-text-secondary);
+    font-weight: var(--jbh-font-weight-medium);
+    white-space: nowrap;
+
+    @media (max-width: 480px) {
+      display: none;
+    }
+  }
+
+  ion-toggle {
+    --track-background: var(--jbh-border-color);
+    --track-background-checked: var(--jbh-success-color);
+    --handle-background: var(--jbh-background-white);
+    --handle-background-checked: var(--jbh-background-white);
+    padding: 0;
+    height: 24px;
+    width: 44px;
+  }
+
+  .jbh-toggle-spinner {
+    position: absolute;
+    right: -28px;
+    width: 20px;
+    height: 20px;
+    color: var(--jbh-primary-color);
   }
 }
 

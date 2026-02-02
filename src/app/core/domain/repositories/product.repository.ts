@@ -12,4 +12,5 @@ export abstract class ProductRepository {
   abstract getProductById(id: string): Observable<ProductListItem>;
   abstract updateProduct(id: string, request: UpdateProductRequest): Observable<void>;
   abstract deleteProduct(id: string): Observable<void>;
+  abstract updateProductStatus(id: string, active: boolean): Observable<void>;
 }
