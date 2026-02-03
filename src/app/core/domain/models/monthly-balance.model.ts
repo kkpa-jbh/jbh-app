@@ -4,7 +4,7 @@
  */
 export interface MonthlyBalanceApiResponse {
   /** Period identifier in "YYYY-MM" format (e.g., "2024-01"). Used for sorting and filtering. */
-  period: string;
+  period: Date;
 
   /** Balance at the start of the month (first day). */
   openingBalance: number;
@@ -27,14 +27,12 @@ export interface MonthlyBalanceApiResponse {
   /** Data comes from an official bank/institution statement. */
   isOfficialReport: boolean;
 
-  /** Unique identifier for the product (UUID). */
-  productId: string;
+  /** Unique identifier for the product (UUID). API returns object wrapper. */
+  productId: { value: string };
 
   /** User-friendly name of the product (e.g., "Main Savings Account"). */
   productName: string;
 
-  /** Human-readable period label, pre-formatted by backend (e.g., "Jan 2024"). */
-  periodLabel: string;
 
   /** Pre-calculated flag: true when profit > 0 */
   isProfitable: boolean;
@@ -115,6 +113,8 @@ export interface BalanceHistorySummary {
   totalMovements: number;
 }
 
+import { JbhDatePipe } from '@shared/pipes';
+
 /**
  * Domain model representing a monthly balance record.
  * Immutable class that maps from API response.
@@ -144,8 +144,6 @@ export class MonthlyBalance {
     public readonly productId: string,
     /** Product display name */
     public readonly productName: string,
-    /** Human-readable period label (e.g., "Jan 2024") */
-    public readonly periodLabel: string,
     /** True when profit > 0 */
     public readonly isProfitable: boolean,
     /** True when profit < 0 */
@@ -159,7 +157,7 @@ export class MonthlyBalance {
    */
   static fromApiResponse(response: MonthlyBalanceApiResponse): MonthlyBalance {
     return new MonthlyBalance(
-      response.period,
+      JbhDatePipe.toPeriod(response.period),
       response.openingBalance,
       response.closingBalance,
       response.profit,
@@ -167,9 +165,8 @@ export class MonthlyBalance {
       response.movementCount,
       response.isGapPeriod,
       response.isOfficialReport,
-      response.productId,
+      response.productId.value,
       response.productName,
-      response.periodLabel,
       response.isProfitable,
       response.isLoss
     );

@@ -91,7 +91,6 @@ totalBalance = $50,000 + $30,000 = $80,000
 interface MonthlyBalanceApiResponse {
   // Period identification
   period: string;
-  periodLabel: string;
 
   // Balance data
   openingBalance: number;
@@ -107,7 +106,7 @@ interface MonthlyBalanceApiResponse {
   isLoss: boolean;
 
   // Product identification
-  productId: string;
+  productId: { value: string };
   productName: string;
 }
 ```
@@ -119,7 +118,6 @@ interface MonthlyBalanceApiResponse {
 | Field | Type | Description | Example |
 |-------|------|-------------|---------|
 | `period` | string | Period identifier in "YYYY-MM" format, used for sorting and filtering | `"2024-01"` |
-| `periodLabel` | string | Human-readable period label, pre-formatted by backend for display | `"Jan 2024"` |
 
 #### Balance Data
 
@@ -144,7 +142,7 @@ interface MonthlyBalanceApiResponse {
 
 | Field | Type | Description | Example |
 |-------|------|-------------|---------|
-| `productId` | string | Unique identifier for the product (UUID) | `"a1b2c3d4-e5f6-..."` |
+| `productId` | object | Unique identifier wrapper for the product (UUID) | `{ "value": "a1b2c3d4-e5f6-..." }` |
 | `productName` | string | User-friendly name of the product | `"Main Savings Account"` |
 
 ---
@@ -173,7 +171,6 @@ class MonthlyBalance {
     public readonly isOfficialReport: boolean,
     public readonly productId: string,
     public readonly productName: string,
-    public readonly periodLabel: string,
     public readonly isProfitable: boolean,
     public readonly isLoss: boolean
   ) {}
@@ -199,7 +196,6 @@ class MonthlyBalance {
 
 | Chart Element | Field Used | Purpose |
 |---------------|------------|---------|
-| X-axis labels | `balance.periodLabel` | Display month names |
 | Y-axis values | `balance.closingBalance` | Plot the balance line |
 | Series grouping | `balance.productId` | Group data by product |
 | Legend labels | `balance.productName` | Identify each product line |
@@ -208,7 +204,6 @@ class MonthlyBalance {
 
 | Table Column | Field Used | Notes |
 |--------------|------------|-------|
-| Period | `balance.periodLabel` | Pre-formatted |
 | Product | `balance.productName` | Only shown in "All Products" view |
 | Opening | `balance.openingBalance` | Formatted as currency |
 | Closing | `balance.closingBalance` | Formatted as currency |
@@ -235,7 +230,6 @@ class MonthlyBalance {
   "balances": [
     {
       "period": "2024-01",
-      "periodLabel": "Jan 2024",
       "openingBalance": 40000.00,
       "closingBalance": 41000.00,
       "profit": 1000.00,
@@ -245,12 +239,11 @@ class MonthlyBalance {
       "isOfficialReport": true,
       "isProfitable": true,
       "isLoss": false,
-      "productId": "prod-001",
+      "productId": { "value": "prod-001" },
       "productName": "Main Savings"
     },
     {
       "period": "2024-01",
-      "periodLabel": "Jan 2024",
       "openingBalance": 35000.00,
       "closingBalance": 36500.00,
       "profit": 1500.00,
@@ -260,12 +253,11 @@ class MonthlyBalance {
       "isOfficialReport": false,
       "isProfitable": true,
       "isLoss": false,
-      "productId": "prod-002",
+      "productId": { "value": "prod-002" },
       "productName": "Investment Fund"
     },
     {
       "period": "2024-02",
-      "periodLabel": "Feb 2024",
       "openingBalance": 41000.00,
       "closingBalance": 41500.00,
       "profit": 500.00,
@@ -275,7 +267,7 @@ class MonthlyBalance {
       "isOfficialReport": false,
       "isProfitable": true,
       "isLoss": false,
-      "productId": "prod-001",
+      "productId": { "value": "prod-001" },
       "productName": "Main Savings"
     }
   ]
@@ -287,7 +279,6 @@ class MonthlyBalance {
 ## Notes for Backend Implementation
 
 1. **All calculations must be done on the backend** - The frontend only renders data
-2. **periodLabel format**: Use locale-appropriate month names (e.g., "Jan 2024" for English)
-3. **Sorting**: Return balances sorted by `period` ascending, then by `productId`
-4. **Empty periods**: Include gap periods with `isGapPeriod: true` if the user should see continuity
-5. **Precision**: Use 2 decimal places for monetary values, reasonable precision for percentages
+2. **Sorting**: Return balances sorted by `period` descending, then by `productId`
+3. **Empty periods**: Include gap periods with `isGapPeriod: true` if the user should see continuity
+4. **Precision**: Use 2 decimal places for monetary values, reasonable precision for percentages

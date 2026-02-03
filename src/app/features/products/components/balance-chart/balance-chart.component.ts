@@ -4,6 +4,7 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxChartsModule, Color, ScaleType, LegendPosition } from '@swimlane/ngx-charts';
 import { MonthlyBalance } from '@core/domain/models/monthly-balance.model';
+import { JbhDatePipe } from '@shared/pipes';
 
 interface ChartDataPoint {
   name: string;
@@ -60,7 +61,7 @@ export class BalanceChartComponent implements OnChanges {
       this.showLegend = false;
       const sortedBalances = [...this.balances].sort((a, b) => a.period.localeCompare(b.period));
       const balanceSeries: ChartDataPoint[] = sortedBalances.map(balance => ({
-        name: balance.periodLabel,
+        name: JbhDatePipe.formatPeriod(balance.period),
         value: balance.closingBalance
       }));
 
@@ -79,7 +80,7 @@ export class BalanceChartComponent implements OnChanges {
         return {
           name: productName,
           series: sortedBalances.map(b => ({
-            name: b.periodLabel,
+            name: JbhDatePipe.formatPeriod(b.period),
             value: b.closingBalance
           }))
         };

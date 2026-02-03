@@ -7,6 +7,7 @@ import { addIcons } from 'ionicons';
 import { calendarOutline, cubeOutline, searchOutline } from 'ionicons/icons';
 import { ProductListItem } from '@core/domain/models/product-list-item.model';
 import { MonthlyBalanceRequest } from '@core/domain/models/monthly-balance.model';
+import { JbhDatePipe } from '@shared/pipes';
 
 export interface BalanceFilterEvent {
   productId: string | null;
@@ -32,8 +33,7 @@ export class BalanceHistoryFilterComponent implements OnInit {
   constructor(private fb: FormBuilder) {
     addIcons({ calendarOutline, cubeOutline, searchOutline });
 
-    const now = new Date();
-    this.maxDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    this.maxDate = JbhDatePipe.toPeriod(new Date());
     this.minStartDate = '2020-01';
   }
 
@@ -43,11 +43,11 @@ export class BalanceHistoryFilterComponent implements OnInit {
 
   private initializeForm(): void {
     const now = new Date();
-    const endPeriod = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    const endPeriod = JbhDatePipe.toPeriod(now);
 
     const sixMonthsAgo = new Date(now);
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5);
-    const startPeriod = `${sixMonthsAgo.getFullYear()}-${String(sixMonthsAgo.getMonth() + 1).padStart(2, '0')}`;
+    const startPeriod = JbhDatePipe.toPeriod(sixMonthsAgo);
 
     this.filterForm = this.fb.group({
       productId: [this.initialProductId || ''],
@@ -57,15 +57,17 @@ export class BalanceHistoryFilterComponent implements OnInit {
   }
 
   private dateRangeValidator(group: FormGroup): { [key: string]: boolean } | null {
-    const start = group.get('startPeriod')?.value;
-    const end = group.get('endPeriod')?.value;
+    const startRaw = group.get('startPeriod')?.value;
+    const endRaw = group.get('endPeriod')?.value;
+
+    const start = startRaw ? JbhDatePipe.normalizePeriod(startRaw) : null;
+    const end = endRaw ? JbhDatePipe.normalizePeriod(endRaw) : null;
 
     if (start && end && start > end) {
       return { startAfterEnd: true };
     }
 
-    const now = new Date();
-    const maxPeriod = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    const maxPeriod = JbhDatePipe.toPeriod(new Date());
     if (end && end > maxPeriod) {
       return { endInFuture: true };
     }
@@ -79,8 +81,8 @@ export class BalanceHistoryFilterComponent implements OnInit {
       this.filterApplied.emit({
         productId: formValue.productId || null,
         request: {
-          startPeriod: formValue.startPeriod,
-          endPeriod: formValue.endPeriod
+          startPeriod: JbhDatePipe.normalizePeriod(formValue.startPeriod),
+          endPeriod: JbhDatePipe.normalizePeriod(formValue.endPeriod)
         }
       });
     }
@@ -96,9 +98,6 @@ export class BalanceHistoryFilterComponent implements OnInit {
   }
 
   formatPeriodDisplay(period: string): string {
-    if (!period) return '';
-    const [year, month] = period.split('-');
-    const date = new Date(parseInt(year, 10), parseInt(month, 10) - 1);
-    return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+    return JbhDatePipe.formatPeriod(period);
   }
 }
