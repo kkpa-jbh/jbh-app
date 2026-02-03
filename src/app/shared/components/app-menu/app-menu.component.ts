@@ -17,7 +17,8 @@ import {
   chevronUpOutline,
   chevronDownOutline,
   peopleOutline,
-  personAddOutline
+  personAddOutline,
+  analyticsOutline
 } from 'ionicons/icons';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
@@ -79,6 +80,12 @@ export class AppMenuComponent implements OnInit {
           translationKey: 'menu.products.transfer',
           icon: 'swap-horizontal-outline',
           route: '/products/transfer'
+        },
+        {
+          id: 'balance-history',
+          translationKey: 'menu.products.balanceHistory',
+          icon: 'analytics-outline',
+          route: '/products/balance-history'
         }
       ]
     },
@@ -142,7 +149,8 @@ export class AppMenuComponent implements OnInit {
       chevronUpOutline,
       chevronDownOutline,
       peopleOutline,
-      personAddOutline
+      personAddOutline,
+      analyticsOutline
     });
   }
 

@@ -48,6 +48,11 @@ export const routes: Routes = [
     canActivate: [authGuard] // Requires authentication
   },
   {
+    path: 'products/balance-history',
+    loadComponent: () => import('./features/products/pages/balance-history/balance-history.page').then(m => m.BalanceHistoryPage),
+    canActivate: [authGuard] // Requires authentication
+  },
+  {
     path: 'teams/create',
     loadComponent: () => import('./features/teams/pages/create/create-team.page').then(m => m.CreateTeamPage),
     canActivate: [authGuard] // Requires authentication

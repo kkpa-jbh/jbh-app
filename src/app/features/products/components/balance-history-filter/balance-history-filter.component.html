@@ -1,0 +1,96 @@
+<form [formGroup]="filterForm" class="jbh-balance-filter" (ngSubmit)="onApplyFilter()">
+  <div class="jbh-balance-filter-field">
+    <label class="jbh-label">{{ 'products.balanceHistory.product.label' | translate }}</label>
+    <div class="jbh-ion-select-wrapper">
+      <ion-icon name="cube-outline" class="jbh-ion-select-icon"></ion-icon>
+      <ion-select
+        formControlName="productId"
+        interface="action-sheet"
+        class="jbh-ion-select"
+        [placeholder]="'products.balanceHistory.product.placeholder' | translate"
+      >
+        <ion-select-option value="">{{ 'products.balanceHistory.allProducts' | translate }}</ion-select-option>
+        @for (product of products; track product.id) {
+          <ion-select-option [value]="product.id">{{ product.name }}</ion-select-option>
+        }
+      </ion-select>
+    </div>
+  </div>
+
+  <div class="jbh-balance-filter-field">
+    <label class="jbh-label">{{ 'products.balanceHistory.startPeriod.label' | translate }}</label>
+    <ion-datetime-button
+      datetime="startPeriod"
+      class="jbh-datetime-button"
+      [class.error]="hasError('startPeriod') || hasFormError('startAfterEnd')"
+    ></ion-datetime-button>
+    <ion-modal [keepContentsMounted]="true">
+      <ng-template>
+        <ion-datetime
+          id="startPeriod"
+          formControlName="startPeriod"
+          presentation="month-year"
+          [min]="minStartDate"
+          [max]="maxDate"
+          [showDefaultButtons]="true"
+        ></ion-datetime>
+      </ng-template>
+    </ion-modal>
+    @if (hasError('startPeriod')) {
+      <div class="jbh-field-error">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <span>{{ 'products.balanceHistory.startPeriod.required' | translate }}</span>
+      </div>
+    }
+    @if (hasFormError('startAfterEnd')) {
+      <div class="jbh-field-error">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <span>{{ 'products.balanceHistory.startPeriod.afterEndError' | translate }}</span>
+      </div>
+    }
+  </div>
+
+  <div class="jbh-balance-filter-field">
+    <label class="jbh-label">{{ 'products.balanceHistory.endPeriod.label' | translate }}</label>
+    <ion-datetime-button
+      datetime="endPeriod"
+      class="jbh-datetime-button"
+      [class.error]="hasError('endPeriod') || hasFormError('endInFuture')"
+    ></ion-datetime-button>
+    <ion-modal [keepContentsMounted]="true">
+      <ng-template>
+        <ion-datetime
+          id="endPeriod"
+          formControlName="endPeriod"
+          presentation="month-year"
+          [min]="minStartDate"
+          [max]="maxDate"
+          [showDefaultButtons]="true"
+        ></ion-datetime>
+      </ng-template>
+    </ion-modal>
+    @if (hasError('endPeriod')) {
+      <div class="jbh-field-error">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <span>{{ 'products.balanceHistory.endPeriod.required' | translate }}</span>
+      </div>
+    }
+    @if (hasFormError('endInFuture')) {
+      <div class="jbh-field-error">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <span>{{ 'products.balanceHistory.endPeriod.futureError' | translate }}</span>
+      </div>
+    }
+  </div>
+
+  <div class="jbh-balance-filter-actions">
+    <button
+      type="submit"
+      class="jbh-button-primary"
+      [disabled]="filterForm.invalid"
+    >
+      <ion-icon name="search-outline"></ion-icon>
+      {{ 'products.balanceHistory.applyFilter' | translate }}
+    </button>
+  </div>
+</form>

@@ -25,6 +25,7 @@
     "logoutError": "Error logging out. Please try again.",
     "logoutSuccess": "You have been logged out successfully",
     "products": {
+      "balanceHistory": "Balance History",
       "create": "Create Product",
       "overview": "Overview",
       "title": "Products",
@@ -40,6 +41,67 @@
     "version": "Version"
   },
   "products": {
+    "balanceHistory": {
+      "allProducts": "All Products",
+      "applyFilter": "Apply Filter",
+      "avgGrowth": "Avg Growth",
+      "chart": {
+        "balance": "Balance",
+        "title": "Balance Trend"
+      },
+      "closingBalance": "Closing Balance",
+      "description": "View monthly balance history and trends",
+      "empty": {
+        "message": "No balance history found for the selected period. Try adjusting the date range or selecting a different product.",
+        "title": "No Data Available"
+      },
+      "endPeriod": {
+        "futureError": "End cannot be in the future",
+        "label": "End Period",
+        "required": "End period is required"
+      },
+      "errors": {
+        "load": "Failed to load balance history. Please try again."
+      },
+      "formSubtitle": "Analyze your financial performance over time",
+      "formTitle": "Balance History",
+      "gapPeriod": "Gap",
+      "growthRate": "Growth",
+      "movements": "Movements",
+      "officialReport": "Official",
+      "openingBalance": "Opening Balance",
+      "period": "Period",
+      "periodChange": "Period Change",
+      "product": {
+        "label": "Product",
+        "placeholder": "Select a product"
+      },
+      "profit": "Profit",
+      "startPeriod": {
+        "afterEndError": "Start must be before or equal to end",
+        "label": "Start Period",
+        "required": "Start period is required"
+      },
+      "summary": {
+        "avgGrowth": "Avg Growth Rate",
+        "periodChange": "Period Change",
+        "totalBalance": "Total Balance",
+        "totalMovements": "Total Movements"
+      },
+      "table": {
+        "closingBalance": "Closing",
+        "growthRate": "Growth",
+        "movements": "Moves",
+        "openingBalance": "Opening",
+        "period": "Period",
+        "productName": "Product",
+        "profit": "Profit",
+        "status": "Status"
+      },
+      "title": "Balance History",
+      "titleLarge": "Balance History",
+      "viewHistory": "View History"
+    },
     "card": {
       "currentBalance": "Current Balance",
       "fullyWithdrawn": "Fully Withdrawn",

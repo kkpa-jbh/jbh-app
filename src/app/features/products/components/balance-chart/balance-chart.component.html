@@ -1,0 +1,26 @@
+<div class="jbh-chart-container">
+  <h3 class="jbh-chart-title">{{ 'products.balanceHistory.chart.title' | translate }}</h3>
+  <div class="jbh-chart-wrapper">
+    @if (chartData.length > 0 && chartData[0].series.length > 0) {
+      <ngx-charts-line-chart
+        [results]="chartData"
+        [scheme]="colorScheme"
+        [xAxis]="true"
+        [yAxis]="true"
+        [showXAxisLabel]="false"
+        [showYAxisLabel]="false"
+        [legend]="showLegend"
+        [legendPosition]="legendPosition"
+        [autoScale]="true"
+        [timeline]="false"
+        [yAxisTickFormatting]="yAxisTickFormat"
+      >
+      </ngx-charts-line-chart>
+    } @else {
+      <div class="jbh-empty-state">
+        <ion-icon name="analytics-outline"></ion-icon>
+        <span>{{ 'products.balanceHistory.empty.title' | translate }}</span>
+      </div>
+    }
+  </div>
+</div>

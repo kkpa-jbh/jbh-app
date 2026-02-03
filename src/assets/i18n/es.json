@@ -25,6 +25,7 @@
     "logoutError": "Error al cerrar sesión. Por favor intenta de nuevo.",
     "logoutSuccess": "Has cerrado sesión exitosamente",
     "products": {
+      "balanceHistory": "Historial de Saldos",
       "create": "Crear Producto",
       "overview": "Resumen",
       "title": "Productos",
@@ -40,6 +41,67 @@
     "version": "Versión"
   },
   "products": {
+    "balanceHistory": {
+      "allProducts": "Todos los Productos",
+      "applyFilter": "Aplicar Filtro",
+      "avgGrowth": "Crecimiento Prom",
+      "chart": {
+        "balance": "Saldo",
+        "title": "Tendencia de Saldo"
+      },
+      "closingBalance": "Saldo de Cierre",
+      "description": "Ver historial de saldos mensuales y tendencias",
+      "empty": {
+        "message": "No se encontró historial de saldos para el período seleccionado. Intenta ajustar el rango de fechas o seleccionar un producto diferente.",
+        "title": "Sin Datos Disponibles"
+      },
+      "endPeriod": {
+        "futureError": "El final no puede ser en el futuro",
+        "label": "Período Final",
+        "required": "El período final es requerido"
+      },
+      "errors": {
+        "load": "Error al cargar el historial de saldos. Por favor intenta de nuevo."
+      },
+      "formSubtitle": "Analiza tu rendimiento financiero a lo largo del tiempo",
+      "formTitle": "Historial de Saldos",
+      "gapPeriod": "Vacío",
+      "growthRate": "Crecimiento",
+      "movements": "Movimientos",
+      "officialReport": "Oficial",
+      "openingBalance": "Saldo de Apertura",
+      "period": "Período",
+      "periodChange": "Cambio del Período",
+      "product": {
+        "label": "Producto",
+        "placeholder": "Selecciona un producto"
+      },
+      "profit": "Ganancia",
+      "startPeriod": {
+        "afterEndError": "El inicio debe ser anterior o igual al final",
+        "label": "Período Inicial",
+        "required": "El período inicial es requerido"
+      },
+      "summary": {
+        "avgGrowth": "Tasa de Crecimiento Prom",
+        "periodChange": "Cambio del Período",
+        "totalBalance": "Saldo Total",
+        "totalMovements": "Total de Movimientos"
+      },
+      "table": {
+        "closingBalance": "Cierre",
+        "growthRate": "Crecimiento",
+        "movements": "Movs",
+        "openingBalance": "Apertura",
+        "period": "Período",
+        "productName": "Producto",
+        "profit": "Ganancia",
+        "status": "Estado"
+      },
+      "title": "Historial de Saldos",
+      "titleLarge": "Historial de Saldos",
+      "viewHistory": "Ver Historial"
+    },
     "card": {
       "currentBalance": "Saldo Actual",
       "fullyWithdrawn": "Retirado Completamente",

@@ -1,4 +1,5 @@
 import { bootstrapApplication } from '@angular/platform-browser';
+import { provideAnimations } from '@angular/platform-browser/animations';
 import { RouteReuseStrategy, provideRouter, withPreloading, PreloadAllModules } from '@angular/router';
 import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalone';
 import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
@@ -18,11 +19,14 @@ import { TeamRepository } from './app/core/domain/repositories/team.repository';
 import { TeamRepositoryImpl } from './app/core/infrastructure/repositories/team.repository.impl';
 import { PreferencesRepository } from './app/core/domain/repositories/preferences.repository';
 import { PreferencesRepositoryImpl } from './app/core/infrastructure/repositories/preferences.repository.impl';
+import { BalanceHistoryRepository } from './app/core/domain/repositories/balance-history.repository';
+import { BalanceHistoryRepositoryImpl } from './app/core/infrastructure/repositories/balance-history.repository.impl';
 
 bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideIonicAngular(),
+    provideAnimations(),
     provideRouter(routes, withPreloading(PreloadAllModules)),
     provideHttpClient(withInterceptorsFromDi()),
 
@@ -46,5 +50,6 @@ bootstrapApplication(AppComponent, {
     { provide: ProductRepository, useClass: ProductRepositoryImpl },
     { provide: TeamRepository, useClass: TeamRepositoryImpl },
     { provide: PreferencesRepository, useClass: PreferencesRepositoryImpl },
+    { provide: BalanceHistoryRepository, useClass: BalanceHistoryRepositoryImpl },
   ],
 });

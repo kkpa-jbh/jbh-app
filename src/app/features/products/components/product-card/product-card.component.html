@@ -79,9 +79,19 @@
       <ion-icon [name]="growthIcon"></ion-icon>
       <span>{{ formattedGrowthRate }}</span>
     </div>
-    <div class="jbh-product-updated">
-      <ion-icon name="time-outline"></ion-icon>
-      {{ relativeUpdatedTime }}
+    <div class="jbh-product-footer-right">
+      <button
+        class="jbh-view-history-button"
+        (click)="onViewHistory($event)"
+        [title]="'products.balanceHistory.viewHistory' | translate"
+      >
+        <ion-icon name="analytics-outline"></ion-icon>
+        <span class="jbh-hide-mobile">{{ 'products.balanceHistory.viewHistory' | translate }}</span>
+      </button>
+      <div class="jbh-product-updated">
+        <ion-icon name="time-outline"></ion-icon>
+        {{ relativeUpdatedTime }}
+      </div>
     </div>
   </div>
 </div>

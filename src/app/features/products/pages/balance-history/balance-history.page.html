@@ -1,0 +1,92 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>{{ 'products.balanceHistory.title' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="jbh-container jbh-container-wide">
+    <!-- Page Header -->
+    <div class="jbh-page-header">
+      <div class="jbh-page-header-content">
+        <div class="jbh-page-header-icon">
+          <ion-icon name="analytics-outline"></ion-icon>
+        </div>
+        <div>
+          <h1 class="jbh-page-title">{{ 'products.balanceHistory.formTitle' | translate }}</h1>
+          <p class="jbh-page-subtitle">{{ 'products.balanceHistory.formSubtitle' | translate }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter Component -->
+    @if (!isProductsLoading) {
+      <app-balance-history-filter
+        [products]="products"
+        [initialProductId]="initialProductId"
+        (filterApplied)="onFilterApplied($event)"
+      ></app-balance-history-filter>
+    } @else {
+      <div class="jbh-balance-filter">
+        <div class="jbh-skeleton jbh-skeleton-input"></div>
+        <div class="jbh-skeleton jbh-skeleton-input"></div>
+        <div class="jbh-skeleton jbh-skeleton-input"></div>
+      </div>
+    }
+
+    <!-- Loading State -->
+    @if (isLoading && currentFilter) {
+      <div class="jbh-skeleton-summary">
+        @for (item of [1, 2, 3, 4]; track item) {
+          <div class="jbh-skeleton jbh-skeleton-summary-card"></div>
+        }
+      </div>
+      <div class="jbh-skeleton jbh-skeleton-chart"></div>
+      <div class="jbh-skeleton jbh-skeleton-table"></div>
+    }
+
+    <!-- Content -->
+    @if (!isLoading && hasData && summary) {
+      <!-- Summary Cards -->
+      <app-balance-summary-cards
+        [summary]="summary"
+      ></app-balance-summary-cards>
+
+      <!-- Chart -->
+      <app-balance-chart
+        [balances]="balances"
+      ></app-balance-chart>
+
+      <!-- Table -->
+      <app-balance-history-table
+        [balances]="balances"
+        [showProductColumn]="showProductColumn"
+      ></app-balance-history-table>
+    }
+
+    <!-- Empty State -->
+    @if (!isLoading && !hasData && currentFilter) {
+      <div class="jbh-empty-state">
+        <div class="jbh-empty-state-icon">
+          <ion-icon name="wallet-outline"></ion-icon>
+        </div>
+        <h3 class="jbh-empty-state-title">{{ 'products.balanceHistory.empty.title' | translate }}</h3>
+        <p class="jbh-empty-state-message">{{ 'products.balanceHistory.empty.message' | translate }}</p>
+      </div>
+    }
+
+    <!-- Initial State (no filter applied yet) -->
+    @if (!isLoading && !currentFilter) {
+      <div class="jbh-empty-state">
+        <div class="jbh-empty-state-icon">
+          <ion-icon name="analytics-outline"></ion-icon>
+        </div>
+        <h3 class="jbh-empty-state-title">{{ 'products.balanceHistory.formTitle' | translate }}</h3>
+        <p class="jbh-empty-state-message">{{ 'products.balanceHistory.description' | translate }}</p>
+      </div>
+    }
+  </div>
+</ion-content>

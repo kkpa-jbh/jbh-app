@@ -1,0 +1,36 @@
+<div class="jbh-balance-summary">
+  <div class="jbh-summary-card">
+    <div class="jbh-summary-card-icon">
+      <ion-icon name="wallet-outline"></ion-icon>
+    </div>
+    <span class="jbh-summary-card-label">{{ 'products.balanceHistory.summary.totalBalance' | translate }}</span>
+    <span class="jbh-summary-card-value">{{ formattedTotalBalance }}</span>
+  </div>
+
+  <div class="jbh-summary-card">
+    <div class="jbh-summary-card-icon">
+      <ion-icon name="trending-up-outline"></ion-icon>
+    </div>
+    <span class="jbh-summary-card-label">{{ 'products.balanceHistory.summary.periodChange' | translate }}</span>
+    <span class="jbh-summary-card-value" [ngClass]="periodChangeClass">
+      {{ formattedPeriodChange }}
+      <small>({{ formattedPeriodChangePercent }})</small>
+    </span>
+  </div>
+
+  <div class="jbh-summary-card">
+    <div class="jbh-summary-card-icon">
+      <ion-icon name="stats-chart-outline"></ion-icon>
+    </div>
+    <span class="jbh-summary-card-label">{{ 'products.balanceHistory.summary.avgGrowth' | translate }}</span>
+    <span class="jbh-summary-card-value" [ngClass]="avgGrowthClass">{{ formattedAvgGrowth }}</span>
+  </div>
+
+  <div class="jbh-summary-card">
+    <div class="jbh-summary-card-icon">
+      <ion-icon name="swap-vertical-outline"></ion-icon>
+    </div>
+    <span class="jbh-summary-card-label">{{ 'products.balanceHistory.summary.totalMovements' | translate }}</span>
+    <span class="jbh-summary-card-value">{{ summary.totalMovements }}</span>
+  </div>
+</div>

@@ -17,6 +17,16 @@ Expert guidance for Ionic/Angular hybrid mobile apps using Clean Architecture, D
 
 ## Quick Reference
 
+### Context Summary                                                             
+                                                                              
+  What products are: Financial instruments (savings accounts, investments,    
+  loans, credit cards, CDTs, real estate) - each with current balance,        
+  movement balance, net profit, and growth rate.                              
+                                                                              
+  Current navigation:                                                         
+  - Products → Create | Overview | Transfer                                   
+  - Teams → Create | Overview | Invite  
+
 ### Project Structure
 
 ```diagram
@@ -46,6 +56,8 @@ src/app/core/infrastructure/
 ### Critical Rules
 
 - Do not use any function from console. Use the servie `private logger: LoggerService` instead.
+- Do not do any calculations with numbers. All calculations must be done on the backend side. If you need to do any calculations, please stop the plan and alert the team.
+- All format conversions must be done via directives or pipes. No format conversions in the component code.
 
 #### Theme System
 
@@ -68,6 +80,8 @@ src/app/core/infrastructure/
 3. **Reactive Forms** with `hasError()`, `getErrorMessage()` methods
 
 #### Components
+
+- Overview pages are snapshots, not reports.
 
 1. **Separate files**: HTML, TS, SCSS (never inline). NOT generate the `spec.ts` files
 2. **Standalone components** with proper imports

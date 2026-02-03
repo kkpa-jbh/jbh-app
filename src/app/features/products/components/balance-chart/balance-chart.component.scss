@@ -1,0 +1,30 @@
+:host {
+  display: block;
+}
+
+.jbh-chart-wrapper {
+  ::ng-deep {
+    .ngx-charts {
+      text {
+        fill: var(--jbh-text-secondary);
+      }
+
+      .line-series {
+        .line {
+          stroke-width: 3px;
+        }
+      }
+
+      .grid-panel {
+        &.odd {
+          fill: rgba(0, 0, 0, 0.02);
+        }
+      }
+
+      .gridline-path {
+        stroke: var(--jbh-border-color);
+        stroke-dasharray: 4, 4;
+      }
+    }
+  }
+}

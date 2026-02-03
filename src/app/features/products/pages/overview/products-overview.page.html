@@ -79,6 +79,7 @@
             (edit)="navigateToEdit(product)"
             (delete)="confirmDeleteProduct(product)"
             (statusChange)="onStatusChange(product, $event)"
+            (viewHistory)="navigateToBalanceHistory(product)"
           ></app-product-card>
         }
       </div>

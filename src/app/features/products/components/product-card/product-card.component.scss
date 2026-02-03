@@ -4,3 +4,9 @@
 :host {
   display: block;
 }
+
+.jbh-product-footer-right {
+  display: flex;
+  align-items: center;
+  gap: var(--jbh-spacing-sm);
+}

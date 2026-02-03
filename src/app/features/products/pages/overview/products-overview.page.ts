@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { IonicModule, ViewWillEnter, ToastController, AlertController } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
+import { addIcons } from 'ionicons';
+import { refreshOutline, walletOutline, addOutline } from 'ionicons/icons';
 import { ProductUseCase } from '@core/domain/use-cases/product.use-case';
 import { ProductListItem } from '@core/domain/models/product-list-item.model';
 import { JBHError } from '@core/domain/models/jbh-error.model';
@@ -37,7 +39,9 @@ export class ProductsOverviewPage implements OnInit, OnDestroy, ViewWillEnter {
     private alertController: AlertController,
     private logger: LoggerService,
     private translationService: TranslationService
-  ) {}
+  ) {
+    addIcons({ refreshOutline, walletOutline, addOutline });
+  }
 
   ngOnInit(): void {
     this.loadProducts();
@@ -100,6 +104,10 @@ export class ProductsOverviewPage implements OnInit, OnDestroy, ViewWillEnter {
     this.router.navigate(['/products/edit', product.id]);
   }
 
+  navigateToBalanceHistory(product: ProductListItem): void {
+    this.router.navigate(['/products/balance-history'], { queryParams: { productId: product.id } });
+  }
+
   async confirmDeleteProduct(product: ProductListItem): Promise<void> {
     const alert = await this.alertController.create({
       header: this.translationService.instant('products.deleteProduct.title'),
@@ -124,11 +132,11 @@ export class ProductsOverviewPage implements OnInit, OnDestroy, ViewWillEnter {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
-          this.products = this.products.filter(p => p.id !== product.id);
           this.showToast(
             this.translationService.instant('products.deleteProduct.success'),
             'success'
           );
+          this.refreshProducts();
         },
         error: (error: JBHError) => {
           this.logger.error('Error deleting product:', 'ProductsOverviewPage', error);
