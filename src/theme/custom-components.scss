@@ -2440,6 +2440,7 @@ ion-menu::part(backdrop) {
   border-radius: var(--jbh-radius-lg);
   box-shadow: var(--jbh-shadow-md);
   overflow: hidden;
+  margin-bottom: var(--jbh-spacing-xl);
 }
 
 .jbh-balance-table-header {
@@ -2569,6 +2570,7 @@ ion-menu::part(backdrop) {
   display: flex;
   flex-direction: column;
   gap: var(--jbh-spacing-sm);
+  margin-bottom: var(--jbh-spacing-xl);
 }
 
 .jbh-balance-card {
