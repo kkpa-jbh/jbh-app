@@ -4,7 +4,7 @@
       <ion-icon name="wallet-outline"></ion-icon>
     </div>
     <span class="jbh-summary-card-label">{{ 'products.balanceHistory.summary.totalBalance' | translate }}</span>
-    <span class="jbh-summary-card-value">{{ formattedTotalBalance }}</span>
+    <span class="jbh-summary-card-value">{{ summary.totalBalance | jbhCurrency:currency }}</span>
   </div>
 
   <div class="jbh-summary-card">
@@ -12,9 +12,9 @@
       <ion-icon name="trending-up-outline"></ion-icon>
     </div>
     <span class="jbh-summary-card-label">{{ 'products.balanceHistory.summary.periodChange' | translate }}</span>
-    <span class="jbh-summary-card-value" [ngClass]="periodChangeClass">
-      {{ formattedPeriodChange }}
-      <small>({{ formattedPeriodChangePercent }})</small>
+    <span class="jbh-summary-card-value" [ngClass]="getPeriodChangeClass()">
+      {{ summary.periodChange | jbhProfit:currency }}
+      <small>({{ summary.periodChangePercent | jbhGrowth }})</small>
     </span>
   </div>
 
@@ -23,7 +23,7 @@
       <ion-icon name="stats-chart-outline"></ion-icon>
     </div>
     <span class="jbh-summary-card-label">{{ 'products.balanceHistory.summary.avgGrowth' | translate }}</span>
-    <span class="jbh-summary-card-value" [ngClass]="avgGrowthClass">{{ formattedAvgGrowth }}</span>
+    <span class="jbh-summary-card-value" [ngClass]="getAvgGrowthClass()">{{ summary.avgGrowthRate | jbhGrowth }}</span>
   </div>
 
   <div class="jbh-summary-card">

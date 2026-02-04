@@ -14,53 +14,63 @@
   <!-- Menu Items -->
   <div class="jbh-menu-content">
     <ion-list class="jbh-menu-list">
-      <ng-container *ngFor="let item of menuItems">
+      @for (item of menuItems; track item.id) {
         <!-- Install App Button (shown before divider/logout) -->
-        <app-install-app-button *ngIf="item.id === 'divider-1'"></app-install-app-button>
+        @if (item.id === 'divider-1') {
+          <app-install-app-button></app-install-app-button>
+        }
 
         <!-- Divider -->
-        <div *ngIf="item.divider" class="jbh-menu-divider"></div>
+        @if (item.divider) {
+          <div class="jbh-menu-divider"></div>
+        }
 
         <!-- Menu Item (Parent) -->
-        <div *ngIf="!item.divider" class="jbh-menu-item-wrapper">
-          <ion-item
-            [button]="true"
-            [detail]="false"
-            lines="none"
-            class="jbh-menu-item"
-            [class.jbh-menu-item-active]="isActive(item)"
-            [class.jbh-menu-item-expanded]="item.expanded"
-            (click)="handleMenuItemClick(item, $event)">
-            <ion-icon [name]="item.icon" slot="start" class="jbh-menu-item-icon"></ion-icon>
-            <ion-label class="jbh-menu-item-label">
-              {{ item.translationKey | translate }}
-            </ion-label>
-            <ion-icon
-              *ngIf="item.children"
-              [name]="item.expanded ? 'chevron-up-outline' : 'chevron-down-outline'"
-              slot="end"
-              class="jbh-menu-item-chevron">
-            </ion-icon>
-          </ion-item>
-
-          <!-- Submenu (Children) -->
-          <div *ngIf="item.children && item.expanded" class="jbh-menu-submenu">
+        @if (!item.divider) {
+          <div class="jbh-menu-item-wrapper">
             <ion-item
-              *ngFor="let child of item.children"
               [button]="true"
               [detail]="false"
               lines="none"
-              class="jbh-menu-subitem"
-              [class.jbh-menu-subitem-active]="isActive(child)"
-              (click)="handleMenuItemClick(child, $event)">
-              <ion-icon [name]="child.icon" slot="start" class="jbh-menu-subitem-icon"></ion-icon>
-              <ion-label class="jbh-menu-subitem-label">
-                {{ child.translationKey | translate }}
+              class="jbh-menu-item"
+              [class.jbh-menu-item-active]="isActive(item)"
+              [class.jbh-menu-item-expanded]="item.expanded"
+              (click)="handleMenuItemClick(item, $event)">
+              <ion-icon [name]="item.icon" slot="start" class="jbh-menu-item-icon"></ion-icon>
+              <ion-label class="jbh-menu-item-label">
+                {{ item.translationKey | translate }}
               </ion-label>
+              @if (item.children) {
+                <ion-icon
+                  [name]="item.expanded ? 'chevron-up-outline' : 'chevron-down-outline'"
+                  slot="end"
+                  class="jbh-menu-item-chevron">
+                </ion-icon>
+              }
             </ion-item>
+
+            <!-- Submenu (Children) -->
+            @if (item.children && item.expanded) {
+              <div class="jbh-menu-submenu">
+                @for (child of item.children; track child.id) {
+                  <ion-item
+                    [button]="true"
+                    [detail]="false"
+                    lines="none"
+                    class="jbh-menu-subitem"
+                    [class.jbh-menu-subitem-active]="isActive(child)"
+                    (click)="handleMenuItemClick(child, $event)">
+                    <ion-icon [name]="child.icon" slot="start" class="jbh-menu-subitem-icon"></ion-icon>
+                    <ion-label class="jbh-menu-subitem-label">
+                      {{ child.translationKey | translate }}
+                    </ion-label>
+                  </ion-item>
+                }
+              </div>
+            }
           </div>
-        </div>
-      </ng-container>
+        }
+      }
     </ion-list>
   </div>
 

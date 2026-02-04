@@ -59,6 +59,71 @@ src/app/core/infrastructure/
 - Do not do any calculations with numbers. All calculations must be done on the backend side. If you need to do any calculations, please stop the plan and alert the team.
 - All format conversions must be done via directives or pipes. No format conversions in the component code.
 
+#### Performance (CRITICAL)
+
+1. **ALWAYS use `ChangeDetectionStrategy.OnPush`** for ALL components:
+```typescript
+@Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  // ...
+})
+```
+
+2. **NEVER use getter methods for formatting** - use pure pipes instead:
+```typescript
+// ❌ BAD - Called on EVERY change detection cycle
+get formattedBalance(): string {
+  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(this.balance);
+}
+
+// ✅ GOOD - Only called when input changes
+{{ balance | jbhCurrency }}
+```
+
+3. **ALWAYS implement `OnDestroy`** and use `takeUntil(this.destroy$)` for subscriptions:
+```typescript
+export class MyComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+
+  ngOnInit(): void {
+    this.someObservable$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(/* ... */);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+}
+```
+
+4. **ALWAYS use `trackBy` with `@for` loops**:
+```html
+@for (item of items; track item.id) {
+  <app-item [item]="item"></app-item>
+}
+```
+
+5. **AVOID expensive CSS animations**:
+    - **NEVER** use `backdrop-filter: blur()` on animated elements
+    - Prefer `transform` and `opacity` for animations (GPU-accelerated)
+    - Avoid `animation: infinite` on complex elements
+
+6. **Use existing pipes** from `src/app/shared/pipes/`:
+    - `JbhCurrencyPipe` (`jbhCurrency`) - for currency formatting
+    - `JbhTranslationKeyPipe` (`jbhTranslationKey`) - for API JSON translation keys
+    - Use pipes in templates, not formatting methods in components
+
+7. **Backend JSON Translation Keys**: When the API returns a `translationKey` field containing JSON like `{"en":"Salary","es":"Salario"}`, use the `jbhTranslationKey` pipe in templates:
+```html
+<!-- ✅ GOOD - Use the pipe directly in template -->
+{{ category.translationKey | jbhTranslationKey }}
+
+<!-- ❌ BAD - Don't use methods that call on every change detection -->
+{{ getCategoryName(category) }}
+```
+
 #### Theme System
 
 1. **ALL styles** in `src/theme/custom-components.scss` - NO feature-specific theme files

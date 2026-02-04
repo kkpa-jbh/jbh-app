@@ -6,7 +6,7 @@
       </div>
       <div class="jbh-product-details">
         <h3 class="jbh-product-name">{{ product.name }}</h3>
-        <span class="jbh-product-type">{{ productTypeLabel }}</span>
+        <span class="jbh-product-type">{{ 'products.types.' + product.type | translate }}</span>
       </div>
     </div>
     <div class="jbh-product-header-actions">
@@ -62,31 +62,31 @@
     <div class="jbh-product-balances">
       <div class="jbh-balance-item">
         <span class="jbh-balance-label">{{ 'products.card.initialBalance' | translate }}</span>
-        <span class="jbh-balance-value">{{ formattedInitialBalance }}</span>
+        <span class="jbh-balance-value">{{ product.initialBalance !== null ? (product.initialBalance | jbhCurrency:currency) : '--' }}</span>
       </div>
       <div class="jbh-balance-item">
         <span class="jbh-balance-label">{{ 'products.card.currentBalance' | translate }}</span>
-        <span class="jbh-balance-value">{{ formattedCurrentBalance }}</span>
+        <span class="jbh-balance-value">{{ product.currentBalance | jbhCurrency:currency }}</span>
       </div>
       <div class="jbh-balance-item">
         <span class="jbh-balance-label">{{ 'products.card.movementBalance' | translate }}</span>
-        <span class="jbh-balance-value">{{ formattedMovementBalance }}</span>
+        <span class="jbh-balance-value">{{ product.movementBalance | jbhCurrency:currency }}</span>
       </div>
       <div class="jbh-balance-item">
         <span class="jbh-balance-label">{{ 'products.card.netProfit' | translate }}</span>
-        <span class="jbh-balance-value" [ngClass]="profitClass">{{ formattedNetProfit }}</span>
+        <span class="jbh-balance-value" [ngClass]="getProfitClass()">{{ product.netProfitBalance | jbhProfit:currency }}</span>
       </div>
       <div class="jbh-balance-item">
         <span class="jbh-balance-label">{{ 'products.card.growthRate' | translate }}</span>
-        <span class="jbh-balance-value" [ngClass]="growthRateClass">{{ formattedGrowthRate }}</span>
+        <span class="jbh-balance-value" [ngClass]="getGrowthRateClass()">{{ product.netGrowthRate | jbhGrowth }}</span>
       </div>
     </div>
   </div>
 
   <div class="jbh-product-card-footer">
-    <div class="jbh-product-growth" [ngClass]="growthRateClass">
-      <ion-icon [name]="growthIcon"></ion-icon>
-      <span>{{ formattedGrowthRate }}</span>
+    <div class="jbh-product-growth" [ngClass]="getGrowthRateClass()">
+      <ion-icon [name]="getGrowthIcon()"></ion-icon>
+      <span>{{ product.netGrowthRate | jbhGrowth }}</span>
     </div>
     <div class="jbh-product-footer-right">
       <button
@@ -99,7 +99,7 @@
       </button>
       <div class="jbh-product-updated">
         <ion-icon name="time-outline"></ion-icon>
-        {{ relativeUpdatedTime }}
+        {{ product.updatedAt | jbhRelativeTime }}
       </div>
     </div>
   </div>

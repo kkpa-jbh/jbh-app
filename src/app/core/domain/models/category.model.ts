@@ -1,31 +1,23 @@
+export type CategorySource = 'INCOME' | 'EXPENSE';
+
 export interface CategoryApiResponse {
-  id: { value: string };
   name: string;
-  displayNameEn: string;
-  displayNameEs: string;
-  type: 'INCOME' | 'EXPENSE';
+  translationKey: string;
+  source: CategorySource;
 }
 
 export class Category {
   constructor(
-    public readonly id: string,
     public readonly name: string,
-    public readonly displayNameEn: string,
-    public readonly displayNameEs: string,
-    public readonly type: 'INCOME' | 'EXPENSE'
+    public readonly translationKey: string,
+    public readonly source: CategorySource
   ) {}
 
   static fromApiResponse(response: CategoryApiResponse): Category {
     return new Category(
-      response.id.value,
       response.name,
-      response.displayNameEn,
-      response.displayNameEs,
-      response.type
+      response.translationKey,
+      response.source
     );
-  }
-
-  getLocalizedName(language: string): string {
-    return language === 'es' ? this.displayNameEs : this.displayNameEn;
   }
 }

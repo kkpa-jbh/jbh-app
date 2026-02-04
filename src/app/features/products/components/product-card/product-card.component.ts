@@ -1,8 +1,9 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
-import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { addIcons } from 'ionicons';
+import { JbhCurrencyPipe, JbhProfitPipe, JbhGrowthPipe, JbhRelativeTimePipe } from '@shared/pipes';
 import {
   createOutline,
   trashOutline,
@@ -26,7 +27,8 @@ import { ProductListItem } from '@core/domain/models/product-list-item.model';
   templateUrl: './product-card.component.html',
   styleUrls: ['./product-card.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, TranslateModule]
+  imports: [CommonModule, IonicModule, TranslateModule, JbhCurrencyPipe, JbhProfitPipe, JbhGrowthPipe, JbhRelativeTimePipe],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductCardComponent {
   @Input({ required: true }) product!: ProductListItem;
@@ -39,10 +41,7 @@ export class ProductCardComponent {
 
   isTogglingStatus = false;
 
-  constructor(
-    private translateService: TranslateService,
-    private cdr: ChangeDetectorRef
-  ) {
+  constructor(private cdr: ChangeDetectorRef) {
     addIcons({
       createOutline,
       trashOutline,
@@ -93,75 +92,21 @@ export class ProductCardComponent {
     this.cdr.markForCheck();
   }
 
-  get formattedInitialBalance(): string {
-    return this.product.initialBalance !== null
-      ? this.formatCurrency(this.product.initialBalance)
-      : '--';
-  }
-
-  get formattedCurrentBalance(): string {
-    return this.formatCurrency(this.product.currentBalance);
-  }
-
-  get formattedMovementBalance(): string {
-    return this.formatCurrency(this.product.movementBalance);
-  }
-
-  get formattedNetProfit(): string {
-    const prefix = this.product.netProfitBalance > 0 ? '+' : '';
-    return prefix + this.formatCurrency(this.product.netProfitBalance);
-  }
-
-  get formattedGrowthRate(): string {
-    const prefix = this.product.netGrowthRate > 0 ? '+' : '';
-    return prefix + this.product.netGrowthRate.toFixed(2) + '%';
-  }
-
-  get growthRateClass(): string {
+  getGrowthRateClass(): string {
     if (this.product.netGrowthRate > 0) return 'positive';
     if (this.product.netGrowthRate < 0) return 'negative';
     return 'neutral';
   }
 
-  get growthIcon(): string {
+  getGrowthIcon(): string {
     if (this.product.netGrowthRate > 0) return 'trending-up-outline';
     if (this.product.netGrowthRate < 0) return 'trending-down-outline';
     return 'remove-outline';
   }
 
-  get profitClass(): string {
+  getProfitClass(): string {
     if (this.product.isProfitable) return 'positive';
     if (this.product.isLoss) return 'negative';
     return '';
-  }
-
-  get productTypeLabel(): string {
-    return this.translateService.instant(`products.types.${this.product.type}`);
-  }
-
-  get relativeUpdatedTime(): string {
-    const now = new Date();
-    const diff = now.getTime() - this.product.updatedAt.getTime();
-    const minutes = Math.floor(diff / 60000);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
-
-    if (days > 0) {
-      return this.product.updatedAt.toLocaleDateString();
-    } else if (hours > 0) {
-      return `${hours}h ago`;
-    } else if (minutes > 0) {
-      return `${minutes}m ago`;
-    }
-    return 'Just now';
-  }
-
-  private formatCurrency(value: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: this.currency,
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(value);
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
@@ -36,7 +36,8 @@ import { debounceTime, distinctUntilChanged, switchMap, map, catchError, takeUnt
     ReactiveFormsModule,
     IonicModule,
     TranslateModule
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SignupPage implements OnInit, OnDestroy {
 
@@ -60,7 +61,8 @@ export class SignupPage implements OnInit, OnDestroy {
     private authUseCase: AuthUseCase,
     private router: Router,
     public translationService: TranslationService,
-    private logger: LoggerService
+    private logger: LoggerService,
+    private cdr: ChangeDetectorRef
   ) {
     addIcons({
       personAdd,
@@ -117,9 +119,11 @@ export class SignupPage implements OnInit, OnDestroy {
       switchMap(username => {
         if (!username || username.length < 3) {
           this.usernameAvailable = null;
+          this.cdr.markForCheck();
           return of(null);
         }
         this.checkingUsername = true;
+        this.cdr.markForCheck();
         return this.authUseCase.checkUsernameAvailability(username).pipe(
           catchError(() => of({ available: true }))
         );
@@ -133,6 +137,7 @@ export class SignupPage implements OnInit, OnDestroy {
           this.signupForm.get('username')?.setErrors({ unavailable: true });
         }
       }
+      this.cdr.markForCheck();
     });
 
     this.emailCheck$.pipe(
@@ -141,9 +146,11 @@ export class SignupPage implements OnInit, OnDestroy {
       switchMap(email => {
         if (!email || !this.isValidEmail(email)) {
           this.emailAvailable = null;
+          this.cdr.markForCheck();
           return of(null);
         }
         this.checkingEmail = true;
+        this.cdr.markForCheck();
         return this.authUseCase.checkEmailAvailability(email).pipe(
           catchError(() => of({ available: true }))
         );
@@ -157,6 +164,7 @@ export class SignupPage implements OnInit, OnDestroy {
           this.signupForm.get('email')?.setErrors({ unavailable: true });
         }
       }
+      this.cdr.markForCheck();
     });
   }
 
@@ -177,7 +185,7 @@ export class SignupPage implements OnInit, OnDestroy {
     this.emailCheck$.next(email);
   }
 
-  async onSignup() {
+  onSignup(): void {
     this.errorMessage = '';
 
     if (this.signupForm.invalid) {
@@ -190,6 +198,7 @@ export class SignupPage implements OnInit, OnDestroy {
     }
 
     this.isLoading = true;
+    this.cdr.markForCheck();
     const { name, username, email, password } = this.signupForm.value;
 
     const signupData = {
@@ -199,34 +208,41 @@ export class SignupPage implements OnInit, OnDestroy {
       password
     };
 
-    this.authUseCase.register(signupData).subscribe({
-      next: () => {
-        this.logger.info('Registration successful', 'SignupPage');
-        this.autoLogin(email, password);
-      },
-      error: (error) => {
-        this.logger.error('Registration failed:', 'SignupPage', error);
-        this.isLoading = false;
-        this.errorMessage = (error instanceof JBHError && error.isValidationError)
-          ? error.message
-          : this.translationService.instant('signup.errors.generic');
-      }
-    });
+    this.authUseCase.register(signupData)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.logger.info('Registration successful', 'SignupPage');
+          this.autoLogin(email, password);
+        },
+        error: (error) => {
+          this.logger.error('Registration failed:', 'SignupPage', error);
+          this.isLoading = false;
+          this.errorMessage = (error instanceof JBHError && error.isValidationError)
+            ? error.message
+            : this.translationService.instant('signup.errors.generic');
+          this.cdr.markForCheck();
+        }
+      });
   }
 
   private autoLogin(email: string, password: string): void {
-    this.authUseCase.login(email, password).subscribe({
-      next: (user) => {
-        this.logger.info('Auto-login successful after registration', 'SignupPage', user);
-        this.isLoading = false;
-        this.router.navigate(['/home']);
-      },
-      error: (error) => {
-        this.logger.error('Auto-login failed:', 'SignupPage', error);
-        this.isLoading = false;
-        this.router.navigate(['/login']);
-      }
-    });
+    this.authUseCase.login(email, password)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (user) => {
+          this.logger.info('Auto-login successful after registration', 'SignupPage', user);
+          this.isLoading = false;
+          this.cdr.markForCheck();
+          this.router.navigate(['/home']);
+        },
+        error: (error) => {
+          this.logger.error('Auto-login failed:', 'SignupPage', error);
+          this.isLoading = false;
+          this.cdr.markForCheck();
+          this.router.navigate(['/login']);
+        }
+      });
   }
 
   togglePasswordVisibility() {

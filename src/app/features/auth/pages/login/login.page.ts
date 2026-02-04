@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { addIcons } from 'ionicons';
 import {
   shieldCheckmark,
@@ -31,9 +33,11 @@ import { LoggerService } from '@core/infrastructure/logging/logger.service';
     ReactiveFormsModule,
     IonicModule,
     TranslateModule
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LoginPage implements OnInit {
+export class LoginPage implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
 
   loginForm!: FormGroup;
   isLoading = false;
@@ -47,7 +51,8 @@ export class LoginPage implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     public translationService: TranslationService,
-    private logger: LoggerService
+    private logger: LoggerService,
+    private cdr: ChangeDetectorRef
   ) {
     addIcons({
       shieldCheckmark,
@@ -67,11 +72,18 @@ export class LoginPage implements OnInit {
   }
 
   private captureReturnUrl(): void {
-    this.route.queryParams.subscribe(params => {
-      if (params['returnUrl']) {
-        this.returnUrl = params['returnUrl'];
-      }
-    });
+    this.route.queryParams
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(params => {
+        if (params['returnUrl']) {
+          this.returnUrl = params['returnUrl'];
+        }
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   /**
@@ -87,36 +99,36 @@ export class LoginPage implements OnInit {
   /**
    * Handle login form submission
    */
-  async onLogin() {
-    // Clear previous error
+  onLogin(): void {
     this.errorMessage = '';
 
-    // Validate form
     if (this.loginForm.invalid) {
       this.markFormGroupTouched(this.loginForm);
       return;
     }
 
     this.isLoading = true;
+    this.cdr.markForCheck();
     const { username, password } = this.loginForm.value;
 
-    this.authUseCase.login(username, password).subscribe({
-      next: (user) => {
-        this.logger.info('Login successful', 'LoginPage', user);
-        this.isLoading = false;
-
-        // Navigate to returnUrl or home
-        this.router.navigateByUrl(this.returnUrl);
-      },
-      error: (error) => {
-        this.logger.error('Login failed:', 'LoginPage', error);
-        this.isLoading = false;
-
-        this.errorMessage = (error instanceof JBHError && error.isValidationError)
-          ? error.message
-          : this.translationService.instant('login.errors.invalidCredentials');
-      }
-    });
+    this.authUseCase.login(username, password)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (user) => {
+          this.logger.info('Login successful', 'LoginPage', user);
+          this.isLoading = false;
+          this.cdr.markForCheck();
+          this.router.navigateByUrl(this.returnUrl);
+        },
+        error: (error) => {
+          this.logger.error('Login failed:', 'LoginPage', error);
+          this.isLoading = false;
+          this.errorMessage = (error instanceof JBHError && error.isValidationError)
+            ? error.message
+            : this.translationService.instant('login.errors.invalidCredentials');
+          this.cdr.markForCheck();
+        }
+      });
   }
 
   /**

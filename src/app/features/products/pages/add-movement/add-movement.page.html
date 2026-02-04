@@ -141,9 +141,9 @@
                   class="jbh-ion-select"
                   [disabled]="isLoadingCategories"
                 >
-                  @for (category of categories; track category.id) {
+                  @for (category of categories; track category.name) {
                     <ion-select-option [value]="category.name">
-                      {{ getCategoryName(category) }}
+                      {{ category.translationKey | jbhTranslationKey }}
                     </ion-select-option>
                   }
                 </ion-select>

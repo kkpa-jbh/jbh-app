@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { MenuController, ToastController } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { addIcons } from 'ionicons';
 import {
   appsOutline,
@@ -41,9 +43,11 @@ export interface MenuItem {
   templateUrl: './app-menu.component.html',
   styleUrls: ['./app-menu.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, TranslateModule, InstallAppButtonComponent]
+  imports: [CommonModule, IonicModule, TranslateModule, InstallAppButtonComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AppMenuComponent implements OnInit {
+export class AppMenuComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
   menuItems: MenuItem[] = [
     {
       id: 'home',
@@ -135,7 +139,8 @@ export class AppMenuComponent implements OnInit {
     private authUseCase: AuthUseCase,
     private toastController: ToastController,
     public translationService: TranslationService,
-    private logger: LoggerService
+    private logger: LoggerService,
+    private cdr: ChangeDetectorRef
   ) {
     addIcons({
       appsOutline,
@@ -156,9 +161,15 @@ export class AppMenuComponent implements OnInit {
 
   ngOnInit(): void {}
 
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   toggleSubmenu(item: MenuItem): void {
     if (item.children) {
       item.expanded = !item.expanded;
+      this.cdr.markForCheck();
     }
   }
 
@@ -192,23 +203,25 @@ export class AppMenuComponent implements OnInit {
     return false;
   }
 
-  private async handleLogout(): Promise<void> {
-    this.authUseCase.logout().subscribe({
-      next: async () => {
-        await this.showToast(
-          this.translationService.instant('menu.logoutSuccess'),
-          'success'
-        );
-        await this.router.navigate(['/login']);
-      },
-      error: async (error) => {
-        this.logger.error('Logout error:', 'AppMenu', error);
-        await this.showToast(
-          this.translationService.instant('menu.logoutError'),
-          'danger'
-        );
-      }
-    });
+  private handleLogout(): void {
+    this.authUseCase.logout()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: async () => {
+          await this.showToast(
+            this.translationService.instant('menu.logoutSuccess'),
+            'success'
+          );
+          await this.router.navigate(['/login']);
+        },
+        error: async (error) => {
+          this.logger.error('Logout error:', 'AppMenu', error);
+          await this.showToast(
+            this.translationService.instant('menu.logoutError'),
+            'danger'
+          );
+        }
+      });
   }
 
   private async showToast(message: string, color: string): Promise<void> {

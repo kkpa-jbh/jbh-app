@@ -26,6 +26,7 @@ import { JBHError } from '@core/domain/models/jbh-error.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
 import { DecimalFormatDirective } from '@shared/directives';
+import { JbhTranslationKeyPipe } from '@shared/pipes';
 
 @Component({
   selector: 'app-add-movement',
@@ -37,7 +38,8 @@ import { DecimalFormatDirective } from '@shared/directives';
     ReactiveFormsModule,
     IonicModule,
     TranslateModule,
-    DecimalFormatDirective
+    DecimalFormatDirective,
+    JbhTranslationKeyPipe
   ]
 })
 export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter {
@@ -49,7 +51,6 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter {
   isLoading = true;
   isLoadingCategories = false;
   isSubmitting = false;
-  currentLanguage = 'en';
 
   movementTypes: { value: MovementType; labelKey: string; icon: string }[] = [
     { value: 'DEPOSIT', labelKey: 'products.addMovement.types.deposit', icon: 'arrow-down-outline' },
@@ -85,7 +86,6 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter {
 
   ngOnInit(): void {
     this.initForm();
-    this.subscribeToLanguageChanges();
     this.subscribeToMovementTypeChanges();
   }
 
@@ -113,14 +113,6 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter {
       categoryName: [''],
       balanceSnapshot: [null]
     });
-  }
-
-  private subscribeToLanguageChanges(): void {
-    this.translationService.getCurrentLanguage$()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(lang => {
-        this.currentLanguage = lang;
-      });
   }
 
   private subscribeToMovementTypeChanges(): void {
@@ -203,10 +195,6 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter {
           this.showToast(this.translationService.instant('products.addMovement.errors.loadCategories'), 'danger');
         }
       });
-  }
-
-  getCategoryName(category: Category): string {
-    return category.getLocalizedName(this.currentLanguage);
   }
 
   getMovementTypeLabel(type: { value: MovementType; labelKey: string }): string {
