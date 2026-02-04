@@ -41,6 +41,50 @@
     "version": "Versión"
   },
   "products": {
+    "addMovement": {
+      "balanceSnapshot": {
+        "hint": "Ingresa el saldo total actual de este producto a la fecha seleccionada.",
+        "label": "Foto de Saldo",
+        "placeholder": "Ingresa el saldo actual"
+      },
+      "category": {
+        "label": "Categoría",
+        "placeholder": "Selecciona una categoría"
+      },
+      "entryDate": {
+        "label": "Fecha de Registro"
+      },
+      "errors": {
+        "create": "Error al agregar el movimiento. Por favor intenta de nuevo.",
+        "loadCategories": "Error al cargar las categorías. Por favor intenta de nuevo.",
+        "loadProduct": "Error al cargar el producto. Por favor intenta de nuevo.",
+        "noProduct": "Ningún producto seleccionado.",
+        "notAllowed": "Este producto no permite movimientos."
+      },
+      "formSubtitle": "Registra una nueva transacción para este producto",
+      "formTitle": "Agregar Movimiento",
+      "movementType": {
+        "label": "Tipo de Movimiento",
+        "placeholder": "Selecciona el tipo de movimiento"
+      },
+      "saveButton": "Guardar Movimiento",
+      "saving": "Guardando...",
+      "success": "¡Movimiento agregado exitosamente!",
+      "title": "Agregar Movimiento",
+      "totalAmount": {
+        "label": "Monto",
+        "placeholder": "Ingresa el monto"
+      },
+      "types": {
+        "balanceSnapshot": "Foto de Saldo",
+        "deposit": "Depósito",
+        "withdrawal": "Retiro"
+      },
+      "validation": {
+        "min": "El valor debe ser al menos {{min}}",
+        "required": "Este campo es requerido"
+      }
+    },
     "balanceHistory": {
       "allProducts": "Todos los Productos",
       "applyFilter": "Aplicar Filtro",

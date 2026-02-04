@@ -108,6 +108,10 @@ export class ProductsOverviewPage implements OnInit, OnDestroy, ViewWillEnter {
     this.router.navigate(['/products/balance-history'], { queryParams: { productId: product.id } });
   }
 
+  navigateToAddMovement(product: ProductListItem): void {
+    this.router.navigate(['/products/add-movement', product.id]);
+  }
+
   async confirmDeleteProduct(product: ProductListItem): Promise<void> {
     const alert = await this.alertController.create({
       header: this.translationService.instant('products.deleteProduct.title'),

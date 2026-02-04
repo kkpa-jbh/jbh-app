@@ -80,6 +80,7 @@
             (delete)="confirmDeleteProduct(product)"
             (statusChange)="onStatusChange(product, $event)"
             (viewHistory)="navigateToBalanceHistory(product)"
+            (addMovement)="navigateToAddMovement(product)"
           ></app-product-card>
         }
       </div>

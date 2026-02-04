@@ -16,7 +16,8 @@ import {
   cubeOutline,
   checkmarkCircleOutline,
   removeOutline,
-  analyticsOutline
+  analyticsOutline,
+  addCircleOutline
 } from 'ionicons/icons';
 import { ProductListItem } from '@core/domain/models/product-list-item.model';
 
@@ -34,6 +35,7 @@ export class ProductCardComponent {
   @Output() delete = new EventEmitter<void>();
   @Output() statusChange = new EventEmitter<boolean>();
   @Output() viewHistory = new EventEmitter<void>();
+  @Output() addMovement = new EventEmitter<void>();
 
   isTogglingStatus = false;
 
@@ -54,7 +56,8 @@ export class ProductCardComponent {
       cubeOutline,
       checkmarkCircleOutline,
       removeOutline,
-      analyticsOutline
+      analyticsOutline,
+      addCircleOutline
     });
   }
 
@@ -78,6 +81,11 @@ export class ProductCardComponent {
   onViewHistory(event: Event): void {
     event.stopPropagation();
     this.viewHistory.emit();
+  }
+
+  onAddMovement(event: Event): void {
+    event.stopPropagation();
+    this.addMovement.emit();
   }
 
   setTogglingStatus(value: boolean): void {

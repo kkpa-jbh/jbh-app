@@ -4,6 +4,7 @@ import { ProductRepository } from '../repositories/product.repository';
 import { ProductType } from '../models/product-type.model';
 import { ProductMetadataConfig } from '../models/product-metadata-config.model';
 import { CreateProductRequest, CreateProductResponse, UpdateProductRequest } from '../models/product.model';
+import { AddMovementRequest, AddMovementResponse } from '../models/movement.model';
 import { ProductListItem } from '../models/product-list-item.model';
 
 @Injectable({
@@ -82,6 +83,12 @@ export class ProductUseCase {
 
   updateProductStatus(id: string, active: boolean): Observable<void> {
     return this.productRepository.updateProductStatus(id, active).pipe(
+      tap(() => this.clearProductsCache())
+    );
+  }
+
+  addMovement(productId: string, request: AddMovementRequest): Observable<AddMovementResponse> {
+    return this.productRepository.addMovement(productId, request).pipe(
       tap(() => this.clearProductsCache())
     );
   }

@@ -41,6 +41,50 @@
     "version": "Version"
   },
   "products": {
+    "addMovement": {
+      "balanceSnapshot": {
+        "hint": "Enter the current total balance of this product as of the selected date.",
+        "label": "Balance Snapshot",
+        "placeholder": "Enter current balance"
+      },
+      "category": {
+        "label": "Category",
+        "placeholder": "Select a category"
+      },
+      "entryDate": {
+        "label": "Entry Date"
+      },
+      "errors": {
+        "create": "Failed to add movement. Please try again.",
+        "loadCategories": "Failed to load categories. Please try again.",
+        "loadProduct": "Failed to load product. Please try again.",
+        "noProduct": "No product selected.",
+        "notAllowed": "This product does not support movements."
+      },
+      "formSubtitle": "Record a new transaction for this product",
+      "formTitle": "Add Movement",
+      "movementType": {
+        "label": "Movement Type",
+        "placeholder": "Select movement type"
+      },
+      "saveButton": "Save Movement",
+      "saving": "Saving...",
+      "success": "Movement added successfully!",
+      "title": "Add Movement",
+      "totalAmount": {
+        "label": "Amount",
+        "placeholder": "Enter amount"
+      },
+      "types": {
+        "balanceSnapshot": "Balance Snapshot",
+        "deposit": "Deposit",
+        "withdrawal": "Withdrawal"
+      },
+      "validation": {
+        "min": "Value must be at least {{min}}",
+        "required": "This field is required"
+      }
+    },
     "balanceHistory": {
       "allProducts": "All Products",
       "applyFilter": "Apply Filter",

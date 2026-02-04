@@ -5,6 +5,7 @@ import { ProductRepository } from '@core/domain/repositories/product.repository'
 import { ProductType, ProductTypeApiResponse } from '@core/domain/models/product-type.model';
 import { ProductMetadataConfig, ProductMetadataConfigApiResponse } from '@core/domain/models/product-metadata-config.model';
 import { CreateProductRequest, CreateProductResponse, UpdateProductRequest } from '@core/domain/models/product.model';
+import { AddMovementRequest, AddMovementResponse } from '@core/domain/models/movement.model';
 import { ProductListItem, ProductListItemApiResponse } from '@core/domain/models/product-list-item.model';
 import { ApiBaseService } from '@core/infrastructure/api/api-base.service';
 import { HttpClient } from '@angular/common/http';
@@ -65,5 +66,9 @@ export class ProductRepositoryImpl extends ApiBaseService implements ProductRepo
 
   updateProductStatus(id: string, active: boolean): Observable<void> {
     return this.patch<void>(`${this.PRODUCTS_ENDPOINT}/${id}/status`, { active });
+  }
+
+  addMovement(productId: string, request: AddMovementRequest): Observable<AddMovementResponse> {
+    return this.post<AddMovementResponse>(`${this.PRODUCTS_ENDPOINT}/movements/${productId}`, request);
   }
 }

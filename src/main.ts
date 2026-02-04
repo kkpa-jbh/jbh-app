@@ -21,6 +21,8 @@ import { PreferencesRepository } from './app/core/domain/repositories/preference
 import { PreferencesRepositoryImpl } from './app/core/infrastructure/repositories/preferences.repository.impl';
 import { BalanceHistoryRepository } from './app/core/domain/repositories/balance-history.repository';
 import { BalanceHistoryRepositoryImpl } from './app/core/infrastructure/repositories/balance-history.repository.impl';
+import { CategoryRepository } from './app/core/domain/repositories/category.repository';
+import { CategoryRepositoryImpl } from './app/core/infrastructure/repositories/category.repository.impl';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -51,5 +53,6 @@ bootstrapApplication(AppComponent, {
     { provide: TeamRepository, useClass: TeamRepositoryImpl },
     { provide: PreferencesRepository, useClass: PreferencesRepositoryImpl },
     { provide: BalanceHistoryRepository, useClass: BalanceHistoryRepositoryImpl },
+    { provide: CategoryRepository, useClass: CategoryRepositoryImpl },
   ],
 });

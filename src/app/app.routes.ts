@@ -53,6 +53,11 @@ export const routes: Routes = [
     canActivate: [authGuard] // Requires authentication
   },
   {
+    path: 'products/add-movement/:productId',
+    loadComponent: () => import('./features/products/pages/add-movement/add-movement.page').then(m => m.AddMovementPage),
+    canActivate: [authGuard] // Requires authentication
+  },
+  {
     path: 'teams/create',
     loadComponent: () => import('./features/teams/pages/create/create-team.page').then(m => m.CreateTeamPage),
     canActivate: [authGuard] // Requires authentication

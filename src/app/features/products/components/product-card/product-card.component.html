@@ -31,6 +31,15 @@
         }
       </div>
       <div class="jbh-product-actions">
+        @if (product.allowsMovements) {
+          <button
+            class="jbh-icon-button jbh-icon-button-primary"
+            (click)="onAddMovement($event)"
+            [title]="'products.addMovement.title' | translate"
+          >
+            <ion-icon name="add-circle-outline"></ion-icon>
+          </button>
+        }
         <button
           class="jbh-icon-button"
           (click)="onEdit($event)"
