@@ -1,6 +1,12 @@
-<div class="jbh-context-switcher">
+<div class="jbh-context-switcher jbh-context-switcher-highlighted">
   <ion-item lines="none" class="jbh-context-switcher-item">
-    <ion-icon name="briefcase-outline" slot="start"></ion-icon>
+    @if (currentContext$ | async; as context) {
+      <ion-icon
+        [name]="context.isPersonal ? 'person-outline' : 'people-outline'"
+        slot="start"
+        class="jbh-context-switcher-icon">
+      </ion-icon>
+    }
     <ion-label class="jbh-context-label">
       {{ 'context.viewing' | translate }}
     </ion-label>
@@ -14,7 +20,7 @@
       </ion-select-option>
       @for (team of teams; track team.id) {
         <ion-select-option [value]="'team_' + team.id">
-          {{ team.name }}
+          {{ team.shortName }}
         </ion-select-option>
       }
     </ion-select>

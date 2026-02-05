@@ -2901,3 +2901,107 @@ ion-menu ion-content::part(scroll) {
   color: var(--jbh-text-secondary);
   margin-top: 2px;
 }
+
+// ============================================
+// 31. CONTEXT SWITCHER
+// ============================================
+
+.jbh-context-switcher {
+  padding: var(--jbh-spacing-sm);
+  border-bottom: 1px solid var(--jbh-border-color);
+  background: var(--jbh-card-background);
+  flex-shrink: 0;
+}
+
+.jbh-context-switcher-highlighted {
+  background: var(--jbh-gradient-primary);
+  border-bottom: none;
+  box-shadow: var(--jbh-shadow-primary);
+}
+
+.jbh-context-switcher-item {
+  --padding-start: 0;
+  --padding-end: 0;
+  --inner-padding-end: 0;
+  --background: transparent;
+}
+
+.jbh-context-switcher-highlighted .jbh-context-switcher-item {
+  --color: var(--jbh-background-white);
+}
+
+.jbh-context-switcher-icon {
+  color: var(--jbh-background-white);
+  font-size: 20px;
+}
+
+.jbh-context-select {
+  max-width: 100%;
+  color: var(--jbh-background-white);
+  font-weight: var(--jbh-font-weight-semibold);
+}
+
+.jbh-context-label {
+  font-size: 0.875rem;
+  color: var(--jbh-background-white);
+  margin-right: var(--jbh-spacing-xs);
+  opacity: 0.9;
+}
+
+// ============================================
+// 32. TOP BANNER
+// ============================================
+
+.jbh-top-banner {
+  background: var(--jbh-gradient-primary);
+  padding: var(--jbh-spacing-md) var(--jbh-spacing-sm);
+  box-shadow: var(--jbh-shadow-md);
+  margin-bottom: var(--jbh-spacing-md);
+}
+
+.jbh-top-banner-content {
+  display: flex;
+  align-items: center;
+  gap: var(--jbh-spacing-sm);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.jbh-top-banner-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: var(--jbh-radius-md);
+  flex-shrink: 0;
+
+  ion-icon {
+    font-size: 24px;
+    color: var(--jbh-background-white);
+  }
+}
+
+.jbh-top-banner-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.jbh-top-banner-label {
+  font-size: var(--jbh-font-size-xs);
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.jbh-top-banner-title {
+  font-size: var(--jbh-font-size-lg);
+  font-weight: var(--jbh-font-weight-bold);
+  color: var(--jbh-background-white);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
