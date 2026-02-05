@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { IonicModule, ToastController, ViewWillEnter } from '@ionic/angular';
+import { IonicModule, ToastController, ViewWillEnter, ViewWillLeave } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil, distinctUntilChanged, filter } from 'rxjs';
 import { addIcons } from 'ionicons';
@@ -25,7 +25,9 @@ import { ProductListItem } from '@core/domain/models/product-list-item.model';
 import { JBHError } from '@core/domain/models/jbh-error.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
+import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
 import { DecimalFormatDirective } from '@shared/directives';
+import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 
 @Component({
   selector: 'app-edit-product',
@@ -37,10 +39,11 @@ import { DecimalFormatDirective } from '@shared/directives';
     ReactiveFormsModule,
     IonicModule,
     TranslateModule,
-    DecimalFormatDirective
+    DecimalFormatDirective,
+    AppHeaderComponent
   ]
 })
-export class EditProductPage implements OnInit, OnDestroy, ViewWillEnter {
+export class EditProductPage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLeave {
 
   productForm!: FormGroup;
   productTypes: ProductType[] = [];
@@ -65,7 +68,8 @@ export class EditProductPage implements OnInit, OnDestroy, ViewWillEnter {
     private productUseCase: ProductUseCase,
     private translationService: TranslationService,
     private toastController: ToastController,
-    private logger: LoggerService
+    private logger: LoggerService,
+    private headerActions: HeaderActionsService
   ) {
     addIcons({
       cubeOutline,
@@ -93,7 +97,15 @@ export class EditProductPage implements OnInit, OnDestroy, ViewWillEnter {
   }
 
   ionViewWillEnter(): void {
+    this.headerActions.setPageConfig({
+      title: 'products.edit.title',
+      showBackButton: true
+    });
     this.loadProduct();
+  }
+
+  ionViewWillLeave(): void {
+    this.headerActions.clearPageConfig();
   }
 
   private initForm(): void {

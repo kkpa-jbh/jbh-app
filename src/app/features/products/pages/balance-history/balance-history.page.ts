@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
-import { IonicModule, ViewWillEnter, ToastController } from '@ionic/angular';
+import { IonicModule, ViewWillEnter, ViewWillLeave, ToastController } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { addIcons } from 'ionicons';
@@ -13,10 +13,12 @@ import { ProductListItem } from '@core/domain/models/product-list-item.model';
 import { JBHError } from '@core/domain/models/jbh-error.model';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
+import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
 import { BalanceHistoryFilterComponent, BalanceFilterEvent } from '../../components/balance-history-filter/balance-history-filter.component';
 import { BalanceSummaryCardsComponent } from '../../components/balance-summary-cards/balance-summary-cards.component';
 import { BalanceChartComponent } from '../../components/balance-chart/balance-chart.component';
 import { BalanceHistoryTableComponent } from '../../components/balance-history-table/balance-history-table.component';
+import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 
 @Component({
   selector: 'app-balance-history',
@@ -30,10 +32,11 @@ import { BalanceHistoryTableComponent } from '../../components/balance-history-t
     BalanceHistoryFilterComponent,
     BalanceSummaryCardsComponent,
     BalanceChartComponent,
-    BalanceHistoryTableComponent
+    BalanceHistoryTableComponent,
+    AppHeaderComponent
   ]
 })
-export class BalanceHistoryPage implements OnInit, OnDestroy, ViewWillEnter {
+export class BalanceHistoryPage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLeave {
   products: ProductListItem[] = [];
   balances: MonthlyBalance[] = [];
   summary: BalanceHistorySummary | null = null;
@@ -52,7 +55,8 @@ export class BalanceHistoryPage implements OnInit, OnDestroy, ViewWillEnter {
     private route: ActivatedRoute,
     private toastController: ToastController,
     private logger: LoggerService,
-    private translationService: TranslationService
+    private translationService: TranslationService,
+    private headerActions: HeaderActionsService
   ) {
     addIcons({ analyticsOutline, refreshOutline, walletOutline });
   }
@@ -68,10 +72,18 @@ export class BalanceHistoryPage implements OnInit, OnDestroy, ViewWillEnter {
   }
 
   ionViewWillEnter(): void {
+    this.headerActions.setPageConfig({
+      title: 'products.balanceHistory.title',
+      showBackButton: true
+    });
     this.loadProducts();
     if (this.currentFilter) {
       this.loadBalances(this.currentFilter);
     }
+  }
+
+  ionViewWillLeave(): void {
+    this.headerActions.clearPageConfig();
   }
 
   ngOnDestroy(): void {

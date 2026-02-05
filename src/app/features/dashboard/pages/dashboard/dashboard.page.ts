@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule, ViewWillEnter } from '@ionic/angular';
+import { IonicModule, ViewWillEnter, ViewWillLeave } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { RouterModule } from '@angular/router';
 import { Subject, takeUntil, combineLatest } from 'rxjs';
@@ -8,16 +8,18 @@ import { PortfolioContextService } from '@core/infrastructure/context/portfolio-
 import { ProductUseCase } from '@core/domain/use-cases/product.use-case';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
 import { JbhCurrencyPipe } from '@shared/pipes/jbh-currency.pipe';
+import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
+import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, TranslateModule, RouterModule, JbhCurrencyPipe],
+  imports: [CommonModule, IonicModule, TranslateModule, RouterModule, JbhCurrencyPipe, AppHeaderComponent],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DashboardPage implements OnInit, OnDestroy, ViewWillEnter {
+export class DashboardPage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLeave {
   currentContext$ = this.portfolioContext.context$;
   totalBalance = 0;
   activeProductsCount = 0;
@@ -28,13 +30,21 @@ export class DashboardPage implements OnInit, OnDestroy, ViewWillEnter {
     private portfolioContext: PortfolioContextService,
     private productUseCase: ProductUseCase,
     private cdr: ChangeDetectorRef,
-    private logger: LoggerService
+    private logger: LoggerService,
+    private headerActions: HeaderActionsService
   ) {}
 
   ngOnInit(): void {}
 
   ionViewWillEnter(): void {
+    this.headerActions.setPageConfig({
+      title: 'menu.dashboard'
+    });
     this.loadDashboardData();
+  }
+
+  ionViewWillLeave(): void {
+    this.headerActions.clearPageConfig();
   }
 
   ngOnDestroy(): void {

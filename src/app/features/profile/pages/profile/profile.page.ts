@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { IonicModule, ToastController, ViewWillEnter } from '@ionic/angular';
+import { IonicModule, ToastController, ViewWillEnter, ViewWillLeave } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil, forkJoin } from 'rxjs';
 import { addIcons } from 'ionicons';
@@ -21,7 +21,9 @@ import { ProductListItem } from '@core/domain/models/product-list-item.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
 import { ViewportService, SelectInterface } from '@core/infrastructure/viewport/viewport.service';
+import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
 import { DecimalFormatDirective } from '@shared/directives/decimal-format.directive';
+import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 
 @Component({
   selector: 'app-profile',
@@ -33,10 +35,11 @@ import { DecimalFormatDirective } from '@shared/directives/decimal-format.direct
     ReactiveFormsModule,
     IonicModule,
     TranslateModule,
-    DecimalFormatDirective
+    DecimalFormatDirective,
+    AppHeaderComponent
   ]
 })
-export class ProfilePage implements OnInit, OnDestroy, ViewWillEnter {
+export class ProfilePage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLeave {
 
   preferencesForm!: FormGroup;
   isLoading = true;
@@ -56,7 +59,8 @@ export class ProfilePage implements OnInit, OnDestroy, ViewWillEnter {
     private translationService: TranslationService,
     private toastController: ToastController,
     private logger: LoggerService,
-    private viewportService: ViewportService
+    private viewportService: ViewportService,
+    private headerActions: HeaderActionsService
   ) {
     this.selectInterface = this.viewportService.selectInterface;
     addIcons({
@@ -81,7 +85,14 @@ export class ProfilePage implements OnInit, OnDestroy, ViewWillEnter {
   }
 
   ionViewWillEnter(): void {
+    this.headerActions.setPageConfig({
+      title: 'menu.profile'
+    });
     this.loadData();
+  }
+
+  ionViewWillLeave(): void {
+    this.headerActions.clearPageConfig();
   }
 
   private initForm(): void {

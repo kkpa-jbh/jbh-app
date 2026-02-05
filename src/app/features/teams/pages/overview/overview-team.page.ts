@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { IonicModule, ToastController, AlertController, ViewWillEnter } from '@ionic/angular';
+import { IonicModule, ToastController, AlertController, ViewWillEnter, ViewWillLeave } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { APP_CONFIG_TOKEN, AppConfig } from '@core/infrastructure/config/app.config';
@@ -26,8 +26,10 @@ import { TeamUseCase } from '@core/domain/use-cases/team.use-case';
 import { TeamWithMembers, TeamMember, MemberStatus } from '@core/domain/models/team.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
+import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
 import { InviteMemberRequest } from '../../../../core/domain/repositories/team.repository';
 import { AuthUseCase } from '@core/domain/use-cases/auth.use-case';
+import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 
 @Component({
   selector: 'app-overview-team',
@@ -37,10 +39,11 @@ import { AuthUseCase } from '@core/domain/use-cases/auth.use-case';
   imports: [
     CommonModule,
     IonicModule,
-    TranslateModule
+    TranslateModule,
+    AppHeaderComponent
   ]
 })
-export class OverviewTeamPage implements OnInit, OnDestroy, ViewWillEnter {
+export class OverviewTeamPage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLeave {
 
   teams: TeamWithMembers[] = [];
   isLoading = true;
@@ -58,6 +61,7 @@ export class OverviewTeamPage implements OnInit, OnDestroy, ViewWillEnter {
     private toastController: ToastController,
     private alertController: AlertController,
     private logger: LoggerService,
+    private headerActions: HeaderActionsService,
     @Inject(APP_CONFIG_TOKEN) private appConfig: AppConfig
   ) {
     addIcons({
@@ -88,7 +92,21 @@ export class OverviewTeamPage implements OnInit, OnDestroy, ViewWillEnter {
   }
 
   ionViewWillEnter(): void {
+    this.headerActions.setPageConfig({
+      title: 'teams.overview.title',
+      actions: [
+        {
+          id: 'refresh',
+          icon: 'refresh-outline',
+          handler: () => this.refreshTeams()
+        }
+      ]
+    });
     this.refreshTeams();
+  }
+
+  ionViewWillLeave(): void {
+    this.headerActions.clearPageConfig();
   }
 
   private loadTeams(): void {

@@ -13,6 +13,8 @@ import { LoggerService } from '@core/infrastructure/logging/logger.service';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
 import { PortfolioContextService } from '@core/infrastructure/context/portfolio-context.service';
+import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
+import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 
 @Component({
   selector: 'app-products-overview',
@@ -23,7 +25,8 @@ import { PortfolioContextService } from '@core/infrastructure/context/portfolio-
     CommonModule,
     IonicModule,
     TranslateModule,
-    ProductCardComponent
+    ProductCardComponent,
+    AppHeaderComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -44,7 +47,8 @@ export class ProductsOverviewPage implements OnInit, OnDestroy, ViewWillEnter, V
     private logger: LoggerService,
     private translationService: TranslationService,
     private portfolioContext: PortfolioContextService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private headerActions: HeaderActionsService
   ) {
     addIcons({ refreshOutline, walletOutline, addOutline });
   }
@@ -61,10 +65,21 @@ export class ProductsOverviewPage implements OnInit, OnDestroy, ViewWillEnter, V
   }
 
   ionViewWillEnter(): void {
+    this.headerActions.setPageConfig({
+      title: 'products.overview.title',
+      actions: [
+        {
+          id: 'refresh',
+          icon: 'refresh-outline',
+          handler: () => this.refreshProducts()
+        }
+      ]
+    });
     this.refreshProducts();
   }
 
   ionViewWillLeave(): void {
+    this.headerActions.clearPageConfig();
     const activeElement = document.activeElement as HTMLElement;
     if (activeElement && activeElement.blur) {
       activeElement.blur();

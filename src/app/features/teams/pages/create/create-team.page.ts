@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { IonicModule, ToastController, ViewWillEnter } from '@ionic/angular';
+import { IonicModule, ToastController, ViewWillEnter, ViewWillLeave } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { addIcons } from 'ionicons';
@@ -20,7 +20,9 @@ import { CreateTeamRequest } from '@core/domain/models/team.model';
 import { JBHError } from '@core/domain/models/jbh-error.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
+import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
 import { APP_CONFIG_TOKEN, AppConfig } from '@core/infrastructure/config/app.config';
+import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 
 @Component({
   selector: 'app-create-team',
@@ -31,10 +33,11 @@ import { APP_CONFIG_TOKEN, AppConfig } from '@core/infrastructure/config/app.con
     CommonModule,
     ReactiveFormsModule,
     IonicModule,
-    TranslateModule
+    TranslateModule,
+    AppHeaderComponent
   ]
 })
-export class CreateTeamPage implements OnInit, OnDestroy, ViewWillEnter {
+export class CreateTeamPage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLeave {
 
   teamForm!: FormGroup;
   isSubmitting = false;
@@ -50,6 +53,7 @@ export class CreateTeamPage implements OnInit, OnDestroy, ViewWillEnter {
     private translationService: TranslationService,
     private toastController: ToastController,
     private logger: LoggerService,
+    private headerActions: HeaderActionsService,
     @Inject(APP_CONFIG_TOKEN) private appConfig: AppConfig
   ) {
     addIcons({
@@ -74,8 +78,15 @@ export class CreateTeamPage implements OnInit, OnDestroy, ViewWillEnter {
   }
 
   ionViewWillEnter(): void {
+    this.headerActions.setPageConfig({
+      title: 'teams.create.title'
+    });
     this.resetForm();
     this.checkTeamLimit();
+  }
+
+  ionViewWillLeave(): void {
+    this.headerActions.clearPageConfig();
   }
 
   private checkTeamLimit(): void {

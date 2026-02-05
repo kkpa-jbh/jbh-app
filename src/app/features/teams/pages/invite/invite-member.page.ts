@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { IonicModule, ToastController, ViewWillEnter } from '@ionic/angular';
+import { IonicModule, ToastController, ViewWillEnter, ViewWillLeave } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil, debounceTime, distinctUntilChanged, switchMap, of } from 'rxjs';
 import { addIcons } from 'ionicons';
@@ -21,7 +21,9 @@ import { TeamWithMembers } from '@core/domain/models/team.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
 import { ViewportService, SelectInterface } from '@core/infrastructure/viewport/viewport.service';
+import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
 import { InviteMemberRequest } from '../../../../core/domain/repositories/team.repository';
+import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 
 @Component({
   selector: 'app-invite-member',
@@ -32,10 +34,11 @@ import { InviteMemberRequest } from '../../../../core/domain/repositories/team.r
     CommonModule,
     ReactiveFormsModule,
     IonicModule,
-    TranslateModule
+    TranslateModule,
+    AppHeaderComponent
   ]
 })
-export class InviteMemberPage implements OnInit, OnDestroy, ViewWillEnter {
+export class InviteMemberPage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLeave {
 
   inviteForm!: FormGroup;
   teams: TeamWithMembers[] = [];
@@ -60,7 +63,8 @@ export class InviteMemberPage implements OnInit, OnDestroy, ViewWillEnter {
     private translationService: TranslationService,
     private toastController: ToastController,
     private logger: LoggerService,
-    private viewportService: ViewportService
+    private viewportService: ViewportService,
+    private headerActions: HeaderActionsService
   ) {
     this.selectInterface = this.viewportService.selectInterface;
     addIcons({
@@ -87,9 +91,16 @@ export class InviteMemberPage implements OnInit, OnDestroy, ViewWillEnter {
   }
 
   ionViewWillEnter(): void {
+    this.headerActions.setPageConfig({
+      title: 'teams.invite.title'
+    });
     this.loadTeams();
     this.resetForm();
     this.checkPreselectedTeam();
+  }
+
+  ionViewWillLeave(): void {
+    this.headerActions.clearPageConfig();
   }
 
   private checkPreselectedTeam(): void {

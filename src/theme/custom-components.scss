@@ -3005,3 +3005,39 @@ ion-menu ion-content::part(scroll) {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+// ============================================
+// 33. APP HEADER & CONTEXT BANNER
+// ============================================
+
+.jbh-context-banner {
+  background: var(--jbh-gradient-primary);
+  padding: var(--jbh-spacing-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--jbh-spacing-xs);
+  box-shadow: var(--jbh-shadow-sm);
+
+  ion-icon {
+    font-size: 20px;
+    color: var(--jbh-background-white);
+  }
+
+  span {
+    color: var(--jbh-background-white);
+    font-weight: var(--jbh-font-weight-semibold);
+    font-size: var(--jbh-font-size-sm);
+  }
+
+  @media (min-width: 768px) {
+    padding: var(--jbh-spacing-md) var(--jbh-spacing-lg);
+
+    ion-icon {
+      font-size: 24px;
+    }
+
+    span {
+      font-size: var(--jbh-font-size-base);
+    }
+  }
+}

@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRe
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { IonicModule, ToastController, ViewWillEnter } from '@ionic/angular';
+import { IonicModule, ToastController, ViewWillEnter, ViewWillLeave } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { addIcons } from 'ionicons';
@@ -29,8 +29,10 @@ import { JBHError } from '@core/domain/models/jbh-error.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
 import { ViewportService, SelectInterface } from '@core/infrastructure/viewport/viewport.service';
+import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
 import { DecimalFormatDirective } from '@shared/directives';
 import { JbhTranslationKeyPipe } from '@shared/pipes';
+import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 
 @Component({
   selector: 'app-add-movement',
@@ -43,11 +45,12 @@ import { JbhTranslationKeyPipe } from '@shared/pipes';
     IonicModule,
     TranslateModule,
     DecimalFormatDirective,
-    JbhTranslationKeyPipe
+    JbhTranslationKeyPipe,
+    AppHeaderComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter {
+export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLeave {
 
   movementForm!: FormGroup;
   product: ProductListItem | null = null;
@@ -82,7 +85,8 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter {
     private toastController: ToastController,
     private logger: LoggerService,
     private viewportService: ViewportService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private headerActions: HeaderActionsService
   ) {
     this.selectInterface = this.viewportService.selectInterface;
     addIcons({
@@ -112,6 +116,9 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter {
   }
 
   ionViewWillEnter(): void {
+    this.headerActions.setPageConfig({
+      title: 'movements.add.title'
+    });
     this.productId = this.route.snapshot.paramMap.get('productId');
     if (this.productId) {
       this.hasProductIdFromRoute = true;
@@ -122,6 +129,10 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter {
       this.loadProductsWithDefaultSelection();
       this.isLoading = false;
     }
+  }
+
+  ionViewWillLeave(): void {
+    this.headerActions.clearPageConfig();
   }
 
   private initForm(): void {
