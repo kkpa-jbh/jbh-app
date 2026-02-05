@@ -1,0 +1,21 @@
+.jbh-context-switcher {
+  padding: var(--jbh-spacing-sm);
+  border-bottom: 1px solid var(--jbh-border-color);
+  background: var(--jbh-card-background);
+}
+
+.jbh-context-switcher-item {
+  --padding-start: 0;
+  --padding-end: 0;
+  --inner-padding-end: 0;
+}
+
+.jbh-context-select {
+  max-width: 100%;
+}
+
+.jbh-context-label {
+  font-size: 0.875rem;
+  color: var(--jbh-text-secondary);
+  margin-right: var(--jbh-spacing-xs);
+}

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ViewChildren, QueryList } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChildren, QueryList, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { IonicModule, ViewWillEnter, ViewWillLeave, ToastController, AlertController } from '@ionic/angular';
@@ -12,6 +12,7 @@ import { JBHError } from '@core/domain/models/jbh-error.model';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
+import { PortfolioContextService } from '@core/infrastructure/context/portfolio-context.service';
 
 @Component({
   selector: 'app-products-overview',
@@ -23,13 +24,16 @@ import { ProductCardComponent } from '../../components/product-card/product-card
     IonicModule,
     TranslateModule,
     ProductCardComponent
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductsOverviewPage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLeave {
   @ViewChildren(ProductCardComponent) productCards!: QueryList<ProductCardComponent>;
 
   products: ProductListItem[] = [];
   isLoading = true;
+  currentContext$ = this.portfolioContext.context$;
+  isPersonalContext = true;
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -38,13 +42,22 @@ export class ProductsOverviewPage implements OnInit, OnDestroy, ViewWillEnter, V
     private toastController: ToastController,
     private alertController: AlertController,
     private logger: LoggerService,
-    private translationService: TranslationService
+    private translationService: TranslationService,
+    private portfolioContext: PortfolioContextService,
+    private cdr: ChangeDetectorRef
   ) {
     addIcons({ refreshOutline, walletOutline, addOutline });
   }
 
   ngOnInit(): void {
     this.loadProducts();
+
+    this.currentContext$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(context => {
+        this.isPersonalContext = context.isPersonal;
+        this.cdr.markForCheck();
+      });
   }
 
   ionViewWillEnter(): void {
@@ -71,6 +84,7 @@ export class ProductsOverviewPage implements OnInit, OnDestroy, ViewWillEnter, V
         next: (products) => {
           this.products = products;
           this.isLoading = false;
+          this.cdr.markForCheck();
         },
         error: (error) => {
           this.logger.error('Error loading products', 'ProductsOverviewPage', error);
@@ -79,6 +93,7 @@ export class ProductsOverviewPage implements OnInit, OnDestroy, ViewWillEnter, V
             this.translationService.instant('products.overview.errors.load'),
             'danger'
           );
+          this.cdr.markForCheck();
         }
       });
   }
@@ -91,6 +106,7 @@ export class ProductsOverviewPage implements OnInit, OnDestroy, ViewWillEnter, V
         next: (products) => {
           this.products = products;
           this.isLoading = false;
+          this.cdr.markForCheck();
         },
         error: (error) => {
           this.logger.error('Error refreshing products', 'ProductsOverviewPage', error);
@@ -99,24 +115,35 @@ export class ProductsOverviewPage implements OnInit, OnDestroy, ViewWillEnter, V
             this.translationService.instant('products.overview.errors.load'),
             'danger'
           );
+          this.cdr.markForCheck();
         }
       });
   }
 
+  canModifyProducts(): boolean {
+    return this.isPersonalContext;
+  }
+
   navigateToCreate(): void {
-    this.router.navigate(['/products/create']);
+    if (this.canModifyProducts()) {
+      this.router.navigate(['/portfolio/create']);
+    }
   }
 
   navigateToEdit(product: ProductListItem): void {
-    this.router.navigate(['/products/edit', product.id]);
+    if (this.canModifyProducts()) {
+      this.router.navigate(['/portfolio/edit', product.id]);
+    }
   }
 
   navigateToBalanceHistory(product: ProductListItem): void {
-    this.router.navigate(['/products/balance-history'], { queryParams: { productId: product.id } });
+    this.router.navigate(['/reports/balance-trends'], { queryParams: { productId: product.id } });
   }
 
   navigateToAddMovement(product: ProductListItem): void {
-    this.router.navigate(['/products/add-movement', product.id]);
+    if (this.canModifyProducts()) {
+      this.router.navigate(['/transactions/record-movement', product.id]);
+    }
   }
 
   async confirmDeleteProduct(product: ProductListItem): Promise<void> {
@@ -193,6 +220,7 @@ export class ProductsOverviewPage implements OnInit, OnDestroy, ViewWillEnter, V
           if (cardComponent) {
             cardComponent.setTogglingStatus(false);
           }
+          this.cdr.markForCheck();
         },
         error: (error: JBHError) => {
           this.logger.error('Error updating product status:', 'ProductsOverviewPage', error);

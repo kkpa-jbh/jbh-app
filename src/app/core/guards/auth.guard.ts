@@ -120,8 +120,8 @@ export const guestGuard: CanActivateFn = (route, state) => {
         return true;
       }
 
-      // Already logged in, redirect to home
-      router.navigate(['/home']);
+      // Already logged in, redirect to dashboard
+      router.navigate(['/dashboard']);
       return false;
     })
   );
@@ -129,7 +129,7 @@ export const guestGuard: CanActivateFn = (route, state) => {
 
 /**
  * Root Redirect Guard
- * Redirects to home if authenticated, login if not
+ * Redirects to dashboard if authenticated, login if not
  * Use this on the root path ('') to handle initial navigation
  *
  * Usage:
@@ -150,7 +150,7 @@ export const rootRedirectGuard: CanActivateFn = (route, state) => {
     take(1),
     map(isAuthenticated => {
       if (isAuthenticated) {
-        router.navigate(['/home']);
+        router.navigate(['/dashboard']);
       } else {
         router.navigate(['/login']);
       }

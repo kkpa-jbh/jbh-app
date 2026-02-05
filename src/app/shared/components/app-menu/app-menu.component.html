@@ -11,6 +11,9 @@
     </div>
   </div>
 
+  <!-- Context Switcher -->
+  <app-portfolio-context-switcher></app-portfolio-context-switcher>
+
   <!-- Menu Items -->
   <div class="jbh-menu-content">
     <ion-list class="jbh-menu-list">
@@ -53,18 +56,48 @@
             @if (item.children && item.expanded) {
               <div class="jbh-menu-submenu">
                 @for (child of item.children; track child.id) {
-                  <ion-item
-                    [button]="true"
-                    [detail]="false"
-                    lines="none"
-                    class="jbh-menu-subitem"
-                    [class.jbh-menu-subitem-active]="isActive(child)"
-                    (click)="handleMenuItemClick(child, $event)">
-                    <ion-icon [name]="child.icon" slot="start" class="jbh-menu-subitem-icon"></ion-icon>
-                    <ion-label class="jbh-menu-subitem-label">
-                      {{ child.translationKey | translate }}
-                    </ion-label>
-                  </ion-item>
+                  <div class="jbh-menu-subitem-wrapper">
+                    <ion-item
+                      [button]="true"
+                      [detail]="false"
+                      lines="none"
+                      class="jbh-menu-subitem"
+                      [class.jbh-menu-subitem-active]="isActive(child)"
+                      [class.jbh-menu-subitem-expanded]="child.expanded"
+                      (click)="handleMenuItemClick(child, $event)">
+                      <ion-icon [name]="child.icon" slot="start" class="jbh-menu-subitem-icon"></ion-icon>
+                      <ion-label class="jbh-menu-subitem-label">
+                        {{ child.translationKey | translate }}
+                      </ion-label>
+                      @if (child.children) {
+                        <ion-icon
+                          [name]="child.expanded ? 'chevron-up-outline' : 'chevron-down-outline'"
+                          slot="end"
+                          class="jbh-menu-subitem-chevron">
+                        </ion-icon>
+                      }
+                    </ion-item>
+
+                    <!-- Nested Submenu -->
+                    @if (child.children && child.expanded) {
+                      <div class="jbh-menu-nested-submenu">
+                        @for (nestedChild of child.children; track nestedChild.id) {
+                          <ion-item
+                            [button]="true"
+                            [detail]="false"
+                            lines="none"
+                            class="jbh-menu-nested-subitem"
+                            [class.jbh-menu-nested-subitem-active]="isActive(nestedChild)"
+                            (click)="handleMenuItemClick(nestedChild, $event)">
+                            <ion-icon [name]="nestedChild.icon" slot="start" class="jbh-menu-nested-subitem-icon"></ion-icon>
+                            <ion-label class="jbh-menu-nested-subitem-label">
+                              {{ nestedChild.translationKey | translate }}
+                            </ion-label>
+                          </ion-item>
+                        }
+                      </div>
+                    }
+                  </div>
                 }
               </div>
             }

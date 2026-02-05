@@ -1,0 +1,22 @@
+<div class="jbh-context-switcher">
+  <ion-item lines="none" class="jbh-context-switcher-item">
+    <ion-icon name="briefcase-outline" slot="start"></ion-icon>
+    <ion-label class="jbh-context-label">
+      {{ 'context.viewing' | translate }}
+    </ion-label>
+    <ion-select
+      [value]="getContextValue()"
+      (ionChange)="onContextChange($event)"
+      [interface]="selectInterface"
+      class="jbh-context-select">
+      <ion-select-option value="personal">
+        {{ 'context.personalPortfolio' | translate }}
+      </ion-select-option>
+      @for (team of teams; track team.id) {
+        <ion-select-option [value]="'team_' + team.id">
+          {{ team.name }}
+        </ion-select-option>
+      }
+    </ion-select>
+  </ion-item>
+</div>

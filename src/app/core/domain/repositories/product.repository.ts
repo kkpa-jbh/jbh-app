@@ -9,8 +9,8 @@ export abstract class ProductRepository {
   abstract getProductTypes(): Observable<ProductType[]>;
   abstract getMetadataConfig(productType: string): Observable<ProductMetadataConfig[]>;
   abstract createProduct(request: CreateProductRequest): Observable<CreateProductResponse>;
-  abstract getProducts(): Observable<ProductListItem[]>;
-  abstract getProductById(id: string): Observable<ProductListItem>;
+  abstract getProducts(teamId?: string): Observable<ProductListItem[]>;
+  abstract getProductById(id: string, teamId?: string): Observable<ProductListItem>;
   abstract updateProduct(id: string, request: UpdateProductRequest): Observable<void>;
   abstract deleteProduct(id: string): Observable<void>;
   abstract updateProductStatus(id: string, active: boolean): Observable<void>;

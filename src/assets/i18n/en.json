@@ -2,6 +2,7 @@
   "common": {
     "cancel": "Cancel",
     "characters": "characters",
+    "comingSoon": "Coming Soon",
     "delete": "Delete",
     "edit": "Edit",
     "error": "Error",
@@ -11,6 +12,21 @@
     "or": "or",
     "save": "Save",
     "success": "Success"
+  },
+  "context": {
+    "myPortfolio": "My Portfolio",
+    "personalPortfolio": "Personal Portfolio",
+    "switchingContext": "Switching portfolio context...",
+    "teamPortfolio": "Team Portfolio",
+    "viewing": "Viewing"
+  },
+  "dashboard": {
+    "activeProducts": "Active Products",
+    "addProduct": "Add Product",
+    "recordMovement": "Record Movement",
+    "totalBalance": "Total Balance",
+    "welcomePersonal": "Welcome to your Dashboard",
+    "welcomeTeam": "Welcome to {{teamName}} Dashboard"
   },
   "home": {
     "description": "Start with Ionic",
@@ -22,25 +38,64 @@
   "menu": {
     "appName": "JBH App",
     "appTagline": "Manage your business",
-    "home": "Home",
+    "dashboard": "Dashboard",
     "logout": "Log Out",
     "logoutError": "Error logging out. Please try again.",
     "logoutSuccess": "You have been logged out successfully",
-    "products": {
-      "balanceHistory": "Balance History",
-      "create": "Create Product",
-      "overview": "Overview",
-      "title": "Products",
-      "transfer": "Transfer"
+    "portfolio": {
+      "addNew": "Add New Product",
+      "title": "Portfolio",
+      "viewAll": "View All Products"
     },
-    "profile": "Profile",
-    "teams": {
-      "create": "Create Team",
-      "invite": "Invite Member",
-      "overview": "Overview",
-      "title": "Teams"
+    "reports": {
+      "balanceTrends": "Balance Trends",
+      "growthAnalysis": "Growth Analysis",
+      "title": "Reports"
+    },
+    "settings": {
+      "myPreferences": "My Preferences",
+      "teamManagement": {
+        "addNew": "Add New Team",
+        "invite": "Invite Members",
+        "myTeams": "My Teams",
+        "title": "Team Management"
+      },
+      "teamPreferences": "Team Preferences",
+      "title": "Settings"
+    },
+    "transactions": {
+      "recordMovement": "Record Movement",
+      "title": "Transactions",
+      "transfer": "Transfer Funds"
     },
     "version": "Version"
+  },
+  "portfolio": {
+    "overview": {
+      "createButton": "Add Product",
+      "formSubtitle": "Manage your portfolio products",
+      "formTitle": "Portfolio Overview"
+    }
+  },
+  "reports": {
+    "growthAnalysis": {
+      "comingSoonMessage": "Growth analysis reports will be available soon."
+    }
+  },
+  "settings": {
+    "teamPreferences": {
+      "forTeam": "Preferences for {{teamName}}",
+      "notifications": "Notifications",
+      "title": "Team Preferences"
+    }
+  },
+  "transactions": {
+    "recordMovement": {
+      "title": "Record Movement"
+    },
+    "transfer": {
+      "title": "Transfer Funds"
+    }
   },
   "products": {
     "addMovement": {

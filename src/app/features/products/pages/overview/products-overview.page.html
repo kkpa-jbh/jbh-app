@@ -26,10 +26,12 @@
           <p class="jbh-page-subtitle">{{ 'products.overview.formSubtitle' | translate }}</p>
         </div>
       </div>
-      <button class="jbh-button-primary" (click)="navigateToCreate()">
-        <ion-icon name="add-outline"></ion-icon>
-        <span>{{ 'products.overview.createButton' | translate }}</span>
-      </button>
+      @if (canModifyProducts()) {
+        <button class="jbh-button-primary" (click)="navigateToCreate()">
+          <ion-icon name="add-outline"></ion-icon>
+          <span>{{ 'products.overview.createButton' | translate }}</span>
+        </button>
+      }
     </div>
 
     <!-- Loading State -->
@@ -63,10 +65,12 @@
         </div>
         <h2 class="jbh-empty-state-title">{{ 'products.overview.empty.title' | translate }}</h2>
         <p class="jbh-empty-state-message">{{ 'products.overview.empty.message' | translate }}</p>
-        <button class="jbh-button-primary" (click)="navigateToCreate()">
-          <ion-icon name="add-outline"></ion-icon>
-          <span>{{ 'products.overview.empty.createButton' | translate }}</span>
-        </button>
+        @if (canModifyProducts()) {
+          <button class="jbh-button-primary" (click)="navigateToCreate()">
+            <ion-icon name="add-outline"></ion-icon>
+            <span>{{ 'products.overview.empty.createButton' | translate }}</span>
+          </button>
+        }
       </div>
     }
 
@@ -76,6 +80,7 @@
         @for (product of products; track trackByProductId($index, product)) {
           <app-product-card
             [product]="product"
+            [showActions]="canModifyProducts()"
             (edit)="navigateToEdit(product)"
             (delete)="confirmDeleteProduct(product)"
             (statusChange)="onStatusChange(product, $event)"

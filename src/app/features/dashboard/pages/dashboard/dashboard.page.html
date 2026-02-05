@@ -1,0 +1,53 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>{{ 'menu.dashboard' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="jbh-container">
+    @if (currentContext$ | async; as context) {
+      <div class="jbh-dashboard-header">
+        <h1>
+          @if (context.isPersonal) {
+            {{ 'dashboard.welcomePersonal' | translate }}
+          } @else {
+            {{ 'dashboard.welcomeTeam' | translate: { teamName: context.teamName } }}
+          }
+        </h1>
+      </div>
+
+      <div class="jbh-dashboard-summary">
+        <ion-card class="jbh-card">
+          <ion-card-header>
+            <ion-card-subtitle>{{ 'dashboard.totalBalance' | translate }}</ion-card-subtitle>
+            <ion-card-title>{{ totalBalance | jbhCurrency }}</ion-card-title>
+          </ion-card-header>
+        </ion-card>
+
+        <ion-card class="jbh-card">
+          <ion-card-header>
+            <ion-card-subtitle>{{ 'dashboard.activeProducts' | translate }}</ion-card-subtitle>
+            <ion-card-title>{{ activeProductsCount }}</ion-card-title>
+          </ion-card-header>
+        </ion-card>
+      </div>
+
+      @if (context.isPersonal) {
+        <div class="jbh-dashboard-actions">
+          <ion-button expand="block" routerLink="/portfolio/create" class="jbh-button-primary">
+            <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+            {{ 'dashboard.addProduct' | translate }}
+          </ion-button>
+          <ion-button expand="block" routerLink="/transactions/record-movement" class="jbh-button-secondary">
+            <ion-icon name="cash-outline" slot="start"></ion-icon>
+            {{ 'dashboard.recordMovement' | translate }}
+          </ion-button>
+        </div>
+      }
+    }
+  </div>
+</ion-content>

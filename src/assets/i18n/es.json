@@ -2,6 +2,7 @@
   "common": {
     "cancel": "Cancelar",
     "characters": "caracteres",
+    "comingSoon": "Próximamente",
     "delete": "Eliminar",
     "edit": "Editar",
     "error": "Error",
@@ -11,6 +12,21 @@
     "or": "o",
     "save": "Guardar",
     "success": "Éxito"
+  },
+  "context": {
+    "myPortfolio": "Mi Cartera",
+    "personalPortfolio": "Cartera Personal",
+    "switchingContext": "Cambiando contexto de cartera...",
+    "teamPortfolio": "Cartera de Equipo",
+    "viewing": "Viendo"
+  },
+  "dashboard": {
+    "activeProducts": "Productos Activos",
+    "addProduct": "Agregar Producto",
+    "recordMovement": "Registrar Movimiento",
+    "totalBalance": "Balance Total",
+    "welcomePersonal": "Bienvenido a tu Panel",
+    "welcomeTeam": "Bienvenido al Panel de {{teamName}}"
   },
   "home": {
     "description": "Comienza con Ionic",
@@ -22,25 +38,64 @@
   "menu": {
     "appName": "JBH App",
     "appTagline": "Gestiona tu negocio",
-    "home": "Inicio",
+    "dashboard": "Panel",
     "logout": "Cerrar Sesión",
     "logoutError": "Error al cerrar sesión. Por favor intenta de nuevo.",
     "logoutSuccess": "Has cerrado sesión exitosamente",
-    "products": {
-      "balanceHistory": "Historial de Saldos",
-      "create": "Crear Producto",
-      "overview": "Resumen",
-      "title": "Productos",
-      "transfer": "Transferir"
+    "portfolio": {
+      "addNew": "Agregar Nuevo Producto",
+      "title": "Cartera",
+      "viewAll": "Ver Todos los Productos"
     },
-    "profile": "Perfil",
-    "teams": {
-      "create": "Crear Equipo",
-      "invite": "Invitar Miembro",
-      "overview": "Resumen",
-      "title": "Equipos"
+    "reports": {
+      "balanceTrends": "Tendencias de Balance",
+      "growthAnalysis": "Análisis de Crecimiento",
+      "title": "Reportes"
+    },
+    "settings": {
+      "myPreferences": "Mis Preferencias",
+      "teamManagement": {
+        "addNew": "Agregar Nuevo Equipo",
+        "invite": "Invitar Miembros",
+        "myTeams": "Mis Equipos",
+        "title": "Gestión de Equipos"
+      },
+      "teamPreferences": "Preferencias del Equipo",
+      "title": "Configuración"
+    },
+    "transactions": {
+      "recordMovement": "Registrar Movimiento",
+      "title": "Transacciones",
+      "transfer": "Transferir Fondos"
     },
     "version": "Versión"
+  },
+  "portfolio": {
+    "overview": {
+      "createButton": "Agregar Producto",
+      "formSubtitle": "Administra los productos de tu cartera",
+      "formTitle": "Resumen de Cartera"
+    }
+  },
+  "reports": {
+    "growthAnalysis": {
+      "comingSoonMessage": "Los reportes de análisis de crecimiento estarán disponibles pronto."
+    }
+  },
+  "settings": {
+    "teamPreferences": {
+      "forTeam": "Preferencias para {{teamName}}",
+      "notifications": "Notificaciones",
+      "title": "Preferencias del Equipo"
+    }
+  },
+  "transactions": {
+    "recordMovement": {
+      "title": "Registrar Movimiento"
+    },
+    "transfer": {
+      "title": "Transferir Fondos"
+    }
   },
   "products": {
     "addMovement": {

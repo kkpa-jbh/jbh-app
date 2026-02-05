@@ -20,12 +20,21 @@ import {
   chevronDownOutline,
   peopleOutline,
   personAddOutline,
-  analyticsOutline
+  analyticsOutline,
+  gridOutline,
+  briefcaseOutline,
+  cashOutline,
+  trendingUpOutline,
+  barChartOutline,
+  settingsOutline,
+  notificationsOutline
 } from 'ionicons/icons';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
 import { AuthUseCase } from '@core/domain/use-cases/auth.use-case';
 import { InstallAppButtonComponent } from '../install-app-button/install-app-button.component';
+import { PortfolioContextSwitcherComponent } from '../portfolio-context-switcher/portfolio-context-switcher.component';
+import { PortfolioContextService } from '@core/infrastructure/context/portfolio-context.service';
 
 export interface MenuItem {
   id: string;
@@ -43,95 +52,13 @@ export interface MenuItem {
   templateUrl: './app-menu.component.html',
   styleUrls: ['./app-menu.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, TranslateModule, InstallAppButtonComponent],
+  imports: [CommonModule, IonicModule, TranslateModule, InstallAppButtonComponent, PortfolioContextSwitcherComponent],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppMenuComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  menuItems: MenuItem[] = [
-    {
-      id: 'home',
-      translationKey: 'menu.home',
-      icon: 'home-outline',
-      route: '/home'
-    },
-    {
-      id: 'profile',
-      translationKey: 'menu.profile',
-      icon: 'person-outline',
-      route: '/profile'
-    },
-    {
-      id: 'products',
-      translationKey: 'menu.products.title',
-      icon: 'cube-outline',
-      expanded: false,
-      children: [
-        {
-          id: 'create-product',
-          translationKey: 'menu.products.create',
-          icon: 'add-circle-outline',
-          route: '/products/create'
-        },
-        {
-          id: 'overview',
-          translationKey: 'menu.products.overview',
-          icon: 'list-outline',
-          route: '/products/overview'
-        },
-        {
-          id: 'transfer',
-          translationKey: 'menu.products.transfer',
-          icon: 'swap-horizontal-outline',
-          route: '/products/transfer'
-        },
-        {
-          id: 'balance-history',
-          translationKey: 'menu.products.balanceHistory',
-          icon: 'analytics-outline',
-          route: '/products/balance-history'
-        }
-      ]
-    },
-    {
-      id: 'teams',
-      translationKey: 'menu.teams.title',
-      icon: 'people-outline',
-      expanded: false,
-      children: [
-        {
-          id: 'create-team',
-          translationKey: 'menu.teams.create',
-          icon: 'add-circle-outline',
-          route: '/teams/create'
-        },
-        {
-          id: 'teams-overview',
-          translationKey: 'menu.teams.overview',
-          icon: 'list-outline',
-          route: '/teams/overview'
-        },
-        {
-          id: 'teams-invite',
-          translationKey: 'menu.teams.invite',
-          icon: 'person-add-outline',
-          route: '/teams/invite'
-        }
-      ]
-    },
-    {
-      id: 'divider-1',
-      translationKey: '',
-      icon: '',
-      divider: true
-    },
-    {
-      id: 'logout',
-      translationKey: 'menu.logout',
-      icon: 'log-out-outline',
-      action: () => this.handleLogout()
-    }
-  ];
+  currentContext$ = this.portfolioContext.context$;
+  menuItems: MenuItem[] = [];
 
   constructor(
     private router: Router,
@@ -140,7 +67,8 @@ export class AppMenuComponent implements OnInit, OnDestroy {
     private toastController: ToastController,
     public translationService: TranslationService,
     private logger: LoggerService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private portfolioContext: PortfolioContextService
   ) {
     addIcons({
       appsOutline,
@@ -155,15 +83,162 @@ export class AppMenuComponent implements OnInit, OnDestroy {
       chevronDownOutline,
       peopleOutline,
       personAddOutline,
-      analyticsOutline
+      analyticsOutline,
+      gridOutline,
+      briefcaseOutline,
+      cashOutline,
+      trendingUpOutline,
+      barChartOutline,
+      settingsOutline,
+      notificationsOutline
     });
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.buildMenuItems();
+
+    this.currentContext$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.buildMenuItems();
+        this.cdr.markForCheck();
+      });
+  }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  private buildMenuItems(): void {
+    const context = this.portfolioContext.getCurrentContext();
+
+    this.menuItems = [
+      {
+        id: 'dashboard',
+        translationKey: 'menu.dashboard',
+        icon: 'grid-outline',
+        route: '/dashboard'
+      },
+      {
+        id: 'portfolio',
+        translationKey: 'menu.portfolio.title',
+        icon: 'briefcase-outline',
+        expanded: false,
+        children: [
+          {
+            id: 'portfolio-view',
+            translationKey: 'menu.portfolio.viewAll',
+            icon: 'list-outline',
+            route: '/portfolio/overview'
+          },
+          ...(context.isPersonal ? [{
+            id: 'portfolio-add',
+            translationKey: 'menu.portfolio.addNew',
+            icon: 'add-circle-outline',
+            route: '/portfolio/create'
+          }] : [])
+        ]
+      },
+      ...(context.isPersonal ? [{
+        id: 'transactions',
+        translationKey: 'menu.transactions.title',
+        icon: 'swap-horizontal-outline',
+        expanded: false,
+        children: [
+          {
+            id: 'transactions-transfer',
+            translationKey: 'menu.transactions.transfer',
+            icon: 'swap-horizontal-outline',
+            route: '/transactions/transfer'
+          },
+          {
+            id: 'transactions-movement',
+            translationKey: 'menu.transactions.recordMovement',
+            icon: 'cash-outline',
+            route: '/transactions/record-movement'
+          }
+        ]
+      }] : []),
+      {
+        id: 'reports',
+        translationKey: 'menu.reports.title',
+        icon: 'analytics-outline',
+        expanded: false,
+        children: [
+          {
+            id: 'reports-balance-trends',
+            translationKey: 'menu.reports.balanceTrends',
+            icon: 'trending-up-outline',
+            route: '/reports/balance-trends'
+          },
+          {
+            id: 'reports-growth',
+            translationKey: 'menu.reports.growthAnalysis',
+            icon: 'bar-chart-outline',
+            route: '/reports/growth-analysis'
+          }
+        ]
+      },
+      {
+        id: 'settings',
+        translationKey: 'menu.settings.title',
+        icon: 'settings-outline',
+        expanded: false,
+        children: [
+          {
+            id: 'settings-preferences',
+            translationKey: 'menu.settings.myPreferences',
+            icon: 'person-outline',
+            route: '/settings/preferences'
+          },
+          ...(context.isTeam ? [{
+            id: 'settings-team-preferences',
+            translationKey: 'menu.settings.teamPreferences',
+            icon: 'notifications-outline',
+            route: '/settings/team-preferences'
+          }] : []),
+          ...(context.isPersonal ? [{
+            id: 'settings-team-management',
+            translationKey: 'menu.settings.teamManagement.title',
+            icon: 'people-outline',
+            expanded: false,
+            children: [
+              {
+                id: 'settings-teams-overview',
+                translationKey: 'menu.settings.teamManagement.myTeams',
+                icon: 'list-outline',
+                route: '/settings/teams/overview'
+              },
+              {
+                id: 'settings-teams-create',
+                translationKey: 'menu.settings.teamManagement.addNew',
+                icon: 'add-circle-outline',
+                route: '/settings/teams/create'
+              },
+              {
+                id: 'settings-teams-invite',
+                translationKey: 'menu.settings.teamManagement.invite',
+                icon: 'person-add-outline',
+                route: '/settings/teams/invite'
+              }
+            ]
+          }] : [])
+        ]
+      },
+      {
+        id: 'divider-1',
+        translationKey: '',
+        icon: '',
+        divider: true
+      },
+      {
+        id: 'logout',
+        translationKey: 'menu.logout',
+        icon: 'log-out-outline',
+        action: () => this.handleLogout()
+      }
+    ];
   }
 
   toggleSubmenu(item: MenuItem): void {

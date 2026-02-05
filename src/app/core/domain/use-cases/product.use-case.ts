@@ -6,6 +6,8 @@ import { ProductMetadataConfig } from '../models/product-metadata-config.model';
 import { CreateProductRequest, CreateProductResponse, UpdateProductRequest } from '../models/product.model';
 import { AddMovementRequest, AddMovementResponse } from '../models/movement.model';
 import { ProductListItem } from '../models/product-list-item.model';
+import { PortfolioContextService } from '@core/infrastructure/context/portfolio-context.service';
+import { LoggerService } from '@core/infrastructure/logging/logger.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,14 +15,18 @@ import { ProductListItem } from '../models/product-list-item.model';
 export class ProductUseCase {
 
   private productTypes$: Observable<ProductType[]> | null = null;
-  private products$: Observable<ProductListItem[]> | null = null;
+  private productsCacheMap = new Map<string, Observable<ProductListItem[]>>();
   private metadataConfigCache = new Map<string, Observable<ProductMetadataConfig[]>>();
   private loadingSubject = new BehaviorSubject<boolean>(false);
   private productsLoadingSubject = new BehaviorSubject<boolean>(false);
   public loading$ = this.loadingSubject.asObservable();
   public productsLoading$ = this.productsLoadingSubject.asObservable();
 
-  constructor(private productRepository: ProductRepository) {}
+  constructor(
+    private productRepository: ProductRepository,
+    private portfolioContext: PortfolioContextService,
+    private logger: LoggerService
+  ) {}
 
   getProductTypes(): Observable<ProductType[]> {
     if (!this.productTypes$) {
@@ -50,14 +56,25 @@ export class ProductUseCase {
   }
 
   getProducts(): Observable<ProductListItem[]> {
-    if (!this.products$) {
+    const context = this.portfolioContext.getCurrentContext();
+    const cacheKey = context.isPersonal ? 'personal' : `team_${context.teamId}`;
+
+    if (!this.productsCacheMap.has(cacheKey)) {
       this.productsLoadingSubject.next(true);
-      this.products$ = this.productRepository.getProducts().pipe(
-        tap(() => this.productsLoadingSubject.next(false)),
-        shareReplay(1)
-      );
+      const products$ = this.productRepository
+        .getProducts(context.teamId || undefined)
+        .pipe(
+          tap(() => this.productsLoadingSubject.next(false)),
+          tap(products => this.logger.info('Products loaded', 'ProductUseCase', {
+            count: products.length,
+            context: context.type,
+            teamId: context.teamId
+          })),
+          shareReplay(1)
+        );
+      this.productsCacheMap.set(cacheKey, products$);
     }
-    return this.products$;
+    return this.productsCacheMap.get(cacheKey)!;
   }
 
   refreshProducts(): Observable<ProductListItem[]> {
@@ -94,12 +111,13 @@ export class ProductUseCase {
   }
 
   clearProductsCache(): void {
-    this.products$ = null;
+    this.productsCacheMap.clear();
+    this.logger.info('Products cache cleared', 'ProductUseCase');
   }
 
   clearCache(): void {
     this.productTypes$ = null;
     this.metadataConfigCache.clear();
-    this.products$ = null;
+    this.productsCacheMap.clear();
   }
 }

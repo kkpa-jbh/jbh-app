@@ -33,6 +33,7 @@ import { ProductListItem } from '@core/domain/models/product-list-item.model';
 export class ProductCardComponent {
   @Input({ required: true }) product!: ProductListItem;
   @Input() currency = 'USD';
+  @Input() showActions = true;
   @Output() edit = new EventEmitter<void>();
   @Output() delete = new EventEmitter<void>();
   @Output() statusChange = new EventEmitter<boolean>();

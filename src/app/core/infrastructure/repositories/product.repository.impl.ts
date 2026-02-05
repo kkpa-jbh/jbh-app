@@ -44,14 +44,22 @@ export class ProductRepositoryImpl extends ApiBaseService implements ProductRepo
     return this.post<CreateProductResponse>(this.PRODUCTS_ENDPOINT, request);
   }
 
-  getProducts(): Observable<ProductListItem[]> {
-    return this.get<ProductListItemApiResponse[]>(this.PRODUCTS_ENDPOINT).pipe(
+  getProducts(teamId?: string): Observable<ProductListItem[]> {
+    const options = teamId ? { params: { teamId } } : {};
+    return this.get<ProductListItemApiResponse[]>(
+      this.PRODUCTS_ENDPOINT,
+      options
+    ).pipe(
       map(responses => responses.map(response => ProductListItem.fromApiResponse(response)))
     );
   }
 
-  getProductById(id: string): Observable<ProductListItem> {
-    return this.get<ProductListItemApiResponse>(`${this.PRODUCTS_ENDPOINT}/${id}`).pipe(
+  getProductById(id: string, teamId?: string): Observable<ProductListItem> {
+    const options = teamId ? { params: { teamId } } : {};
+    return this.get<ProductListItemApiResponse>(
+      `${this.PRODUCTS_ENDPOINT}/${id}`,
+      options
+    ).pipe(
       map(response => ProductListItem.fromApiResponse(response))
     );
   }

@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ 'settings.teamPreferences.title' | translate }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div class="jbh-container">
+    @if (currentContext$ | async; as context) {
+      <div class="jbh-card">
+        <h2>{{ 'settings.teamPreferences.forTeam' | translate: { teamName: context.teamName } }}</h2>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()">
+          <ion-item>
+            <ion-label>{{ 'settings.teamPreferences.notifications' | translate }}</ion-label>
+            <ion-toggle formControlName="notifications"></ion-toggle>
+          </ion-item>
+
+          <ion-button type="submit" expand="block" class="jbh-button-primary">
+            {{ 'common.save' | translate }}
+          </ion-button>
+        </form>
+      </div>
+    }
+  </div>
+</ion-content>

@@ -1,0 +1,12 @@
+h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--jbh-text-primary);
+  margin-bottom: var(--jbh-spacing-md);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--jbh-spacing-md);
+}

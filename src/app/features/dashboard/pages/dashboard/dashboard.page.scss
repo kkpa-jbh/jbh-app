@@ -1,0 +1,24 @@
+.jbh-dashboard-header {
+  padding: var(--jbh-spacing-md) 0;
+
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--jbh-text-primary);
+    margin: 0;
+  }
+}
+
+.jbh-dashboard-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--jbh-spacing-md);
+  margin-bottom: var(--jbh-spacing-lg);
+}
+
+.jbh-dashboard-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--jbh-spacing-md);
+  margin-top: var(--jbh-spacing-lg);
+}

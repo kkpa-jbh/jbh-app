@@ -135,6 +135,8 @@ export class PortfolioContextStorageService {
 
 Pattern: BehaviorSubject-based state service (similar to ViewportService)
 
+Centralize Scope State with a Service
+
 ```typescript
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';

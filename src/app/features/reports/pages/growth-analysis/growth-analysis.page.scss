@@ -1,0 +1,21 @@
+.jbh-coming-soon {
+  text-align: center;
+  padding: var(--jbh-spacing-xl);
+
+  ion-icon {
+    color: var(--jbh-text-secondary);
+    margin-bottom: var(--jbh-spacing-md);
+  }
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--jbh-text-primary);
+    margin-bottom: var(--jbh-spacing-sm);
+  }
+
+  p {
+    color: var(--jbh-text-secondary);
+    font-size: 1rem;
+  }
+}

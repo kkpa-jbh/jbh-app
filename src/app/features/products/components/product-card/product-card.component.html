@@ -16,45 +16,49 @@
           {{ 'products.card.fullyWithdrawn' | translate }}
         </span>
       }
-      <div class="jbh-status-toggle" [class.toggling]="isTogglingStatus">
-        <span class="jbh-status-label">
-          {{ (product.isActive ? 'products.card.status.active' : 'products.card.status.inactive') | translate }}
-        </span>
-        <ion-toggle
-          [checked]="product.isActive"
-          [disabled]="isTogglingStatus"
-          (ionChange)="onStatusToggle($event)"
-          [title]="'products.card.status.toggle' | translate"
-        ></ion-toggle>
-        @if (isTogglingStatus) {
-          <ion-spinner name="crescent" class="jbh-toggle-spinner"></ion-spinner>
-        }
-      </div>
-      <div class="jbh-product-actions">
-        @if (product.allowsMovements) {
+      @if (showActions) {
+        <div class="jbh-status-toggle" [class.toggling]="isTogglingStatus">
+          <span class="jbh-status-label">
+            {{ (product.isActive ? 'products.card.status.active' : 'products.card.status.inactive') | translate }}
+          </span>
+          <ion-toggle
+            [checked]="product.isActive"
+            [disabled]="isTogglingStatus"
+            (ionChange)="onStatusToggle($event)"
+            [title]="'products.card.status.toggle' | translate"
+          ></ion-toggle>
+          @if (isTogglingStatus) {
+            <ion-spinner name="crescent" class="jbh-toggle-spinner"></ion-spinner>
+          }
+        </div>
+      }
+      @if (showActions) {
+        <div class="jbh-product-actions">
+          @if (product.allowsMovements) {
+            <button
+              class="jbh-icon-button jbh-icon-button-primary"
+              (click)="onAddMovement($event)"
+              [title]="'products.addMovement.title' | translate"
+            >
+              <ion-icon name="add-circle-outline"></ion-icon>
+            </button>
+          }
           <button
-            class="jbh-icon-button jbh-icon-button-primary"
-            (click)="onAddMovement($event)"
-            [title]="'products.addMovement.title' | translate"
+            class="jbh-icon-button"
+            (click)="onEdit($event)"
+            [title]="'common.edit' | translate"
           >
-            <ion-icon name="add-circle-outline"></ion-icon>
+            <ion-icon name="create-outline"></ion-icon>
           </button>
-        }
-        <button
-          class="jbh-icon-button"
-          (click)="onEdit($event)"
-          [title]="'common.edit' | translate"
-        >
-          <ion-icon name="create-outline"></ion-icon>
-        </button>
-        <button
-          class="jbh-icon-button jbh-icon-button-danger"
-          (click)="onDelete($event)"
-          [title]="'common.delete' | translate"
-        >
-          <ion-icon name="trash-outline"></ion-icon>
-        </button>
-      </div>
+          <button
+            class="jbh-icon-button jbh-icon-button-danger"
+            (click)="onDelete($event)"
+            [title]="'common.delete' | translate"
+          >
+            <ion-icon name="trash-outline"></ion-icon>
+          </button>
+        </div>
+      }
     </div>
   </div>
 
