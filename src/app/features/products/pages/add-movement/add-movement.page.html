@@ -53,7 +53,7 @@
               <ion-icon name="wallet-outline" class="jbh-ion-select-icon"></ion-icon>
               <ion-select
                 formControlName="movementType"
-                interface="action-sheet"
+                [interface]="selectInterface"
                 [placeholder]="'products.addMovement.movementType.placeholder' | translate"
                 class="jbh-ion-select"
               >
@@ -136,10 +136,9 @@
                 <ion-icon name="pricetag-outline" class="jbh-ion-select-icon"></ion-icon>
                 <ion-select
                   formControlName="categoryName"
-                  interface="action-sheet"
+                  [interface]="selectInterface"
                   [placeholder]="'products.addMovement.category.placeholder' | translate"
                   class="jbh-ion-select"
-                  [disabled]="isLoadingCategories"
                 >
                   @for (category of categories; track category.name) {
                     <ion-select-option [value]="category.name">
@@ -185,6 +184,35 @@
               <p class="jbh-field-hint">{{ 'products.addMovement.balanceSnapshot.hint' | translate }}</p>
             </div>
           }
+
+          <!-- Description (Optional) -->
+          <div class="jbh-form-field">
+            <label class="jbh-label">
+              {{ 'products.addMovement.description.label' | translate }}
+              <span class="jbh-label-optional">{{ 'common.optional' | translate }}</span>
+            </label>
+            <div class="jbh-input-wrapper">
+              <ion-icon name="document-text-outline" class="jbh-input-icon left"></ion-icon>
+              <ion-textarea
+                formControlName="description"
+                class="jbh-textarea jbh-input-icon-left"
+                [class.error]="hasError('description')"
+                [placeholder]="'products.addMovement.description.placeholder' | translate"
+                [autoGrow]="true"
+                [rows]="3"
+                [maxlength]="500"
+              ></ion-textarea>
+            </div>
+            @if (hasError('description')) {
+              <div class="jbh-field-error">
+                <ion-icon name="alert-circle-outline"></ion-icon>
+                <span>{{ getErrorMessage('description') }}</span>
+              </div>
+            }
+            <p class="jbh-field-hint">
+              {{ movementForm.get('description')?.value?.length || 0 }}/500 {{ 'common.characters' | translate }}
+            </p>
+          </div>
 
           <!-- Submit Button -->
           <button

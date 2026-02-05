@@ -23,6 +23,7 @@ import { CreateProductRequest } from '@core/domain/models/product.model';
 import { JBHError } from '@core/domain/models/jbh-error.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
+import { ViewportService, SelectInterface } from '@core/infrastructure/viewport/viewport.service';
 import { DecimalFormatDirective } from '@shared/directives';
 
 @Component({
@@ -52,6 +53,8 @@ export class CreateProductPage implements OnInit, OnDestroy, ViewWillEnter {
 
   readonly MetadataValueType = MetadataValueType;
 
+  selectInterface: SelectInterface = 'action-sheet';
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -60,8 +63,10 @@ export class CreateProductPage implements OnInit, OnDestroy, ViewWillEnter {
     private productUseCase: ProductUseCase,
     private translationService: TranslationService,
     private toastController: ToastController,
-    private logger: LoggerService
+    private logger: LoggerService,
+    private viewportService: ViewportService
   ) {
+    this.selectInterface = this.viewportService.selectInterface;
     addIcons({
       cubeOutline,
       pricetagOutline,

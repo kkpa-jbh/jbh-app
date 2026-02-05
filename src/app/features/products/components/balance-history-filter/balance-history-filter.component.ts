@@ -7,6 +7,7 @@ import { addIcons } from 'ionicons';
 import { calendarOutline, cubeOutline, searchOutline } from 'ionicons/icons';
 import { ProductListItem } from '@core/domain/models/product-list-item.model';
 import { MonthlyBalanceRequest } from '@core/domain/models/monthly-balance.model';
+import { ViewportService, SelectInterface } from '@core/infrastructure/viewport/viewport.service';
 import { JbhDatePipe } from '@shared/pipes';
 
 export interface BalanceFilterEvent {
@@ -29,12 +30,17 @@ export class BalanceHistoryFilterComponent implements OnInit {
   filterForm!: FormGroup;
   maxDate: string;
   minStartDate: string;
+  selectInterface: SelectInterface = 'action-sheet';
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private viewportService: ViewportService
+  ) {
     addIcons({ calendarOutline, cubeOutline, searchOutline });
 
     this.maxDate = JbhDatePipe.toPeriod(new Date());
     this.minStartDate = '2020-01';
+    this.selectInterface = this.viewportService.selectInterface;
   }
 
   ngOnInit(): void {

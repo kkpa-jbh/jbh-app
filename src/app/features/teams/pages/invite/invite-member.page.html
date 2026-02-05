@@ -48,7 +48,7 @@
               <ion-select
                 formControlName="teamId"
                 [placeholder]="'teams.invite.teamId.placeholder' | translate"
-                interface="action-sheet"
+                [interface]="selectInterface"
                 [interfaceOptions]="{ header: ('teams.invite.teamId.label' | translate) }"
                 class="jbh-ion-select"
                 [disabled]="isTeamDisabled"

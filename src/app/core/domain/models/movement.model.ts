@@ -6,6 +6,7 @@ export interface AddMovementRequest {
   totalAmount?: number;
   categoryName?: string;
   balanceSnapshot?: number;
+  description?: string;
 }
 
 export interface AddMovementResponse {
@@ -16,5 +17,6 @@ export interface AddMovementResponse {
   totalAmount?: number;
   categoryName?: string;
   balanceSnapshot?: number;
+  description?: string;
   createdAt: string;
 }

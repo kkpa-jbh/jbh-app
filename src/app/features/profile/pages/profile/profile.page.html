@@ -51,7 +51,7 @@
               <ion-select
                 formControlName="defaultLang"
                 [placeholder]="'profile.language.placeholder' | translate"
-                interface="action-sheet"
+                [interface]="selectInterface"
                 [interfaceOptions]="{ header: ('profile.language.label' | translate) }"
                 class="jbh-ion-select"
               >
@@ -76,7 +76,7 @@
               <ion-select
                 formControlName="defaultCurrency"
                 [placeholder]="'profile.currency.placeholder' | translate"
-                interface="action-sheet"
+                [interface]="selectInterface"
                 [interfaceOptions]="{ header: ('profile.currency.label' | translate) }"
                 class="jbh-ion-select"
               >
@@ -126,7 +126,7 @@
               <ion-select
                 formControlName="defaultProductId"
                 [placeholder]="'profile.defaultProduct.placeholder' | translate"
-                interface="action-sheet"
+                [interface]="selectInterface"
                 [interfaceOptions]="{ header: ('profile.defaultProduct.label' | translate) }"
                 class="jbh-ion-select"
               >

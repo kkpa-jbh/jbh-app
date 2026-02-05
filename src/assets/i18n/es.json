@@ -1,11 +1,13 @@
 {
   "common": {
     "cancel": "Cancelar",
+    "characters": "caracteres",
     "delete": "Eliminar",
     "edit": "Editar",
     "error": "Error",
     "gotIt": "Entendido",
     "loading": "Cargando...",
+    "optional": "(opcional)",
     "or": "o",
     "save": "Guardar",
     "success": "Éxito"
@@ -51,6 +53,10 @@
         "label": "Categoría",
         "placeholder": "Selecciona una categoría"
       },
+      "description": {
+        "label": "Descripción",
+        "placeholder": "Agrega una descripción (opcional)"
+      },
       "entryDate": {
         "label": "Fecha de Registro"
       },
@@ -81,6 +87,7 @@
         "withdrawal": "Retiro"
       },
       "validation": {
+        "maxLength": "La descripción no debe exceder {{max}} caracteres",
         "min": "El valor debe ser al menos {{min}}",
         "required": "Este campo es requerido"
       }

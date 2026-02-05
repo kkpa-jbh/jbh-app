@@ -7,15 +7,17 @@ import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { addIcons } from 'ionicons';
 import {
-  cashOutline,
-  calendarOutline,
-  pricetagOutline,
-  saveOutline,
-  close,
-  walletOutline,
+  alertCircleOutline,
   arrowDownOutline,
   arrowUpOutline,
-  syncOutline
+  calendarOutline,
+  cashOutline,
+  close,
+  documentTextOutline,
+  pricetagOutline,
+  saveOutline,
+  syncOutline,
+  walletOutline
 } from 'ionicons/icons';
 import { ProductUseCase } from '@core/domain/use-cases/product.use-case';
 import { CategoryUseCase } from '@core/domain/use-cases/category.use-case';
@@ -25,6 +27,7 @@ import { MovementType, AddMovementRequest } from '@core/domain/models/movement.m
 import { JBHError } from '@core/domain/models/jbh-error.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
+import { ViewportService, SelectInterface } from '@core/infrastructure/viewport/viewport.service';
 import { DecimalFormatDirective } from '@shared/directives';
 import { JbhTranslationKeyPipe } from '@shared/pipes';
 
@@ -58,6 +61,8 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter {
     { value: 'BALANCE_SNAPSHOT', labelKey: 'products.addMovement.types.balanceSnapshot', icon: 'sync-outline' }
   ];
 
+  selectInterface: SelectInterface = 'action-sheet';
+
   private productId: string | null = null;
   private destroy$ = new Subject<void>();
 
@@ -69,18 +74,22 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter {
     private categoryUseCase: CategoryUseCase,
     private translationService: TranslationService,
     private toastController: ToastController,
-    private logger: LoggerService
+    private logger: LoggerService,
+    private viewportService: ViewportService
   ) {
+    this.selectInterface = this.viewportService.selectInterface;
     addIcons({
-      cashOutline,
-      calendarOutline,
-      pricetagOutline,
-      saveOutline,
-      close,
-      walletOutline,
+      alertCircleOutline,
       arrowDownOutline,
       arrowUpOutline,
-      syncOutline
+      calendarOutline,
+      cashOutline,
+      close,
+      documentTextOutline,
+      pricetagOutline,
+      saveOutline,
+      syncOutline,
+      walletOutline
     });
   }
 
@@ -111,7 +120,8 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter {
       entryDate: [today, [Validators.required]],
       totalAmount: [null],
       categoryName: [''],
-      balanceSnapshot: [null]
+      balanceSnapshot: [null],
+      description: ['', [Validators.maxLength(500)]]
     });
   }
 
@@ -178,6 +188,8 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter {
 
   private loadCategories(type: MovementType): void {
     this.isLoadingCategories = true;
+    this.movementForm.get('categoryName')?.disable();
+
     const categoryObservable = type === 'DEPOSIT'
       ? this.categoryUseCase.getIncomeCategories()
       : this.categoryUseCase.getExpenseCategories();
@@ -188,10 +200,12 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter {
         next: (categories) => {
           this.categories = categories;
           this.isLoadingCategories = false;
+          this.movementForm.get('categoryName')?.enable();
         },
         error: (error) => {
           this.logger.error('Error loading categories:', 'AddMovementPage', error);
           this.isLoadingCategories = false;
+          this.movementForm.get('categoryName')?.enable();
           this.showToast(this.translationService.instant('products.addMovement.errors.loadCategories'), 'danger');
         }
       });
@@ -224,6 +238,10 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter {
     } else {
       request.totalAmount = formData.totalAmount;
       request.categoryName = formData.categoryName;
+    }
+
+    if (formData.description?.trim()) {
+      request.description = formData.description.trim();
     }
 
     this.productUseCase.addMovement(this.productId, request)
@@ -272,6 +290,10 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter {
     if (field.hasError('min')) {
       const minValue = field.errors['min'].min;
       return this.translationService.instant('products.addMovement.validation.min', { min: minValue });
+    }
+    if (field.hasError('maxlength')) {
+      const maxLength = field.errors['maxlength'].requiredLength;
+      return this.translationService.instant('products.addMovement.validation.maxLength', { max: maxLength });
     }
     return this.translationService.instant('validation.pattern');
   }

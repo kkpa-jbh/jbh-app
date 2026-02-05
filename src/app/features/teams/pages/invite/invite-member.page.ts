@@ -20,6 +20,7 @@ import { AuthUseCase } from '@core/domain/use-cases/auth.use-case';
 import { TeamWithMembers } from '@core/domain/models/team.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
+import { ViewportService, SelectInterface } from '@core/infrastructure/viewport/viewport.service';
 import { InviteMemberRequest } from '../../../../core/domain/repositories/team.repository';
 
 @Component({
@@ -45,6 +46,7 @@ export class InviteMemberPage implements OnInit, OnDestroy, ViewWillEnter {
   checkingUser = false;
   userExists: boolean | null = null;
   userCheckMessage = '';
+  selectInterface: SelectInterface = 'action-sheet';
 
   private destroy$ = new Subject<void>();
   private userCheck$ = new Subject<string>();
@@ -57,8 +59,10 @@ export class InviteMemberPage implements OnInit, OnDestroy, ViewWillEnter {
     private authUseCase: AuthUseCase,
     private translationService: TranslationService,
     private toastController: ToastController,
-    private logger: LoggerService
+    private logger: LoggerService,
+    private viewportService: ViewportService
   ) {
+    this.selectInterface = this.viewportService.selectInterface;
     addIcons({
       mailOutline,
       personOutline,

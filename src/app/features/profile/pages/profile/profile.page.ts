@@ -20,6 +20,7 @@ import { Language, Currency, UpdatePreferencesDto } from '@core/domain/models/pr
 import { ProductListItem } from '@core/domain/models/product-list-item.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
+import { ViewportService, SelectInterface } from '@core/infrastructure/viewport/viewport.service';
 import { DecimalFormatDirective } from '@shared/directives/decimal-format.directive';
 
 @Component({
@@ -45,6 +46,8 @@ export class ProfilePage implements OnInit, OnDestroy, ViewWillEnter {
   readonly Language = Language;
   readonly Currency = Currency;
 
+  selectInterface: SelectInterface = 'action-sheet';
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -52,8 +55,10 @@ export class ProfilePage implements OnInit, OnDestroy, ViewWillEnter {
     private preferencesUseCase: PreferencesUseCase,
     private translationService: TranslationService,
     private toastController: ToastController,
-    private logger: LoggerService
+    private logger: LoggerService,
+    private viewportService: ViewportService
   ) {
+    this.selectInterface = this.viewportService.selectInterface;
     addIcons({
       personOutline,
       languageOutline,

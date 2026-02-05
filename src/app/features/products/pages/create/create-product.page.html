@@ -69,7 +69,7 @@
               <ion-select
                 formControlName="productType"
                 [placeholder]="'products.create.productType.placeholder' | translate"
-                interface="action-sheet"
+                [interface]="selectInterface"
                 [interfaceOptions]="{ header: ('products.create.productType.label' | translate) }"
                 class="jbh-ion-select"
               >

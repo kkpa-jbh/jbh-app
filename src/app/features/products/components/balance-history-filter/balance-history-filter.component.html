@@ -5,7 +5,7 @@
       <ion-icon name="cube-outline" class="jbh-ion-select-icon"></ion-icon>
       <ion-select
         formControlName="productId"
-        interface="action-sheet"
+        [interface]="selectInterface"
         class="jbh-ion-select"
         [placeholder]="'products.balanceHistory.product.placeholder' | translate"
       >

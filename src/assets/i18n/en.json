@@ -1,11 +1,13 @@
 {
   "common": {
     "cancel": "Cancel",
+    "characters": "characters",
     "delete": "Delete",
     "edit": "Edit",
     "error": "Error",
     "gotIt": "Got it",
     "loading": "Loading...",
+    "optional": "(optional)",
     "or": "or",
     "save": "Save",
     "success": "Success"
@@ -51,6 +53,10 @@
         "label": "Category",
         "placeholder": "Select a category"
       },
+      "description": {
+        "label": "Description",
+        "placeholder": "Add a description (optional)"
+      },
       "entryDate": {
         "label": "Entry Date"
       },
@@ -81,6 +87,7 @@
         "withdrawal": "Withdrawal"
       },
       "validation": {
+        "maxLength": "Description must not exceed {{max}} characters",
         "min": "Value must be at least {{min}}",
         "required": "This field is required"
       }

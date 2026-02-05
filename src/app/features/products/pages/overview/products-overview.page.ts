@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, ViewChildren, QueryList } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
-import { IonicModule, ViewWillEnter, ToastController, AlertController } from '@ionic/angular';
+import { IonicModule, ViewWillEnter, ViewWillLeave, ToastController, AlertController } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { addIcons } from 'ionicons';
@@ -25,7 +25,7 @@ import { ProductCardComponent } from '../../components/product-card/product-card
     ProductCardComponent
   ]
 })
-export class ProductsOverviewPage implements OnInit, OnDestroy, ViewWillEnter {
+export class ProductsOverviewPage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLeave {
   @ViewChildren(ProductCardComponent) productCards!: QueryList<ProductCardComponent>;
 
   products: ProductListItem[] = [];
@@ -49,6 +49,13 @@ export class ProductsOverviewPage implements OnInit, OnDestroy, ViewWillEnter {
 
   ionViewWillEnter(): void {
     this.refreshProducts();
+  }
+
+  ionViewWillLeave(): void {
+    const activeElement = document.activeElement as HTMLElement;
+    if (activeElement && activeElement.blur) {
+      activeElement.blur();
+    }
   }
 
   ngOnDestroy(): void {

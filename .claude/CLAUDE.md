@@ -140,7 +140,8 @@ export class MyComponent implements OnInit, OnDestroy {
 
 #### Forms
 
-1. **Use `ion-select`** (not native `<select>`) with `interface="action-sheet"`
+1. **Use `ion-select`** (not native `<select>`) with `interface="selectInterface"`
+   where in the TS file it should be: ` this.selectInterface = this.viewportService.selectInterface;    `
 2. **Angular control flow**: `@if`, `@for` (not `*ngIf`, `*ngFor`)
 3. **Reactive Forms** with `hasError()`, `getErrorMessage()` methods
 
