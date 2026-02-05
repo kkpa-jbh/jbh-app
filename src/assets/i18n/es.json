@@ -199,6 +199,8 @@
         "totalBalance": "Saldo Total",
         "totalMovements": "Total de Movimientos"
       },
+      "totalCredits": "Total Créditos",
+      "totalDebits": "Total Débitos",
       "table": {
         "closingBalance": "Cierre",
         "growthRate": "Crecimiento",
@@ -207,7 +209,9 @@
         "period": "Período",
         "productName": "Producto",
         "profit": "Ganancia",
-        "status": "Estado"
+        "status": "Estado",
+        "totalCredits": "Créditos",
+        "totalDebits": "Débitos"
       },
       "title": "Historial de Saldos",
       "titleLarge": "Historial de Saldos",

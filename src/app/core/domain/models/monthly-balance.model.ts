@@ -21,6 +21,12 @@ export interface MonthlyBalanceApiResponse {
   /** Number of transactions (deposits, withdrawals, transfers) during the month. */
   movementCount: number;
 
+  /** Total amount of debits (withdrawals, expenses) during the month. */
+  totalDebits: number;
+
+  /** Total amount of credits (deposits, income) during the month. */
+  totalCredits: number;
+
   /** Indicates no actual data exists for this period (product didn't exist, was closed, or had no activity). */
   isGapPeriod: boolean;
 
@@ -136,6 +142,10 @@ export class MonthlyBalance {
     public readonly growthRate: number,
     /** Number of transactions during the month */
     public readonly movementCount: number,
+    /** Total amount of debits during the month */
+    public readonly totalDebits: number,
+    /** Total amount of credits during the month */
+    public readonly totalCredits: number,
     /** True if no actual data exists for this period */
     public readonly isGapPeriod: boolean,
     /** True if data comes from official statement */
@@ -163,6 +173,8 @@ export class MonthlyBalance {
       response.profit,
       response.growthRate,
       response.movementCount,
+      response.totalDebits,
+      response.totalCredits,
       response.isGapPeriod,
       response.isOfficialReport,
       response.productId.value,

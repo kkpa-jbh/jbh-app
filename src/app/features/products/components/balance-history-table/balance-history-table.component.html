@@ -7,6 +7,8 @@
     }
     <div class="jbh-balance-cell jbh-cell-balance">{{ 'products.balanceHistory.table.openingBalance' | translate }}</div>
     <div class="jbh-balance-cell jbh-cell-balance">{{ 'products.balanceHistory.table.closingBalance' | translate }}</div>
+    <div class="jbh-balance-cell jbh-cell-balance">{{ 'products.balanceHistory.table.totalDebits' | translate }}</div>
+    <div class="jbh-balance-cell jbh-cell-balance">{{ 'products.balanceHistory.table.totalCredits' | translate }}</div>
     <div class="jbh-balance-cell jbh-cell-profit">{{ 'products.balanceHistory.table.profit' | translate }}</div>
     <div class="jbh-balance-cell jbh-cell-growth">{{ 'products.balanceHistory.table.growthRate' | translate }}</div>
     <div class="jbh-balance-cell jbh-cell-movements">{{ 'products.balanceHistory.table.movements' | translate }}</div>
@@ -21,6 +23,8 @@
       }
       <div class="jbh-balance-cell jbh-cell-balance">{{ balance.openingBalance | jbhCurrency:currency }}</div>
       <div class="jbh-balance-cell jbh-cell-balance">{{ balance.closingBalance | jbhCurrency:currency }}</div>
+      <div class="jbh-balance-cell jbh-cell-balance">{{ balance.totalDebits | jbhCurrency:currency }}</div>
+      <div class="jbh-balance-cell jbh-cell-balance">{{ balance.totalCredits | jbhCurrency:currency }}</div>
       <div class="jbh-balance-cell jbh-cell-profit" [ngClass]="getProfitClass(balance.profit)">
         {{ balance.profit | jbhProfit:currency }}
       </div>
@@ -68,6 +72,14 @@
         <div class="jbh-balance-card-item">
           <span class="jbh-balance-card-label">{{ 'products.balanceHistory.closingBalance' | translate }}</span>
           <span class="jbh-balance-card-value">{{ balance.closingBalance | jbhCurrency:currency }}</span>
+        </div>
+        <div class="jbh-balance-card-item">
+          <span class="jbh-balance-card-label">{{ 'products.balanceHistory.totalDebits' | translate }}</span>
+          <span class="jbh-balance-card-value">{{ balance.totalDebits | jbhCurrency:currency }}</span>
+        </div>
+        <div class="jbh-balance-card-item">
+          <span class="jbh-balance-card-label">{{ 'products.balanceHistory.totalCredits' | translate }}</span>
+          <span class="jbh-balance-card-value">{{ balance.totalCredits | jbhCurrency:currency }}</span>
         </div>
         <div class="jbh-balance-card-item">
           <span class="jbh-balance-card-label">{{ 'products.balanceHistory.profit' | translate }}</span>

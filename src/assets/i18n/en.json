@@ -199,6 +199,8 @@
         "totalBalance": "Total Balance",
         "totalMovements": "Total Movements"
       },
+      "totalCredits": "Total Credits",
+      "totalDebits": "Total Debits",
       "table": {
         "closingBalance": "Closing",
         "growthRate": "Growth",
@@ -207,7 +209,9 @@
         "period": "Period",
         "productName": "Product",
         "profit": "Profit",
-        "status": "Status"
+        "status": "Status",
+        "totalCredits": "Credits",
+        "totalDebits": "Debits"
       },
       "title": "Balance History",
       "titleLarge": "Balance History",
