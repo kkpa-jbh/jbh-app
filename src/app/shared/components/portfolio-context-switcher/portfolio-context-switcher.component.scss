@@ -2,6 +2,7 @@
   padding: var(--jbh-spacing-sm);
   border-bottom: 1px solid var(--jbh-border-color);
   background: var(--jbh-card-background);
+  flex-shrink: 0;
 }
 
 .jbh-context-switcher-item {

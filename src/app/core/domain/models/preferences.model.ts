@@ -53,7 +53,6 @@ export function toApiRequest(dto: UpdatePreferencesDto): UpdatePreferencesApiReq
 
 export class Preferences {
   constructor(
-    public readonly id: PreferencesId,
     public readonly defaultLang: Language,
     public readonly defaultCurrency: Currency,
     public readonly savingsGoal: number,
@@ -63,7 +62,6 @@ export class Preferences {
   static fromApiResponse(response: PreferencesApiResponse): Preferences {
     const langCode = response.defaultLang.code.toUpperCase() as Language;
     return new Preferences(
-      new PreferencesId(response.id.value),
       langCode,
       response.defaultCurrency as Currency,
       response.savingsGoal,

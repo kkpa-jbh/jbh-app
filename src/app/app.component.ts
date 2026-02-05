@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { IonApp, IonRouterOutlet, IonMenu, ToastController } from '@ionic/angular/standalone';
+import { IonApp, IonRouterOutlet, IonMenu, IonContent, ToastController } from '@ionic/angular/standalone';
 import { TranslationService } from './core/infrastructure/i18n/translation.service';
 import { PushNotificationService } from './core/infrastructure/push/push-notification.service';
 import { SwUpdateService } from './core/infrastructure/pwa/sw-update.service';
@@ -9,7 +9,7 @@ import { AppMenuComponent } from './shared/components/app-menu/app-menu.componen
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
-  imports: [IonApp, IonRouterOutlet, IonMenu, AppMenuComponent],
+  imports: [IonApp, IonRouterOutlet, IonMenu, IonContent, AppMenuComponent],
 })
 export class AppComponent implements OnInit {
   constructor(

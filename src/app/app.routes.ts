@@ -53,6 +53,11 @@ export const routes: Routes = [
     canActivate: [authGuard, teamReadOnlyGuard]
   },
   {
+    path: 'transactions/record-movement/:productId',
+    loadComponent: () => import('./features/products/pages/add-movement/add-movement.page').then(m => m.AddMovementPage),
+    canActivate: [authGuard, teamReadOnlyGuard]
+  },
+  {
     path: 'transactions/record-movement',
     loadComponent: () => import('./features/products/pages/add-movement/add-movement.page').then(m => m.AddMovementPage),
     canActivate: [authGuard, teamReadOnlyGuard]

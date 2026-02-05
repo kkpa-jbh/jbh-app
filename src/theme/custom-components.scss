@@ -1063,13 +1063,44 @@ ion-menu::part(backdrop) {
   background: rgba(0, 0, 0, 0.4);
 }
 
+ion-menu ion-content {
+  --background: transparent;
+}
+
+ion-menu ion-content::part(scroll) {
+  overflow-y: auto !important;
+  height: 100%;
+
+  // Custom scrollbar styling
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(102, 126, 234, 0.05);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--jbh-primary-color);
+    border-radius: 4px;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background: rgba(102, 126, 234, 0.9);
+    }
+
+    &:active {
+      background: rgba(102, 126, 234, 1);
+    }
+  }
+}
+
 .jbh-menu-container {
   display: flex;
   flex-direction: column;
-  height: 100%;
   background: var(--jbh-background-white);
   position: relative;
-  overflow: hidden;
 }
 
 // Menu Header
@@ -1080,6 +1111,7 @@ ion-menu::part(backdrop) {
   background: var(--jbh-gradient-primary);
   color: var(--jbh-background-white);
   box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+  flex-shrink: 0;
 
   @media (min-width: 768px) {
     padding: var(--jbh-spacing-xl) var(--jbh-spacing-lg);
@@ -1172,8 +1204,7 @@ ion-menu::part(backdrop) {
 
 // Menu Content
 .jbh-menu-content {
-  flex: 1;
-  overflow-y: auto;
+  flex: 1 1 auto;
   padding: var(--jbh-spacing-sm) 0;
 }
 
@@ -1286,7 +1317,7 @@ ion-menu::part(backdrop) {
 
 // Submenu - Modern slide-in animation
 .jbh-menu-submenu {
-  overflow: hidden;
+  overflow: visible;
   background: rgba(102, 126, 234, 0.03);
   border-left: 2px solid rgba(102, 126, 234, 0.2);
   margin: 4px var(--jbh-spacing-sm) 8px calc(var(--jbh-spacing-sm) + 8px);
@@ -1304,7 +1335,7 @@ ion-menu::part(backdrop) {
   }
   to {
     opacity: 1;
-    max-height: 400px;
+    max-height: 1000px;
     transform: translateY(0) scaleY(1);
   }
 }
@@ -1368,6 +1399,76 @@ ion-menu::part(backdrop) {
   }
 }
 
+// Nested Submenu (Third Level)
+.jbh-menu-nested-submenu {
+  overflow: visible;
+  background: rgba(102, 126, 234, 0.02);
+  border-left: 2px solid rgba(102, 126, 234, 0.15);
+  margin: 4px 0 8px calc(var(--jbh-spacing-sm) + 8px);
+  padding: 4px 0;
+  border-radius: 0 var(--jbh-radius-sm) var(--jbh-radius-sm) 0;
+  animation: slideDownFadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: top;
+}
+
+.jbh-menu-nested-subitem {
+  --background: transparent;
+  --background-hover: rgba(102, 126, 234, 0.06);
+  --background-activated: rgba(102, 126, 234, 0.08);
+  --padding-start: calc(var(--jbh-spacing-lg) + var(--jbh-spacing-sm));
+  --padding-end: var(--jbh-spacing-sm);
+  --min-height: 36px;
+  cursor: pointer;
+  transition: all var(--jbh-transition-base);
+  border-radius: var(--jbh-radius-sm);
+  margin: 2px 4px;
+
+  &:hover {
+    --background: rgba(102, 126, 234, 0.06);
+    transform: translateX(2px);
+  }
+
+  @media (min-width: 768px) {
+    --min-height: 38px;
+  }
+}
+
+.jbh-menu-nested-subitem-active {
+  --background: rgba(102, 126, 234, 0.1) !important;
+  box-shadow: 0 1px 3px rgba(102, 126, 234, 0.12);
+
+  .jbh-menu-nested-subitem-icon {
+    color: var(--jbh-primary-color);
+  }
+
+  .jbh-menu-nested-subitem-label {
+    color: var(--jbh-primary-color);
+    font-weight: var(--jbh-font-weight-semibold);
+  }
+}
+
+.jbh-menu-nested-subitem-icon {
+  font-size: 18px;
+  color: var(--jbh-text-secondary);
+  margin-right: var(--jbh-spacing-sm);
+  transition: color var(--jbh-transition-base);
+
+  @media (min-width: 768px) {
+    font-size: 20px;
+  }
+}
+
+.jbh-menu-nested-subitem-label {
+  font-size: var(--jbh-font-size-xs);
+  font-weight: var(--jbh-font-weight-normal);
+  color: var(--jbh-text-secondary);
+  transition: all var(--jbh-transition-base);
+
+  @media (min-width: 768px) {
+    font-size: var(--jbh-font-size-sm);
+  }
+}
+
 // Menu Divider
 .jbh-menu-divider {
   height: 1px;
@@ -1384,6 +1485,7 @@ ion-menu::part(backdrop) {
     transparent 0%,
     rgba(102, 126, 234, 0.02) 100%
   );
+  flex-shrink: 0;
 }
 
 .jbh-menu-footer-info {

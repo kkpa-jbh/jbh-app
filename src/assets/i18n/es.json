@@ -119,6 +119,7 @@
         "create": "Error al agregar el movimiento. Por favor intenta de nuevo.",
         "loadCategories": "Error al cargar las categorías. Por favor intenta de nuevo.",
         "loadProduct": "Error al cargar el producto. Por favor intenta de nuevo.",
+        "loadProducts": "Error al cargar los productos. Por favor intenta de nuevo.",
         "noProduct": "Ningún producto seleccionado.",
         "notAllowed": "Este producto no permite movimientos."
       },
@@ -127,6 +128,10 @@
       "movementType": {
         "label": "Tipo de Movimiento",
         "placeholder": "Selecciona el tipo de movimiento"
+      },
+      "product": {
+        "label": "Producto",
+        "placeholder": "Selecciona un producto"
       },
       "saveButton": "Guardar Movimiento",
       "saving": "Guardando...",

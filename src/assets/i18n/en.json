@@ -119,6 +119,7 @@
         "create": "Failed to add movement. Please try again.",
         "loadCategories": "Failed to load categories. Please try again.",
         "loadProduct": "Failed to load product. Please try again.",
+        "loadProducts": "Failed to load products. Please try again.",
         "noProduct": "No product selected.",
         "notAllowed": "This product does not support movements."
       },
@@ -127,6 +128,10 @@
       "movementType": {
         "label": "Movement Type",
         "placeholder": "Select movement type"
+      },
+      "product": {
+        "label": "Product",
+        "placeholder": "Select a product"
       },
       "saveButton": "Save Movement",
       "saving": "Saving...",

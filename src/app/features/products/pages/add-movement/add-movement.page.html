@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button defaultHref="/products/overview"></ion-back-button>
+      <ion-back-button defaultHref="/portfolio/overview"></ion-back-button>
     </ion-buttons>
     <ion-title>{{ 'products.addMovement.title' | translate }}</ion-title>
   </ion-toolbar>
@@ -23,7 +23,7 @@
     }
 
     <!-- Form -->
-    @if (!isLoading && product) {
+    @if (!isLoading || !hasProductIdFromRoute) {
       <div class="jbh-form-card">
         <div class="jbh-form-header">
           <div class="jbh-form-icon">
@@ -33,18 +33,49 @@
           <p class="jbh-form-subtitle">{{ 'products.addMovement.formSubtitle' | translate }}</p>
         </div>
 
-        <!-- Product Info Card -->
-        <div class="jbh-movement-product-info">
-          <div class="jbh-movement-product-icon" [style.background]="product.getTypeColor()">
-            <ion-icon [name]="product.getTypeIcon()"></ion-icon>
+        <!-- Product Info Card (when productId is from route) -->
+        @if (hasProductIdFromRoute && product) {
+          <div class="jbh-movement-product-info">
+            <div class="jbh-movement-product-icon" [style.background]="product.getTypeColor()">
+              <ion-icon [name]="product.getTypeIcon()"></ion-icon>
+            </div>
+            <div class="jbh-movement-product-details">
+              <span class="jbh-movement-product-name">{{ product.name }}</span>
+              <span class="jbh-movement-product-type">{{ 'products.types.' + product.type | translate }}</span>
+            </div>
           </div>
-          <div class="jbh-movement-product-details">
-            <span class="jbh-movement-product-name">{{ product.name }}</span>
-            <span class="jbh-movement-product-type">{{ 'products.types.' + product.type | translate }}</span>
-          </div>
-        </div>
+        }
 
         <form [formGroup]="movementForm" (ngSubmit)="onSubmit()" class="jbh-form-animated">
+
+          <!-- Product Selector (when no productId from route) -->
+          @if (!hasProductIdFromRoute) {
+            <div class="jbh-form-field">
+              <label class="jbh-label">{{ 'products.addMovement.product.label' | translate }}</label>
+              <div class="jbh-ion-select-wrapper" [class.error]="hasError('productId')">
+                <ion-icon name="wallet-outline" class="jbh-ion-select-icon"></ion-icon>
+                <ion-select
+                  formControlName="productId"
+                  [interface]="selectInterface"
+                  [placeholder]="'products.addMovement.product.placeholder' | translate"
+                  class="jbh-ion-select"
+                >
+                  @for (prod of products; track prod.id) {
+                    <ion-select-option [value]="prod.id">{{ prod.name }}</ion-select-option>
+                  }
+                </ion-select>
+                @if (isLoadingProducts) {
+                  <ion-spinner name="crescent" class="jbh-select-spinner"></ion-spinner>
+                }
+              </div>
+              @if (hasError('productId')) {
+                <div class="jbh-field-error">
+                  <ion-icon name="alert-circle-outline"></ion-icon>
+                  <span>{{ getErrorMessage('productId') }}</span>
+                </div>
+              }
+            </div>
+          }
 
           <!-- Movement Type -->
           <div class="jbh-form-field">

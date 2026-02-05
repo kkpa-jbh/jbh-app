@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -21,6 +21,7 @@ import {
 } from 'ionicons/icons';
 import { ProductUseCase } from '@core/domain/use-cases/product.use-case';
 import { CategoryUseCase } from '@core/domain/use-cases/category.use-case';
+import { PreferencesUseCase } from '@core/domain/use-cases/preferences.use-case';
 import { ProductListItem } from '@core/domain/models/product-list-item.model';
 import { Category } from '@core/domain/models/category.model';
 import { MovementType, AddMovementRequest } from '@core/domain/models/movement.model';
@@ -43,17 +44,21 @@ import { JbhTranslationKeyPipe } from '@shared/pipes';
     TranslateModule,
     DecimalFormatDirective,
     JbhTranslationKeyPipe
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter {
 
   movementForm!: FormGroup;
   product: ProductListItem | null = null;
+  products: ProductListItem[] = [];
   categories: Category[] = [];
 
   isLoading = true;
+  isLoadingProducts = false;
   isLoadingCategories = false;
   isSubmitting = false;
+  hasProductIdFromRoute = false;
 
   movementTypes: { value: MovementType; labelKey: string; icon: string }[] = [
     { value: 'DEPOSIT', labelKey: 'products.addMovement.types.deposit', icon: 'arrow-down-outline' },
@@ -72,10 +77,12 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter {
     private route: ActivatedRoute,
     private productUseCase: ProductUseCase,
     private categoryUseCase: CategoryUseCase,
+    private preferencesUseCase: PreferencesUseCase,
     private translationService: TranslationService,
     private toastController: ToastController,
     private logger: LoggerService,
-    private viewportService: ViewportService
+    private viewportService: ViewportService,
+    private cdr: ChangeDetectorRef
   ) {
     this.selectInterface = this.viewportService.selectInterface;
     addIcons({
@@ -96,6 +103,7 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter {
   ngOnInit(): void {
     this.initForm();
     this.subscribeToMovementTypeChanges();
+    this.subscribeToProductChanges();
   }
 
   ngOnDestroy(): void {
@@ -106,16 +114,20 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter {
   ionViewWillEnter(): void {
     this.productId = this.route.snapshot.paramMap.get('productId');
     if (this.productId) {
+      this.hasProductIdFromRoute = true;
+      this.movementForm.get('productId')?.setValue(this.productId);
       this.loadProduct(this.productId);
     } else {
-      this.showToast(this.translationService.instant('products.addMovement.errors.noProduct'), 'danger');
-      this.router.navigate(['/products/overview']);
+      this.hasProductIdFromRoute = false;
+      this.loadProductsWithDefaultSelection();
+      this.isLoading = false;
     }
   }
 
   private initForm(): void {
     const today = new Date().toISOString().split('T')[0];
     this.movementForm = this.formBuilder.group({
+      productId: ['', [Validators.required]],
       movementType: ['DEPOSIT', [Validators.required]],
       entryDate: [today, [Validators.required]],
       totalAmount: [null],
@@ -130,6 +142,16 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter {
       .pipe(takeUntil(this.destroy$))
       .subscribe((type: MovementType) => {
         this.onMovementTypeChange(type);
+      });
+  }
+
+  private subscribeToProductChanges(): void {
+    this.movementForm.get('productId')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((productId: string) => {
+        if (productId && !this.hasProductIdFromRoute) {
+          this.loadProduct(productId);
+        }
       });
   }
 
@@ -159,17 +181,59 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter {
     balanceSnapshotControl?.updateValueAndValidity();
   }
 
+  private loadProductsWithDefaultSelection(): void {
+    this.preferencesUseCase.getPreferences()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (preferences) => {
+          if (preferences.defaultProductId) {
+            this.movementForm.get('productId')?.setValue(preferences.defaultProductId);
+          }
+          this.loadProducts();
+        },
+        error: (error) => {
+          this.logger.error('Error loading preferences:', 'AddMovementPage', error);
+          this.loadProducts();
+        }
+      });
+  }
+
+  private loadProducts(): void {
+    this.isLoadingProducts = true;
+    this.movementForm.get('productId')?.disable();
+    this.cdr.markForCheck();
+    this.productUseCase.getProducts()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (products) => {
+          this.products = products.filter(p => p.allowsMovements);
+          this.isLoadingProducts = false;
+          this.movementForm.get('productId')?.enable();
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          this.logger.error('Error loading products:', 'AddMovementPage', error);
+          this.isLoadingProducts = false;
+          this.movementForm.get('productId')?.enable();
+          this.showToast(this.translationService.instant('products.addMovement.errors.loadProducts'), 'danger');
+          this.cdr.markForCheck();
+        }
+      });
+  }
+
   private loadProduct(productId: string): void {
     this.isLoading = true;
+    this.cdr.markForCheck();
     this.productUseCase.getProductById(productId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (product) => {
           this.product = product;
           this.isLoading = false;
+          this.cdr.markForCheck();
           if (!product.allowsMovements) {
             this.showToast(this.translationService.instant('products.addMovement.errors.notAllowed'), 'danger');
-            this.router.navigate(['/products/overview']);
+            this.router.navigate(['/portfolio/overview']);
             return;
           }
           const currentType = this.movementForm.get('movementType')?.value as MovementType;
@@ -181,7 +245,8 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter {
           this.logger.error('Error loading product:', 'AddMovementPage', error);
           this.isLoading = false;
           this.showToast(this.translationService.instant('products.addMovement.errors.loadProduct'), 'danger');
-          this.router.navigate(['/products/overview']);
+          this.router.navigate(['/portfolio/overview']);
+          this.cdr.markForCheck();
         }
       });
   }
@@ -189,6 +254,7 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter {
   private loadCategories(type: MovementType): void {
     this.isLoadingCategories = true;
     this.movementForm.get('categoryName')?.disable();
+    this.cdr.markForCheck();
 
     const categoryObservable = type === 'DEPOSIT'
       ? this.categoryUseCase.getIncomeCategories()
@@ -201,12 +267,14 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter {
           this.categories = categories;
           this.isLoadingCategories = false;
           this.movementForm.get('categoryName')?.enable();
+          this.cdr.markForCheck();
         },
         error: (error) => {
           this.logger.error('Error loading categories:', 'AddMovementPage', error);
           this.isLoadingCategories = false;
           this.movementForm.get('categoryName')?.enable();
           this.showToast(this.translationService.instant('products.addMovement.errors.loadCategories'), 'danger');
+          this.cdr.markForCheck();
         }
       });
   }
@@ -221,13 +289,15 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter {
       return;
     }
 
-    if (!this.productId) {
+    const formData = this.movementForm.value;
+    const selectedProductId = formData.productId;
+
+    if (!selectedProductId) {
       return;
     }
 
     this.isSubmitting = true;
 
-    const formData = this.movementForm.value;
     const request: AddMovementRequest = {
       entryDate: formData.entryDate,
       movementType: formData.movementType
@@ -244,13 +314,13 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter {
       request.description = formData.description.trim();
     }
 
-    this.productUseCase.addMovement(this.productId, request)
+    this.productUseCase.addMovement(selectedProductId, request)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: async () => {
           this.isSubmitting = false;
           await this.showToast(this.translationService.instant('products.addMovement.success'), 'success');
-          this.router.navigate(['/products/overview']);
+          this.router.navigate(['/portfolio/overview']);
         },
         error: async (error: JBHError) => {
           this.logger.error('Error adding movement:', 'AddMovementPage', error);
