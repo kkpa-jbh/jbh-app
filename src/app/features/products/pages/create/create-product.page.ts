@@ -97,7 +97,7 @@ export class CreateProductPage implements OnInit, OnDestroy, ViewWillEnter, View
 
   ionViewWillEnter(): void {
     this.headerActions.setPageConfig({
-      title: 'products.create.title'
+      title: 'products.create.formTitle'
     });
     this.loadProductTypes();
     this.resetForm();

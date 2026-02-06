@@ -98,7 +98,7 @@ export class EditProductPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
 
   ionViewWillEnter(): void {
     this.headerActions.setPageConfig({
-      title: 'products.edit.title',
+      title: 'products.edit.formTitle',
       showBackButton: true
     });
     this.loadProduct();

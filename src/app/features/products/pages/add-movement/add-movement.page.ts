@@ -117,7 +117,7 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
 
   ionViewWillEnter(): void {
     this.headerActions.setPageConfig({
-      title: 'movements.add.title'
+      title: 'products.addMovement.title'
     });
     this.productId = this.route.snapshot.paramMap.get('productId');
     if (this.productId) {

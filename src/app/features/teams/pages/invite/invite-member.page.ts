@@ -92,7 +92,7 @@ export class InviteMemberPage implements OnInit, OnDestroy, ViewWillEnter, ViewW
 
   ionViewWillEnter(): void {
     this.headerActions.setPageConfig({
-      title: 'teams.invite.title'
+      title: 'teams.invite.formTitle'
     });
     this.loadTeams();
     this.resetForm();

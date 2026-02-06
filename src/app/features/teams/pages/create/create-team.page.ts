@@ -79,7 +79,7 @@ export class CreateTeamPage implements OnInit, OnDestroy, ViewWillEnter, ViewWil
 
   ionViewWillEnter(): void {
     this.headerActions.setPageConfig({
-      title: 'teams.create.title'
+      title: 'teams.create.formTitle'
     });
     this.resetForm();
     this.checkTeamLimit();
