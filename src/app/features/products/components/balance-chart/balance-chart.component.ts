@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { NgxChartsModule, Color, ScaleType, LegendPosition } from '@swimlane/ngx-charts';
-import { MonthlyBalance } from '@core/domain/models/monthly-balance.model';
+import { BalanceHistoryEntryModel } from '@core/domain/models/balance-history.model';
 import { JbhDatePipe } from '@shared/pipes';
 
 interface ChartDataPoint {
@@ -24,7 +24,7 @@ interface ChartSeries {
   imports: [CommonModule, IonicModule, TranslateModule, NgxChartsModule]
 })
 export class BalanceChartComponent implements OnChanges {
-  @Input({ required: true }) balances: MonthlyBalance[] = [];
+  @Input({ required: true }) balances: BalanceHistoryEntryModel[] = [];
   @Input() currency = 'USD';
 
   chartData: ChartSeries[] = [];

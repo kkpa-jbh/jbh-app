@@ -4,7 +4,7 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { addIcons } from 'ionicons';
 import { walletOutline, trendingUpOutline, statsChartOutline, swapVerticalOutline } from 'ionicons/icons';
-import { BalanceHistorySummary } from '@core/domain/models/monthly-balance.model';
+import { BalanceHistorySummaryModel } from '@core/domain/models/balance-history.model';
 import { JbhCurrencyPipe, JbhProfitPipe, JbhGrowthPipe } from '@shared/pipes';
 
 @Component({
@@ -16,7 +16,7 @@ import { JbhCurrencyPipe, JbhProfitPipe, JbhGrowthPipe } from '@shared/pipes';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BalanceSummaryCardsComponent {
-  @Input({ required: true }) summary!: BalanceHistorySummary;
+  @Input({ required: true }) summary!: BalanceHistorySummaryModel;
   @Input() currency = 'USD';
 
   constructor() {

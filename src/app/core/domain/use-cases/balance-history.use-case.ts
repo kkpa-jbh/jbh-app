@@ -1,20 +1,20 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject, shareReplay, tap } from 'rxjs';
-import { BalanceHistoryRepository, BalanceHistoryResult } from '../repositories/balance-history.repository';
-import { MonthlyBalanceRequest } from '../models/monthly-balance.model';
+import { BalanceHistoryRepository } from '../repositories/balance-history.repository';
+import { MonthlyBalanceRequest, BalanceHistoryModel } from '../models/balance-history.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BalanceHistoryUseCase {
 
-  private balanceCache = new Map<string, Observable<BalanceHistoryResult>>();
+  private balanceCache = new Map<string, Observable<BalanceHistoryModel>>();
   private loadingSubject = new BehaviorSubject<boolean>(false);
   public loading$ = this.loadingSubject.asObservable();
 
   constructor(private balanceHistoryRepository: BalanceHistoryRepository) {}
 
-  getProductBalances(productId: string, request: MonthlyBalanceRequest): Observable<BalanceHistoryResult> {
+  getProductBalances(productId: string, request: MonthlyBalanceRequest): Observable<BalanceHistoryModel> {
     const cacheKey = `product-${productId}-${request.startPeriod}-${request.endPeriod}`;
 
     if (!this.balanceCache.has(cacheKey)) {
@@ -28,7 +28,7 @@ export class BalanceHistoryUseCase {
     return this.balanceCache.get(cacheKey)!;
   }
 
-  getAllBalances(request: MonthlyBalanceRequest): Observable<BalanceHistoryResult> {
+  getAllBalances(request: MonthlyBalanceRequest): Observable<BalanceHistoryModel> {
     const cacheKey = `all-${request.startPeriod}-${request.endPeriod}`;
 
     if (!this.balanceCache.has(cacheKey)) {
@@ -42,13 +42,13 @@ export class BalanceHistoryUseCase {
     return this.balanceCache.get(cacheKey)!;
   }
 
-  refreshProductBalances(productId: string, request: MonthlyBalanceRequest): Observable<BalanceHistoryResult> {
+  refreshProductBalances(productId: string, request: MonthlyBalanceRequest): Observable<BalanceHistoryModel> {
     const cacheKey = `product-${productId}-${request.startPeriod}-${request.endPeriod}`;
     this.balanceCache.delete(cacheKey);
     return this.getProductBalances(productId, request);
   }
 
-  refreshAllBalances(request: MonthlyBalanceRequest): Observable<BalanceHistoryResult> {
+  refreshAllBalances(request: MonthlyBalanceRequest): Observable<BalanceHistoryModel> {
     const cacheKey = `all-${request.startPeriod}-${request.endPeriod}`;
     this.balanceCache.delete(cacheKey);
     return this.getAllBalances(request);

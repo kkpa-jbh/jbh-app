@@ -26,9 +26,9 @@ interface MonthlyBalanceRequest {
 ## Response Body
 
 ```typescript
-interface BalanceHistoryResponseApi {
-  summary: BalanceHistorySummary;
-  balances: MonthlyBalanceApiResponse[];
+interface BalanceHistoryResponse {
+  summary: BalanceHistorySummaryResponse;
+  balances: BalanceHistoryEntryResponse[];
 }
 ```
 
@@ -41,7 +41,7 @@ The response contains two main sections:
 ## Summary Object
 
 ```typescript
-interface BalanceHistorySummary {
+interface BalanceHistorySummaryResponse {
   totalBalance: number;
   periodChange: number;
   periodChangePercent: number;
@@ -88,7 +88,7 @@ totalBalance = $50,000 + $30,000 = $80,000
 ## Balance Record Object
 
 ```typescript
-interface MonthlyBalanceApiResponse {
+interface BalanceHistoryEntryResponse {
   // Period identification
   period: string;
 
@@ -98,6 +98,8 @@ interface MonthlyBalanceApiResponse {
   profit: number;
   growthRate: number;
   movementCount: number;
+  totalDebits: number;
+  totalCredits: number;
 
   // Status flags
   isGapPeriod: boolean;
@@ -106,7 +108,7 @@ interface MonthlyBalanceApiResponse {
   isLoss: boolean;
 
   // Product identification
-  productId: { value: string };
+  productId: string;
   productName: string;
 }
 ```
@@ -128,6 +130,8 @@ interface MonthlyBalanceApiResponse {
 | `profit` | number | Net profit or loss for the month. Positive = gain, Negative = loss | `500.00` or `-200.00` |
 | `growthRate` | number | Percentage growth for the month. Calculated as: `((closing - opening) / opening) × 100` | `5.00` (meaning 5%) |
 | `movementCount` | number | Number of transactions (deposits, withdrawals, transfers) during the month | `12` |
+| `totalDebits` | number | Total amount of debits (withdrawals, expenses) during the month | `2000.00` |
+| `totalCredits` | number | Total amount of credits (deposits, income) during the month | `2500.00` |
 
 #### Status Flags
 
@@ -142,24 +146,42 @@ interface MonthlyBalanceApiResponse {
 
 | Field | Type | Description | Example |
 |-------|------|-------------|---------|
-| `productId` | object | Unique identifier wrapper for the product (UUID) | `{ "value": "a1b2c3d4-e5f6-..." }` |
+| `productId` | string | Unique identifier for the product (UUID) | `"a1b2c3d4-e5f6-..."` |
 | `productName` | string | User-friendly name of the product | `"Main Savings Account"` |
 
 ---
 
-## Frontend Domain Model
+## Frontend Domain Models
 
-The frontend maps the API response to domain models:
+The frontend maps the API response to domain models following the pattern:
+**API Response (interface) → Domain Model (class)**
 
 ```typescript
-// Result wrapper returned by use cases
-interface BalanceHistoryResult {
-  summary: BalanceHistorySummary;
-  balances: MonthlyBalance[];
+// Main domain model returned by use cases
+class BalanceHistoryModel {
+  constructor(
+    public readonly summary: BalanceHistorySummaryModel,
+    public readonly balances: BalanceHistoryEntryModel[]
+  ) {}
+
+  static fromResponse(response: BalanceHistoryResponse): BalanceHistoryModel;
 }
 
-// Domain model for a single balance record
-class MonthlyBalance {
+// Summary domain model
+class BalanceHistorySummaryModel {
+  constructor(
+    public readonly totalBalance: number,
+    public readonly periodChange: number,
+    public readonly periodChangePercent: number,
+    public readonly avgGrowthRate: number,
+    public readonly totalMovements: number
+  ) {}
+
+  static fromResponse(response: BalanceHistorySummaryResponse): BalanceHistorySummaryModel;
+}
+
+// Entry domain model for a single balance record
+class BalanceHistoryEntryModel {
   constructor(
     public readonly period: string,
     public readonly openingBalance: number,
@@ -172,10 +194,12 @@ class MonthlyBalance {
     public readonly productId: string,
     public readonly productName: string,
     public readonly isProfitable: boolean,
-    public readonly isLoss: boolean
+    public readonly isLoss: boolean,
+    public readonly totalDebits: number,
+    public readonly totalCredits: number
   ) {}
 
-  static fromApiResponse(response: MonthlyBalanceApiResponse): MonthlyBalance;
+  static fromResponse(response: BalanceHistoryEntryResponse): BalanceHistoryEntryModel;
 }
 ```
 
@@ -239,7 +263,9 @@ class MonthlyBalance {
       "isOfficialReport": true,
       "isProfitable": true,
       "isLoss": false,
-      "productId": { "value": "prod-001" },
+      "totalDebits": 2000.00,
+      "totalCredits": 3000.00,
+      "productId": "prod-001",
       "productName": "Main Savings"
     },
     {
@@ -267,7 +293,9 @@ class MonthlyBalance {
       "isOfficialReport": false,
       "isProfitable": true,
       "isLoss": false,
-      "productId": { "value": "prod-001" },
+      "totalDebits": 1500.00,
+      "totalCredits": 2000.00,
+      "productId": "prod-001",
       "productName": "Main Savings"
     }
   ]

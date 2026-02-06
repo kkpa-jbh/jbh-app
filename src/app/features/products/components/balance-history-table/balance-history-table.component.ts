@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } f
 import { CommonModule } from '@angular/common';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { MonthlyBalance } from '@core/domain/models/monthly-balance.model';
+import { BalanceHistoryEntryModel } from '@core/domain/models/balance-history.model';
 import { JbhCurrencyPipe, JbhDatePipe, JbhGrowthPipe, JbhProfitPipe } from '@shared/pipes';
 
 @Component({
@@ -14,11 +14,11 @@ import { JbhCurrencyPipe, JbhDatePipe, JbhGrowthPipe, JbhProfitPipe } from '@sha
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BalanceHistoryTableComponent implements OnChanges {
-  @Input({ required: true }) balances: MonthlyBalance[] = [];
+  @Input({ required: true }) balances: BalanceHistoryEntryModel[] = [];
   @Input() currency = 'USD';
   @Input() showProductColumn = false;
 
-  sortedBalances: MonthlyBalance[] = [];
+  sortedBalances: BalanceHistoryEntryModel[] = [];
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['balances'] && this.balances) {
@@ -40,7 +40,7 @@ export class BalanceHistoryTableComponent implements OnChanges {
     return '';
   }
 
-  trackByPeriod(_index: number, balance: MonthlyBalance): string {
+  trackByPeriod(_index: number, balance: BalanceHistoryEntryModel): string {
     return balance.period + balance.productId;
   }
 }

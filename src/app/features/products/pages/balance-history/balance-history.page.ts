@@ -8,7 +8,7 @@ import { addIcons } from 'ionicons';
 import { analyticsOutline, refreshOutline, walletOutline } from 'ionicons/icons';
 import { BalanceHistoryUseCase } from '@core/domain/use-cases/balance-history.use-case';
 import { ProductUseCase } from '@core/domain/use-cases/product.use-case';
-import { MonthlyBalance, MonthlyBalanceRequest, BalanceHistorySummary } from '@core/domain/models/monthly-balance.model';
+import { BalanceHistoryEntryModel, MonthlyBalanceRequest, BalanceHistorySummaryModel } from '@core/domain/models/balance-history.model';
 import { ProductListItem } from '@core/domain/models/product-list-item.model';
 import { JBHError } from '@core/domain/models/jbh-error.model';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
@@ -38,8 +38,8 @@ import { AppHeaderComponent } from '@shared/components/app-header/app-header.com
 })
 export class BalanceHistoryPage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLeave {
   products: ProductListItem[] = [];
-  balances: MonthlyBalance[] = [];
-  summary: BalanceHistorySummary | null = null;
+  balances: BalanceHistoryEntryModel[] = [];
+  summary: BalanceHistorySummaryModel | null = null;
   isLoading = true;
   isProductsLoading = true;
   hasData = false;

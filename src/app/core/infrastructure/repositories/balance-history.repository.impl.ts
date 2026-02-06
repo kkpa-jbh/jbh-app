@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
-import { BalanceHistoryRepository, BalanceHistoryResult } from '@core/domain/repositories/balance-history.repository';
-import { MonthlyBalance, BalanceHistoryResponseApi, MonthlyBalanceRequest } from '@core/domain/models/monthly-balance.model';
+import { BalanceHistoryRepository } from '@core/domain/repositories/balance-history.repository';
+import { MonthlyBalanceRequest, BalanceHistoryModel } from '@core/domain/models/balance-history.model';
+import { BalanceHistoryResponse } from '@core/domain/models/balance-history-response.interface';
 import { ApiBaseService } from '@core/infrastructure/api/api-base.service';
 import { EnvironmentConfig } from '@core/infrastructure/config/environment.config';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
@@ -19,21 +20,15 @@ export class BalanceHistoryRepositoryImpl extends ApiBaseService implements Bala
     super(http, envConfig, logger);
   }
 
-  getProductBalances(productId: string, request: MonthlyBalanceRequest): Observable<BalanceHistoryResult> {
-    return this.post<BalanceHistoryResponseApi>(`${this.ENDPOINT}/${productId}`, request).pipe(
-      map(response => ({
-        summary: response.summary,
-        balances: response.balances.map(b => MonthlyBalance.fromApiResponse(b))
-      }))
+  getProductBalances(productId: string, request: MonthlyBalanceRequest): Observable<BalanceHistoryModel> {
+    return this.post<BalanceHistoryResponse>(`${this.ENDPOINT}/${productId}`, request).pipe(
+      map(response => BalanceHistoryModel.fromResponse(response))
     );
   }
 
-  getAllBalances(request: MonthlyBalanceRequest): Observable<BalanceHistoryResult> {
-    return this.post<BalanceHistoryResponseApi>(`${this.ENDPOINT}/`, request).pipe(
-      map(response => ({
-        summary: response.summary,
-        balances: response.balances.map(b => MonthlyBalance.fromApiResponse(b))
-      }))
+  getAllBalances(request: MonthlyBalanceRequest): Observable<BalanceHistoryModel> {
+    return this.post<BalanceHistoryResponse>(`${this.ENDPOINT}/`, request).pipe(
+      map(response => BalanceHistoryModel.fromResponse(response))
     );
   }
 }

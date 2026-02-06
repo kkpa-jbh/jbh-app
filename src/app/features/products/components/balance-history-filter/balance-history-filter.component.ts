@@ -6,7 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { addIcons } from 'ionicons';
 import { calendarOutline, cubeOutline, searchOutline } from 'ionicons/icons';
 import { ProductListItem } from '@core/domain/models/product-list-item.model';
-import { MonthlyBalanceRequest } from '@core/domain/models/monthly-balance.model';
+import { MonthlyBalanceRequest } from '@core/domain/models/balance-history.model';
 import { ViewportService, SelectInterface } from '@core/infrastructure/viewport/viewport.service';
 import { JbhDatePipe } from '@shared/pipes';
 

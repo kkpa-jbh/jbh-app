@@ -169,6 +169,88 @@ export class MyComponent implements OnInit, OnDestroy {
     - `edit-user.page.ts` (NOT `edit.page.ts`)
     - `list-orders.page.ts` (NOT `list.page.ts`)
 2. **Pattern**: `[action]-[entity].page.ts` for clarity across features
+3. **API Responses, Models, View Models**
+   
+##### API Response Interfaces (HTTP Boundary)
+
+
+- Type: interface
+-   Represents backend API responses
+-   Must exactly match backend *Response objects: If the backend API defines the names of response objects, those names MUST be respected and reused exactly on the frontend. Do not rename API response objects.
+-   Defines the frontend API contract.
+
+-   Used only in API services
+-   No methods
+-   No UI logic
+-   Not used directly in templates
+
+
+Examples
+
+-   MonthlyBalanceResponse
+-   UserResponse
+
+
+
+------------------------------------------------------------------------
+
+##### Frontend Domain Models
+
+- Type: class
+- Name: Model
+
+-   Represents application-level data
+-   Used by components and business logic
+-   May include computed properties and helper methods
+-   Created by mapping from *Response
+-   Independent from backend API shape
+-   Safe to evolve with UI needs
+
+Examples:
+
+-   MonthlyBalanceModel
+-   UserModel
+
+Rules
+
+
+
+------------------------------------------------------------------------
+
+##### View Models (UI-Specific, Optional)
+- Type: interface or class
+- Name: ViewModel
+-   Tailored for a specific component or screen
+-   Contains display-only and formatting fields
+-   Optimized for rendering
+
+-   Used only by components/templates
+-   Never used in API services
+-   Never sent back to backend
+
+
+
+Examples
+
+-   MonthlyBalanceViewModel
+-   DashboardViewModel
+
+
+
+------------------------------------------------------------------------
+
+#####  Mandatory Mapping Flow
+
+API Response (interface) ↓ Domain Model (class) OR View Model (interface/class)
+
+Example: MonthlyBalanceResponse ↓ MonthlyBalanceModel OR MonthlyBalanceViewModel
+
+------------------------------------------------------------------------
+
+##### Key Principle
+
+Backend speaks in Responses. Frontend thinks in Models. UI renders
+ViewModels or models.
 
 #### Responsive
 
