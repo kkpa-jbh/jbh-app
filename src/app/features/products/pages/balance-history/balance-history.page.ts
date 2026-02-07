@@ -73,8 +73,7 @@ export class BalanceHistoryPage implements OnInit, OnDestroy, ViewWillEnter, Vie
 
   ionViewWillEnter(): void {
     this.headerActions.setPageConfig({
-      title: 'products.balanceHistory.formTitle',
-      showBackButton: true
+      title: 'products.balanceHistory.formTitle'
     });
     this.loadProducts();
     if (this.currentFilter) {

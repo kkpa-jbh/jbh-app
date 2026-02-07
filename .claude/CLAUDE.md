@@ -124,6 +124,27 @@ export class MyComponent implements OnInit, OnDestroy {
 {{ getCategoryName(category) }}
 ```
 
+#### Charts and Visualizations (ngx-charts)
+
+1. **ALWAYS disable animations** for ngx-charts components to avoid Angular 20 compatibility issues:
+```html
+<ngx-charts-line-chart
+  [animations]="false"
+  ...
+>
+</ngx-charts-line-chart>
+```
+
+2. **Why disable animations**:
+   - ngx-charts animations use `strokeDashoffset` which is not supported by Angular 20's animation system
+   - Causes browser warnings: "animationState is attempting to animate the following not animatable properties: strokeDashoffset"
+   - Can prevent chart elements from rendering properly
+   - Aligns with performance best practices (avoid expensive animations)
+
+3. **Affected components**: All ngx-charts components (line-chart, bar-chart, pie-chart, etc.)
+
+**Reference implementation**: `src/app/features/products/components/balance-chart/balance-chart.component.html`
+
 #### Theme System
 
 1. **ALL styles** in `src/theme/custom-components.scss` - NO feature-specific theme files
@@ -161,6 +182,46 @@ export class MyComponent implements OnInit, OnDestroy {
 4. **Pattern**:
     - `ngOnInit()`: Form initialization, static setup, event subscriptions
     - `ionViewWillEnter()`: API calls, data refresh, dynamic state reset
+
+#### Header Configuration (CRITICAL)
+
+1. **Use `HeaderActionsService`** in `ionViewWillEnter()` to configure the page header
+2. **Hamburger menu vs Back button**: The header shows EITHER a menu button OR a back button
+   - Omit `showBackButton` (or set to `false`) for **top-level pages** → shows hamburger menu
+   - Set `showBackButton: true` for **detail/child pages** → shows back button
+3. **Always clear config** in `ionViewWillLeave()`: `this.headerActions.clearPageConfig()`
+
+**Pattern**:
+```typescript
+// Top-level page (e.g., /portfolio/overview, /reports/balance-trends)
+ionViewWillEnter(): void {
+  this.headerActions.setPageConfig({
+    title: 'feature.page.title',
+    actions: [
+      {
+        id: 'refresh',
+        icon: 'refresh-outline',
+        handler: () => this.refreshData()
+      }
+    ]
+    // No showBackButton - defaults to false, showing menu
+  });
+}
+
+// Detail page (e.g., /portfolio/edit/:id, /transactions/details/:id)
+ionViewWillEnter(): void {
+  this.headerActions.setPageConfig({
+    title: 'feature.detail.title',
+    showBackButton: true  // Shows back button instead of menu
+  });
+}
+
+ionViewWillLeave(): void {
+  this.headerActions.clearPageConfig();
+}
+```
+
+**Reference implementation**: `src/app/features/products/pages/overview/products-overview.page.ts:67-87`
 
 #### File Naming Convention
 
