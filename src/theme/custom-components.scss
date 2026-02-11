@@ -1320,7 +1320,8 @@ ion-menu ion-content::part(scroll) {
   overflow: visible;
   background: rgba(102, 126, 234, 0.03);
   border-left: 2px solid rgba(102, 126, 234, 0.2);
-  margin: 4px var(--jbh-spacing-sm) 8px calc(var(--jbh-spacing-sm) + 8px);
+  // Team Management menu option is not wrapping properly. 
+  //margin: 4px var(--jbh-spacing-sm) 8px calc(var(--jbh-spacing-sm) + 8px);
   padding: 4px 0;
   border-radius: 0 var(--jbh-radius-sm) var(--jbh-radius-sm) 0;
   animation: slideDownFadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);

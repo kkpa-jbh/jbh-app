@@ -5,6 +5,7 @@
 export const environment = {
   production: false,
   environmentName: 'local',
+  appVersion: '1.0.0',
   api: {
     // Use relative URL to leverage proxy configuration (avoids CORS in development)
     baseUrl: '/jbh-api',

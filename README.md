@@ -64,6 +64,14 @@ Neutral Palette:
 
 All colors are defined in `src/theme/custom-components.scss`.
 
+# Versioning
+
+```
+1. ✅ Run npm run version:patch - verify version increments (e.g., 1.0.0 → 1.0.1)
+2. ✅ Run npm run version:minor - verify version increments (e.g., 1.0.1 → 1.1.0)
+3. ✅ Run npm run version:major - verify version increments (e.g., 1.1.0 → 2.0.0)
+```
+
 ## Documentation
 
 - [Architecture](docs/architecture.md)

@@ -66,6 +66,10 @@ export class EnvironmentConfig {
     return this.env.features.enableDebugMode;
   }
 
+  get appVersion(): string {
+    return this.env.appVersion;
+  }
+
   /**
    * Build a complete API endpoint URL
    * @param endpoint - The API endpoint path (e.g., '/users', '/products')

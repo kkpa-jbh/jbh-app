@@ -35,6 +35,7 @@ import { AuthUseCase } from '@core/domain/use-cases/auth.use-case';
 import { InstallAppButtonComponent } from '../install-app-button/install-app-button.component';
 import { PortfolioContextSwitcherComponent } from '../portfolio-context-switcher/portfolio-context-switcher.component';
 import { PortfolioContextService } from '@core/infrastructure/context/portfolio-context.service';
+import { EnvironmentConfig } from '@core/infrastructure/config/environment.config';
 
 export interface MenuItem {
   id: string;
@@ -59,6 +60,8 @@ export class AppMenuComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   currentContext$ = this.portfolioContext.context$;
   menuItems: MenuItem[] = [];
+  currentYear = new Date().getFullYear();
+  appVersion!: string;
 
   constructor(
     private router: Router,
@@ -68,7 +71,8 @@ export class AppMenuComponent implements OnInit, OnDestroy {
     public translationService: TranslationService,
     private logger: LoggerService,
     private cdr: ChangeDetectorRef,
-    private portfolioContext: PortfolioContextService
+    private portfolioContext: PortfolioContextService,
+    private environmentConfig: EnvironmentConfig
   ) {
     addIcons({
       appsOutline,
@@ -95,6 +99,7 @@ export class AppMenuComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.appVersion = this.environmentConfig.appVersion;
     this.buildMenuItems();
 
     this.currentContext$

@@ -1,6 +1,6 @@
 {
   "name": "jbh-app",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
   "scripts": {
@@ -11,7 +11,10 @@
     "test": "ng test",
     "lint": "ng lint",
     "i18n:lint": "i18n-lint",
-    "i18n:lint:fix": "i18n-lint --fix"
+    "i18n:lint:fix": "i18n-lint --fix",
+    "version:major": "node scripts/bump-version.js major",
+    "version:minor": "node scripts/bump-version.js minor",
+    "version:patch": "node scripts/bump-version.js patch"
   },
   "private": true,
   "dependencies": {
