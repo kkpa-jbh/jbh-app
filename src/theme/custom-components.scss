@@ -1677,143 +1677,6 @@ ion-menu ion-content::part(scroll) {
   justify-content: flex-end;
 }
 
-// ============================================
-// 20. TEAM CARDS
-// ============================================
-
-.jbh-teams-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--jbh-spacing-md);
-}
-
-.jbh-team-card {
-  background: var(--jbh-background-white);
-  border-radius: var(--jbh-radius-lg);
-  box-shadow: var(--jbh-shadow-md);
-  overflow: hidden;
-  transition: all var(--jbh-transition-base);
-
-  &:hover {
-    box-shadow: var(--jbh-shadow-lg);
-  }
-
-  &.expanded {
-    box-shadow: var(--jbh-shadow-xl);
-  }
-}
-
-.jbh-team-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--jbh-spacing-md);
-  cursor: pointer;
-  transition: background var(--jbh-transition-base);
-
-  &:hover {
-    background: var(--jbh-background-light);
-  }
-}
-
-.jbh-team-info {
-  display: flex;
-  align-items: center;
-  gap: var(--jbh-spacing-sm);
-  flex: 1;
-  min-width: 0;
-}
-
-.jbh-team-avatar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  background: var(--jbh-gradient-primary);
-  border-radius: var(--jbh-radius-md);
-  flex-shrink: 0;
-
-  span {
-    font-size: var(--jbh-font-size-base);
-    font-weight: var(--jbh-font-weight-bold);
-    color: var(--jbh-background-white);
-    text-transform: uppercase;
-  }
-}
-
-.jbh-team-details {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-}
-
-.jbh-team-name {
-  font-size: var(--jbh-font-size-base);
-  font-weight: var(--jbh-font-weight-semibold);
-  color: var(--jbh-text-primary);
-  margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-
-  @media (min-width: 768px) {
-    font-size: var(--jbh-font-size-lg);
-  }
-}
-
-.jbh-team-shortname {
-  font-size: var(--jbh-font-size-xs);
-  color: var(--jbh-text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.jbh-team-members-count {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: var(--jbh-font-size-xs);
-  color: var(--jbh-text-secondary);
-  margin-top: 2px;
-
-  ion-icon {
-    font-size: 12px;
-  }
-}
-
-.jbh-team-actions {
-  display: flex;
-  align-items: center;
-  gap: var(--jbh-spacing-xs);
-}
-
-.jbh-team-chevron {
-  font-size: 20px;
-  color: var(--jbh-text-secondary);
-  margin-left: var(--jbh-spacing-xs);
-  transition: transform var(--jbh-transition-base);
-}
-
-.jbh-team-body {
-  border-top: 1px solid var(--jbh-border-color);
-  padding: var(--jbh-spacing-md);
-  background: var(--jbh-background-light);
-  animation: jbh-slide-up 0.3s ease-out;
-}
-
-.jbh-no-members {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--jbh-spacing-xs);
-  padding: var(--jbh-spacing-lg);
-  color: var(--jbh-text-tertiary);
-
-  ion-icon {
-    font-size: 20px;
-  }
-}
 
 // ============================================
 // 21. ICON BUTTONS
@@ -1872,15 +1735,7 @@ ion-menu ion-content::part(scroll) {
   }
 }
 
-// ============================================
-// 22. MEMBERS TABLE
-// ============================================
 
-.jbh-members-table {
-  background: var(--jbh-background-white);
-  border-radius: var(--jbh-radius-md);
-  overflow: hidden;
-}
 
 .jbh-table-header {
   display: flex;
@@ -1919,15 +1774,6 @@ ion-menu ion-content::part(scroll) {
   gap: var(--jbh-spacing-xs);
 }
 
-.jbh-cell-user {
-  flex: 2;
-  min-width: 0;
-}
-
-.jbh-cell-email {
-  flex: 2;
-  min-width: 0;
-}
 
 .jbh-cell-status {
   flex: 1.5;
@@ -1942,19 +1788,7 @@ ion-menu ion-content::part(scroll) {
   justify-content: flex-end;
 }
 
-.jbh-member-avatar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  background: var(--jbh-gradient-primary);
-  border-radius: var(--jbh-radius-sm);
-  font-size: var(--jbh-font-size-sm);
-  font-weight: var(--jbh-font-weight-semibold);
-  color: var(--jbh-background-white);
-  flex-shrink: 0;
-}
+
 
 .jbh-member-name {
   font-size: var(--jbh-font-size-sm);

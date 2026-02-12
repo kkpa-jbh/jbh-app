@@ -86,7 +86,7 @@ export class ProfilePage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLe
 
   ionViewWillEnter(): void {
     this.headerActions.setPageConfig({
-      title: 'menu.profile'
+      title: 'menu.settings.myPreferences',
     });
     this.loadData();
   }

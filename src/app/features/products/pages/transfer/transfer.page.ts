@@ -22,7 +22,7 @@ export class TransferPage implements OnInit, ViewWillEnter, ViewWillLeave {
 
   ionViewWillEnter(): void {
     this.headerActions.setPageConfig({
-      title: 'products.transfer.formTitle'
+      title: 'menu.transactions.transfer'
     });
   }
 

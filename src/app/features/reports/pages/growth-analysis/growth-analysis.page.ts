@@ -19,7 +19,7 @@ export class GrowthAnalysisPage implements ViewWillEnter, ViewWillLeave {
 
   ionViewWillEnter(): void {
     this.headerActions.setPageConfig({
-      title: 'reports.growthAnalysis.formTitle'
+      title: 'menu.reports.growthAnalysis'
     });
   }
 
