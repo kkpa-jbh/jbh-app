@@ -1,5 +1,7 @@
 # Theming: Centralized Design System
 
+> **See Also:** [UX & Design System Guide](ux-design-system.md) for comprehensive patterns, page templates, and component usage examples.
+
 What Should Stay in custom-components.scss (Truly Global)
 These are reusable across all features:
 
@@ -166,3 +168,300 @@ To change styles app-wide, edit `src/theme/custom-components.scss`:
   --jbh-primary-color: #4299e1;  // All buttons update!
 }
 ```
+
+---
+
+## Common Mistakes
+
+### ❌ Mistake 1: Duplicating Theme Styles in Component Files
+**Problem:**
+```scss
+// my-component.component.scss
+.jbh-button-primary {  // Redefining global class
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  // ... duplicated code
+}
+```
+
+**Why Bad:**
+- Violates single source of truth
+- Creates maintenance burden
+- Can cause style conflicts
+- Increases bundle size
+
+**Solution:**
+```scss
+// my-component.component.scss
+// Component-specific layout ONLY
+.custom-layout {
+  display: flex;
+  gap: var(--jbh-spacing-md);  // Use theme variables
+}
+```
+
+---
+
+### ❌ Mistake 2: Hardcoding Colors and Spacing
+**Problem:**
+```scss
+// my-component.component.scss
+.custom-element {
+  color: #667eea;        // Hardcoded color
+  padding: 24px;         // Hardcoded spacing
+  border-radius: 12px;   // Hardcoded radius
+}
+```
+
+**Why Bad:**
+- Can't be changed globally
+- Breaks design consistency
+- Won't update if theme changes
+
+**Solution:**
+```scss
+// my-component.component.scss
+.custom-element {
+  color: var(--jbh-primary-color);
+  padding: var(--jbh-spacing-md);
+  border-radius: var(--jbh-radius-md);
+}
+```
+
+---
+
+### ❌ Mistake 3: Creating Feature-Specific Theme Files
+**Problem:**
+```
+src/app/features/products/
+  └── styles/
+      └── product-theme.scss  // DON'T DO THIS
+```
+
+**Why Bad:**
+- Violates single source of truth
+- Styles not reusable across features
+- Hard to find and maintain
+
+**Solution:**
+- ALL reusable styles go in `src/theme/custom-components.scss`
+- Component SCSS only for page-specific layout
+
+---
+
+### ❌ Mistake 4: Not Using Existing Classes
+**Problem:**
+```html
+<!-- Reinventing the wheel -->
+<button class="my-custom-button">
+  Save
+</button>
+```
+
+```scss
+.my-custom-button {
+  // Duplicate of jbh-button-primary
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  // ...
+}
+```
+
+**Solution:**
+```html
+<!-- Use existing class -->
+<button class="jbh-button-primary">
+  Save
+</button>
+```
+
+---
+
+## Accessibility Requirements
+
+### Minimum Touch Target Size
+**WCAG AA:** 48px × 48px minimum for interactive elements
+
+**Current Issue:**
+```scss
+// src/theme/custom-components.scss
+.jbh-icon-button {
+  width: 36px;   // TOO SMALL - needs to be 48px
+  height: 36px;  // TOO SMALL - needs to be 48px
+}
+```
+
+**Planned Fix:**
+```scss
+.jbh-icon-button {
+  width: 48px;
+  height: 48px;
+
+  ion-icon {
+    font-size: 24px;  // Increase from 20px
+  }
+}
+```
+
+---
+
+### Color Contrast
+**WCAG AA:** Minimum 4.5:1 for normal text, 3:1 for large text
+
+**Review Required:**
+```scss
+:root {
+  --jbh-text-tertiary: #a0aec0;  // May not meet 4.5:1 on white
+}
+```
+
+**Testing:**
+- Use WebAIM Contrast Checker: https://webaim.org/resources/contrastchecker/
+- Chrome DevTools Lighthouse accessibility audit
+
+---
+
+### Semantic Roles
+**Add to theme classes:**
+```scss
+// Document in comments
+.jbh-table-header {
+  // Use with role="rowgroup"
+}
+
+.jbh-table-row {
+  // Use with role="row"
+}
+
+.jbh-table-cell {
+  // Use with role="cell" or role="columnheader"
+}
+```
+
+---
+
+## Performance Implications
+
+### CSS-Only Animations (Preferred)
+```scss
+// ✅ GOOD: Pure CSS, GPU-accelerated
+.jbh-skeleton {
+  animation: jbh-skeleton-loading 1.5s infinite;
+}
+
+@keyframes jbh-skeleton-loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+```
+
+---
+
+### Avoid Expensive Properties in Animations
+```scss
+// ❌ BAD: Triggers repaints every frame
+@keyframes expensive-animation {
+  from { backdrop-filter: blur(0); }
+  to { backdrop-filter: blur(10px); }
+}
+
+// ✅ GOOD: GPU-accelerated properties only
+@keyframes smooth-animation {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+```
+
+**GPU-Accelerated Properties:**
+- `transform` (translate, scale, rotate)
+- `opacity`
+
+**Expensive Properties (avoid in animations):**
+- `backdrop-filter`
+- `filter` (blur, etc.)
+- `width`, `height`
+- `top`, `left`, `margin`, `padding`
+
+---
+
+### Use CSS Variables for Dynamic Values
+```scss
+// ✅ GOOD: Change once, updates everywhere
+:root {
+  --jbh-primary-color: #667eea;
+}
+
+.jbh-button-primary {
+  background: var(--jbh-gradient-primary);  // Uses variable
+}
+
+.jbh-link {
+  color: var(--jbh-primary-color);  // Uses same variable
+}
+```
+
+---
+
+### Minimize CSS Selector Specificity
+```scss
+// ❌ BAD: Overly specific, hard to override
+div.container ion-content .jbh-card .jbh-button-primary {
+  background: red;
+}
+
+// ✅ GOOD: Simple, reusable
+.jbh-button-primary {
+  background: var(--jbh-gradient-primary);
+}
+
+// ✅ GOOD: Use modifier classes for variants
+.jbh-button-primary.custom-variant {
+  background: red;
+}
+```
+
+---
+
+## Dark Mode Support (Implemented)
+
+```scss
+@media (prefers-color-scheme: dark) {
+  :root {
+    --jbh-text-primary: #e2e8f0;
+    --jbh-text-secondary: #a0aec0;
+    --jbh-text-tertiary: #718096;
+    --jbh-border-color: #4a5568;
+    --jbh-background-light: #2d3748;
+    --jbh-background-white: #1a202c;
+    --jbh-error-background: #742a2a;
+    --jbh-success-background: #22543d;
+    --jbh-warning-background: #7c2d12;
+    --jbh-info-background: #1e3a8a;
+  }
+}
+```
+
+**Usage:**
+- Colors automatically adjust based on system preference
+- No need to manually handle dark mode in components
+- All `--jbh-*` variables are theme-aware
+
+---
+
+## Checklist: Adding a New Reusable Style
+
+- [ ] Is this style reusable across multiple features? (If not, use component SCSS)
+- [ ] Does a similar class already exist? (Check complete list first)
+- [ ] Add to `src/theme/custom-components.scss`
+- [ ] Use `jbh-*` naming convention
+- [ ] Use CSS variables for colors, spacing, typography
+- [ ] Add to appropriate section (buttons, forms, cards, etc.)
+- [ ] Document in this file (add to class reference table)
+- [ ] Add to UX Design System guide if it's a pattern
+- [ ] Test in light and dark modes
+- [ ] Test on mobile and desktop

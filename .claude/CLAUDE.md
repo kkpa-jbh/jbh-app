@@ -10,10 +10,12 @@ Expert guidance for Ionic/Angular hybrid mobile apps using Clean Architecture, D
 ## Detailed Documentation
 
 - [Architecture](docs/architecture.md) - Hexagonal/DDD/Clean Architecture, project structure
+- [UX & Design System](docs/ux-design-system.md) - **Page templates, components, patterns, complete reference**
 - [Theming](docs/theming.md) - CSS classes, variables, design system
 - [Forms](docs/forms.md) - Reactive forms, validation, mobile patterns
 - [i18n](docs/i18n.md) - Internationalization, translations
 - [Responsive](docs/responsive.md) - Breakpoints, grid system, viewport detection
+- [Improvements](docs/improvements.md) - Known issues, planned fixes, priorities
 
 ## Quick Reference
 
@@ -144,6 +146,55 @@ export class MyComponent implements OnInit, OnDestroy {
 3. **Affected components**: All ngx-charts components (line-chart, bar-chart, pie-chart, etc.)
 
 **Reference implementation**: `src/app/features/products/components/balance-chart/balance-chart.component.html`
+
+#### Accessibility (WCAG AA Target)
+
+1. **ALWAYS add `aria-label` to icon buttons**:
+```html
+<button
+  class="jbh-icon-button"
+  (click)="action()"
+  aria-label="{{ 'button.action' | translate }}"
+  title="{{ 'button.action' | translate }}"
+>
+  <ion-icon name="icon-outline"></ion-icon>
+</button>
+```
+
+2. **Minimum touch target size:** 48px × 48px (current icon buttons are 36px - needs fix)
+
+3. **Add semantic roles to tables**:
+```html
+<div class="jbh-table" role="table">
+  <div class="jbh-table-header" role="rowgroup">
+    <div class="jbh-table-row" role="row">
+      <div class="jbh-table-cell" role="columnheader">Header</div>
+    </div>
+  </div>
+</div>
+```
+
+4. **Add roles to state elements**:
+```html
+<!-- Loading states -->
+<div role="status" aria-live="polite">Loading...</div>
+
+<!-- Error states -->
+<div role="alert" aria-live="assertive">Error message</div>
+```
+
+5. **Expandable elements**:
+```html
+<button
+  [attr.aria-expanded]="isExpanded"
+  aria-controls="content-id"
+>
+  Toggle
+</button>
+<div id="content-id" [hidden]="!isExpanded">Content</div>
+```
+
+**See:** [UX Design System - Accessibility](docs/ux-design-system.md#13-accessibility-guidelines) for complete guidelines
 
 #### Theme System
 
