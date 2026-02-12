@@ -11,3 +11,34 @@
 .currentFilter {
   display: none;
 }
+
+.jbh-skeleton-summary {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--jbh-spacing-sm);
+  margin-bottom: var(--jbh-spacing-lg);
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.jbh-skeleton-summary-card {
+  height: 100px;
+  border-radius: var(--jbh-radius-md);
+}
+
+.jbh-skeleton-chart {
+  height: 300px;
+  border-radius: var(--jbh-radius-lg);
+  margin-bottom: var(--jbh-spacing-lg);
+
+  @media (min-width: 768px) {
+    height: 400px;
+  }
+}
+
+.jbh-skeleton-table {
+  height: 400px;
+  border-radius: var(--jbh-radius-lg);
+}

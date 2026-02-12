@@ -2,9 +2,8 @@
   --background: var(--jbh-background-light);
 }
 
-
 // ============================================
-// 20. TEAM CARDS
+// TEAM CARDS
 // ============================================
 
 .jbh-teams-list {
@@ -142,7 +141,7 @@
 }
 
 // ============================================
-// 22. MEMBERS TABLE
+// MEMBERS TABLE
 // ============================================
 
 .jbh-members-table {
@@ -150,7 +149,6 @@
   border-radius: var(--jbh-radius-md);
   overflow: hidden;
 }
-
 
 .jbh-cell-user {
   flex: 2;
@@ -174,4 +172,166 @@
   font-weight: var(--jbh-font-weight-semibold);
   color: var(--jbh-background-white);
   flex-shrink: 0;
+}
+
+.jbh-cell-status {
+  flex: 1.5;
+}
+
+.jbh-cell-role {
+  flex: 1;
+}
+
+.jbh-cell-actions {
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.jbh-member-name {
+  font-size: var(--jbh-font-size-sm);
+  font-weight: var(--jbh-font-weight-medium);
+  color: var(--jbh-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.jbh-member-email {
+  font-size: var(--jbh-font-size-sm);
+  color: var(--jbh-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// ============================================
+// STATUS BADGES
+// ============================================
+
+.jbh-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: var(--jbh-radius-full);
+  font-size: var(--jbh-font-size-xs);
+  font-weight: var(--jbh-font-weight-medium);
+
+  ion-icon {
+    font-size: 14px;
+  }
+}
+
+.status-accepted {
+  background: var(--jbh-success-background);
+  color: var(--jbh-success-color);
+}
+
+.status-pending {
+  background: var(--jbh-warning-background);
+  color: var(--jbh-warning-color);
+}
+
+.status-declined {
+  background: var(--jbh-error-background);
+  color: var(--jbh-error-color);
+}
+
+// ============================================
+// ROLE BADGES
+// ============================================
+
+.jbh-role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: var(--jbh-radius-sm);
+  font-size: var(--jbh-font-size-xs);
+  font-weight: var(--jbh-font-weight-medium);
+
+  ion-icon {
+    font-size: 12px;
+  }
+}
+
+.jbh-role-owner {
+  background: var(--jbh-info-background);
+  color: var(--jbh-info-color);
+}
+
+.jbh-role-member {
+  background: var(--jbh-background-light);
+  color: var(--jbh-text-secondary);
+}
+
+// ============================================
+// ACTION BUTTONS
+// ============================================
+
+.jbh-action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+// ============================================
+// MEMBER CARDS (MOBILE)
+// ============================================
+
+.jbh-members-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--jbh-spacing-sm);
+}
+
+.jbh-member-card {
+  background: var(--jbh-background-white);
+  border-radius: var(--jbh-radius-md);
+  padding: var(--jbh-spacing-sm);
+}
+
+.jbh-member-card-header {
+  display: flex;
+  align-items: center;
+  gap: var(--jbh-spacing-sm);
+}
+
+.jbh-member-card-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+
+  .jbh-member-name {
+    font-size: var(--jbh-font-size-base);
+  }
+
+  .jbh-member-email {
+    font-size: var(--jbh-font-size-xs);
+  }
+}
+
+.jbh-member-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: var(--jbh-spacing-sm);
+  padding-top: var(--jbh-spacing-sm);
+  border-top: 1px solid var(--jbh-border-color);
+}
+
+// ============================================
+// LOADING SKELETONS (TEAMS)
+// ============================================
+
+.jbh-team-card-skeleton {
+  background: var(--jbh-background-white);
+  border-radius: var(--jbh-radius-lg);
+  padding: var(--jbh-spacing-md);
+}
+
+.jbh-skeleton-table {
+  height: 120px;
+  width: 100%;
 }

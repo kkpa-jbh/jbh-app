@@ -1,3 +1,40 @@
 :host {
   display: block;
 }
+
+.jbh-balance-filter {
+  display: flex;
+  flex-direction: column;
+  gap: var(--jbh-spacing-md);
+  padding: var(--jbh-spacing-md);
+  background: var(--jbh-background-white);
+  border-radius: var(--jbh-radius-lg);
+  box-shadow: var(--jbh-shadow-md);
+  margin-bottom: var(--jbh-spacing-lg);
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+}
+
+.jbh-balance-filter-field {
+  flex: 1;
+  min-width: 200px;
+
+  @media (min-width: 768px) {
+    max-width: 250px;
+  }
+}
+
+.jbh-balance-filter-actions {
+  display: flex;
+  gap: var(--jbh-spacing-sm);
+  margin-top: var(--jbh-spacing-sm);
+
+  @media (min-width: 768px) {
+    margin-top: 0;
+    margin-left: auto;
+  }
+}

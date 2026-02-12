@@ -1,2 +1,41 @@
-// All styles are in src/theme/custom-components.scss
-// Component SCSS = page layout only
+.jbh-context-switcher {
+  padding: var(--jbh-spacing-sm);
+  border-bottom: 1px solid var(--jbh-border-color);
+  background: var(--jbh-card-background);
+  flex-shrink: 0;
+}
+
+.jbh-context-switcher-highlighted {
+  background: var(--jbh-gradient-primary);
+  border-bottom: none;
+  box-shadow: var(--jbh-shadow-primary);
+}
+
+.jbh-context-switcher-item {
+  --padding-start: 0;
+  --padding-end: 0;
+  --inner-padding-end: 0;
+  --background: transparent;
+}
+
+.jbh-context-switcher-highlighted .jbh-context-switcher-item {
+  --color: var(--jbh-background-white);
+}
+
+.jbh-context-switcher-icon {
+  color: var(--jbh-background-white);
+  font-size: 20px;
+}
+
+.jbh-context-select {
+  max-width: 100%;
+  color: var(--jbh-background-white);
+  font-weight: var(--jbh-font-weight-semibold);
+}
+
+.jbh-context-label {
+  font-size: 0.875rem;
+  color: var(--jbh-background-white);
+  margin-right: var(--jbh-spacing-xs);
+  opacity: 0.9;
+}

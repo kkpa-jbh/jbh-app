@@ -1,11 +1,29 @@
 # Theming: Centralized Design System
 
+What Should Stay in custom-components.scss (Truly Global)
+These are reusable across all features:
+
+✅ Buttons (jbh-button-, jbh-icon-button-)
+✅ Forms (jbh-input, jbh-select, jbh-label, jbh-field-error, etc.)
+✅ Cards (jbh-card, jbh-card-elevated, jbh-card-flat)
+✅ Alerts (jbh-alert-error, jbh-alert-success, etc.)
+✅ Typography (jbh-title, jbh-heading-*, jbh-text-muted, etc.)
+✅ Layout Utilities (jbh-container, jbh-divider, jbh-spacer)
+✅ Links (jbh-link, jbh-link-muted)
+✅ Animations (jbh-animate-fade-in, jbh-animate-slide-up, etc.)
+✅ Generic Empty State (jbh-empty-state, jbh-empty-state-icon, etc.)
+✅ Generic Page Header (jbh-page-header, jbh-page-title, etc.)
+✅ Base Skeleton (jbh-skeleton, jbh-skeleton-loading animation)
+✅ Generic Table (jbh-table-header, jbh-table-row, jbh-table-cell)
+✅ Generic Badges (jbh-status-badge, jbh-role-badge
+
 ## Critical Rule: Single Source of Truth
 **ALL reusable styles MUST be defined in `src/theme/custom-components.scss`**
 
 ### ❌ NEVER
 - Create feature-specific theme files (NO `auth-theme.scss`, `dashboard-theme.scss`)
-- Define component-specific styles in component SCSS files
+- Define component-specific styles in the component SCSS files itself.
+- Defined component-specific styles will not be placed on the custom-components.scss file.
 - Hardcode colors, spacing, or typography values
 
 ### ✅ ALWAYS

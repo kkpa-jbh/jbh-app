@@ -1,3 +1,212 @@
 :host {
   display: block;
 }
+
+.jbh-balance-table {
+  background: var(--jbh-background-white);
+  border-radius: var(--jbh-radius-lg);
+  box-shadow: var(--jbh-shadow-md);
+  overflow: hidden;
+  margin-bottom: var(--jbh-spacing-xl);
+}
+
+.jbh-balance-table-header {
+  display: flex;
+  background: var(--jbh-background-light);
+  border-bottom: 1px solid var(--jbh-border-color);
+  padding: var(--jbh-spacing-sm) var(--jbh-spacing-md);
+
+  .jbh-balance-cell {
+    font-size: var(--jbh-font-size-xs);
+    font-weight: var(--jbh-font-weight-semibold);
+    color: var(--jbh-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+.jbh-balance-table-row {
+  display: flex;
+  align-items: center;
+  padding: var(--jbh-spacing-sm) var(--jbh-spacing-md);
+  border-bottom: 1px solid var(--jbh-border-color);
+  transition: background var(--jbh-transition-base);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: var(--jbh-background-light);
+  }
+
+  &.gap-period {
+    background: rgba(160, 174, 192, 0.1);
+  }
+}
+
+.jbh-balance-cell {
+  display: flex;
+  align-items: center;
+  gap: var(--jbh-spacing-xs);
+  font-size: var(--jbh-font-size-sm);
+  color: var(--jbh-text-primary);
+}
+
+.jbh-cell-period {
+  flex: 1.5;
+  font-weight: var(--jbh-font-weight-medium);
+}
+
+.jbh-cell-balance {
+  flex: 1.5;
+  text-align: right;
+  justify-content: flex-end;
+}
+
+.jbh-cell-profit {
+  flex: 1.2;
+  text-align: right;
+  justify-content: flex-end;
+
+  &.positive {
+    color: var(--jbh-success-color);
+  }
+
+  &.negative {
+    color: var(--jbh-error-color);
+  }
+}
+
+.jbh-cell-growth {
+  flex: 1;
+  text-align: right;
+  justify-content: flex-end;
+
+  &.positive {
+    color: var(--jbh-success-color);
+  }
+
+  &.negative {
+    color: var(--jbh-error-color);
+  }
+}
+
+.jbh-cell-movements {
+  flex: 0.8;
+  text-align: center;
+  justify-content: center;
+}
+
+.jbh-cell-badges {
+  flex: 1.2;
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+}
+
+.jbh-cell-product {
+  flex: 1.5;
+  font-weight: var(--jbh-font-weight-medium);
+  color: var(--jbh-text-secondary);
+}
+
+.jbh-badge-gap {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  background: rgba(160, 174, 192, 0.2);
+  color: var(--jbh-text-secondary);
+  border-radius: var(--jbh-radius-full);
+  font-size: var(--jbh-font-size-xs);
+  font-weight: var(--jbh-font-weight-medium);
+}
+
+.jbh-badge-official {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  background: var(--jbh-info-background);
+  color: var(--jbh-info-color);
+  border-radius: var(--jbh-radius-full);
+  font-size: var(--jbh-font-size-xs);
+  font-weight: var(--jbh-font-weight-medium);
+}
+
+.jbh-balance-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--jbh-spacing-sm);
+  margin-bottom: var(--jbh-spacing-xl);
+}
+
+.jbh-balance-card {
+  background: var(--jbh-background-white);
+  border-radius: var(--jbh-radius-md);
+  padding: var(--jbh-spacing-md);
+  box-shadow: var(--jbh-shadow-sm);
+
+  &.gap-period {
+    background: rgba(160, 174, 192, 0.1);
+  }
+}
+
+.jbh-balance-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--jbh-spacing-sm);
+}
+
+.jbh-balance-card-header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.jbh-balance-card-period {
+  font-size: var(--jbh-font-size-base);
+  font-weight: var(--jbh-font-weight-semibold);
+  color: var(--jbh-text-primary);
+}
+
+.jbh-balance-card-product {
+  font-size: var(--jbh-font-size-xs);
+  color: var(--jbh-text-secondary);
+}
+
+.jbh-balance-card-badges {
+  display: flex;
+  gap: 4px;
+}
+
+.jbh-balance-card-body {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--jbh-spacing-sm);
+}
+
+.jbh-balance-card-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.jbh-balance-card-label {
+  font-size: var(--jbh-font-size-xs);
+  color: var(--jbh-text-secondary);
+}
+
+.jbh-balance-card-value {
+  font-size: var(--jbh-font-size-sm);
+  font-weight: var(--jbh-font-weight-medium);
+  color: var(--jbh-text-primary);
+
+  &.positive {
+    color: var(--jbh-success-color);
+  }
+
+  &.negative {
+    color: var(--jbh-error-color);
+  }
+}

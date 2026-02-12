@@ -2215,13 +2215,6 @@ ion-menu ion-content::part(scroll) {
   }
 }
 
-// Product Card Skeleton
-.jbh-product-card-skeleton {
-  background: var(--jbh-background-white);
-  border-radius: var(--jbh-radius-lg);
-  padding: var(--jbh-spacing-md);
-  box-shadow: var(--jbh-shadow-md);
-}
 
 .jbh-skeleton-product-header {
   display: flex;

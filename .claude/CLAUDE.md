@@ -148,6 +148,22 @@ export class MyComponent implements OnInit, OnDestroy {
 #### Theme System
 
 1. **ALL styles** in `src/theme/custom-components.scss` - NO feature-specific theme files
+   What Should Stay in custom-components.scss (Truly Global)
+These are reusable across all features:
+
+✅ Buttons (jbh-button-, jbh-icon-button-)
+✅ Forms (jbh-input, jbh-select, jbh-label, jbh-field-error, etc.)
+✅ Cards (jbh-card, jbh-card-elevated, jbh-card-flat)
+✅ Alerts (jbh-alert-error, jbh-alert-success, etc.)
+✅ Typography (jbh-title, jbh-heading-*, jbh-text-muted, etc.)
+✅ Layout Utilities (jbh-container, jbh-divider, jbh-spacer)
+✅ Links (jbh-link, jbh-link-muted)
+✅ Animations (jbh-animate-fade-in, jbh-animate-slide-up, etc.)
+✅ Generic Empty State (jbh-empty-state, jbh-empty-state-icon, etc.)
+✅ Generic Page Header (jbh-page-header, jbh-page-title, etc.)
+✅ Base Skeleton (jbh-skeleton, jbh-skeleton-loading animation)
+✅ Generic Table (jbh-table-header, jbh-table-row, jbh-table-cell)
+✅ Generic Badges (jbh-status-badge, jbh-role-badge
 2. **Use `jbh-*` classes**: `jbh-button-primary`, `jbh-input`, `jbh-card`, etc.
 3. **Use `--jbh-*` variables** for colors, spacing, typography
 4. Component SCSS = page layout only

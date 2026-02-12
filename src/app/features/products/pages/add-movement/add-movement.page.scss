@@ -16,3 +16,49 @@
   margin-top: var(--jbh-spacing-xs);
   margin-bottom: 0;
 }
+
+.jbh-movement-product-info {
+  display: flex;
+  align-items: center;
+  gap: var(--jbh-spacing-sm);
+  padding: var(--jbh-spacing-md);
+  background: var(--jbh-background-light);
+  border-radius: var(--jbh-radius-md);
+  margin-bottom: var(--jbh-spacing-lg);
+}
+
+.jbh-movement-product-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--jbh-radius-md);
+  flex-shrink: 0;
+
+  ion-icon {
+    font-size: 24px;
+    color: var(--jbh-background-white);
+  }
+}
+
+.jbh-movement-product-details {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.jbh-movement-product-name {
+  font-size: var(--jbh-font-size-base);
+  font-weight: var(--jbh-font-weight-semibold);
+  color: var(--jbh-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.jbh-movement-product-type {
+  font-size: var(--jbh-font-size-xs);
+  color: var(--jbh-text-secondary);
+  margin-top: 2px;
+}
