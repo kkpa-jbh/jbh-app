@@ -50,6 +50,7 @@
     "reports": {
       "balanceTrends": "Balance Trends",
       "growthAnalysis": "Growth Analysis",
+      "productMovements": "Product Movements",
       "title": "Reports"
     },
     "settings": {
@@ -75,6 +76,44 @@
       "createButton": "Add Product",
       "formSubtitle": "Manage your portfolio products",
       "formTitle": "Portfolio Overview"
+    }
+  },
+  "movements": {
+    "delete": {
+      "button": "Delete Movement",
+      "message": "Are you sure you want to delete this movement: {{description}}?",
+      "success": "Movement deleted successfully",
+      "title": "Delete Movement"
+    },
+    "empty": {
+      "message": "No movements have been recorded for this product in the last 3 months.",
+      "noProductMessage": "Please select a product from the dropdown above to view its movements.",
+      "noProductTitle": "No Product Selected",
+      "title": "No Movements Found"
+    },
+    "errors": {
+      "delete": "Failed to delete movement. Please try again.",
+      "load": "Failed to load movements. Please try again."
+    },
+    "noDescription": "No description",
+    "pageSubtitle": "View movements and transactions for the last 3 months",
+    "pageTitle": "Product Movements",
+    "selectProduct": "Select Product",
+    "selectProductPlaceholder": "Choose a product",
+    "table": {
+      "actions": "Actions",
+      "amount": "Amount",
+      "balance": "Balance",
+      "category": "Category",
+      "date": "Date",
+      "description": "Description",
+      "type": "Type"
+    },
+    "title": "Product Movements",
+    "types": {
+      "BALANCE_SNAPSHOT": "Balance Update",
+      "DEPOSIT": "Deposit",
+      "WITHDRAWAL": "Withdrawal"
     }
   },
   "reports": {

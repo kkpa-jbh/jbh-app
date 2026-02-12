@@ -4,6 +4,7 @@ import { ProductMetadataConfig } from '../models/product-metadata-config.model';
 import { CreateProductRequest, CreateProductResponse, UpdateProductRequest } from '../models/product.model';
 import { ProductListItem } from '../models/product-list-item.model';
 import { AddMovementRequest, AddMovementResponse } from '../models/movement.model';
+import { ProductMovement } from '../models/product-movement.model';
 
 export abstract class ProductRepository {
   abstract getProductTypes(): Observable<ProductType[]>;
@@ -15,4 +16,6 @@ export abstract class ProductRepository {
   abstract deleteProduct(id: string): Observable<void>;
   abstract updateProductStatus(id: string, active: boolean): Observable<void>;
   abstract addMovement(productId: string, request: AddMovementRequest): Observable<AddMovementResponse>;
+  abstract getProductMovements(productId: string): Observable<ProductMovement[]>;
+  abstract deleteProductMovement(productId: string, movementId: string): Observable<void>;
 }

@@ -7,6 +7,8 @@ import { ProductMetadataConfig, ProductMetadataConfigApiResponse } from '@core/d
 import { CreateProductRequest, CreateProductResponse, UpdateProductRequest } from '@core/domain/models/product.model';
 import { AddMovementRequest, AddMovementResponse } from '@core/domain/models/movement.model';
 import { ProductListItem, ProductListItemApiResponse } from '@core/domain/models/product-list-item.model';
+import { ProductMovement } from '@core/domain/models/product-movement.model';
+import { ProductMovementApiResponse } from '@core/domain/models/product-movement-api-response.interface';
 import { ApiBaseService } from '@core/infrastructure/api/api-base.service';
 import { HttpClient } from '@angular/common/http';
 import { EnvironmentConfig } from '@core/infrastructure/config/environment.config';
@@ -78,5 +80,15 @@ export class ProductRepositoryImpl extends ApiBaseService implements ProductRepo
 
   addMovement(productId: string, request: AddMovementRequest): Observable<AddMovementResponse> {
     return this.post<AddMovementResponse>(`${this.PRODUCTS_ENDPOINT}/movements/${productId}`, request);
+  }
+
+  getProductMovements(productId: string): Observable<ProductMovement[]> {
+    return this.get<ProductMovementApiResponse[]>(`${this.PRODUCTS_ENDPOINT}/movements/${productId}`).pipe(
+      map(responses => responses.map(response => ProductMovement.fromApiResponse(response)))
+    );
+  }
+
+  deleteProductMovement(productId: string, movementId: string): Observable<void> {
+    return this.delete<void>(`${this.PRODUCTS_ENDPOINT}/movements/${productId}/${movementId}`);
   }
 }

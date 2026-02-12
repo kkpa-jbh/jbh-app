@@ -50,6 +50,7 @@
     "reports": {
       "balanceTrends": "Tendencias de Balance",
       "growthAnalysis": "Análisis de Crecimiento",
+      "productMovements": "Movimientos del Producto",
       "title": "Reportes"
     },
     "settings": {
@@ -75,6 +76,44 @@
       "createButton": "Agregar Producto",
       "formSubtitle": "Administra los productos de tu cartera",
       "formTitle": "Resumen de Cartera"
+    }
+  },
+  "movements": {
+    "delete": {
+      "button": "Eliminar Movimiento",
+      "message": "¿Está seguro de que desea eliminar este movimiento: {{description}}?",
+      "success": "Movimiento eliminado exitosamente",
+      "title": "Eliminar Movimiento"
+    },
+    "empty": {
+      "message": "No se han registrado movimientos para este producto en los últimos 3 meses.",
+      "noProductMessage": "Por favor seleccione un producto del menú desplegable para ver sus movimientos.",
+      "noProductTitle": "Ningún Producto Seleccionado",
+      "title": "No Se Encontraron Movimientos"
+    },
+    "errors": {
+      "delete": "No se pudo eliminar el movimiento. Por favor intente de nuevo.",
+      "load": "No se pudieron cargar los movimientos. Por favor intente de nuevo."
+    },
+    "noDescription": "Sin descripción",
+    "pageSubtitle": "Ver movimientos y transacciones de los últimos 3 meses",
+    "pageTitle": "Movimientos del Producto",
+    "selectProduct": "Seleccionar Producto",
+    "selectProductPlaceholder": "Elija un producto",
+    "table": {
+      "actions": "Acciones",
+      "amount": "Monto",
+      "balance": "Balance",
+      "category": "Categoría",
+      "date": "Fecha",
+      "description": "Descripción",
+      "type": "Tipo"
+    },
+    "title": "Movimientos del Producto",
+    "types": {
+      "BALANCE_SNAPSHOT": "Actualización de Balance",
+      "DEPOSIT": "Depósito",
+      "WITHDRAWAL": "Retiro"
     }
   },
   "reports": {

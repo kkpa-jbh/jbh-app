@@ -57,9 +57,11 @@ src/app/core/infrastructure/
 
 ### Critical Rules
 
-- Do not use any function from console. Use the servie `private logger: LoggerService` instead.
+- Do not use any function from console. Use the service `private logger: LoggerService` instead.
 - Do not do any calculations with numbers. All calculations must be done on the backend side. If you need to do any calculations, please stop the plan and alert the team.
-- All format conversions must be done via directives or pipes. No format conversions in the component code.
+- **Formatting in templates only**: Use **pipes for display** (tables, cards) and **directives for form inputs**. No format conversions in component code.
+  - **Pipes** (`|`) for displaying values: `{{ value | jbhCurrency }}`
+  - **Directives** (`[]`) ONLY for `<input>` elements: `<input [jbhDecimalFormat]="2" />`
 
 #### Performance (CRITICAL)
 
@@ -117,7 +119,32 @@ export class MyComponent implements OnInit, OnDestroy {
     - `JbhTranslationKeyPipe` (`jbhTranslationKey`) - for API JSON translation keys
     - Use pipes in templates, not formatting methods in components
 
-7. **Backend JSON Translation Keys**: When the API returns a `translationKey` field containing JSON like `{"en":"Salary","es":"Salario"}`, use the `jbhTranslationKey` pipe in templates:
+7. **Directives vs Pipes for Formatting (CRITICAL)**:
+    - **Directives are ONLY for form inputs** - they require `NgControl` and listen to user input events
+    - **Pipes are for displaying values** - use them for tables, cards, and read-only text
+
+```html
+<!-- ❌ WRONG - Directive on display element (causes NG0201 error) -->
+<span [jbhDecimalFormat]="product.balance"></span>
+
+<!-- ✅ CORRECT - Pipe for displaying values -->
+<span>{{ product.balance | jbhCurrency }}</span>
+
+<!-- ✅ CORRECT - Directive on form input -->
+<input type="text" [jbhDecimalFormat]="2" formControlName="amount" />
+```
+
+**Available pipes for display:**
+- `jbhCurrency` - Currency formatting ($1,234.56)
+- `jbhDate` - Date formatting
+- `jbhTranslationKey` - Backend JSON translation keys
+- `jbhProfit` - Profit/loss formatting with color
+- `jbhGrowth` - Growth rate formatting with %
+
+**Available directives for form inputs:**
+- `jbhDecimalFormat` - Numeric input formatting (use ONLY on `<input>` elements)
+
+8. **Backend JSON Translation Keys**: When the API returns a `translationKey` field containing JSON like `{"en":"Salary","es":"Salario"}`, use the `jbhTranslationKey` pipe in templates:
 ```html
 <!-- ✅ GOOD - Use the pipe directly in template -->
 {{ category.translationKey | jbhTranslationKey }}

@@ -74,6 +74,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/reports/pages/growth-analysis/growth-analysis.page').then(m => m.GrowthAnalysisPage),
     canActivate: [authGuard]
   },
+  {
+    path: 'reports/product-movements',
+    loadComponent: () => import('./features/products/pages/product-movements/product-movements.page').then(m => m.ProductMovementsPage),
+    canActivate: [authGuard]
+  },
 
   // Settings
   {

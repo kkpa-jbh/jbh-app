@@ -1,0 +1,234 @@
+<app-header></app-header>
+
+<ion-content>
+  <div class="jbh-container">
+
+    <!-- Product Selection -->
+    <div class="jbh-card" style="margin-bottom: var(--jbh-spacing-lg);">
+      <div class="jbh-page-header" style="margin-bottom: var(--jbh-spacing-md);">
+        <div class="jbh-page-header-content">
+          <div class="jbh-page-header-icon">
+            <ion-icon name="list-outline"></ion-icon>
+          </div>
+          <div>
+            <h1 class="jbh-page-title">{{ 'movements.pageTitle' | translate }}</h1>
+            <p class="jbh-page-subtitle">{{ 'movements.pageSubtitle' | translate }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Dropdown -->
+      <div class="jbh-form-field">
+        <label class="jbh-label">{{ 'movements.selectProduct' | translate }}</label>
+
+        @if (isLoadingProducts) {
+          <div class="jbh-skeleton jbh-skeleton-select"></div>
+        } @else {
+          <div class="jbh-ion-select-wrapper">
+            <ion-icon name="wallet-outline" class="jbh-ion-select-icon"></ion-icon>
+            <ion-select
+              [(ngModel)]="selectedProductId"
+              [placeholder]="'movements.selectProductPlaceholder' | translate"
+              [interface]="selectInterface"
+              class="jbh-ion-select"
+              (ionChange)="onProductChange()"
+            >
+              @for (product of products; track product.id) {
+                <ion-select-option [value]="product.id">
+                  {{ product.name }}
+                </ion-select-option>
+              }
+            </ion-select>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    @if (isLoadingMovements) {
+      <div class="jbh-loading-container">
+        @for (i of [1,2,3,4,5]; track i) {
+          <div class="jbh-skeleton" style="height: 120px; margin-bottom: var(--jbh-spacing-sm);"></div>
+        }
+      </div>
+    }
+
+    <!-- Empty State - No Product Selected -->
+    @else if (!hasSelectedProduct) {
+      <div class="jbh-empty-state">
+        <div class="jbh-empty-state-icon">
+          <ion-icon name="wallet-outline"></ion-icon>
+        </div>
+        <h2 class="jbh-empty-state-title">{{ 'movements.empty.noProductTitle' | translate }}</h2>
+        <p class="jbh-empty-state-message">{{ 'movements.empty.noProductMessage' | translate }}</p>
+      </div>
+    }
+
+    <!-- Empty State - No Movements -->
+    @else if (showEmptyState) {
+      <div class="jbh-empty-state">
+        <div class="jbh-empty-state-icon">
+          <ion-icon name="document-text-outline"></ion-icon>
+        </div>
+        <h2 class="jbh-empty-state-title">{{ 'movements.empty.title' | translate }}</h2>
+        <p class="jbh-empty-state-message">{{ 'movements.empty.message' | translate }}</p>
+      </div>
+    }
+
+    <!-- Desktop Table -->
+    @else if (hasMovements) {
+      <div class="jbh-card jbh-hide-mobile">
+        <div class="movements-table">
+          <!-- Table Header -->
+          <div class="movements-table-header">
+            <div class="movements-cell movements-cell-date">{{ 'movements.table.date' | translate }}</div>
+            <div class="movements-cell movements-cell-type">{{ 'movements.table.type' | translate }}</div>
+            <div class="movements-cell movements-cell-description">{{ 'movements.table.description' | translate }}</div>
+            <div class="movements-cell movements-cell-category">{{ 'movements.table.category' | translate }}</div>
+            <div class="movements-cell movements-cell-amount">{{ 'movements.table.amount' | translate }}</div>
+            <div class="movements-cell movements-cell-balance">{{ 'movements.table.balance' | translate }}</div>
+            <div class="movements-cell movements-cell-actions">{{ 'movements.table.actions' | translate }}</div>
+          </div>
+
+          <!-- Table Rows -->
+          @for (movement of movements; track movement.id) {
+            <div class="movements-table-row" [class]="'movement-' + getMovementTypeClass(movement)">
+              <div class="movements-cell movements-cell-date">
+                <ion-icon name="calendar-outline" class="cell-icon"></ion-icon>
+                {{ movement.movementDate | jbhDate }}
+              </div>
+
+              <div class="movements-cell movements-cell-type">
+                <div class="movement-type-badge" [class]="getMovementTypeClass(movement)">
+                  <ion-icon [name]="getMovementIcon(movement)"></ion-icon>
+                  <span>{{ 'movements.types.' + movement.movementType | translate }}</span>
+                </div>
+              </div>
+
+              <div class="movements-cell movements-cell-description">
+                <div class="movement-description">
+                  {{ movement.description || ('movements.noDescription' | translate) }}
+                </div>
+                @if (movement.hasTargetAccount) {
+                  <div class="movement-transfer-info">
+                    <ion-icon name="chevron-forward-outline"></ion-icon>
+                    {{ movement.targetAccountName }}
+                  </div>
+                }
+              </div>
+
+              <div class="movements-cell movements-cell-category">
+                @if (movement.categoryLabel) {
+                  <span>{{ movement.categoryLabel | jbhTranslationKey }}</span>
+                } @else {
+                  <span class="jbh-text-muted">-</span>
+                }
+              </div>
+
+              <div class="movements-cell movements-cell-amount">
+                @if (!movement.isBalanceSnapshot) {
+                  <span
+                    class="movement-amount"
+                    [class.positive]="movement.isDeposit"
+                    [class.negative]="movement.isWithdrawal"
+                  >{{ movement.movementAmount | jbhCurrency }}</span>
+                } @else {
+                  <span class="jbh-text-muted">-</span>
+                }
+              </div>
+
+              <div class="movements-cell movements-cell-balance">
+                <span class="balance-value">{{ movement.balanceSnapshot | jbhCurrency }}</span>
+              </div>
+
+              <div class="movements-cell movements-cell-actions">
+                @if (movement.canBeRemoved) {
+                    <button
+                      class="jbh-icon-button jbh-icon-button-danger"
+                      (click)="confirmDelete(movement)"
+                      aria-label="{{ 'movements.delete.button' | translate }}"
+                      title="{{ 'movements.delete.button' | translate }}"
+                    >
+                      <ion-icon name="trash-outline"></ion-icon>
+                    </button>
+                }
+               
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Mobile Cards -->
+      <div class="jbh-hide-desktop">
+        @for (movement of movements; track movement.id) {
+          <div class="jbh-card movement-card" [class]="'movement-' + getMovementTypeClass(movement)">
+            <!-- Card Header -->
+            <div class="movement-card-header">
+              <div class="movement-type-badge" [class]="getMovementTypeClass(movement)">
+                <ion-icon [name]="getMovementIcon(movement)"></ion-icon>
+                <span>{{ 'movements.types.' + movement.movementType | translate }}</span>
+              </div>
+              <button
+                class="jbh-icon-button jbh-icon-button-small jbh-icon-button-danger"
+                (click)="confirmDelete(movement)"
+                aria-label="{{ 'movements.delete.button' | translate }}"
+                title="{{ 'movements.delete.button' | translate }}"
+              >
+                <ion-icon name="trash-outline"></ion-icon>
+              </button>
+            </div>
+
+            <!-- Card Body -->
+            <div class="movement-card-body">
+              <div class="movement-card-date">
+                <ion-icon name="calendar-outline"></ion-icon>
+                <span>{{ movement.movementDate | jbhDate }}</span>
+              </div>
+
+              <div class="movement-card-description">
+                {{ movement.description || ('movements.noDescription' | translate) }}
+              </div>
+
+              @if (movement.categoryLabel) {
+                <div class="movement-card-category">
+                  <span class="label">{{ 'movements.table.category' | translate }}:</span>
+                  <span>{{ movement.categoryLabel | jbhTranslationKey }}</span>
+                </div>
+              }
+
+              @if (movement.hasTargetAccount) {
+                <div class="movement-transfer-info">
+                  <ion-icon name="chevron-forward-outline"></ion-icon>
+                  {{ movement.targetAccountName }}
+                </div>
+              }
+            </div>
+
+            <!-- Card Footer -->
+            <div class="movement-card-footer">
+              <div class="movement-card-item">
+                <span class="label">{{ 'movements.table.amount' | translate }}</span>
+                @if (!movement.isBalanceSnapshot) {
+                  <span
+                    class="value movement-amount"
+                    [class.positive]="movement.isDeposit"
+                    [class.negative]="movement.isWithdrawal"
+                  >{{ movement.movementAmount | jbhCurrency }}</span>
+                } @else {
+                  <span class="value jbh-text-muted">-</span>
+                }
+              </div>
+
+              <div class="movement-card-item">
+                <span class="label">{{ 'movements.table.balance' | translate }}</span>
+                <span class="value balance-value">{{ movement.balanceSnapshot | jbhCurrency }}</span>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+  </div>
+</ion-content>

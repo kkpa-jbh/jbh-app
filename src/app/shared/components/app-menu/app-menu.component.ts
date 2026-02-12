@@ -27,7 +27,8 @@ import {
   trendingUpOutline,
   barChartOutline,
   settingsOutline,
-  notificationsOutline
+  notificationsOutline,
+  receiptOutline
 } from 'ionicons/icons';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
@@ -94,7 +95,8 @@ export class AppMenuComponent implements OnInit, OnDestroy {
       trendingUpOutline,
       barChartOutline,
       settingsOutline,
-      notificationsOutline
+      notificationsOutline,
+      receiptOutline
     });
   }
 
@@ -182,6 +184,12 @@ export class AppMenuComponent implements OnInit, OnDestroy {
             translationKey: 'menu.reports.growthAnalysis',
             icon: 'bar-chart-outline',
             route: '/reports/growth-analysis'
+          },
+          {
+            id: 'reports-movements',
+            translationKey: 'menu.reports.productMovements',
+            icon: 'receipt-outline',
+            route: '/reports/product-movements'
           }
         ]
       },
