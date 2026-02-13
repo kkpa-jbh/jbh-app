@@ -121,6 +121,10 @@ export class ProductMovementsPage implements OnInit, OnDestroy, ViewWillEnter, V
           this.products = products;
           this.isLoadingProducts = false;
           this.cdr.markForCheck();
+          if (this.products.length === 1) {
+            this.selectedProductId = this.products[0].id;
+            this.loadMovements();
+          }
         },
         error: (error: JBHError) => {
           this.logger.error('Error loading products', 'ProductMovementsPage', error);

@@ -52,6 +52,6 @@ export class ProductMovement {
   }
 
   get categoryLabel(): string | null {
-    return this.category?.translationsKey || null;
+    return this.category?.typeName || null;
   }
 }

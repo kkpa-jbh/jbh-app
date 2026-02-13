@@ -95,7 +95,7 @@
             <div class="movements-table-row" [class]="'movement-' + getMovementTypeClass(movement)">
               <div class="movements-cell movements-cell-date">
                 <ion-icon name="calendar-outline" class="cell-icon"></ion-icon>
-                {{ movement.movementDate | jbhDate }}
+                {{ movement.movementDate | jbhDate:'shortDate' }}
               </div>
 
               <div class="movements-cell movements-cell-type">

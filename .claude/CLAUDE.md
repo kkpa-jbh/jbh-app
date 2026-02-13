@@ -16,6 +16,7 @@ Expert guidance for Ionic/Angular hybrid mobile apps using Clean Architecture, D
 - [i18n](docs/i18n.md) - Internationalization, translations
 - [Responsive](docs/responsive.md) - Breakpoints, grid system, viewport detection
 - [Improvements](docs/improvements.md) - Known issues, planned fixes, priorities
+- [Debug Info](docs/debuginfo.md) - How to add debug info for responsive issues
 
 ## Quick Reference
 
