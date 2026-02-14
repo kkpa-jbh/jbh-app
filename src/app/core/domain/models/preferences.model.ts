@@ -25,7 +25,7 @@ export interface PreferencesApiResponse {
   defaultLang: { code: string };
   defaultCurrency: string;
   savingsGoal: number;
-  defaultAccountId: string | null;
+  defaultProductId: string | null;
 }
 
 export interface UpdatePreferencesDto {
@@ -39,7 +39,7 @@ export interface UpdatePreferencesApiRequest {
   defaultLang: string;
   defaultCurrency: string;
   savingsGoal: number;
-  defaultAccountId: string | null;
+  defaultProductId: string | null;
 }
 
 export function toApiRequest(dto: UpdatePreferencesDto): UpdatePreferencesApiRequest {
@@ -47,7 +47,7 @@ export function toApiRequest(dto: UpdatePreferencesDto): UpdatePreferencesApiReq
     defaultLang: dto.defaultLang.toLowerCase(),
     defaultCurrency: dto.defaultCurrency,
     savingsGoal: dto.savingsGoal,
-    defaultAccountId: dto.defaultProductId
+    defaultProductId: dto.defaultProductId
   };
 }
 
@@ -65,7 +65,7 @@ export class Preferences {
       langCode,
       response.defaultCurrency as Currency,
       response.savingsGoal,
-      response.defaultAccountId
+      response.defaultProductId
     );
   }
 }

@@ -3,7 +3,7 @@ import { CategoryType, MovementMetadata, MovementType, ProductMovementApiRespons
 export class ProductMovement {
   constructor(
     public readonly id: string,
-    public readonly accountId: string,
+    public readonly productId: string,
     public readonly movementType: MovementType,
     public readonly category: CategoryType | null,
     public readonly movementAmount: number,
@@ -18,7 +18,7 @@ export class ProductMovement {
   static fromApiResponse(response: ProductMovementApiResponse): ProductMovement {
     return new ProductMovement(
       response.id,
-      response.accountId,
+      response.productId,
       response.movementType,
       response.category,
       response.movementAmount,

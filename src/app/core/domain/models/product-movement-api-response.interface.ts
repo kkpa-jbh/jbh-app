@@ -12,7 +12,7 @@ export interface MovementMetadata {
 
 export interface ProductMovementApiResponse {
   id: string;
-  accountId: string;
+  productId: string;
   movementType: MovementType;
   category: CategoryType | null;
   movementAmount: number;
