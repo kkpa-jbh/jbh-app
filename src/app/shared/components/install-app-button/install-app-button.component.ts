@@ -5,7 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { PwaInstallService } from '@core/infrastructure/pwa/pwa-install.service';
 import { IosInstallModalComponent } from '../ios-install-modal/ios-install-modal.component';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
-import { Subscription } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-install-app-button',
@@ -17,7 +17,7 @@ import { Subscription } from 'rxjs';
 export class InstallAppButtonComponent implements OnInit, OnDestroy {
   canInstall = false;
   isInstalled = false;
-  private installableSubscription?: Subscription;
+  private destroy$ = new Subject<void>();
 
   constructor(
     private pwaInstallService: PwaInstallService,
@@ -30,16 +30,17 @@ export class InstallAppButtonComponent implements OnInit, OnDestroy {
     this.checkInstallStatus();
 
     // Subscribe to installable changes (for Android)
-    this.installableSubscription = this.pwaInstallService.installable$.subscribe(
-      (installable) => {
+    this.pwaInstallService.installable$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((installable) => {
         this.canInstall = installable || this.pwaInstallService.isIOS();
         this.isInstalled = this.pwaInstallService.isAppInstalled();
-      }
-    );
+      });
   }
 
   ngOnDestroy(): void {
-    this.installableSubscription?.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private checkInstallStatus(): void {

@@ -21,10 +21,12 @@
       </div>
 
       <!-- Error Alert -->
-      <div class="jbh-alert-error" *ngIf="errorMessage">
-        <ion-icon name="alert-circle"></ion-icon>
-        <div class="jbh-alert-content">{{ errorMessage }}</div>
-      </div>
+      @if (errorMessage) {
+        <div class="jbh-alert-error" role="alert" aria-live="assertive">
+          <ion-icon name="alert-circle"></ion-icon>
+          <div class="jbh-alert-content">{{ errorMessage }}</div>
+        </div>
+      }
 
       <!-- Login Form -->
       <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="login-form">
@@ -43,10 +45,12 @@
               autocomplete="username"
             />
           </div>
-          <div class="jbh-field-error" *ngIf="hasError('username')">
-            <ion-icon name="information-circle"></ion-icon>
-            <span>{{ getErrorMessage('username') }}</span>
-          </div>
+          @if (hasError('username')) {
+            <div class="jbh-field-error">
+              <ion-icon name="information-circle"></ion-icon>
+              <span>{{ getErrorMessage('username') }}</span>
+            </div>
+          }
         </div>
 
         <!-- Password Field -->
@@ -71,10 +75,12 @@
               <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
             </button>
           </div>
-          <div class="jbh-field-error" *ngIf="hasError('password')">
-            <ion-icon name="information-circle"></ion-icon>
-            <span>{{ getErrorMessage('password') }}</span>
-          </div>
+          @if (hasError('password')) {
+            <div class="jbh-field-error">
+              <ion-icon name="information-circle"></ion-icon>
+              <span>{{ getErrorMessage('password') }}</span>
+            </div>
+          }
         </div>
 
         <!-- Remember Me & Forgot Password -->
@@ -95,9 +101,15 @@
           [disabled]="isLoading || loginForm.invalid"
           [class.jbh-button-loading]="isLoading"
         >
-          <ion-spinner name="crescent" *ngIf="isLoading"></ion-spinner>
-          <span *ngIf="!isLoading">{{ 'login.signInButton' | translate }}</span>
-          <span *ngIf="isLoading">{{ 'login.signingIn' | translate }}</span>
+          @if (isLoading) {
+            <ion-spinner name="crescent"></ion-spinner>
+          }
+          @if (!isLoading) {
+            <span>{{ 'login.signInButton' | translate }}</span>
+          }
+          @if (isLoading) {
+            <span>{{ 'login.signingIn' | translate }}</span>
+          }
         </button>
 
         <!-- Divider -->

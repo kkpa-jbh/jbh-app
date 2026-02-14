@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
@@ -20,6 +20,7 @@ export interface BalanceFilterEvent {
   templateUrl: './balance-history-filter.component.html',
   styleUrls: ['./balance-history-filter.component.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [CommonModule, IonicModule, ReactiveFormsModule, TranslateModule]
 })
 export class BalanceHistoryFilterComponent implements OnInit {

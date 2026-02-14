@@ -12,6 +12,7 @@
     "lint": "ng lint",
     "i18n:lint": "i18n-lint",
     "i18n:lint:fix": "i18n-lint --fix",
+    "i18n:sort": "sort-json src/assets/i18n/*.json",
     "version:major": "node scripts/bump-version.js major",
     "version:minor": "node scripts/bump-version.js minor",
     "version:patch": "node scripts/bump-version.js patch"
@@ -70,6 +71,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "sort-json": "^2.0.1",
     "typescript": "~5.9.0"
   },
   "description": "An Ionic project"

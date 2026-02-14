@@ -35,6 +35,35 @@
     "uiComponents": "UI Components",
     "welcome": "Ready to create an app?"
   },
+  "login": {
+    "continueWith": "Continue with {{provider}}",
+    "continueWithGoogle": "Continue with Google",
+    "errors": {
+      "generic": "An error occurred. Please try again later.",
+      "invalidCredentials": "Invalid username or password. Please try again."
+    },
+    "footer": "© 2025 Your Company. All rights reserved.",
+    "forgotPassword": "Forgot password?",
+    "noAccount": "Don't have an account?",
+    "password": {
+      "label": "Password",
+      "minlength": "Password must be at least {{minLength}} characters",
+      "placeholder": "Enter your password",
+      "required": "Password is required"
+    },
+    "rememberMe": "Remember me",
+    "signInButton": "Sign In",
+    "signUp": "Sign up",
+    "signingIn": "Signing in...",
+    "subtitle": "Sign in to continue to your account",
+    "title": "Welcome Back",
+    "username": {
+      "label": "Username/Email",
+      "minlength": "Username must be at least {{minLength}} characters",
+      "placeholder": "Enter your username or email",
+      "required": "Username is required"
+    }
+  },
   "menu": {
     "appName": "JBH App",
     "appTagline": "Manage your business",
@@ -71,13 +100,6 @@
     },
     "version": "Version"
   },
-  "portfolio": {
-    "overview": {
-      "createButton": "Add Product",
-      "formSubtitle": "Manage your portfolio products",
-      "formTitle": "Portfolio Overview"
-    }
-  },
   "movements": {
     "delete": {
       "button": "Delete Movement",
@@ -103,6 +125,7 @@
     "table": {
       "actions": "Actions",
       "amount": "Amount",
+      "ariaLabel": "Product movements table",
       "balance": "Balance",
       "category": "Category",
       "date": "Date",
@@ -116,24 +139,11 @@
       "WITHDRAWAL": "Withdrawal"
     }
   },
-  "reports": {
-    "growthAnalysis": {
-      "comingSoonMessage": "Growth analysis reports will be available soon."
-    }
-  },
-  "settings": {
-    "teamPreferences": {
-      "forTeam": "Preferences for {{teamName}}",
-      "notifications": "Notifications",
-      "title": "Team Preferences"
-    }
-  },
-  "transactions": {
-    "recordMovement": {
-      "title": "Record Movement"
-    },
-    "transfer": {
-      "title": "Transfer Funds"
+  "portfolio": {
+    "overview": {
+      "createButton": "Add Product",
+      "formSubtitle": "Manage your portfolio products",
+      "formTitle": "Portfolio Overview"
     }
   },
   "products": {
@@ -238,9 +248,8 @@
         "totalBalance": "Total Balance",
         "totalMovements": "Total Movements"
       },
-      "totalCredits": "Total Credits",
-      "totalDebits": "Total Debits",
       "table": {
+        "ariaLabel": "Balance history table",
         "closingBalance": "Closing",
         "growthRate": "Growth",
         "movements": "Moves",
@@ -254,6 +263,8 @@
       },
       "title": "Balance History",
       "titleLarge": "Balance History",
+      "totalCredits": "Total Credits",
+      "totalDebits": "Total Debits",
       "viewHistory": "View History"
     },
     "card": {
@@ -382,9 +393,9 @@
   "profile": {
     "currency": {
       "COP": "Colombian Peso (COP)",
+      "USD": "US Dollar (USD)",
       "label": "Default Currency",
-      "placeholder": "Select currency",
-      "USD": "US Dollar (USD)"
+      "placeholder": "Select currency"
     },
     "defaultProduct": {
       "label": "Default Product",
@@ -440,36 +451,98 @@
     "updateAvailable": "A new version is available!",
     "updateNow": "Update Now"
   },
-  "login": {
-    "continueWith": "Continue with {{provider}}",
-    "continueWithGoogle": "Continue with Google",
-    "errors": {
-      "generic": "An error occurred. Please try again later.",
-      "invalidCredentials": "Invalid username or password. Please try again."
+  "reports": {
+    "growthAnalysis": {
+      "comingSoonMessage": "Growth analysis reports will be available soon."
+    }
+  },
+  "settings": {
+    "teamPreferences": {
+      "forTeam": "Preferences for {{teamName}}",
+      "notifications": "Notifications",
+      "title": "Team Preferences"
+    }
+  },
+  "signup": {
+    "confirmPassword": {
+      "label": "Confirm Password",
+      "mismatch": "Passwords do not match",
+      "placeholder": "Confirm your password",
+      "required": "Please confirm your password"
     },
-    "footer": "© 2025 Your Company. All rights reserved.",
-    "forgotPassword": "Forgot password?",
-    "noAccount": "Don't have an account?",
+    "createAccountButton": "Create Account",
+    "creating": "Creating account...",
+    "email": {
+      "available": "Email is available",
+      "label": "Email",
+      "placeholder": "Enter your email",
+      "required": "Email is required",
+      "unavailable": "This email is already registered"
+    },
+    "errors": {
+      "generic": "An error occurred during registration. Please try again."
+    },
+    "haveAccount": "Already have an account?",
+    "name": {
+      "label": "Full Name",
+      "maxlength": "Name must not exceed {{maxLength}} characters",
+      "minlength": "Name must be at least {{minLength}} characters",
+      "placeholder": "Enter your full name",
+      "required": "Full name is required"
+    },
     "password": {
       "label": "Password",
       "minlength": "Password must be at least {{minLength}} characters",
-      "placeholder": "Enter your password",
+      "placeholder": "Create a password",
       "required": "Password is required"
     },
-    "rememberMe": "Remember me",
-    "signInButton": "Sign In",
-    "signUp": "Sign up",
-    "signingIn": "Signing in...",
-    "subtitle": "Sign in to continue to your account",
-    "title": "Welcome Back",
+    "signIn": "Sign in",
+    "subtitle": "Create your account to get started",
+    "title": "Create Account",
     "username": {
-      "label": "Username/Email",
+      "available": "Username is available",
+      "label": "Username (Nickname)",
+      "maxlength": "Username must not exceed {{maxLength}} characters",
       "minlength": "Username must be at least {{minLength}} characters",
-      "placeholder": "Enter your username or email",
-      "required": "Username is required"
+      "pattern": "Username can only contain letters, numbers, and underscores",
+      "placeholder": "Choose a unique username",
+      "required": "Username is required",
+      "unavailable": "This username is already taken"
     }
   },
   "teams": {
+    "acceptInvitation": {
+      "acceptButton": "Accept Invitation",
+      "accepting": "Accepting Invitation...",
+      "clickToJoin": "Click below to join the team",
+      "errorHelp": "This might have happened because:",
+      "errorHelpItem1": "The invitation link has expired",
+      "errorHelpItem2": "You are already a member of this team",
+      "errorHelpItem3": "The invitation was revoked or the team no longer exists",
+      "errorTitle": "Unable to Join Team",
+      "errors": {
+        "alreadyMember": "You are already a member of this team.",
+        "generic": "Unable to accept the invitation. Please try again or contact the team owner.",
+        "invalidLink": "This invitation link is invalid. Please request a new invitation.",
+        "invitationExpired": "This invitation has expired. Please request a new invitation from the team owner.",
+        "invitationNotFound": "Invitation not found. It may have been revoked or already used."
+      },
+      "formSubtitle": "You've been invited to join a team",
+      "formSubtitleWithTeam": "You've been invited to join \"{{teamName}}\"",
+      "formTitle": "Team Invitation",
+      "goHome": "Go to Home",
+      "notice": "By accepting this invitation, you will become a member of this team and will be able to collaborate with other team members.",
+      "pendingInvitation": "Team Invitation",
+      "pleaseWait": "Please wait while we process your request...",
+      "success": "You have successfully joined the team!",
+      "successMessage": "You are now a team member. You can start collaborating with your teammates.",
+      "successMessageWithTeam": "You are now a member of \"{{teamName}}\". You can start collaborating with your teammates.",
+      "successTitle": "Welcome to the Team!",
+      "teamLabel": "Team",
+      "title": "Accept Invitation",
+      "titleLarge": "Accept Invitation",
+      "viewTeams": "View My Teams"
+    },
     "create": {
       "errors": {
         "create": "Failed to create team. Please try again."
@@ -531,6 +604,38 @@
       "title": "Edit Team",
       "titleLarge": "Edit Team"
     },
+    "invite": {
+      "emailOrUsername": {
+        "label": "Email or Username",
+        "minlength": "Must be at least {{minLength}} characters",
+        "placeholder": "Enter email or username",
+        "required": "Email or username is required"
+      },
+      "errors": {
+        "invite": "Failed to send invitation. Please try again.",
+        "loadTeams": "Failed to load teams. Please try again."
+      },
+      "formSubtitle": "Enter the email or username of the person you want to invite",
+      "formTitle": "Send Invitation",
+      "sendButton": "Send Invitation",
+      "sending": "Sending...",
+      "success": "Invitation sent successfully!",
+      "teamId": {
+        "label": "Select Team",
+        "placeholder": "Choose a team",
+        "required": "Please select a team"
+      },
+      "title": "Invite Member",
+      "titleLarge": "Invite Member",
+      "userFound": {
+        "email": "User found with this email",
+        "username": "User found with this username"
+      },
+      "userNotFound": {
+        "email": "No user found with this email",
+        "username": "No user found with this username"
+      }
+    },
     "overview": {
       "createButton": "Create Team",
       "deleteMember": {
@@ -576,6 +681,7 @@
       },
       "table": {
         "actions": "Actions",
+        "ariaLabel": "Team members table",
         "email": "Email",
         "role": "Role",
         "status": "Status",
@@ -583,117 +689,14 @@
       },
       "title": "Teams Overview",
       "titleLarge": "Teams Overview"
-    },
-    "invite": {
-      "emailOrUsername": {
-        "label": "Email or Username",
-        "minlength": "Must be at least {{minLength}} characters",
-        "placeholder": "Enter email or username",
-        "required": "Email or username is required"
-      },
-      "errors": {
-        "invite": "Failed to send invitation. Please try again.",
-        "loadTeams": "Failed to load teams. Please try again."
-      },
-      "formSubtitle": "Enter the email or username of the person you want to invite",
-      "formTitle": "Send Invitation",
-      "sendButton": "Send Invitation",
-      "sending": "Sending...",
-      "success": "Invitation sent successfully!",
-      "teamId": {
-        "label": "Select Team",
-        "placeholder": "Choose a team",
-        "required": "Please select a team"
-      },
-      "title": "Invite Member",
-      "titleLarge": "Invite Member",
-      "userFound": {
-        "email": "User found with this email",
-        "username": "User found with this username"
-      },
-      "userNotFound": {
-        "email": "No user found with this email",
-        "username": "No user found with this username"
-      }
-    },
-    "acceptInvitation": {
-      "acceptButton": "Accept Invitation",
-      "accepting": "Accepting Invitation...",
-      "clickToJoin": "Click below to join the team",
-      "errorHelp": "This might have happened because:",
-      "errorHelpItem1": "The invitation link has expired",
-      "errorHelpItem2": "You are already a member of this team",
-      "errorHelpItem3": "The invitation was revoked or the team no longer exists",
-      "errorTitle": "Unable to Join Team",
-      "errors": {
-        "alreadyMember": "You are already a member of this team.",
-        "generic": "Unable to accept the invitation. Please try again or contact the team owner.",
-        "invalidLink": "This invitation link is invalid. Please request a new invitation.",
-        "invitationExpired": "This invitation has expired. Please request a new invitation from the team owner.",
-        "invitationNotFound": "Invitation not found. It may have been revoked or already used."
-      },
-      "formSubtitle": "You've been invited to join a team",
-      "formSubtitleWithTeam": "You've been invited to join \"{{teamName}}\"",
-      "formTitle": "Team Invitation",
-      "goHome": "Go to Home",
-      "notice": "By accepting this invitation, you will become a member of this team and will be able to collaborate with other team members.",
-      "pendingInvitation": "Team Invitation",
-      "pleaseWait": "Please wait while we process your request...",
-      "success": "You have successfully joined the team!",
-      "successMessage": "You are now a team member. You can start collaborating with your teammates.",
-      "successMessageWithTeam": "You are now a member of \"{{teamName}}\". You can start collaborating with your teammates.",
-      "successTitle": "Welcome to the Team!",
-      "teamLabel": "Team",
-      "title": "Accept Invitation",
-      "titleLarge": "Accept Invitation",
-      "viewTeams": "View My Teams"
     }
   },
-  "signup": {
-    "confirmPassword": {
-      "label": "Confirm Password",
-      "mismatch": "Passwords do not match",
-      "placeholder": "Confirm your password",
-      "required": "Please confirm your password"
+  "transactions": {
+    "recordMovement": {
+      "title": "Record Movement"
     },
-    "createAccountButton": "Create Account",
-    "creating": "Creating account...",
-    "email": {
-      "available": "Email is available",
-      "label": "Email",
-      "placeholder": "Enter your email",
-      "required": "Email is required",
-      "unavailable": "This email is already registered"
-    },
-    "errors": {
-      "generic": "An error occurred during registration. Please try again."
-    },
-    "haveAccount": "Already have an account?",
-    "name": {
-      "label": "Full Name",
-      "maxlength": "Name must not exceed {{maxLength}} characters",
-      "minlength": "Name must be at least {{minLength}} characters",
-      "placeholder": "Enter your full name",
-      "required": "Full name is required"
-    },
-    "password": {
-      "label": "Password",
-      "minlength": "Password must be at least {{minLength}} characters",
-      "placeholder": "Create a password",
-      "required": "Password is required"
-    },
-    "signIn": "Sign in",
-    "subtitle": "Create your account to get started",
-    "title": "Create Account",
-    "username": {
-      "available": "Username is available",
-      "label": "Username (Nickname)",
-      "maxlength": "Username must not exceed {{maxLength}} characters",
-      "minlength": "Username must be at least {{minLength}} characters",
-      "pattern": "Username can only contain letters, numbers, and underscores",
-      "placeholder": "Choose a unique username",
-      "required": "Username is required",
-      "unavailable": "This username is already taken"
+    "transfer": {
+      "title": "Transfer Funds"
     }
   },
   "validation": {

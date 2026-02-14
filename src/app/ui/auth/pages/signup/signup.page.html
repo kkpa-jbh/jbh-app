@@ -21,10 +21,12 @@
       </div>
 
       <!-- Error Alert -->
-      <div class="jbh-alert-error" *ngIf="errorMessage">
-        <ion-icon name="alert-circle"></ion-icon>
-        <div class="jbh-alert-content">{{ errorMessage }}</div>
-      </div>
+      @if (errorMessage) {
+        <div class="jbh-alert-error" role="alert" aria-live="assertive">
+          <ion-icon name="alert-circle"></ion-icon>
+          <div class="jbh-alert-content">{{ errorMessage }}</div>
+        </div>
+      }
 
       <!-- Signup Form -->
       <form [formGroup]="signupForm" (ngSubmit)="onSignup()" class="signup-form">
@@ -43,10 +45,12 @@
               autocomplete="name"
             />
           </div>
-          <div class="jbh-field-error" *ngIf="hasError('name')">
-            <ion-icon name="information-circle"></ion-icon>
-            <span>{{ getErrorMessage('name') }}</span>
-          </div>
+          @if (hasError('name')) {
+            <div class="jbh-field-error">
+              <ion-icon name="information-circle"></ion-icon>
+              <span>{{ getErrorMessage('name') }}</span>
+            </div>
+          }
         </div>
 
         <!-- Username/Nickname Field -->
@@ -64,24 +68,34 @@
               (input)="onUsernameInput()"
               autocomplete="username"
             />
-            <span class="jbh-input-action" *ngIf="checkingUsername">
-              <ion-spinner name="crescent"></ion-spinner>
-            </span>
-            <span class="jbh-input-status" *ngIf="!checkingUsername && usernameAvailable === true && !hasError('username')">
-              <ion-icon name="checkmark-circle" color="success"></ion-icon>
-            </span>
-            <span class="jbh-input-status" *ngIf="!checkingUsername && usernameAvailable === false">
-              <ion-icon name="close-circle" color="danger"></ion-icon>
-            </span>
+            @if (checkingUsername) {
+              <span class="jbh-input-action">
+                <ion-spinner name="crescent"></ion-spinner>
+              </span>
+            }
+            @if (!checkingUsername && usernameAvailable === true && !hasError('username')) {
+              <span class="jbh-input-status">
+                <ion-icon name="checkmark-circle" color="success"></ion-icon>
+              </span>
+            }
+            @if (!checkingUsername && usernameAvailable === false) {
+              <span class="jbh-input-status">
+                <ion-icon name="close-circle" color="danger"></ion-icon>
+              </span>
+            }
           </div>
-          <div class="jbh-field-error" *ngIf="hasError('username')">
-            <ion-icon name="information-circle"></ion-icon>
-            <span>{{ getErrorMessage('username') }}</span>
-          </div>
-          <div class="jbh-field-success" *ngIf="usernameAvailable === true && !hasError('username')">
-            <ion-icon name="checkmark-circle"></ion-icon>
-            <span>{{ 'signup.username.available' | translate }}</span>
-          </div>
+          @if (hasError('username')) {
+            <div class="jbh-field-error">
+              <ion-icon name="information-circle"></ion-icon>
+              <span>{{ getErrorMessage('username') }}</span>
+            </div>
+          }
+          @if (usernameAvailable === true && !hasError('username')) {
+            <div class="jbh-field-success">
+              <ion-icon name="checkmark-circle"></ion-icon>
+              <span>{{ 'signup.username.available' | translate }}</span>
+            </div>
+          }
         </div>
 
         <!-- Email Field -->
@@ -99,24 +113,34 @@
               (input)="onEmailInput()"
               autocomplete="email"
             />
-            <span class="jbh-input-action" *ngIf="checkingEmail">
-              <ion-spinner name="crescent"></ion-spinner>
-            </span>
-            <span class="jbh-input-status" *ngIf="!checkingEmail && emailAvailable === true && !hasError('email')">
-              <ion-icon name="checkmark-circle" color="success"></ion-icon>
-            </span>
-            <span class="jbh-input-status" *ngIf="!checkingEmail && emailAvailable === false">
-              <ion-icon name="close-circle" color="danger"></ion-icon>
-            </span>
+            @if (checkingEmail) {
+              <span class="jbh-input-action">
+                <ion-spinner name="crescent"></ion-spinner>
+              </span>
+            }
+            @if (!checkingEmail && emailAvailable === true && !hasError('email')) {
+              <span class="jbh-input-status">
+                <ion-icon name="checkmark-circle" color="success"></ion-icon>
+              </span>
+            }
+            @if (!checkingEmail && emailAvailable === false) {
+              <span class="jbh-input-status">
+                <ion-icon name="close-circle" color="danger"></ion-icon>
+              </span>
+            }
           </div>
-          <div class="jbh-field-error" *ngIf="hasError('email')">
-            <ion-icon name="information-circle"></ion-icon>
-            <span>{{ getErrorMessage('email') }}</span>
-          </div>
-          <div class="jbh-field-success" *ngIf="emailAvailable === true && !hasError('email')">
-            <ion-icon name="checkmark-circle"></ion-icon>
-            <span>{{ 'signup.email.available' | translate }}</span>
-          </div>
+          @if (hasError('email')) {
+            <div class="jbh-field-error">
+              <ion-icon name="information-circle"></ion-icon>
+              <span>{{ getErrorMessage('email') }}</span>
+            </div>
+          }
+          @if (emailAvailable === true && !hasError('email')) {
+            <div class="jbh-field-success">
+              <ion-icon name="checkmark-circle"></ion-icon>
+              <span>{{ 'signup.email.available' | translate }}</span>
+            </div>
+          }
         </div>
 
         <!-- Password Field -->
@@ -141,10 +165,12 @@
               <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
             </button>
           </div>
-          <div class="jbh-field-error" *ngIf="hasError('password')">
-            <ion-icon name="information-circle"></ion-icon>
-            <span>{{ getErrorMessage('password') }}</span>
-          </div>
+          @if (hasError('password')) {
+            <div class="jbh-field-error">
+              <ion-icon name="information-circle"></ion-icon>
+              <span>{{ getErrorMessage('password') }}</span>
+            </div>
+          }
         </div>
 
         <!-- Confirm Password Field -->
@@ -169,10 +195,12 @@
               <ion-icon [name]="showConfirmPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
             </button>
           </div>
-          <div class="jbh-field-error" *ngIf="hasError('confirmPassword')">
-            <ion-icon name="information-circle"></ion-icon>
-            <span>{{ getErrorMessage('confirmPassword') }}</span>
-          </div>
+          @if (hasError('confirmPassword')) {
+            <div class="jbh-field-error">
+              <ion-icon name="information-circle"></ion-icon>
+              <span>{{ getErrorMessage('confirmPassword') }}</span>
+            </div>
+          }
         </div>
 
         <!-- Signup Button -->
@@ -182,9 +210,15 @@
           [disabled]="isLoading || signupForm.invalid || usernameAvailable === false || emailAvailable === false"
           [class.jbh-button-loading]="isLoading"
         >
-          <ion-spinner name="crescent" *ngIf="isLoading"></ion-spinner>
-          <span *ngIf="!isLoading">{{ 'signup.createAccountButton' | translate }}</span>
-          <span *ngIf="isLoading">{{ 'signup.creating' | translate }}</span>
+          @if (isLoading) {
+            <ion-spinner name="crescent"></ion-spinner>
+          }
+          @if (!isLoading) {
+            <span>{{ 'signup.createAccountButton' | translate }}</span>
+          }
+          @if (isLoading) {
+            <span>{{ 'signup.creating' | translate }}</span>
+          }
         </button>
 
         <!-- Login Link -->

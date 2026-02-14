@@ -39,6 +39,7 @@
               class="jbh-icon-button jbh-icon-button-primary"
               (click)="onAddMovement($event)"
               [title]="'products.addMovement.title' | translate"
+              [attr.aria-label]="'products.addMovement.title' | translate"
             >
               <ion-icon name="add-circle-outline"></ion-icon>
             </button>
@@ -47,6 +48,7 @@
             class="jbh-icon-button"
             (click)="onEdit($event)"
             [title]="'common.edit' | translate"
+            [attr.aria-label]="'common.edit' | translate"
           >
             <ion-icon name="create-outline"></ion-icon>
           </button>
@@ -54,6 +56,7 @@
             class="jbh-icon-button jbh-icon-button-danger"
             (click)="onDelete($event)"
             [title]="'common.delete' | translate"
+            [attr.aria-label]="'common.delete' | translate"
           >
             <ion-icon name="trash-outline"></ion-icon>
           </button>
@@ -97,6 +100,7 @@
         class="jbh-view-history-button"
         (click)="onViewHistory($event)"
         [title]="'products.balanceHistory.viewHistory' | translate"
+        [attr.aria-label]="'products.balanceHistory.viewHistory' | translate"
       >
         <ion-icon name="analytics-outline"></ion-icon>
         <span class="jbh-hide-mobile">{{ 'products.balanceHistory.viewHistory' | translate }}</span>

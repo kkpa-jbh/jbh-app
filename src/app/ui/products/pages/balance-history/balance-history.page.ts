@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { IonicModule, ViewWillEnter, ViewWillLeave, ToastController } from '@ionic/angular';
@@ -25,6 +25,7 @@ import { AppHeaderComponent } from '@shared/components/app-header/app-header.com
   templateUrl: './balance-history.page.html',
   styleUrls: ['./balance-history.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     IonicModule,

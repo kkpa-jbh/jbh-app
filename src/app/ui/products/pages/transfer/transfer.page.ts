@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, ViewWillEnter, ViewWillLeave } from '@ionic/angular/standalone';
@@ -11,6 +11,7 @@ import { AppHeaderComponent } from '@shared/components/app-header/app-header.com
   templateUrl: './transfer.page.html',
   styleUrls: ['./transfer.page.scss'],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [IonContent, CommonModule, FormsModule, TranslateModule, AppHeaderComponent]
 })
 export class TransferPage implements OnInit, ViewWillEnter, ViewWillLeave {

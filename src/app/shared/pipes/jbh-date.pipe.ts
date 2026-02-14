@@ -105,7 +105,7 @@ if (!(date instanceof Date)) {
     const month = String(date.getMonth() + 1).padStart(2, '0');
     return `${year}-${month}`;
     }catch(err){
-      console.error('Error in toPeriod:', err, typeof date );
+      // Error converting date to period - return string representation as fallback
       return date.toString();
     }
   }
