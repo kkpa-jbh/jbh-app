@@ -10,7 +10,7 @@ import { Language, Currency } from '../../types/preferences.types';
  * Domain DTO for updating preferences.
  * Used within the application layer.
  */
-export interface UpdatePreferencesDto {
+export interface UpdatePreferencesRequest {
   defaultLang: Language;
   defaultCurrency: Currency;
   savingsGoal: number;
@@ -32,7 +32,7 @@ export interface UpdatePreferencesApiRequest {
  * Converts domain DTO to API request format.
  * Transforms enum values to lowercase strings as expected by the backend.
  */
-export function toApiRequest(dto: UpdatePreferencesDto): UpdatePreferencesApiRequest {
+export function toApiRequest(dto: UpdatePreferencesRequest): UpdatePreferencesApiRequest {
   return {
     defaultLang: dto.defaultLang.toLowerCase(),
     defaultCurrency: dto.defaultCurrency,

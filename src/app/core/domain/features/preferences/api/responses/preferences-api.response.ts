@@ -5,7 +5,7 @@
  * DO NOT modify to fit UI needs - create Models for that purpose.
  */
 
-export interface PreferencesApiResponse {
+export interface UserPreferencesResponse {
   id: { value: string };
   defaultLang: { code: string };
   defaultCurrency: string;

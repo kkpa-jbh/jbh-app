@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { PreferencesRepository } from '@core/domain/repositories/preferences.repository';
-import { Preferences, PreferencesApiResponse, UpdatePreferencesDto, toApiRequest } from '@core/domain/features/preferences';
+import { Preferences, UserPreferencesResponse, UpdatePreferencesRequest, toApiRequest } from '@core/domain/features/preferences';
 import { ApiBaseService } from '@core/infrastructure/api/api-base.service';
 import { EnvironmentConfig } from '@core/infrastructure/config/environment.config';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
@@ -20,13 +20,13 @@ export class PreferencesRepositoryImpl extends ApiBaseService implements Prefere
   }
 
   getPreferences(): Observable<Preferences> {
-    return this.get<PreferencesApiResponse>(this.PREFERENCES_ENDPOINT).pipe(
+    return this.get<UserPreferencesResponse>(this.PREFERENCES_ENDPOINT).pipe(
       map(response => Preferences.fromApiResponse(response))
     );
   }
 
-  updatePreferences(request: UpdatePreferencesDto): Observable<Preferences> {
-    return this.put<PreferencesApiResponse>(this.PREFERENCES_ENDPOINT, toApiRequest(request)).pipe(
+  updatePreferences(request: UpdatePreferencesRequest): Observable<Preferences> {
+    return this.put<UserPreferencesResponse>(this.PREFERENCES_ENDPOINT, toApiRequest(request)).pipe(
       map(response => Preferences.fromApiResponse(response))
     );
   }

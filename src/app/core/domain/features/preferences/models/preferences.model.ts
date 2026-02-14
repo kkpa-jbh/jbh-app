@@ -7,7 +7,7 @@
  * Mapping Flow: API Response → Domain Model
  */
 
-import { PreferencesApiResponse } from '../api/responses/preferences-api.response';
+import { UserPreferencesResponse } from '../api/responses/preferences-api.response';
 import { Language, Currency } from '../types/preferences.types';
 
 export class Preferences {
@@ -18,7 +18,7 @@ export class Preferences {
     public readonly defaultProductId: string | null
   ) {}
 
-  static fromApiResponse(response: PreferencesApiResponse): Preferences {
+  static fromApiResponse(response: UserPreferencesResponse): Preferences {
     const langCode = response.defaultLang.code.toUpperCase() as Language;
     return new Preferences(
       langCode,

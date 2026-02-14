@@ -3,11 +3,10 @@ export * from './api/requests/create-product.request';
 export * from './api/requests/update-product.request';
 
 // API Responses
-export * from './api/responses/create-product.response';
 export * from './api/responses/product-type-api.response';
 export * from './api/responses/product-id-api.response';
 export * from './api/responses/product-metadata-api.response';
-export * from './api/responses/product-list-item-api.response';
+export * from './api/responses/product-api.response';
 export * from './api/responses/product-metadata-config-api.response';
 
 // Domain Models

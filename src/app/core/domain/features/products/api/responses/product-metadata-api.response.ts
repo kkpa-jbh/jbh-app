@@ -1,3 +1,3 @@
-export interface ProductMetadataApiResponse {
+export interface ProductMetadataResponse {
   data: Record<string, unknown>;
 }

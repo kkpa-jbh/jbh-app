@@ -4,20 +4,19 @@ import { map } from 'rxjs/operators';
 import { ProductRepository } from '@core/domain/repositories/product.repository';
 import {
   ProductType,
-  ProductTypeApiResponse,
+  ProductTypeResponse,
   ProductMetadataConfig,
-  ProductMetadataConfigApiResponse,
+  MetadataFieldConfigResponse,
   CreateProductRequest,
-  CreateProductResponse,
   UpdateProductRequest,
   ProductListItem,
-  ProductListItemApiResponse
+  ProductResponse
 } from '@core/domain/features/products';
 import {
   AddMovementRequest,
   AddMovementResponse,
   ProductMovement,
-  ProductMovementApiResponse
+  MovementResponse
 } from '@core/domain/features/movements';
 import { ApiBaseService } from '@core/infrastructure/api/api-base.service';
 import { HttpClient } from '@angular/common/http';
@@ -38,13 +37,13 @@ export class ProductRepositoryImpl extends ApiBaseService implements ProductRepo
   }
 
   getProductTypes(): Observable<ProductType[]> {
-    return this.get<ProductTypeApiResponse[]>(this.PRODUCT_TYPES_ENDPOINT).pipe(
+    return this.get<ProductTypeResponse[]>(this.PRODUCT_TYPES_ENDPOINT).pipe(
       map(responses => responses.map(response => ProductType.fromApiResponse(response)))
     );
   }
 
   getMetadataConfig(productType: string): Observable<ProductMetadataConfig[]> {
-    return this.get<ProductMetadataConfigApiResponse[]>(
+    return this.get<MetadataFieldConfigResponse[]>(
       this.METADATA_CONFIG_ENDPOINT,
       { params: { productType } }
     ).pipe(
@@ -52,13 +51,13 @@ export class ProductRepositoryImpl extends ApiBaseService implements ProductRepo
     );
   }
 
-  createProduct(request: CreateProductRequest): Observable<CreateProductResponse> {
-    return this.post<CreateProductResponse>(this.PRODUCTS_ENDPOINT, request);
+  createProduct(request: CreateProductRequest): Observable<ProductResponse> {
+    return this.post<ProductResponse>(this.PRODUCTS_ENDPOINT, request);
   }
 
   getProducts(teamId?: string): Observable<ProductListItem[]> {
     const options = teamId ? { params: { teamId } } : {};
-    return this.get<ProductListItemApiResponse[]>(
+    return this.get<ProductResponse[]>(
       this.PRODUCTS_ENDPOINT,
       options
     ).pipe(
@@ -68,7 +67,7 @@ export class ProductRepositoryImpl extends ApiBaseService implements ProductRepo
 
   getProductById(id: string, teamId?: string): Observable<ProductListItem> {
     const options = teamId ? { params: { teamId } } : {};
-    return this.get<ProductListItemApiResponse>(
+    return this.get<ProductResponse>(
       `${this.PRODUCTS_ENDPOINT}/${id}`,
       options
     ).pipe(
@@ -93,7 +92,7 @@ export class ProductRepositoryImpl extends ApiBaseService implements ProductRepo
   }
 
   getProductMovements(productId: string): Observable<ProductMovement[]> {
-    return this.get<ProductMovementApiResponse[]>(`${this.PRODUCTS_ENDPOINT}/movements/${productId}`).pipe(
+    return this.get<MovementResponse[]>(`${this.PRODUCTS_ENDPOINT}/movements/${productId}`).pipe(
       map(responses => responses.map(response => ProductMovement.fromApiResponse(response)))
     );
   }

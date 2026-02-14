@@ -1,10 +1,10 @@
-import { ProductListItemApiResponse, ProductTypeName } from '../api/responses/product-list-item-api.response';
+import { ProductResponse, ProductType } from '../api/responses/product-api.response';
 
 export class ProductListItem {
   constructor(
     public readonly id: string,
     public readonly name: string,
-    public readonly type: ProductTypeName,
+    public readonly type: ProductType,
     public readonly userId: string,
     public readonly movementBalance: number,
     public readonly currentBalance: number,
@@ -16,7 +16,7 @@ export class ProductListItem {
     public readonly metadata: Record<string, unknown>
   ) {}
 
-  static fromApiResponse(response: ProductListItemApiResponse): ProductListItem {
+  static fromApiResponse(response: ProductResponse): ProductListItem {
     return new ProductListItem(
       response.id.value,
       response.name,
@@ -56,12 +56,12 @@ export class ProductListItem {
   }
 
   get allowsMovements(): boolean {
-    const movementAllowedTypes: ProductTypeName[] = ['SAVINGS', 'CREDIT_CARD', 'INVESTMENT', 'CDT'];
+    const movementAllowedTypes: ProductType[] = ['SAVINGS', 'CREDIT_CARD', 'INVESTMENT', 'CDT'];
     return movementAllowedTypes.includes(this.type);
   }
 
   getTypeIcon(): string {
-    const iconMap: Record<ProductTypeName, string> = {
+    const iconMap: Record<ProductType, string> = {
       'SAVINGS': 'wallet-outline',
       'REAL_ESTATE_INVESTMENT': 'home-outline',
       'LOAN': 'cash-outline',
@@ -73,7 +73,7 @@ export class ProductListItem {
   }
 
   getTypeColor(): string {
-    const colorMap: Record<ProductTypeName, string> = {
+    const colorMap: Record<ProductType, string> = {
       'SAVINGS': '#48bb78',
       'REAL_ESTATE_INVESTMENT': '#ed8936',
       'LOAN': '#f56565',

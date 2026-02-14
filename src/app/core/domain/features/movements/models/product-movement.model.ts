@@ -1,4 +1,4 @@
-import { ProductMovementApiResponse } from '../api/responses/product-movement-api.response';
+import { MovementResponse } from '../api/responses/product-movement-api.response';
 import { MovementType, CategoryType, MovementMetadata } from '../types/movement.types';
 
 export class ProductMovement {
@@ -16,7 +16,7 @@ export class ProductMovement {
     public readonly canBeRemoved?: boolean
   ) {}
 
-  static fromApiResponse(response: ProductMovementApiResponse): ProductMovement {
+  static fromApiResponse(response: MovementResponse): ProductMovement {
     return new ProductMovement(
       response.id,
       response.productId,

@@ -23,7 +23,7 @@ export type ProductMetadataKey =
   | 'REAL_ESTATE_DOWN_PAYMENT_PERCENTAGE'
   | 'REAL_ESTATE_DOWN_PAYMENT_PAID_TO_DATE';
 
-export interface ProductMetadataConfigApiResponse {
+export interface MetadataFieldConfigResponse {
   key: string;
   valueType: string;
   required: boolean;

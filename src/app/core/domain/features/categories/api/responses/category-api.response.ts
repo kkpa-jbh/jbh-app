@@ -5,7 +5,7 @@
  * DO NOT modify to fit UI needs - create Models for that purpose.
  */
 
-export interface CategoryApiResponse {
+export interface CategoryResponse {
   name: string;
   translationKey: string;
   source: CategorySource;

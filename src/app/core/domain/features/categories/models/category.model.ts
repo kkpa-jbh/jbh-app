@@ -7,7 +7,7 @@
  * Mapping Flow: API Response → Domain Model
  */
 
-import { CategoryApiResponse, CategorySource } from '../api/responses/category-api.response';
+import { CategoryResponse, CategorySource } from '../api/responses/category-api.response';
 
 export class Category {
   constructor(
@@ -16,7 +16,7 @@ export class Category {
     public readonly source: CategorySource
   ) {}
 
-  static fromApiResponse(response: CategoryApiResponse): Category {
+  static fromApiResponse(response: CategoryResponse): Category {
     return new Category(
       response.name,
       response.translationKey,

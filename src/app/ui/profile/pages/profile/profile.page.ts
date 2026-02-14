@@ -16,7 +16,7 @@ import {
   informationCircle
 } from 'ionicons/icons';
 import { PreferencesUseCase } from '@core/domain/use-cases/preferences.use-case';
-import { Language, Currency, UpdatePreferencesDto } from '@core/domain/features/preferences';
+import { Language, Currency, UpdatePreferencesRequest } from '@core/domain/features/preferences';
 import { ProductListItem } from '@core/domain/features/products';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
@@ -139,7 +139,7 @@ export class ProfilePage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLe
 
     this.isSubmitting = true;
 
-    const request: UpdatePreferencesDto = {
+    const request: UpdatePreferencesRequest = {
       defaultLang: this.preferencesForm.value.defaultLang,
       defaultCurrency: this.preferencesForm.value.defaultCurrency,
       savingsGoal: this.preferencesForm.value.savingsGoal,

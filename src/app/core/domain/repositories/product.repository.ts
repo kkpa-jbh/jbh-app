@@ -3,7 +3,7 @@ import {
   ProductType,
   ProductMetadataConfig,
   CreateProductRequest,
-  CreateProductResponse,
+  ProductResponse,
   UpdateProductRequest,
   ProductListItem
 } from '../features/products';
@@ -16,7 +16,7 @@ import {
 export abstract class ProductRepository {
   abstract getProductTypes(): Observable<ProductType[]>;
   abstract getMetadataConfig(productType: string): Observable<ProductMetadataConfig[]>;
-  abstract createProduct(request: CreateProductRequest): Observable<CreateProductResponse>;
+  abstract createProduct(request: CreateProductRequest): Observable<ProductResponse>;
   abstract getProducts(teamId?: string): Observable<ProductListItem[]>;
   abstract getProductById(id: string, teamId?: string): Observable<ProductListItem>;
   abstract updateProduct(id: string, request: UpdateProductRequest): Observable<void>;

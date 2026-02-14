@@ -5,7 +5,7 @@ import {
   ProductType,
   ProductMetadataConfig,
   CreateProductRequest,
-  CreateProductResponse,
+  ProductResponse,
   UpdateProductRequest,
   ProductListItem
 } from '../features/products';
@@ -53,7 +53,7 @@ export class ProductUseCase {
     return this.metadataConfigCache.get(productType)!;
   }
 
-  createProduct(request: CreateProductRequest): Observable<CreateProductResponse> {
+  createProduct(request: CreateProductRequest): Observable<ProductResponse> {
     return this.productRepository.createProduct(request).pipe(
       tap(() => this.clearProductsCache())
     );

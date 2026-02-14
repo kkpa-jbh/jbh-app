@@ -1,6 +1,6 @@
 import { MovementType, CategoryType, MovementMetadata } from '../../types/movement.types';
 
-export interface ProductMovementApiResponse {
+export interface MovementResponse {
   id: string;
   productId: string;
   movementType: MovementType;

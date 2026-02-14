@@ -1,4 +1,4 @@
-import { ProductMetadataConfigApiResponse } from '../api/responses/product-metadata-config-api.response';
+import { MetadataFieldConfigResponse } from '../api/responses/product-metadata-config-api.response';
 
 export enum MetadataValueType {
   STRING = 'STRING',
@@ -27,7 +27,7 @@ export class ProductMetadataConfig {
     return this.translations[language as keyof MetadataTranslation] || this.translations.en;
   }
 
-  static fromApiResponse(response: ProductMetadataConfigApiResponse): ProductMetadataConfig {
+  static fromApiResponse(response: MetadataFieldConfigResponse): ProductMetadataConfig {
     const translations = JSON.parse(response.displayName) as MetadataTranslation;
     const valueType = response.valueType as MetadataValueType;
 

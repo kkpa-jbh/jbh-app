@@ -1,3 +1,3 @@
-export interface ProductIdApiResponse {
+export interface ProductId {
   value: string;
 }

@@ -1,4 +1,4 @@
-import { ProductTypeApiResponse } from '../api/responses/product-type-api.response';
+import { ProductTypeResponse } from '../api/responses/product-type-api.response';
 
 export interface ProductTypeTranslation {
   en: string;
@@ -15,7 +15,7 @@ export class ProductType {
     return this.translations[language as keyof ProductTypeTranslation] || this.translations.en;
   }
 
-  static fromApiResponse(response: ProductTypeApiResponse): ProductType {
+  static fromApiResponse(response: ProductTypeResponse): ProductType {
     const translations = JSON.parse(response.translationKey) as ProductTypeTranslation;
     return new ProductType(response.name, translations);
   }

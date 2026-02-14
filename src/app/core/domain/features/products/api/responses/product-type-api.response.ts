@@ -1,4 +1,4 @@
-export interface ProductTypeApiResponse {
+export interface ProductTypeResponse {
   name: string;
   translationKey: string;
 }
