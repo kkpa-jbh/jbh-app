@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ProductRepository } from '../repositories/product.repository';
-import { ProductMovement } from '../models/product-movement.model';
+import { ProductMovement } from '../features/movements';
 
 @Injectable({
   providedIn: 'root'

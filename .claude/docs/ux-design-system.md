@@ -66,7 +66,7 @@ Empty State (if no data)
 List/Grid of Cards
 ```
 
-**Example:** `src/app/features/products/pages/overview/products-overview.page.ts`
+**Example:** `src/app/ui/products/pages/overview/products-overview.page.ts`
 
 **TypeScript Pattern:**
 ```typescript
@@ -487,7 +487,7 @@ Elevated Card (centered)
   └─ Social Login (optional)
 ```
 
-**Example:** `src/app/features/auth/pages/login/login.page.ts`
+**Example:** `src/app/ui/auth/pages/login/login.page.ts`
 
 **Unique Styling:**
 - Fullscreen background with gradient or pattern
@@ -554,7 +554,7 @@ Context-Based Actions
 Recent Activity (optional)
 ```
 
-**Example:** `src/app/features/dashboard/pages/dashboard/dashboard.page.ts`
+**Example:** `src/app/ui/dashboard/pages/dashboard/dashboard.page.ts`
 
 **Pattern:**
 ```html
@@ -654,7 +654,7 @@ this.headerActions.setPageConfig({
 ---
 
 #### product-card
-**Location:** `src/app/features/products/components/product-card/`
+**Location:** `src/app/ui/products/components/product-card/`
 
 **Purpose:** Display product information with balances and actions
 
@@ -690,7 +690,7 @@ this.headerActions.setPageConfig({
 ---
 
 #### balance-summary-cards
-**Location:** `src/app/features/products/components/balance-summary-cards/`
+**Location:** `src/app/ui/products/components/balance-summary-cards/`
 
 **Purpose:** Display 4-card grid with balance metrics
 
@@ -720,7 +720,7 @@ this.headerActions.setPageConfig({
 ---
 
 #### balance-chart
-**Location:** `src/app/features/products/components/balance-chart/`
+**Location:** `src/app/ui/products/components/balance-chart/`
 
 **Purpose:** ngx-charts line chart wrapper for balance trends
 
@@ -749,7 +749,7 @@ this.headerActions.setPageConfig({
 ---
 
 #### balance-history-table
-**Location:** `src/app/features/products/components/balance-history-table/`
+**Location:** `src/app/ui/products/components/balance-history-table/`
 
 **Purpose:** Responsive table/cards for balance records
 
@@ -771,7 +771,7 @@ this.headerActions.setPageConfig({
 ---
 
 #### balance-history-filter
-**Location:** `src/app/features/products/components/balance-history-filter/`
+**Location:** `src/app/ui/products/components/balance-history-filter/`
 
 **Purpose:** Date range and product filter controls
 

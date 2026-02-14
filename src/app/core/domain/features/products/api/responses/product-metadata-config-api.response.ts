@@ -1,0 +1,33 @@
+export type ProductMetadataKey =
+  | 'CREDIT_LIMIT'
+  | 'PAYMENT_DUE_DAY'
+  | 'BROKER_NAME'
+  | 'COMMISSION_RATE'
+  | 'MATURITY_DATE'
+  | 'OPENING_DATE'
+  | 'TERM_LENGTH_IN_DAYS'
+  | 'COMMON_INITIAL_BALANCE'
+  | 'COMMON_IS_FULLY_WITHDRAWN'
+  | 'COMMON_FULLY_WITHDRAWN_DATE'
+  | 'COMMON_FULLY_WITHDRAWN_AT'
+  | 'LOAN_PRINCIPAL_AMOUNT'
+  | 'LOAN_INTEREST_RATE'
+  | 'LOAN_TOTAL_AMOUNT_PAID'
+  | 'LOAN_PAYOFF_AMOUNT_TODAY'
+  | 'REAL_ESTATE_PURCHASE_DATE'
+  | 'REAL_ESTATE_PURCHASE_PRICE'
+  | 'REAL_ESTATE_PROPERTY_SIZE'
+  | 'REAL_ESTATE_RENTAL_INCOME'
+  | 'REAL_ESTATE_FINANCED_AMOUNT'
+  | 'REAL_ESTATE_DOWN_PAYMENT_AMOUNT'
+  | 'REAL_ESTATE_DOWN_PAYMENT_PERCENTAGE'
+  | 'REAL_ESTATE_DOWN_PAYMENT_PAID_TO_DATE';
+
+export interface ProductMetadataConfigApiResponse {
+  key: string;
+  valueType: string;
+  required: boolean;
+  minValue: string | null;
+  maxValue: string | null;
+  displayName: string;
+}

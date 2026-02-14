@@ -36,7 +36,7 @@ Expert guidance for Ionic/Angular hybrid mobile apps using Clean Architecture, D
 src/app/
 ├── core/domain/          # Models, repositories, use-cases
 ├── core/infrastructure/  # API, persistence, implementations
-├── features/             # Lazy-loaded feature modules (pages,components)
+├── ui/                   # Lazy-loaded feature modules (pages,components)
 ├── shared/               # Reusable components, pipes, directives, utilities
 └── theme/                # custom-components.scss (single source)
 ```
@@ -173,7 +173,7 @@ export class MyComponent implements OnInit, OnDestroy {
 
 3. **Affected components**: All ngx-charts components (line-chart, bar-chart, pie-chart, etc.)
 
-**Reference implementation**: `src/app/features/products/components/balance-chart/balance-chart.component.html`
+**Reference implementation**: `src/app/ui/products/components/balance-chart/balance-chart.component.html`
 
 #### Accessibility (WCAG AA Target)
 
@@ -316,7 +316,7 @@ ionViewWillLeave(): void {
 }
 ```
 
-**Reference implementation**: `src/app/features/products/pages/overview/products-overview.page.ts:67-87`
+**Reference implementation**: `src/app/ui/products/pages/overview/products-overview.page.ts:67-87`
 
 #### File Naming Convention
 
@@ -407,6 +407,90 @@ Example: MonthlyBalanceResponse ↓ MonthlyBalanceModel OR MonthlyBalanceViewMod
 
 Backend speaks in Responses. Frontend thinks in Models. UI renders
 ViewModels or models.
+
+#### Model Organization (CRITICAL)
+
+**All feature-specific models are organized under `src/app/core/domain/features/` by business domain.**
+
+This structure enforces clear boundaries, improves maintainability, and makes it easy to find and verify backend alignment.
+
+##### Directory Structure
+
+```
+src/app/core/domain/
+├── features/              # Feature-based organization
+│   ├── products/
+│   │   ├── api/          # HTTP boundary (DTOs)
+│   │   │   ├── requests/     # What we send to backend
+│   │   │   └── responses/    # What we receive from backend
+│   │   ├── models/           # Domain models (application logic)
+│   │   └── index.ts          # Barrel export
+│   ├── movements/
+│   │   ├── api/
+│   │   ├── models/
+│   │   ├── types/            # Shared types, enums, constants
+│   │   └── index.ts
+│   ├── teams/
+│   ├── categories/
+│   ├── balance-history/
+│   └── preferences/
+└── models/                # Shared cross-cutting models ONLY
+    ├── user.model.ts
+    ├── auth-token.model.ts
+    ├── login-credentials.model.ts
+    ├── jbh-error.model.ts
+    └── portfolio-context.model.ts
+```
+
+##### File Naming Conventions
+
+**Requests**: `{action}-{entity}.request.ts`
+- Example: `create-product.request.ts` exports `CreateProductRequest`
+
+**Responses**: `{entity}-{detail}-api.response.ts` or `{entity}-api.response.ts`
+- Example: `product-list-item-api.response.ts` exports `ProductListItemApiResponse`
+- Example: `create-product.response.ts` exports `CreateProductResponse`
+
+**Models**: `{entity}-{detail}.model.ts` or `{entity}.model.ts`
+- Example: `product-list-item.model.ts` exports `ProductListItem` class
+- Example: `team.model.ts` exports `Team` class
+
+**Types**: `{entity}.types.ts` or `{name}.enum.ts`
+- Example: `movement.types.ts` exports `MovementType`
+- Example: `member-status.enum.ts` exports `MemberStatus` enum
+
+##### Import Examples
+
+```typescript
+// API Request/Response (for repositories)
+import { CreateProductRequest } from '@core/domain/features/products/api/requests/create-product.request';
+import { ProductListItemApiResponse } from '@core/domain/features/products/api/responses/product-list-item-api.response';
+
+// Domain Models (for use cases, components)
+import { ProductListItem } from '@core/domain/features/products/models/product-list-item.model';
+import { MovementType } from '@core/domain/features/movements/types/movement.types';
+
+// Barrel exports (preferred - cleaner)
+import { CreateProductRequest, ProductListItem } from '@core/domain/features/products';
+import { MovementType, ProductMovement } from '@core/domain/features/movements';
+```
+
+##### Organization Rules
+
+1. **One export per file** (exceptions: small related types can be grouped in `types/` folder)
+2. **API responses must match backend names** - verify with backend code before creating
+3. **Shared cross-feature models** stay in `core/domain/models/`
+4. **Feature-specific models** go in `features/{feature}/`
+5. **Use barrel exports** (`index.ts`) for clean imports across the codebase
+
+##### Available Features
+
+- `@core/domain/features/products` - Product types, metadata, CRUD operations
+- `@core/domain/features/movements` - Deposits, withdrawals, balance snapshots
+- `@core/domain/features/teams` - Team management, members, invitations
+- `@core/domain/features/categories` - Income/expense categories
+- `@core/domain/features/balance-history` - Monthly balance reports, trends
+- `@core/domain/features/preferences` - User preferences, settings
 
 #### Responsive
 

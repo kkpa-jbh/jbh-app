@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { Preferences, UpdatePreferencesDto } from '../models/preferences.model';
+import { Preferences, UpdatePreferencesDto } from '../features/preferences';
 
 export abstract class PreferencesRepository {
   abstract getPreferences(): Observable<Preferences>;

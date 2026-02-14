@@ -1,0 +1,5 @@
+export enum MemberStatus {
+  ACCEPTED = 'ACCEPTED',
+  DECLINED = 'DECLINED',
+  PENDING_TO_ACCEPT = 'PENDING_TO_ACCEPT'
+}

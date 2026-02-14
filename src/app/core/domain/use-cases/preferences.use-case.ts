@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { PreferencesRepository } from '../repositories/preferences.repository';
 import { ProductRepository } from '../repositories/product.repository';
-import { Preferences, UpdatePreferencesDto } from '../models/preferences.model';
-import { ProductListItem } from '../models/product-list-item.model';
+import { Preferences, UpdatePreferencesDto } from '../features/preferences';
+import { ProductListItem } from '../features/products';
 
 @Injectable({
   providedIn: 'root'

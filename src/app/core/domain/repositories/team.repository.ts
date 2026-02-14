@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { AcceptInvitationResponse, CreateTeamRequest, CreateTeamResponse, Team, TeamWithMembers, UpdateTeamRequest } from '../models/team.model';
+import { AcceptInvitationResponse, CreateTeamRequest, CreateTeamResponse, Team, TeamWithMembers, UpdateTeamRequest } from '../features/teams';
 
 export interface InviteMemberRequest {
   emailOrUsername: string;

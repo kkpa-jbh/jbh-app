@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, shareReplay } from 'rxjs';
 import { CategoryRepository } from '../repositories/category.repository';
-import { Category } from '../models/category.model';
+import { Category } from '../features/categories';
 
 @Injectable({
   providedIn: 'root'

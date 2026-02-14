@@ -1,11 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject, shareReplay, tap } from 'rxjs';
 import { ProductRepository } from '../repositories/product.repository';
-import { ProductType } from '../models/product-type.model';
-import { ProductMetadataConfig } from '../models/product-metadata-config.model';
-import { CreateProductRequest, CreateProductResponse, UpdateProductRequest } from '../models/product.model';
-import { AddMovementRequest, AddMovementResponse } from '../models/movement.model';
-import { ProductListItem } from '../models/product-list-item.model';
+import {
+  ProductType,
+  ProductMetadataConfig,
+  CreateProductRequest,
+  CreateProductResponse,
+  UpdateProductRequest,
+  ProductListItem
+} from '../features/products';
+import { AddMovementRequest, AddMovementResponse } from '../features/movements';
 import { PortfolioContextService } from '@core/infrastructure/context/portfolio-context.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
 

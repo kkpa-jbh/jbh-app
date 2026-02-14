@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject, shareReplay, tap } from 'rxjs';
 import { BalanceHistoryRepository } from '../repositories/balance-history.repository';
-import { MonthlyBalanceRequest, BalanceHistoryModel } from '../models/balance-history.model';
+import { MonthlyBalanceRequest, BalanceHistoryModel } from '../features/balance-history';
 
 @Injectable({
   providedIn: 'root'

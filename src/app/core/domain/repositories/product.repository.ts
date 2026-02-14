@@ -1,10 +1,17 @@
 import { Observable } from 'rxjs';
-import { ProductType } from '../models/product-type.model';
-import { ProductMetadataConfig } from '../models/product-metadata-config.model';
-import { CreateProductRequest, CreateProductResponse, UpdateProductRequest } from '../models/product.model';
-import { ProductListItem } from '../models/product-list-item.model';
-import { AddMovementRequest, AddMovementResponse } from '../models/movement.model';
-import { ProductMovement } from '../models/product-movement.model';
+import {
+  ProductType,
+  ProductMetadataConfig,
+  CreateProductRequest,
+  CreateProductResponse,
+  UpdateProductRequest,
+  ProductListItem
+} from '../features/products';
+import {
+  AddMovementRequest,
+  AddMovementResponse,
+  ProductMovement
+} from '../features/movements';
 
 export abstract class ProductRepository {
   abstract getProductTypes(): Observable<ProductType[]>;

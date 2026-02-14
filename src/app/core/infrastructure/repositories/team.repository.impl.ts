@@ -10,7 +10,7 @@ import {
   TeamWithMembers,
   TeamWithMembersApiResponse,
   UpdateTeamRequest
-} from '@core/domain/models/team.model';
+} from '@core/domain/features/teams';
 import { ApiBaseService } from '@core/infrastructure/api/api-base.service';
 import { HttpClient } from '@angular/common/http';
 import { EnvironmentConfig } from '@core/infrastructure/config/environment.config';

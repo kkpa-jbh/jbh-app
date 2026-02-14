@@ -2,13 +2,23 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ProductRepository } from '@core/domain/repositories/product.repository';
-import { ProductType, ProductTypeApiResponse } from '@core/domain/models/product-type.model';
-import { ProductMetadataConfig, ProductMetadataConfigApiResponse } from '@core/domain/models/product-metadata-config.model';
-import { CreateProductRequest, CreateProductResponse, UpdateProductRequest } from '@core/domain/models/product.model';
-import { AddMovementRequest, AddMovementResponse } from '@core/domain/models/movement.model';
-import { ProductListItem, ProductListItemApiResponse } from '@core/domain/models/product-list-item.model';
-import { ProductMovement } from '@core/domain/models/product-movement.model';
-import { ProductMovementApiResponse } from '@core/domain/models/product-movement-api-response.interface';
+import {
+  ProductType,
+  ProductTypeApiResponse,
+  ProductMetadataConfig,
+  ProductMetadataConfigApiResponse,
+  CreateProductRequest,
+  CreateProductResponse,
+  UpdateProductRequest,
+  ProductListItem,
+  ProductListItemApiResponse
+} from '@core/domain/features/products';
+import {
+  AddMovementRequest,
+  AddMovementResponse,
+  ProductMovement,
+  ProductMovementApiResponse
+} from '@core/domain/features/movements';
 import { ApiBaseService } from '@core/infrastructure/api/api-base.service';
 import { HttpClient } from '@angular/common/http';
 import { EnvironmentConfig } from '@core/infrastructure/config/environment.config';

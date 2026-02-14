@@ -31,8 +31,8 @@ grep -v "spec.ts"
 ```
 
 **Common Locations:**
-- Feature pages: `src/app/features/*/pages/**/*.page.ts`
-- Components: `src/app/features/*/components/**/*.component.ts`
+- Feature pages: `src/app/ui/*/pages/**/*.page.ts`
+- Components: `src/app/ui/*/components/**/*.component.ts`
 - Shared components: `src/app/shared/components/**/*.component.ts`
 
 **Fix:**
@@ -72,8 +72,8 @@ grep -r "changeDetection: ChangeDetectionStrategy.OnPush" src/app --include="*.t
 **Impact:** Performance degradation due to repeated function calls on every change detection cycle
 
 **Files Affected:**
-- `src/app/features/products/components/product-card/product-card.component.ts`
-- `src/app/features/products/components/balance-summary-cards/balance-summary-cards.component.ts`
+- `src/app/ui/products/components/product-card/product-card.component.ts`
+- `src/app/ui/products/components/balance-summary-cards/balance-summary-cards.component.ts`
 
 **Example Issues:**
 
@@ -136,7 +136,7 @@ private computeGrowthClass(rate: number): string {
 **Impact:** Performance degradation in chart rendering
 
 **File Affected:**
-- `src/app/features/products/components/balance-chart/balance-chart.component.ts`
+- `src/app/ui/products/components/balance-chart/balance-chart.component.ts`
 
 **Issue:**
 ```typescript
@@ -178,7 +178,7 @@ formatCurrency = (value: number): string => {
 
 **Files Affected:**
 - `src/theme/custom-components.scss` (lines 1963-2283) - CORRECT SOURCE
-- `src/app/features/products/components/product-card/product-card.component.scss` - DUPLICATE
+- `src/app/ui/products/components/product-card/product-card.component.scss` - DUPLICATE
 
 **Issue:**
 Product card styles are defined in BOTH the global theme file and the component SCSS file. This violates the single source of truth principle.
@@ -194,11 +194,11 @@ grep -A 5 ".jbh-product-card" src/theme/custom-components.scss
 **Step 2:** Delete component SCSS file
 ```bash
 # Backup first
-cp src/app/features/products/components/product-card/product-card.component.scss \
-   src/app/features/products/components/product-card/product-card.component.scss.bak
+cp src/app/ui/products/components/product-card/product-card.component.scss \
+   src/app/ui/products/components/product-card/product-card.component.scss.bak
 
 # Delete the file
-rm src/app/features/products/components/product-card/product-card.component.scss
+rm src/app/ui/products/components/product-card/product-card.component.scss
 ```
 
 **Step 3:** Remove SCSS reference from component
@@ -228,7 +228,7 @@ ionic serve
 
 **Files Affected:**
 - `src/theme/custom-components.scss` (lines 2418-2625) - CORRECT SOURCE
-- `src/app/features/products/components/balance-history-table/balance-history-table.component.scss` - DUPLICATE
+- `src/app/ui/products/components/balance-history-table/balance-history-table.component.scss` - DUPLICATE
 
 **Issue:**
 Same as product card - styles duplicated between theme and component files.
@@ -243,11 +243,11 @@ grep -A 5 ".jbh-balance-table" src/theme/custom-components.scss
 **Step 2:** Delete component SCSS
 ```bash
 # Backup first
-cp src/app/features/products/components/balance-history-table/balance-history-table.component.scss \
-   src/app/features/products/components/balance-history-table/balance-history-table.component.scss.bak
+cp src/app/ui/products/components/balance-history-table/balance-history-table.component.scss \
+   src/app/ui/products/components/balance-history-table/balance-history-table.component.scss.bak
 
 # Delete
-rm src/app/features/products/components/balance-history-table/balance-history-table.component.scss
+rm src/app/ui/products/components/balance-history-table/balance-history-table.component.scss
 ```
 
 **Step 3:** Remove SCSS reference

@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 import { PreferencesRepository } from '@core/domain/repositories/preferences.repository';
-import { Preferences, PreferencesApiResponse, UpdatePreferencesDto, toApiRequest } from '@core/domain/models/preferences.model';
+import { Preferences, PreferencesApiResponse, UpdatePreferencesDto, toApiRequest } from '@core/domain/features/preferences';
 import { ApiBaseService } from '@core/infrastructure/api/api-base.service';
 import { EnvironmentConfig } from '@core/infrastructure/config/environment.config';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';

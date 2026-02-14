@@ -7,7 +7,7 @@ import { PortfolioContextService } from '@core/infrastructure/context/portfolio-
 import { TeamUseCase } from '@core/domain/use-cases/team.use-case';
 import { ProductUseCase } from '@core/domain/use-cases/product.use-case';
 import { ViewportService, SelectInterface } from '@core/infrastructure/viewport/viewport.service';
-import { TeamWithMembers } from '@core/domain/models/team.model';
+import { TeamWithMembers } from '@core/domain/features/teams';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
 
 @Component({

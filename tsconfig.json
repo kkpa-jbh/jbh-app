@@ -23,7 +23,7 @@
     "useDefineForClassFields": false,
     "paths": {
       "@core/*": ["src/app/core/*"],
-      "@features/*": ["src/app/features/*"],
+      "@ui/*": ["src/app/ui/*"],
       "@shared/*": ["src/app/shared/*"],
       "@environments/*": ["src/environments/*"]
     }

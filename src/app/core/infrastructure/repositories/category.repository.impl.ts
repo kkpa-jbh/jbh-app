@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CategoryRepository } from '@core/domain/repositories/category.repository';
-import { Category, CategoryApiResponse } from '@core/domain/models/category.model';
+import { Category, CategoryApiResponse } from '@core/domain/features/categories';
 import { ApiBaseService } from '@core/infrastructure/api/api-base.service';
 import { HttpClient } from '@angular/common/http';
 import { EnvironmentConfig } from '@core/infrastructure/config/environment.config';

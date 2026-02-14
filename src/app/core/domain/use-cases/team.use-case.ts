@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject, shareReplay, tap } from 'rxjs';
 import { TeamRepository, InviteMemberRequest } from '../repositories/team.repository';
-import { AcceptInvitationResponse, CreateTeamRequest, CreateTeamResponse, Team, TeamWithMembers, UpdateTeamRequest } from '../models/team.model';
+import { AcceptInvitationResponse, CreateTeamRequest, CreateTeamResponse, Team, TeamWithMembers, UpdateTeamRequest } from '../features/teams';
 
 @Injectable({
   providedIn: 'root'

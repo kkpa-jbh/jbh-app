@@ -232,7 +232,7 @@ To change styles app-wide, edit `src/theme/custom-components.scss`:
 ### ❌ Mistake 3: Creating Feature-Specific Theme Files
 **Problem:**
 ```
-src/app/features/products/
+src/app/ui/products/
   └── styles/
       └── product-theme.scss  // DON'T DO THIS
 ```
