@@ -8,13 +8,11 @@
 export type MovementType = 'DEPOSIT' | 'WITHDRAWAL' | 'BALANCE_SNAPSHOT';
 
 /**
- * Category information for a movement.
- * Used to classify movements as income or expense.
+ * Category type as returned by the API inside a movement response.
  */
-export interface CategoryType {
+export interface CategoryTypeApiResponse {
   source: 'INCOME' | 'EXPENSE';
-  typeName: string;
-  translationsKey: string;
+  alias: string;
 }
 
 /**

@@ -1,25 +1,25 @@
 import { MovementResponse } from '../api/responses/product-movement-api.response';
-import { MovementType, CategoryType, MovementMetadata } from '../types/movement.types';
+import { MovementType, CategoryTypeApiResponse, MovementMetadata } from '../types/movement.types';
 
 export class ProductMovement {
   constructor(
     public readonly id: string,
     public readonly productId: string,
     public readonly movementType: MovementType,
-    public readonly category: CategoryType | null,
+    public readonly category: CategoryTypeApiResponse | null,
     public readonly movementAmount: number,
     public readonly movementDate: string,
-    public readonly balanceSnapshot: number,
+    public readonly balanceSnapshot: number | null,
     public readonly metadata: MovementMetadata,
     public readonly createdAt: string,
-    public readonly description: string,
+    public readonly description: string | null,
     public readonly canBeRemoved?: boolean
   ) {}
 
   static fromApiResponse(response: MovementResponse): ProductMovement {
     return new ProductMovement(
-      response.id,
-      response.productId,
+      response.id.value,
+      response.productId.value,
       response.movementType,
       response.category,
       response.movementAmount,
@@ -53,6 +53,6 @@ export class ProductMovement {
   }
 
   get categoryLabel(): string | null {
-    return this.category?.typeName || null;
+    return this.category?.alias || null;
   }
 }

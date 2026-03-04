@@ -269,6 +269,32 @@ These are reusable across all features:
 2. **Standalone components** with proper imports
 3. **Always include** `TranslateModule` in imports
 
+#### Shared Components (CRITICAL — reuse these, never recreate inline)
+
+**`<app-category-select>`** — `src/app/shared/components/category-select/`
+
+Use this component whenever a page needs a category dropdown. It implements `ControlValueAccessor` so the parent uses `formControlName` directly on it.
+
+```html
+<div class="jbh-form-field">
+  <label class="jbh-label">{{ 'your.category.label' | translate }}</label>
+  <app-category-select
+    formControlName="categoryId"
+    [categories]="categories"
+    [isLoading]="isLoadingCategories"
+    [selectInterface]="selectInterface"
+    [placeholder]="'your.category.placeholder' | translate"
+    [hasError]="hasError('categoryId')"
+  ></app-category-select>
+</div>
+```
+
+- Renders the `ion-select` with spinner + error message + description hint automatically
+- Shows selected category's `description` (multilanguage) as a contextual info box below the select
+- Import: `import { CategorySelectComponent } from '@shared/components/category-select/category-select.component';`
+- Add to component `imports[]` array
+- Hint for missing product: add `<p class="jbh-field-hint">` below the component when no product is selected yet
+
 #### Ionic Lifecycle (CRITICAL)
 
 1. **NEVER call APIs in `ngOnInit()`** - Ionic reuses component instances when navigating

@@ -10,7 +10,7 @@ import {
   ProductListItem,
   ProductTypeResponse
 } from '../features/products';
-import { AddMovementRequest, AddMovementResponse } from '../features/movements';
+import { AddMovementRequest, AddMovementApiResponse } from '../features/movements';
 import { PortfolioContextService } from '@core/infrastructure/context/portfolio-context.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
 
@@ -109,7 +109,7 @@ export class ProductUseCase {
     );
   }
 
-  addMovement(productId: string, request: AddMovementRequest): Observable<AddMovementResponse> {
+  addMovement(productId: string, request: AddMovementRequest): Observable<AddMovementApiResponse> {
     return this.productRepository.addMovement(productId, request).pipe(
       tap(() => this.clearProductsCache())
     );

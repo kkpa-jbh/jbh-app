@@ -9,7 +9,7 @@ import {
 } from '../features/products';
 import {
   AddMovementRequest,
-  AddMovementResponse,
+  AddMovementApiResponse,
   ProductMovement
 } from '../features/movements';
 
@@ -22,7 +22,7 @@ export abstract class ProductRepository {
   abstract updateProduct(id: string, request: UpdateProductRequest): Observable<void>;
   abstract deleteProduct(id: string): Observable<void>;
   abstract updateProductStatus(id: string, active: boolean): Observable<void>;
-  abstract addMovement(productId: string, request: AddMovementRequest): Observable<AddMovementResponse>;
+  abstract addMovement(productId: string, request: AddMovementRequest): Observable<AddMovementApiResponse>;
   abstract getProductMovements(productId: string): Observable<ProductMovement[]>;
   abstract deleteProductMovement(productId: string, movementId: string): Observable<void>;
 }

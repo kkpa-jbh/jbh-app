@@ -14,7 +14,7 @@ import {
 } from '@core/domain/features/products';
 import {
   AddMovementRequest,
-  AddMovementResponse,
+  AddMovementApiResponse,
   ProductMovement,
   MovementResponse
 } from '@core/domain/features/movements';
@@ -87,8 +87,8 @@ export class ProductRepositoryImpl extends ApiBaseService implements ProductRepo
     return this.patch<void>(`${this.PRODUCTS_ENDPOINT}/${id}/status`, { active });
   }
 
-  addMovement(productId: string, request: AddMovementRequest): Observable<AddMovementResponse> {
-    return this.post<AddMovementResponse>(`${this.PRODUCTS_ENDPOINT}/movements/${productId}`, request);
+  addMovement(productId: string, request: AddMovementRequest): Observable<AddMovementApiResponse> {
+    return this.post<AddMovementApiResponse>(`${this.PRODUCTS_ENDPOINT}/movements/${productId}`, request);
   }
 
   getProductMovements(productId: string): Observable<ProductMovement[]> {

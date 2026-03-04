@@ -23,7 +23,8 @@
       <div class="categories-list" role="status" aria-live="polite">
         @for (i of [1, 2, 3, 4, 5]; track i) {
           <div class="jbh-card categories-card-skeleton">
-            <div class="jbh-skeleton" style="height: 20px; width: 60%; border-radius: 4px;"></div>
+            <div class="jbh-skeleton" style="height: 20px; width: 60%; border-radius: 4px; margin-bottom: 8px;"></div>
+            <div class="jbh-skeleton" style="height: 14px; width: 90%; border-radius: 4px;"></div>
           </div>
         }
       </div>
@@ -43,13 +44,13 @@
         <div class="categories-list" role="list" [attr.aria-label]="'categories.income' | translate">
           @for (category of incomeCategories; track trackByCategoryId($index, category)) {
             <div class="jbh-card categories-card" role="listitem">
-              <div class="categories-card-content">
+              <div class="categories-card-header">
                 <ion-icon name="trending-up-outline" class="categories-icon categories-icon--income"></ion-icon>
-                <span class="categories-name">
-                  {{ category.displayName | jbhDisplayName : category.alias }}
-                </span>
+                <span class="categories-name">{{ category.displayName | jbhDisplayName }}</span>
               </div>
-              <span class="categories-alias jbh-text-muted">{{ category.alias }}</span>
+              @if (category.description | jbhDisplayName) {
+                <p class="categories-description jbh-text-muted">{{ category.description | jbhDisplayName }}</p>
+              }
             </div>
           }
         </div>
@@ -70,13 +71,13 @@
         <div class="categories-list" role="list" [attr.aria-label]="'categories.expense' | translate">
           @for (category of expenseCategories; track trackByCategoryId($index, category)) {
             <div class="jbh-card categories-card" role="listitem">
-              <div class="categories-card-content">
+              <div class="categories-card-header">
                 <ion-icon name="trending-down-outline" class="categories-icon categories-icon--expense"></ion-icon>
-                <span class="categories-name">
-                  {{ category.displayName | jbhDisplayName : category.alias }}
-                </span>
+                <span class="categories-name">{{ category.displayName | jbhDisplayName }}</span>
               </div>
-              <span class="categories-alias jbh-text-muted">{{ category.alias }}</span>
+              @if (category.description | jbhDisplayName) {
+                <p class="categories-description jbh-text-muted">{{ category.description | jbhDisplayName }}</p>
+              }
             </div>
           }
         </div>

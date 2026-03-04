@@ -1,13 +1,9 @@
-import { MovementType } from '../../types/movement.types';
+import { ProductResponse } from '@core/domain/features/products';
+import { MovementResponse } from './product-movement-api.response';
+import { MonthlyBalanceApiResponse } from './monthly-balance-api.response';
 
-export interface AddMovementResponse {
-  id: string;
-  productId: string;
-  entryDate: string;
-  movementType: MovementType;
-  totalAmount?: number;
-  categoryName?: string;
-  balanceSnapshot?: number;
-  description?: string;
-  createdAt: string;
+export interface AddMovementApiResponse {
+  productresponse: ProductResponse;
+  movement: MovementResponse;
+  monthlyBalance: MonthlyBalanceApiResponse;
 }

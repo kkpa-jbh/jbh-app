@@ -129,6 +129,22 @@
 
           <!-- Conditional Fields for DEPOSIT/WITHDRAWAL -->
           @if (!isBalanceSnapshot()) {
+            <!-- Category -->
+            <div class="jbh-form-field">
+              <label class="jbh-label">{{ 'products.addMovement.category.label' | translate }}</label>
+              <app-category-select
+                formControlName="categoryId"
+                [categories]="categories"
+                [isLoading]="isLoadingCategories"
+                [selectInterface]="selectInterface"
+                [placeholder]="'products.addMovement.category.placeholder' | translate"
+                [hasError]="hasError('categoryId')"
+              ></app-category-select>
+              @if (!hasProductIdFromRoute && !movementForm.get('productId')?.value && !isLoadingCategories) {
+                <p class="jbh-field-hint">{{ 'products.addMovement.category.selectProductFirst' | translate }}</p>
+              }
+            </div>
+
             <!-- Total Amount -->
             <div class="jbh-form-field">
               <label class="jbh-label">{{ 'products.addMovement.totalAmount.label' | translate }}</label>
@@ -148,35 +164,6 @@
                 <div class="jbh-field-error">
                   <ion-icon name="alert-circle-outline"></ion-icon>
                   <span>{{ getErrorMessage('totalAmount') }}</span>
-                </div>
-              }
-            </div>
-
-            <!-- Category -->
-            <div class="jbh-form-field">
-              <label class="jbh-label">{{ 'products.addMovement.category.label' | translate }}</label>
-              <div class="jbh-ion-select-wrapper" [class.error]="hasError('categoryName')">
-                <ion-icon name="pricetag-outline" class="jbh-ion-select-icon"></ion-icon>
-                <ion-select
-                  formControlName="categoryName"
-                  [interface]="selectInterface"
-                  [placeholder]="'products.addMovement.category.placeholder' | translate"
-                  class="jbh-ion-select"
-                >
-                  @for (category of categories; track category.id) {
-                    <ion-select-option [value]="category.alias">
-                      {{ category.displayName | jbhDisplayName : category.alias }}
-                    </ion-select-option>
-                  }
-                </ion-select>
-                @if (isLoadingCategories) {
-                  <ion-spinner name="crescent" class="jbh-select-spinner"></ion-spinner>
-                }
-              </div>
-              @if (hasError('categoryName')) {
-                <div class="jbh-field-error">
-                  <ion-icon name="alert-circle-outline"></ion-icon>
-                  <span>{{ getErrorMessage('categoryName') }}</span>
                 </div>
               }
             </div>

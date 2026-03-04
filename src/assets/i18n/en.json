@@ -93,6 +93,7 @@
       "title": "Reports"
     },
     "settings": {
+      "categories": "Categories",
       "myPreferences": "My Preferences",
       "teamManagement": {
         "addNew": "Add New Team",
@@ -165,7 +166,8 @@
       },
       "category": {
         "label": "Category",
-        "placeholder": "Select a category"
+        "placeholder": "Select a category",
+        "selectProductFirst": "Select a product first to load categories"
       },
       "description": {
         "label": "Description",

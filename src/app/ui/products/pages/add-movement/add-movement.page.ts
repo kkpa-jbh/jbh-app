@@ -24,15 +24,15 @@ import { CategoryUseCase } from '@core/domain/use-cases/category.use-case';
 import { PreferencesUseCase } from '@core/domain/use-cases/preferences.use-case';
 import { ProductListItem } from '@core/domain/features/products';
 import { Category } from '@core/domain/features/categories';
-import { MovementType, AddMovementRequest } from '@core/domain/features/movements';
+import { MovementType, AddMovementRequest, CategoryApiRequest } from '@core/domain/features/movements';
 import { JBHError } from '@core/domain/models/jbh-error.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
 import { ViewportService, SelectInterface } from '@core/infrastructure/viewport/viewport.service';
 import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
 import { DecimalFormatDirective } from '@shared/directives';
-import { JbhDisplayNamePipe } from '@shared/pipes';
 import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
+import { CategorySelectComponent } from '@shared/components/category-select/category-select.component';
 
 @Component({
   selector: 'app-add-movement',
@@ -45,8 +45,8 @@ import { AppHeaderComponent } from '@shared/components/app-header/app-header.com
     IonicModule,
     TranslateModule,
     DecimalFormatDirective,
-    JbhDisplayNamePipe,
-    AppHeaderComponent
+    AppHeaderComponent,
+    CategorySelectComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -142,7 +142,7 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
       movementType: ['DEPOSIT', [Validators.required]],
       entryDate: [today, [Validators.required]],
       totalAmount: [null],
-      categoryName: [''],
+      categoryId: [null],
       balanceSnapshot: [null],
       description: ['', [Validators.maxLength(500)]]
     });
@@ -168,27 +168,27 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
 
   private onMovementTypeChange(type: MovementType): void {
     const totalAmountControl = this.movementForm.get('totalAmount');
-    const categoryNameControl = this.movementForm.get('categoryName');
+    const categoryIdControl = this.movementForm.get('categoryId');
     const balanceSnapshotControl = this.movementForm.get('balanceSnapshot');
 
     totalAmountControl?.clearValidators();
-    categoryNameControl?.clearValidators();
+    categoryIdControl?.clearValidators();
     balanceSnapshotControl?.clearValidators();
 
     if (type === 'BALANCE_SNAPSHOT') {
       balanceSnapshotControl?.setValidators([Validators.required, Validators.min(0)]);
       totalAmountControl?.setValue(null);
-      categoryNameControl?.setValue('');
+      categoryIdControl?.setValue(null);
       this.categories = [];
     } else {
       totalAmountControl?.setValidators([Validators.required, Validators.min(0.01)]);
-      categoryNameControl?.setValidators([Validators.required]);
+      categoryIdControl?.setValidators([Validators.required]);
       balanceSnapshotControl?.setValue(null);
       this.loadCategories(type);
     }
 
     totalAmountControl?.updateValueAndValidity();
-    categoryNameControl?.updateValueAndValidity();
+    categoryIdControl?.updateValueAndValidity();
     balanceSnapshotControl?.updateValueAndValidity();
   }
 
@@ -264,7 +264,7 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
 
   private loadCategories(type: MovementType): void {
     this.isLoadingCategories = true;
-    this.movementForm.get('categoryName')?.disable();
+    this.movementForm.get('categoryId')?.disable();
     this.cdr.markForCheck();
 
     const categoryObservable = type === 'DEPOSIT'
@@ -277,13 +277,13 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
         next: (categories) => {
           this.categories = categories;
           this.isLoadingCategories = false;
-          this.movementForm.get('categoryName')?.enable();
+          this.movementForm.get('categoryId')?.enable();
           this.cdr.markForCheck();
         },
         error: (error) => {
           this.logger.error('Error loading categories:', 'AddMovementPage', error);
           this.isLoadingCategories = false;
-          this.movementForm.get('categoryName')?.enable();
+          this.movementForm.get('categoryId')?.enable();
           this.showToast(this.translationService.instant('products.addMovement.errors.loadCategories'), 'danger');
           this.cdr.markForCheck();
         }
@@ -309,21 +309,28 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
 
     this.isSubmitting = true;
 
+    let categoryRequest: CategoryApiRequest | null = null;
+    if (formData.movementType !== 'BALANCE_SNAPSHOT' && formData.categoryId != null) {
+      const selectedCategory = this.categories.find(c => c.id === formData.categoryId);
+      if (selectedCategory) {
+        categoryRequest = {
+          categoryId: selectedCategory.id,
+          categoryType: {
+            source: selectedCategory.source,
+            alias: selectedCategory.alias
+          }
+        };
+      }
+    }
+
     const request: AddMovementRequest = {
       entryDate: formData.entryDate,
-      movementType: formData.movementType
+      movementType: formData.movementType,
+      totalAmount: formData.movementType !== 'BALANCE_SNAPSHOT' ? formData.totalAmount : null,
+      balanceSnapshot: formData.movementType === 'BALANCE_SNAPSHOT' ? formData.balanceSnapshot : null,
+      categoryRequest,
+      description: formData.description?.trim() || null
     };
-
-    if (formData.movementType === 'BALANCE_SNAPSHOT') {
-      request.balanceSnapshot = formData.balanceSnapshot;
-    } else {
-      request.totalAmount = formData.totalAmount;
-      request.categoryName = formData.categoryName;
-    }
-
-    if (formData.description?.trim()) {
-      request.description = formData.description.trim();
-    }
 
     this.productUseCase.addMovement(selectedProductId, request)
       .pipe(takeUntil(this.destroy$))

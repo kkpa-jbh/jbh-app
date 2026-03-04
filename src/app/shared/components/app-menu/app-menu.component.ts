@@ -28,7 +28,8 @@ import {
   barChartOutline,
   settingsOutline,
   notificationsOutline,
-  receiptOutline
+  receiptOutline,
+  pricetagOutline
 } from 'ionicons/icons';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
@@ -96,7 +97,8 @@ export class AppMenuComponent implements OnInit, OnDestroy {
       barChartOutline,
       settingsOutline,
       notificationsOutline,
-      receiptOutline
+      receiptOutline,
+      pricetagOutline
     });
   }
 
@@ -204,6 +206,12 @@ export class AppMenuComponent implements OnInit, OnDestroy {
             translationKey: 'menu.settings.myPreferences',
             icon: 'person-outline',
             route: '/settings/preferences'
+          },
+          {
+            id: 'settings-categories',
+            translationKey: 'menu.settings.categories',
+            icon: 'pricetag-outline',
+            route: '/settings/categories'
           },
           ...(context.isTeam ? [{
             id: 'settings-team-preferences',

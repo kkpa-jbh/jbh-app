@@ -14,7 +14,8 @@ export class Category {
     public readonly source: CategorySource,
     public readonly alias: string,
     public readonly active: boolean,
-    public readonly displayName: Record<string, string>
+    public readonly displayName: Record<string, string>,
+    public readonly description: Record<string, string>,
   ) {}
 
   static fromApiResponse(response: CategoryApiResponse): Category {
@@ -23,7 +24,8 @@ export class Category {
       response.source,
       response.alias,
       response.active,
-      response.displayName
+      response.displayName,
+      response.description
     );
   }
 }

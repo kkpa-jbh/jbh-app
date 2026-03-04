@@ -11,6 +11,7 @@ export interface CategoryApiResponse {
   alias: string;
   active: boolean;
   displayName: Record<string, string>;
+  description: Record<string, string>;
 }
 
 export type CategorySource = 'INCOME' | 'EXPENSE';

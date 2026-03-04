@@ -1,15 +1,15 @@
-import { MovementType, CategoryType, MovementMetadata } from '../../types/movement.types';
+import { MovementType, CategoryTypeApiResponse, MovementMetadata } from '../../types/movement.types';
 
 export interface MovementResponse {
-  id: string;
-  productId: string;
+  id: { value: string };
+  productId: { value: string };
   movementType: MovementType;
-  category: CategoryType | null;
+  category: CategoryTypeApiResponse | null;
   movementAmount: number;
   movementDate: string;
-  balanceSnapshot: number;
+  balanceSnapshot: number | null;
   metadata: MovementMetadata;
   createdAt: string;
-  description: string;
+  description: string | null;
   canBeRemoved: boolean;
 }

@@ -28,7 +28,6 @@ import { HeaderActionsService } from '@core/infrastructure/header/header-actions
 import { ViewportService } from '@core/infrastructure/viewport/viewport.service';
 import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 import { JbhDatePipe } from '@shared/pipes/jbh-date.pipe';
-import { JbhTranslationKeyPipe } from '@shared/pipes/jbh-translation-key.pipe';
 import { JbhCurrencyPipe } from '@shared/pipes/jbh-currency.pipe';
 
 @Component({
@@ -43,7 +42,6 @@ import { JbhCurrencyPipe } from '@shared/pipes/jbh-currency.pipe';
     TranslateModule,
     AppHeaderComponent,
     JbhDatePipe,
-    JbhTranslationKeyPipe,
     JbhCurrencyPipe
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
