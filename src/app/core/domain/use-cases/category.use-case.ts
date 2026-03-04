@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, shareReplay } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { CategoryRepository } from '../repositories/category.repository';
 import { Category } from '../features/categories';
 
@@ -16,6 +17,7 @@ export class CategoryUseCase {
   getIncomeCategories(): Observable<Category[]> {
     if (!this.incomeCategories$) {
       this.incomeCategories$ = this.categoryRepository.getIncomeCategories().pipe(
+        map(categories => categories.filter(c => c.active)),
         shareReplay(1)
       );
     }
@@ -25,6 +27,7 @@ export class CategoryUseCase {
   getExpenseCategories(): Observable<Category[]> {
     if (!this.expenseCategories$) {
       this.expenseCategories$ = this.categoryRepository.getExpenseCategories().pipe(
+        map(categories => categories.filter(c => c.active)),
         shareReplay(1)
       );
     }

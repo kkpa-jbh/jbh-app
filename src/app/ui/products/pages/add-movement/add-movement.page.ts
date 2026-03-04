@@ -31,7 +31,7 @@ import { LoggerService } from '@core/infrastructure/logging/logger.service';
 import { ViewportService, SelectInterface } from '@core/infrastructure/viewport/viewport.service';
 import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
 import { DecimalFormatDirective } from '@shared/directives';
-import { JbhTranslationKeyPipe } from '@shared/pipes';
+import { JbhDisplayNamePipe } from '@shared/pipes';
 import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 
 @Component({
@@ -45,7 +45,7 @@ import { AppHeaderComponent } from '@shared/components/app-header/app-header.com
     IonicModule,
     TranslateModule,
     DecimalFormatDirective,
-    JbhTranslationKeyPipe,
+    JbhDisplayNamePipe,
     AppHeaderComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush

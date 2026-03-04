@@ -163,9 +163,9 @@
                   [placeholder]="'products.addMovement.category.placeholder' | translate"
                   class="jbh-ion-select"
                 >
-                  @for (category of categories; track category.name) {
-                    <ion-select-option [value]="category.name">
-                      {{ category.translationKey | jbhTranslationKey }}
+                  @for (category of categories; track category.id) {
+                    <ion-select-option [value]="category.alias">
+                      {{ category.displayName | jbhDisplayName : category.alias }}
                     </ion-select-option>
                   }
                 </ion-select>

@@ -13,6 +13,16 @@
     "save": "Guardar",
     "success": "Éxito"
   },
+  "categories": {
+    "empty": {
+      "expenseMessage": "No hay categorías de gastos activas disponibles.",
+      "incomeMessage": "No hay categorías de ingresos activas disponibles.",
+      "title": "Sin Categorías"
+    },
+    "expense": "Gasto",
+    "income": "Ingreso",
+    "title": "Categorías"
+  },
   "context": {
     "myPortfolio": "Mi Cartera",
     "personalPortfolio": "Cartera Personal",

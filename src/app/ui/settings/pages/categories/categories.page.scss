@@ -1,0 +1,52 @@
+.categories-segment {
+  margin-bottom: var(--jbh-spacing-md);
+}
+
+.categories-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--jbh-spacing-sm, 16px);
+}
+
+.categories-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--jbh-spacing-sm, 16px);
+}
+
+.categories-card-skeleton {
+  height: 52px;
+  display: flex;
+  align-items: center;
+}
+
+.categories-card-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.categories-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+
+  &--income {
+    color: var(--jbh-success-color);
+  }
+
+  &--expense {
+    color: var(--jbh-error-color);
+  }
+}
+
+.categories-name {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.categories-alias {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}

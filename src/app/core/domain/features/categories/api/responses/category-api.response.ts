@@ -5,10 +5,12 @@
  * DO NOT modify to fit UI needs - create Models for that purpose.
  */
 
-export interface CategoryResponse {
-  name: string;
-  translationKey: string;
+export interface CategoryApiResponse {
+  id: number;
   source: CategorySource;
+  alias: string;
+  active: boolean;
+  displayName: Record<string, string>;
 }
 
 export type CategorySource = 'INCOME' | 'EXPENSE';

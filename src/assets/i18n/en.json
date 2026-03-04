@@ -13,6 +13,16 @@
     "save": "Save",
     "success": "Success"
   },
+  "categories": {
+    "empty": {
+      "expenseMessage": "No active expense categories available.",
+      "incomeMessage": "No active income categories available.",
+      "title": "No Categories"
+    },
+    "expense": "Expense",
+    "income": "Income",
+    "title": "Categories"
+  },
   "context": {
     "myPortfolio": "My Portfolio",
     "personalPortfolio": "Personal Portfolio",

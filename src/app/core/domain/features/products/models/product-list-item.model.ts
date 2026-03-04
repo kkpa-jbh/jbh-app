@@ -1,10 +1,10 @@
-import { ProductResponse, ProductType } from '../api/responses/product-api.response';
+import { ProductResponse, ProductTypeCode } from '../api/responses/product-api.response';
 
 export class ProductListItem {
   constructor(
     public readonly id: string,
     public readonly name: string,
-    public readonly type: ProductType,
+    public readonly type: ProductTypeCode,
     public readonly userId: string,
     public readonly movementBalance: number,
     public readonly currentBalance: number,
@@ -56,12 +56,12 @@ export class ProductListItem {
   }
 
   get allowsMovements(): boolean {
-    const movementAllowedTypes: ProductType[] = ['SAVINGS', 'CREDIT_CARD', 'INVESTMENT', 'CDT'];
+    const movementAllowedTypes: ProductTypeCode[] = ['SAVINGS', 'CREDIT_CARD', 'INVESTMENT', 'CDT'];
     return movementAllowedTypes.includes(this.type);
   }
 
   getTypeIcon(): string {
-    const iconMap: Record<ProductType, string> = {
+    const iconMap: Partial<Record<ProductTypeCode, string>> = {
       'SAVINGS': 'wallet-outline',
       'REAL_ESTATE_INVESTMENT': 'home-outline',
       'LOAN': 'cash-outline',
@@ -73,7 +73,7 @@ export class ProductListItem {
   }
 
   getTypeColor(): string {
-    const colorMap: Record<ProductType, string> = {
+    const colorMap: Partial<Record<ProductTypeCode, string>> = {
       'SAVINGS': '#48bb78',
       'REAL_ESTATE_INVESTMENT': '#ed8936',
       'LOAN': '#f56565',

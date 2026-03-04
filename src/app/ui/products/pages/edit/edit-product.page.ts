@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -73,7 +73,8 @@ export class EditProductPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
     private translationService: TranslationService,
     private toastController: ToastController,
     private logger: LoggerService,
-    private headerActions: HeaderActionsService
+    private headerActions: HeaderActionsService,
+    private cdr: ChangeDetectorRef
   ) {
     addIcons({
       cubeOutline,
@@ -132,11 +133,13 @@ export class EditProductPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
         next: (product) => {
           this.product = product;
           this.isLoading = false;
+          this.cdr.markForCheck();
           this.loadMetadataConfig(product.type);
         },
         error: (error) => {
           this.logger.error('Error loading product:', 'EditProductPage', error);
           this.isLoading = false;
+          this.cdr.markForCheck();
           this.showToast(this.translationService.instant('products.edit.errors.load'), 'danger');
           this.navigateToOverview();
         }
@@ -167,10 +170,12 @@ export class EditProductPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
         next: (types) => {
           this.productTypes = types;
           this.isLoadingTypes = false;
+          this.cdr.markForCheck();
         },
         error: (error) => {
           this.logger.error('Error loading product types:', 'EditProductPage', error);
           this.isLoadingTypes = false;
+          this.cdr.markForCheck();
           this.showToast(this.translationService.instant('products.edit.errors.loadTypes'), 'danger');
         }
       });
@@ -181,6 +186,7 @@ export class EditProductPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
       .pipe(takeUntil(this.destroy$))
       .subscribe(lang => {
         this.currentLanguage = lang;
+        this.cdr.markForCheck();
       });
   }
 
@@ -196,10 +202,12 @@ export class EditProductPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
           this.addDynamicFormControls(configs);
           this.populateForm();
           this.isLoadingMetadata = false;
+          this.cdr.markForCheck();
         },
         error: (error) => {
           this.logger.error('Error loading metadata config:', 'EditProductPage', error);
           this.isLoadingMetadata = false;
+          this.cdr.markForCheck();
           this.showToast(this.translationService.instant('products.edit.errors.loadMetadata'), 'danger');
         }
       });

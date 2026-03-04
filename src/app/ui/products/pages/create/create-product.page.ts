@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -72,7 +72,8 @@ export class CreateProductPage implements OnInit, OnDestroy, ViewWillEnter, View
     private toastController: ToastController,
     private logger: LoggerService,
     private viewportService: ViewportService,
-    private headerActions: HeaderActionsService
+    private headerActions: HeaderActionsService,
+    private cdr: ChangeDetectorRef
   ) {
     this.selectInterface = this.viewportService.selectInterface;
     addIcons({
@@ -133,10 +134,12 @@ export class CreateProductPage implements OnInit, OnDestroy, ViewWillEnter, View
         next: (types) => {
           this.productTypes = types;
           this.isLoadingTypes = false;
+          this.cdr.markForCheck();
         },
         error: (error) => {
           this.logger.error('Error loading product types:', 'CreateProductPage', error);
           this.isLoadingTypes = false;
+          this.cdr.markForCheck();
           this.showToast(this.translationService.instant('products.create.errors.loadTypes'), 'danger');
         }
       });
@@ -147,6 +150,7 @@ export class CreateProductPage implements OnInit, OnDestroy, ViewWillEnter, View
       .pipe(takeUntil(this.destroy$))
       .subscribe(lang => {
         this.currentLanguage = lang;
+        this.cdr.markForCheck();
       });
   }
 
@@ -173,10 +177,12 @@ export class CreateProductPage implements OnInit, OnDestroy, ViewWillEnter, View
           this.metadataConfigs = configs;
           this.addDynamicFormControls(configs);
           this.isLoadingMetadata = false;
+          this.cdr.markForCheck();
         },
         error: (error) => {
           this.logger.error('Error loading metadata config:', 'CreateProductPage', error);
           this.isLoadingMetadata = false;
+          this.cdr.markForCheck();
           this.showToast(this.translationService.instant('products.create.errors.loadMetadata'), 'danger');
         }
       });

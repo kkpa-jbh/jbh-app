@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CategoryRepository } from '@core/domain/repositories/category.repository';
-import { Category, CategoryResponse } from '@core/domain/features/categories';
+import { Category, CategoryApiResponse, CategorySource } from '@core/domain/features/categories';
 import { ApiBaseService } from '@core/infrastructure/api/api-base.service';
 import { HttpClient } from '@angular/common/http';
 import { EnvironmentConfig } from '@core/infrastructure/config/environment.config';
@@ -19,15 +19,21 @@ export class CategoryRepositoryImpl extends ApiBaseService implements CategoryRe
     super(http, envConfig, logger);
   }
 
+  findBySource(source: CategorySource): Observable<Category[]> {
+    return this.get<CategoryApiResponse[]>(this.CATEGORIES_ENDPOINT, { params: { source } }).pipe(
+      map(responses => responses.map(r => Category.fromApiResponse(r)))
+    );
+  }
+
   getIncomeCategories(): Observable<Category[]> {
-    return this.get<CategoryResponse[]>(`${this.CATEGORIES_ENDPOINT}/incomes`).pipe(
-      map(responses => responses.map(response => Category.fromApiResponse(response)))
+    return this.get<CategoryApiResponse[]>(`${this.CATEGORIES_ENDPOINT}/incomes`).pipe(
+      map(responses => responses.map(r => Category.fromApiResponse(r)))
     );
   }
 
   getExpenseCategories(): Observable<Category[]> {
-    return this.get<CategoryResponse[]>(`${this.CATEGORIES_ENDPOINT}/expenses`).pipe(
-      map(responses => responses.map(response => Category.fromApiResponse(response)))
+    return this.get<CategoryApiResponse[]>(`${this.CATEGORIES_ENDPOINT}/expenses`).pipe(
+      map(responses => responses.map(r => Category.fromApiResponse(r)))
     );
   }
 }

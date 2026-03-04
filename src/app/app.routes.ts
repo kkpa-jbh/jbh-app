@@ -82,6 +82,11 @@ export const routes: Routes = [
 
   // Settings
   {
+    path: 'settings/categories',
+    loadComponent: () => import('./ui/settings/pages/categories/categories.page').then(m => m.CategoriesPage),
+    canActivate: [authGuard]
+  },
+  {
     path: 'settings/preferences',
     loadComponent: () => import('./ui/profile/pages/profile/profile.page').then(m => m.ProfilePage),
     canActivate: [authGuard]

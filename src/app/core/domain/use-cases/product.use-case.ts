@@ -7,7 +7,8 @@ import {
   CreateProductRequest,
   ProductResponse,
   UpdateProductRequest,
-  ProductListItem
+  ProductListItem,
+  ProductTypeResponse
 } from '../features/products';
 import { AddMovementRequest, AddMovementResponse } from '../features/movements';
 import { PortfolioContextService } from '@core/infrastructure/context/portfolio-context.service';
