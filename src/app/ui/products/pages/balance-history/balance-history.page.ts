@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { IonicModule, ViewWillEnter, ViewWillLeave, ToastController } from '@ionic/angular';
@@ -57,7 +57,8 @@ export class BalanceHistoryPage implements OnInit, OnDestroy, ViewWillEnter, Vie
     private toastController: ToastController,
     private logger: LoggerService,
     private translationService: TranslationService,
-    private headerActions: HeaderActionsService
+    private headerActions: HeaderActionsService,
+    private cdr: ChangeDetectorRef
   ) {
     addIcons({ analyticsOutline, refreshOutline, walletOutline });
   }
@@ -68,8 +69,6 @@ export class BalanceHistoryPage implements OnInit, OnDestroy, ViewWillEnter, Vie
       .subscribe(params => {
         this.initialProductId = params['productId'] || null;
       });
-
-    this.loadProducts();
   }
 
   ionViewWillEnter(): void {
@@ -99,10 +98,12 @@ export class BalanceHistoryPage implements OnInit, OnDestroy, ViewWillEnter, Vie
         next: (products) => {
           this.products = products;
           this.isProductsLoading = false;
+          this.cdr.markForCheck();
         },
         error: (error) => {
           this.logger.error('Error loading products', 'BalanceHistoryPage', error);
           this.isProductsLoading = false;
+          this.cdr.markForCheck();
         }
       });
   }
@@ -129,11 +130,13 @@ export class BalanceHistoryPage implements OnInit, OnDestroy, ViewWillEnter, Vie
           this.summary = result.summary;
           this.hasData = result.balances.length > 0;
           this.isLoading = false;
+          this.cdr.markForCheck();
         },
         error: (error: JBHError) => {
           this.logger.error('Error loading balance history', 'BalanceHistoryPage', error);
           this.isLoading = false;
           this.hasData = false;
+          this.cdr.markForCheck();
           const errorMessage = error.isValidationError
             ? error.message
             : this.translationService.instant('products.balanceHistory.errors.load');

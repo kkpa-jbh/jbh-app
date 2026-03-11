@@ -388,9 +388,37 @@
       "titleLarge": "Mis Productos"
     },
     "transfer": {
-      "description": "Transferir productos entre ubicaciones",
+      "description": "Transfiere fondos entre tus productos financieros",
+      "errors": {
+        "execute": "No se pudo ejecutar la transferencia. Por favor intenta de nuevo.",
+        "loadProducts": "No se pudieron cargar los productos. Por favor intenta de nuevo."
+      },
+      "formSubtitle": "Mueve fondos entre tus cuentas financieras",
+      "formTitle": "Transferir Fondos",
+      "fromAccount": {
+        "label": "Cuenta Origen",
+        "placeholder": "Selecciona la cuenta de origen"
+      },
+      "saveButton": "Transferir Fondos",
+      "saving": "Transfiriendo...",
+      "success": "Transferencia realizada con éxito",
       "title": "Transferir",
-      "titleLarge": "Transferencia de Productos",
+      "titleLarge": "Transferir Fondos",
+      "toAccount": {
+        "label": "Cuenta Destino",
+        "placeholder": "Selecciona la cuenta de destino"
+      },
+      "totalAmount": {
+        "label": "Monto",
+        "placeholder": "0.00"
+      },
+      "transferDate": {
+        "label": "Fecha de Transferencia"
+      },
+      "validation": {
+        "min": "El monto debe ser mayor a {{min}}",
+        "required": "Este campo es requerido"
+      },
       "welcome": "Página de Transferencia de Productos"
     },
     "types": {

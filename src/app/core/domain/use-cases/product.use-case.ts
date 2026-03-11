@@ -4,6 +4,7 @@ import { ProductRepository } from '../repositories/product.repository';
 import {
   ProductType,
   ProductMetadataConfig,
+  AddTransferRequest,
   CreateProductRequest,
   ProductResponse,
   UpdateProductRequest,
@@ -111,6 +112,12 @@ export class ProductUseCase {
 
   addMovement(productId: string, request: AddMovementRequest): Observable<AddMovementApiResponse> {
     return this.productRepository.addMovement(productId, request).pipe(
+      tap(() => this.clearProductsCache())
+    );
+  }
+
+  executeTransfer(fromAccountId: string, request: AddTransferRequest): Observable<void> {
+    return this.productRepository.executeTransfer(fromAccountId, request).pipe(
       tap(() => this.clearProductsCache())
     );
   }

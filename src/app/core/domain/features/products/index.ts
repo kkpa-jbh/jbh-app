@@ -1,4 +1,5 @@
 // API Requests
+export * from './api/requests/add-transfer.request';
 export * from './api/requests/create-product.request';
 export * from './api/requests/update-product.request';
 

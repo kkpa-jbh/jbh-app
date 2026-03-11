@@ -38,8 +38,9 @@ export class BalanceHistoryFilterComponent implements OnInit {
     private viewportService: ViewportService
   ) {
     addIcons({ calendarOutline, cubeOutline, searchOutline });
-
-    this.maxDate = JbhDatePipe.toPeriod(new Date());
+    const date = new Date();
+    date.setMonth(date.getMonth() - 1);
+    this.maxDate = JbhDatePipe.toPeriod(date);
     this.minStartDate = '2020-01';
     this.selectInterface = this.viewportService.selectInterface;
   }
@@ -50,7 +51,9 @@ export class BalanceHistoryFilterComponent implements OnInit {
 
   private initializeForm(): void {
     const now = new Date();
-    const endPeriod = JbhDatePipe.toPeriod(now);
+    const lastMonth = new Date(now);
+    lastMonth.setMonth(lastMonth.getMonth() - 1);
+    const endPeriod = JbhDatePipe.toPeriod(lastMonth);
 
     const sixMonthsAgo = new Date(now);
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5);

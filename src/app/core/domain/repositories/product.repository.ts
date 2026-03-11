@@ -2,6 +2,7 @@ import { Observable } from 'rxjs';
 import {
   ProductType,
   ProductMetadataConfig,
+  AddTransferRequest,
   CreateProductRequest,
   ProductResponse,
   UpdateProductRequest,
@@ -25,4 +26,5 @@ export abstract class ProductRepository {
   abstract addMovement(productId: string, request: AddMovementRequest): Observable<AddMovementApiResponse>;
   abstract getProductMovements(productId: string): Observable<ProductMovement[]>;
   abstract deleteProductMovement(productId: string, movementId: string): Observable<void>;
+  abstract executeTransfer(fromAccountId: string, request: AddTransferRequest): Observable<void>;
 }

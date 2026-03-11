@@ -7,6 +7,7 @@ import {
   ProductTypeResponse,
   ProductMetadataConfig,
   MetadataFieldConfigResponse,
+  AddTransferRequest,
   CreateProductRequest,
   UpdateProductRequest,
   ProductListItem,
@@ -31,6 +32,7 @@ export class ProductRepositoryImpl extends ApiBaseService implements ProductRepo
   private readonly PRODUCTS_ENDPOINT = '/finance/products';
   private readonly PRODUCT_TYPES_ENDPOINT = '/finance/product-types';
   private readonly METADATA_CONFIG_ENDPOINT = '/finance/products/metadata-config';
+  private readonly TRANSFERS_ENDPOINT = '/finance/products/transfers';
 
   constructor(http: HttpClient, envConfig: EnvironmentConfig, logger: LoggerService) {
     super(http, envConfig, logger);
@@ -99,5 +101,11 @@ export class ProductRepositoryImpl extends ApiBaseService implements ProductRepo
 
   deleteProductMovement(productId: string, movementId: string): Observable<void> {
     return this.delete<void>(`${this.PRODUCTS_ENDPOINT}/movements/${productId}/${movementId}`);
+  }
+
+  executeTransfer(fromAccountId: string, request: AddTransferRequest): Observable<void> {
+    return this.post<void>(`${this.TRANSFERS_ENDPOINT}/`, request, {
+      params: { fromAccountId }
+    });
   }
 }

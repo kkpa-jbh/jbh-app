@@ -388,9 +388,37 @@
       "titleLarge": "My Products"
     },
     "transfer": {
-      "description": "Transfer products between locations",
+      "description": "Transfer funds between your financial products",
+      "errors": {
+        "execute": "Failed to execute the transfer. Please try again.",
+        "loadProducts": "Failed to load products. Please try again."
+      },
+      "formSubtitle": "Move funds between your financial accounts",
+      "formTitle": "Transfer Funds",
+      "fromAccount": {
+        "label": "From Account",
+        "placeholder": "Select source account"
+      },
+      "saveButton": "Transfer Funds",
+      "saving": "Transferring...",
+      "success": "Transfer completed successfully",
       "title": "Transfer",
-      "titleLarge": "Product Transfer",
+      "titleLarge": "Transfer Funds",
+      "toAccount": {
+        "label": "To Account",
+        "placeholder": "Select destination account"
+      },
+      "totalAmount": {
+        "label": "Amount",
+        "placeholder": "0.00"
+      },
+      "transferDate": {
+        "label": "Transfer Date"
+      },
+      "validation": {
+        "min": "Amount must be greater than {{min}}",
+        "required": "This field is required"
+      },
       "welcome": "Product Transfer Page"
     },
     "types": {
