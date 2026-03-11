@@ -24,22 +24,14 @@
         @if (isLoadingProducts) {
           <div class="jbh-skeleton jbh-skeleton-select"></div>
         } @else {
-          <div class="jbh-ion-select-wrapper">
-            <ion-icon name="wallet-outline" class="jbh-ion-select-icon"></ion-icon>
-            <ion-select
-              [(ngModel)]="selectedProductId"
-              [placeholder]="'movements.selectProductPlaceholder' | translate"
-              [interface]="selectInterface"
-              class="jbh-ion-select"
-              (ionChange)="onProductChange()"
-            >
-              @for (product of products; track product.id) {
-                <ion-select-option [value]="product.id">
-                  {{ product.name }}
-                </ion-select-option>
-              }
-            </ion-select>
-          </div>
+          <app-product-select
+            [(ngModel)]="selectedProductId"
+            (ngModelChange)="onProductChange()"
+            [products]="products"
+            [isLoading]="false"
+            [selectInterface]="selectInterface"
+            [placeholder]="'movements.selectProductPlaceholder' | translate"
+          ></app-product-select>
         }
       </div>
     </div>

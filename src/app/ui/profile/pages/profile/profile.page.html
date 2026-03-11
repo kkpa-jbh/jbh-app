@@ -107,25 +107,13 @@
             <label class="jbh-label">
               {{ 'profile.defaultProduct.label' | translate }}
             </label>
-            <div class="jbh-ion-select-wrapper">
-              <ion-icon name="cube-outline" class="jbh-ion-select-icon"></ion-icon>
-              <ion-select
-                formControlName="defaultProductId"
-                [placeholder]="'profile.defaultProduct.placeholder' | translate"
-                [interface]="selectInterface"
-                [interfaceOptions]="{ header: ('profile.defaultProduct.label' | translate) }"
-                class="jbh-ion-select"
-              >
-                <ion-select-option [value]="null">
-                  {{ 'profile.defaultProduct.none' | translate }}
-                </ion-select-option>
-                @for (product of products; track product.id) {
-                  <ion-select-option [value]="product.id">
-                    {{ product.name }}
-                  </ion-select-option>
-                }
-              </ion-select>
-            </div>
+            <app-product-select
+              formControlName="defaultProductId"
+              [products]="products"
+              [selectInterface]="selectInterface"
+              [placeholder]="'profile.defaultProduct.placeholder' | translate"
+              [emptyOption]="{ label: ('profile.defaultProduct.none' | translate), value: null }"
+            ></app-product-select>
           </div>
 
           <!-- Submit Button -->

@@ -1,20 +1,13 @@
 <form [formGroup]="filterForm" class="jbh-balance-filter" (ngSubmit)="onApplyFilter()">
   <div class="jbh-balance-filter-field">
     <label class="jbh-label">{{ 'products.balanceHistory.product.label' | translate }}</label>
-    <div class="jbh-ion-select-wrapper">
-      <ion-icon name="cube-outline" class="jbh-ion-select-icon"></ion-icon>
-      <ion-select
-        formControlName="productId"
-        [interface]="selectInterface"
-        class="jbh-ion-select"
-        [placeholder]="'products.balanceHistory.product.placeholder' | translate"
-      >
-        <ion-select-option value="">{{ 'products.balanceHistory.allProducts' | translate }}</ion-select-option>
-        @for (product of products; track product.id) {
-          <ion-select-option [value]="product.id">{{ product.name }}</ion-select-option>
-        }
-      </ion-select>
-    </div>
+    <app-product-select
+      formControlName="productId"
+      [products]="products"
+      [selectInterface]="selectInterface"
+      [placeholder]="'products.balanceHistory.product.placeholder' | translate"
+      [emptyOption]="{ label: ('products.balanceHistory.allProducts' | translate), value: '' }"
+    ></app-product-select>
   </div>
 
   <div class="jbh-balance-filter-field">

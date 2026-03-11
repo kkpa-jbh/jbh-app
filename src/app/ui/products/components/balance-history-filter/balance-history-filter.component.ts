@@ -4,11 +4,12 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { addIcons } from 'ionicons';
-import { calendarOutline, cubeOutline, searchOutline } from 'ionicons/icons';
+import { calendarOutline, searchOutline } from 'ionicons/icons';
 import { ProductListItem } from '@core/domain/features/products';
 import { MonthlyBalanceRequest } from '@core/domain/features/balance-history';
 import { ViewportService, SelectInterface } from '@core/infrastructure/viewport/viewport.service';
 import { JbhDatePipe } from '@shared/pipes';
+import { ProductSelectComponent } from '@shared/components/product-select/product-select.component';
 
 export interface BalanceFilterEvent {
   productId: string | null;
@@ -21,7 +22,7 @@ export interface BalanceFilterEvent {
   styleUrls: ['./balance-history-filter.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, IonicModule, ReactiveFormsModule, TranslateModule]
+  imports: [CommonModule, IonicModule, ReactiveFormsModule, TranslateModule, ProductSelectComponent]
 })
 export class BalanceHistoryFilterComponent implements OnInit {
   @Input() products: ProductListItem[] = [];
@@ -37,7 +38,7 @@ export class BalanceHistoryFilterComponent implements OnInit {
     private fb: FormBuilder,
     private viewportService: ViewportService
   ) {
-    addIcons({ calendarOutline, cubeOutline, searchOutline });
+    addIcons({ calendarOutline, searchOutline });
     const date = new Date();
     date.setMonth(date.getMonth() - 1);
     this.maxDate = JbhDatePipe.toPeriod(date);

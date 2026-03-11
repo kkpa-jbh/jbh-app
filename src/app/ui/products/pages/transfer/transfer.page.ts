@@ -24,6 +24,7 @@ import { ViewportService, SelectInterface } from '@core/infrastructure/viewport/
 import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
 import { DecimalFormatDirective } from '@shared/directives';
 import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
+import { ProductSelectComponent } from '@shared/components/product-select/product-select.component';
 
 @Component({
   selector: 'app-transfer',
@@ -37,7 +38,8 @@ import { AppHeaderComponent } from '@shared/components/app-header/app-header.com
     IonicModule,
     TranslateModule,
     DecimalFormatDirective,
-    AppHeaderComponent
+    AppHeaderComponent,
+    ProductSelectComponent
   ]
 })
 export class TransferPage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLeave {

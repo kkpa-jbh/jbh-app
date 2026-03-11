@@ -44,22 +44,14 @@
           @if (!hasProductIdFromRoute) {
             <div class="jbh-form-field">
               <label class="jbh-label">{{ 'products.addMovement.product.label' | translate }}</label>
-              <div class="jbh-ion-select-wrapper" [class.error]="hasError('productId')">
-                <ion-icon name="wallet-outline" class="jbh-ion-select-icon"></ion-icon>
-                <ion-select
-                  formControlName="productId"
-                  [interface]="selectInterface"
-                  [placeholder]="'products.addMovement.product.placeholder' | translate"
-                  class="jbh-ion-select"
-                >
-                  @for (prod of products; track prod.id) {
-                    <ion-select-option [value]="prod.id">{{ prod.name }}</ion-select-option>
-                  }
-                </ion-select>
-                @if (isLoadingProducts) {
-                  <ion-spinner name="crescent" class="jbh-select-spinner"></ion-spinner>
-                }
-              </div>
+              <app-product-select
+                formControlName="productId"
+                [products]="products"
+                [isLoading]="isLoadingProducts"
+                [selectInterface]="selectInterface"
+                [placeholder]="'products.addMovement.product.placeholder' | translate"
+                [hasError]="hasError('productId')"
+              ></app-product-select>
               @if (hasError('productId')) {
                 <div class="jbh-field-error">
                   <ion-icon name="alert-circle-outline"></ion-icon>

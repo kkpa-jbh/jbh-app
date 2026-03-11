@@ -33,6 +33,7 @@ import { HeaderActionsService } from '@core/infrastructure/header/header-actions
 import { DecimalFormatDirective } from '@shared/directives';
 import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 import { CategorySelectComponent } from '@shared/components/category-select/category-select.component';
+import { ProductSelectComponent } from '@shared/components/product-select/product-select.component';
 
 @Component({
   selector: 'app-add-movement',
@@ -46,7 +47,8 @@ import { CategorySelectComponent } from '@shared/components/category-select/cate
     TranslateModule,
     DecimalFormatDirective,
     AppHeaderComponent,
-    CategorySelectComponent
+    CategorySelectComponent,
+    ProductSelectComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })

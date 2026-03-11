@@ -29,6 +29,7 @@ import { ViewportService } from '@core/infrastructure/viewport/viewport.service'
 import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 import { JbhDatePipe } from '@shared/pipes/jbh-date.pipe';
 import { JbhCurrencyPipe } from '@shared/pipes/jbh-currency.pipe';
+import { ProductSelectComponent } from '@shared/components/product-select/product-select.component';
 
 @Component({
   selector: 'app-product-movements',
@@ -42,7 +43,8 @@ import { JbhCurrencyPipe } from '@shared/pipes/jbh-currency.pipe';
     TranslateModule,
     AppHeaderComponent,
     JbhDatePipe,
-    JbhCurrencyPipe
+    JbhCurrencyPipe,
+    ProductSelectComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })

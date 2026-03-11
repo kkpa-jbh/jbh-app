@@ -15,22 +15,14 @@
         <!-- From Account -->
         <div class="jbh-form-field">
           <label class="jbh-label">{{ 'products.transfer.fromAccount.label' | translate }}</label>
-          <div class="jbh-ion-select-wrapper" [class.error]="hasError('fromAccountId')">
-            <ion-icon name="wallet-outline" class="jbh-ion-select-icon"></ion-icon>
-            <ion-select
-              formControlName="fromAccountId"
-              [interface]="selectInterface"
-              [placeholder]="'products.transfer.fromAccount.placeholder' | translate"
-              class="jbh-ion-select"
-            >
-              @for (product of products; track product.id) {
-                <ion-select-option [value]="product.id">{{ product.name }}</ion-select-option>
-              }
-            </ion-select>
-            @if (isLoadingProducts) {
-              <ion-spinner name="crescent" class="jbh-select-spinner"></ion-spinner>
-            }
-          </div>
+          <app-product-select
+            formControlName="fromAccountId"
+            [products]="products"
+            [isLoading]="isLoadingProducts"
+            [selectInterface]="selectInterface"
+            [placeholder]="'products.transfer.fromAccount.placeholder' | translate"
+            [hasError]="hasError('fromAccountId')"
+          ></app-product-select>
           @if (hasError('fromAccountId')) {
             <div class="jbh-field-error">
               <ion-icon name="alert-circle-outline"></ion-icon>
@@ -47,22 +39,14 @@
         <!-- To Account -->
         <div class="jbh-form-field">
           <label class="jbh-label">{{ 'products.transfer.toAccount.label' | translate }}</label>
-          <div class="jbh-ion-select-wrapper" [class.error]="hasError('toAccountId')">
-            <ion-icon name="wallet-outline" class="jbh-ion-select-icon"></ion-icon>
-            <ion-select
-              formControlName="toAccountId"
-              [interface]="selectInterface"
-              [placeholder]="'products.transfer.toAccount.placeholder' | translate"
-              class="jbh-ion-select"
-            >
-              @for (product of toAccountProducts; track product.id) {
-                <ion-select-option [value]="product.id">{{ product.name }}</ion-select-option>
-              }
-            </ion-select>
-            @if (isLoadingProducts) {
-              <ion-spinner name="crescent" class="jbh-select-spinner"></ion-spinner>
-            }
-          </div>
+          <app-product-select
+            formControlName="toAccountId"
+            [products]="toAccountProducts"
+            [isLoading]="isLoadingProducts"
+            [selectInterface]="selectInterface"
+            [placeholder]="'products.transfer.toAccount.placeholder' | translate"
+            [hasError]="hasError('toAccountId')"
+          ></app-product-select>
           @if (hasError('toAccountId')) {
             <div class="jbh-field-error">
               <ion-icon name="alert-circle-outline"></ion-icon>
