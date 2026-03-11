@@ -170,7 +170,7 @@
           }
 
           <!-- Conditional Field for BALANCE_SNAPSHOT -->
-          @if (isBalanceSnapshot()) {
+          @if (showOptionalBalanceSnapshotInfo()) {
             <div class="jbh-form-field">
               <label class="jbh-label">{{ 'products.addMovement.balanceSnapshot.label' | translate }}</label>
               <div class="jbh-input-wrapper">

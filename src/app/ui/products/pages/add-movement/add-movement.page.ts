@@ -121,10 +121,20 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
     });
     this.productId = this.route.snapshot.paramMap.get('productId');
     if (this.productId) {
+      // Route scenario: /products/:productId/add-movement
+      // - hasProductIdFromRoute = true → hides the product selector dropdown (HTML: @if (!hasProductIdFromRoute))
+      // - isLoading = true → shows skeleton, hides form until product data arrives (HTML: @if (!isLoading || !hasProductIdFromRoute))
+      // - After loadProduct() resolves: isLoading = false → form becomes visible
+      // - Once product is loaded: shows the product info card (HTML: @if (hasProductIdFromRoute && product))
       this.hasProductIdFromRoute = true;
       this.movementForm.get('productId')?.setValue(this.productId);
       this.loadProduct(this.productId);
     } else {
+      // Free-form scenario: /products/add-movement (no productId in route)
+      // - hasProductIdFromRoute = false → shows the product selector dropdown (HTML: @if (!hasProductIdFromRoute))
+      // - isLoading stays false → form is shown immediately (!isLoading || !hasProductIdFromRoute is always true)
+      // - Product info card is never shown (hasProductIdFromRoute is false)
+      // - Loads preferences to pre-select the default product in the dropdown
       this.hasProductIdFromRoute = false;
       this.loadProductsWithDefaultSelection();
       this.isLoading = false;
@@ -139,7 +149,7 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
     const today = new Date().toISOString().split('T')[0];
     this.movementForm = this.formBuilder.group({
       productId: ['', [Validators.required]],
-      movementType: ['DEPOSIT', [Validators.required]],
+      movementType: ['WITHDRAWAL', [Validators.required]],
       entryDate: [today, [Validators.required]],
       totalAmount: [null],
       categoryId: [null],
@@ -171,19 +181,28 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
     const categoryIdControl = this.movementForm.get('categoryId');
     const balanceSnapshotControl = this.movementForm.get('balanceSnapshot');
 
+    // Reset all validators before applying the ones relevant to the selected type
     totalAmountControl?.clearValidators();
     categoryIdControl?.clearValidators();
     balanceSnapshotControl?.clearValidators();
 
     if (type === 'BALANCE_SNAPSHOT') {
+      // BALANCE_SNAPSHOT: only balanceSnapshot is required/validated
+      // - HTML hides category + totalAmount via @if (!isBalanceSnapshot())
+      // - balanceSnapshot field is always rendered (showOptionalBalanceSnapshotInfo() = true)
       balanceSnapshotControl?.setValidators([Validators.required, Validators.min(0)]);
       totalAmountControl?.setValue(null);
       categoryIdControl?.setValue(null);
       this.categories = [];
     } else {
+      // DEPOSIT or WITHDRAWAL: category + totalAmount are required
+      // - HTML shows category + totalAmount via @if (!isBalanceSnapshot())
+      // - balanceSnapshot field is still rendered (showOptionalBalanceSnapshotInfo() = true always),
+      //   but its value is cleared and no validator is applied, so it's optional/ignored on submit
       totalAmountControl?.setValidators([Validators.required, Validators.min(0.01)]);
       categoryIdControl?.setValidators([Validators.required]);
       balanceSnapshotControl?.setValue(null);
+      // Load categories matching the movement direction (income for DEPOSIT, expense for WITHDRAWAL)
       this.loadCategories(type);
     }
 
@@ -343,6 +362,7 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
         error: async (error: JBHError) => {
           this.logger.error('Error adding movement:', 'AddMovementPage', error);
           this.isSubmitting = false;
+          this.cdr.markForCheck();
           const errorMessage = error.isValidationError
             ? error.message
             : this.translationService.instant('products.addMovement.errors.create');
@@ -386,8 +406,18 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
     return this.translationService.instant('validation.pattern');
   }
 
+  // Controls visibility of category + totalAmount fields in the template (HTML: @if (!isBalanceSnapshot()))
+  // Returns true when movementType === 'BALANCE_SNAPSHOT' → those fields are hidden
   isBalanceSnapshot(): boolean {
     return this.movementForm.get('movementType')?.value === 'BALANCE_SNAPSHOT';
+  }
+
+  // Controls visibility of the balanceSnapshot input field (HTML: @if (showOptionalBalanceSnapshotInfo()))
+  // Currently always returns true → balanceSnapshot field is always rendered for ALL movement types.
+  // For DEPOSIT/WITHDRAWAL, the field has no validator and its value is cleared on type change,
+  // so it is effectively ignored during submission even though it's visible.
+  showOptionalBalanceSnapshotInfo(): boolean {
+    return true;
   }
 
   get maxDate(): string {

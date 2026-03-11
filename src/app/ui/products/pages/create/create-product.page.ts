@@ -346,6 +346,7 @@ export class CreateProductPage implements OnInit, OnDestroy, ViewWillEnter, View
         error: async (error: JBHError) => {
           this.logger.error('Error creating product:', 'CreateProductPage', error);
           this.isSubmitting = false;
+          this.cdr.markForCheck();
           const errorMessage = (error.isValidationError)
             ? error.message
             : this.translationService.instant('products.create.errors.create');

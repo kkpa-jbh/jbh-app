@@ -379,6 +379,7 @@ export class EditProductPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
         error: async (error: JBHError) => {
           this.logger.error('Error updating product:', 'EditProductPage', error);
           this.isSubmitting = false;
+          this.cdr.markForCheck();
           const errorMessage = (error.isValidationError)
             ? error.message
             : this.translationService.instant('products.edit.errors.update');

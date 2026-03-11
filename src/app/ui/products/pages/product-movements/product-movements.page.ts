@@ -212,7 +212,7 @@ export class ProductMovementsPage implements OnInit, OnDestroy, ViewWillEnter, V
         },
         error: (error: JBHError) => {
           this.logger.error('Error deleting movement', 'ProductMovementsPage', error);
-
+          this.cdr.markForCheck();
           const errorMessage = error.isValidationError
             ? error.message
             : this.translationService.instant('movements.errors.delete');
