@@ -56,7 +56,7 @@ http://localhost:8100/login
 
 The app calls `jbh-gateway` at `http://localhost:8080/jbh-api` (through the dev proxy).
 The gateway needs `jbh-iam` and `jbh-personal-finance` running and registered in Consul.
-See `kkpa-jbh/README.md` (start order) for the full list.
+See `jbh-deploy/README.md` (start order) for the full list.
 
 ### 2. Test Login Flow
 
