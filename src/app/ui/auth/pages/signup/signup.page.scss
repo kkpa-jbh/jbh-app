@@ -103,6 +103,10 @@
 // ============================================
 
 .signup-form {
+  .social-login {
+    margin-bottom: var(--jbh-spacing-md);
+  }
+
   .login-link {
     text-align: center;
     font-size: var(--jbh-font-size-base);

@@ -50,9 +50,10 @@
     "continueWithGoogle": "Continue with Google",
     "errors": {
       "generic": "An error occurred. Please try again later.",
+      "google": "Google sign-in failed. Please try again.",
       "invalidCredentials": "Invalid username or password. Please try again."
     },
-    "footer": "© 2025 Your Company. All rights reserved.",
+    "footer": "© {{year}} JBH. All rights reserved.",
     "forgotPassword": "Forgot password?",
     "noAccount": "Don't have an account?",
     "password": {

@@ -50,9 +50,10 @@
     "continueWithGoogle": "Continuar con Google",
     "errors": {
       "generic": "Ocurrió un error. Por favor intenta más tarde.",
+      "google": "No se pudo iniciar sesión con Google. Por favor intenta de nuevo.",
       "invalidCredentials": "Usuario o contraseña inválidos. Por favor intenta de nuevo."
     },
-    "footer": "© 2025 Tu Empresa. Todos los derechos reservados.",
+    "footer": "© {{year}} JBH. Todos los derechos reservados.",
     "forgotPassword": "¿Olvidaste tu contraseña?",
     "noAccount": "¿No tienes una cuenta?",
     "password": {

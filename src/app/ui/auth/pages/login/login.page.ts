@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -21,6 +21,7 @@ import { AuthUseCase } from '@core/domain/use-cases/auth.use-case';
 import { JBHError } from '@core/domain/models/jbh-error.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
+import { GoogleSignInService } from '@core/infrastructure/auth/google-sign-in.service';
 
 @Component({
   selector: 'app-login',
@@ -36,13 +37,16 @@ import { LoggerService } from '@core/infrastructure/logging/logger.service';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class LoginPage implements OnInit, OnDestroy {
+export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('googleButton') googleButton?: ElementRef<HTMLElement>;
+
   private destroy$ = new Subject<void>();
 
   loginForm!: FormGroup;
   isLoading = false;
   errorMessage = '';
   showPassword = false;
+  readonly currentYear = new Date().getFullYear();
   private returnUrl: string = '/home';
 
   constructor(
@@ -52,7 +56,8 @@ export class LoginPage implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     public translationService: TranslationService,
     private logger: LoggerService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private googleSignIn: GoogleSignInService
   ) {
     addIcons({
       shieldCheckmark,
@@ -79,6 +84,17 @@ export class LoginPage implements OnInit, OnDestroy {
           this.returnUrl = params['returnUrl'];
         }
       });
+  }
+
+  get googleEnabled(): boolean {
+    return this.googleSignIn.isEnabled;
+  }
+
+  ngAfterViewInit(): void {
+    if (!this.googleButton) return;
+    this.googleSignIn
+      .renderButton(this.googleButton.nativeElement, 'continue_with', idToken => this.onGoogleCredential(idToken))
+      .catch(error => this.logger.error('Google button failed to load', 'LoginPage', error));
   }
 
   ngOnDestroy(): void {
@@ -126,6 +142,32 @@ export class LoginPage implements OnInit, OnDestroy {
           this.errorMessage = (error instanceof JBHError && error.isValidationError)
             ? error.message
             : this.translationService.instant('login.errors.invalidCredentials');
+          this.cdr.markForCheck();
+        }
+      });
+  }
+
+  /**
+   * Handle the ID token returned by Google's button
+   */
+  private onGoogleCredential(idToken: string): void {
+    this.errorMessage = '';
+    this.isLoading = true;
+    this.cdr.markForCheck();
+
+    this.authUseCase.loginWithGoogle(idToken)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (user) => {
+          this.logger.info('Google login successful', 'LoginPage', user);
+          this.isLoading = false;
+          this.cdr.markForCheck();
+          this.router.navigateByUrl(this.returnUrl);
+        },
+        error: (error) => {
+          this.logger.error('Google login failed:', 'LoginPage', error);
+          this.isLoading = false;
+          this.errorMessage = this.translationService.instant('login.errors.google');
           this.cdr.markForCheck();
         }
       });

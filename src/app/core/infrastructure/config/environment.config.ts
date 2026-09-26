@@ -54,6 +54,10 @@ export class EnvironmentConfig {
     return this.env.api.retryAttempts;
   }
 
+  get googleClientId(): string {
+    return this.env.google.clientId;
+  }
+
   get features(): FeatureConfig {
     return this.env.features;
   }

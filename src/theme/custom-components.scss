@@ -215,6 +215,35 @@
   width: 100%;
 }
 
+// Google sign-in button in the JBH palette.
+// Google only returns an ID token from its own iframe button, and that iframe cannot be restyled.
+// So our button is the visual, and Google's button sits on top, almost transparent, to take the click.
+.jbh-google-button {
+  position: relative;
+
+  .jbh-google-button-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    // 0.01, not 0: some browsers ignore clicks on fully transparent iframes.
+    opacity: 0.01;
+  }
+
+  // The pointer is over Google's iframe, so hover and focus are read from the wrapper.
+  &:hover .jbh-button-secondary {
+    background: var(--jbh-background-light);
+    border-color: var(--jbh-primary-color);
+  }
+
+  &:focus-within .jbh-button-secondary {
+    border-color: var(--jbh-primary-color);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25);
+  }
+}
+
 .jbh-button-loading {
   pointer-events: none;
 

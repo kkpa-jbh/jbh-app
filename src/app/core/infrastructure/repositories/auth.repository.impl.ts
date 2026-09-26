@@ -23,6 +23,7 @@ export class AuthRepositoryImpl extends ApiBaseService implements AuthRepository
 
   private readonly AUTH_ENDPOINTS = {
     LOGIN: '/auth/signin',
+    LOGIN_GOOGLE: '/auth/google',
     LOGOUT: '/auth/logout',
     REFRESH: '/auth/refresh',
     REGISTER: '/auth/signup',
@@ -51,6 +52,22 @@ export class AuthRepositoryImpl extends ApiBaseService implements AuthRepository
       },
       {
         context: new HttpContext().set(IS_PUBLIC_API, true) // Mark as public API
+      }
+    ).pipe(
+      map(response => this.mapToAuthToken(response))
+    );
+  }
+
+  /**
+   * Login with a Google ID token
+   * This is a PUBLIC API - the backend verifies the token with Google
+   */
+  loginWithGoogle(idToken: string): Observable<AuthToken> {
+    return this.post<any>(
+      this.AUTH_ENDPOINTS.LOGIN_GOOGLE,
+      { idToken },
+      {
+        context: new HttpContext().set(IS_PUBLIC_API, true)
       }
     ).pipe(
       map(response => this.mapToAuthToken(response))

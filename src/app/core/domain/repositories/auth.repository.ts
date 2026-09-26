@@ -17,6 +17,13 @@ export abstract class AuthRepository {
   abstract login(credentials: LoginCredentials): Observable<AuthToken>;
 
   /**
+   * Login with a Google ID token
+   * @param idToken - ID token returned by Google Identity Services
+   * @returns Observable of authentication token
+   */
+  abstract loginWithGoogle(idToken: string): Observable<AuthToken>;
+
+  /**
    * Refresh the authentication token
    * @param refreshToken - Optional refresh token (for mobile apps).
    *                       If not provided, expects refresh token from HTTP-only cookies (web/PWA)

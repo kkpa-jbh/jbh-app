@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
@@ -16,12 +16,14 @@ import {
   eyeOffOutline,
   checkmarkCircle,
   closeCircle,
-  informationCircle
+  informationCircle,
+  logoGoogle
 } from 'ionicons/icons';
 import { AuthUseCase } from '@core/domain/use-cases/auth.use-case';
 import { JBHError } from '@core/domain/models/jbh-error.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
+import { GoogleSignInService } from '@core/infrastructure/auth/google-sign-in.service';
 import { Subject, Observable, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, map, catchError, takeUntil } from 'rxjs/operators';
 
@@ -39,13 +41,15 @@ import { debounceTime, distinctUntilChanged, switchMap, map, catchError, takeUnt
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SignupPage implements OnInit, OnDestroy {
+export class SignupPage implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('googleButton') googleButton?: ElementRef<HTMLElement>;
 
   signupForm!: FormGroup;
   isLoading = false;
   errorMessage = '';
   showPassword = false;
   showConfirmPassword = false;
+  readonly currentYear = new Date().getFullYear();
 
   usernameAvailable: boolean | null = null;
   emailAvailable: boolean | null = null;
@@ -62,7 +66,8 @@ export class SignupPage implements OnInit, OnDestroy {
     private router: Router,
     public translationService: TranslationService,
     private logger: LoggerService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private googleSignIn: GoogleSignInService
   ) {
     addIcons({
       personAdd,
@@ -75,7 +80,8 @@ export class SignupPage implements OnInit, OnDestroy {
       eyeOffOutline,
       checkmarkCircle,
       closeCircle,
-      informationCircle
+      informationCircle,
+      logoGoogle
     });
   }
 
@@ -221,6 +227,43 @@ export class SignupPage implements OnInit, OnDestroy {
           this.errorMessage = (error instanceof JBHError && error.isValidationError)
             ? error.message
             : this.translationService.instant('signup.errors.generic');
+          this.cdr.markForCheck();
+        }
+      });
+  }
+
+  get googleEnabled(): boolean {
+    return this.googleSignIn.isEnabled;
+  }
+
+  ngAfterViewInit(): void {
+    if (!this.googleButton) return;
+    this.googleSignIn
+      .renderButton(this.googleButton.nativeElement, 'continue_with', idToken => this.onGoogleCredential(idToken))
+      .catch(error => this.logger.error('Google button failed to load', 'SignupPage', error));
+  }
+
+  /**
+   * Handle the ID token returned by Google's button. The backend creates the account on first use.
+   */
+  private onGoogleCredential(idToken: string): void {
+    this.errorMessage = '';
+    this.isLoading = true;
+    this.cdr.markForCheck();
+
+    this.authUseCase.loginWithGoogle(idToken)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (user) => {
+          this.logger.info('Google signup successful', 'SignupPage', user);
+          this.isLoading = false;
+          this.cdr.markForCheck();
+          this.router.navigate(['/home']);
+        },
+        error: (error) => {
+          this.logger.error('Google signup failed:', 'SignupPage', error);
+          this.isLoading = false;
+          this.errorMessage = this.translationService.instant('login.errors.google');
           this.cdr.markForCheck();
         }
       });

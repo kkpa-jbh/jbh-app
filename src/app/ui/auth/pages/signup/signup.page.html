@@ -221,6 +221,22 @@
           }
         </button>
 
+        @if (googleEnabled) {
+          <div class="jbh-divider">
+            <span>{{ 'common.or' | translate }}</span>
+          </div>
+
+          <div class="social-login">
+            <div class="jbh-google-button">
+              <button type="button" class="jbh-button-secondary jbh-button-block" tabindex="-1" aria-hidden="true">
+                <ion-icon name="logo-google"></ion-icon>
+                <span>{{ 'login.continueWithGoogle' | translate }}</span>
+              </button>
+              <div #googleButton class="jbh-google-button-overlay"></div>
+            </div>
+          </div>
+        }
+
         <!-- Login Link -->
         <div class="login-link">
           <span>{{ 'signup.haveAccount' | translate }}</span>
@@ -232,7 +248,7 @@
 
     <!-- Footer -->
     <div class="signup-footer">
-      <p>{{ 'login.footer' | translate }}</p>
+      <p>{{ 'login.footer' | translate: { year: currentYear } }}</p>
     </div>
 
   </div>

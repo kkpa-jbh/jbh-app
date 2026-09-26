@@ -67,8 +67,22 @@ export class AuthUseCase {
    */
   login(username: string, password: string): Observable<User> {
     const credentials = new LoginCredentials(username, password);
+    return this.startSession(this.authRepository.login(credentials));
+  }
 
-    return this.authRepository.login(credentials).pipe(
+  /**
+   * Login with a Google ID token
+   * @param idToken - ID token returned by Google Identity Services
+   */
+  loginWithGoogle(idToken: string): Observable<User> {
+    return this.startSession(this.authRepository.loginWithGoogle(idToken));
+  }
+
+  /**
+   * Save the token, then load the user profile. Shared by every login method.
+   */
+  private startSession(token$: Observable<AuthToken>): Observable<User> {
+    return token$.pipe(
       switchMap(token => {
         // Save token to storage
         return from(this.tokenStorage.saveToken(token)).pipe(
