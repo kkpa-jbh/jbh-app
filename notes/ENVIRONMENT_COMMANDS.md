@@ -7,7 +7,7 @@ ionic serve
 # or
 npm start
 ```
-**API URL**: `http://localhost:8080/jbh-api`
+**API URL**: `/jbh-api` (relative; `proxy.conf.json` sends it to `jbh-gateway` at `http://localhost:8080`)
 
 ---
 
@@ -40,7 +40,7 @@ ionic build --configuration=production && ionic cap sync ios && ionic cap open i
 # Build and sync for Android production
 ionic build --configuration=production && ionic cap sync android && ionic cap open android
 ```
-**API URL**: `https://api.yourdomain.com/jbh-api` (update in `environment.prod.ts`)
+**API URL**: `/jbh-api`, same host as the app (`https://jbh.usemagus.cloud`). Set in `environment.prod.ts`.
 
 ---
 

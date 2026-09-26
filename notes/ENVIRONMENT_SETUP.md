@@ -6,9 +6,9 @@ This project supports three environments: **Local**, **Staging (STG)**, and **Pr
 
 | Environment | File | API URL |
 |-------------|------|---------|
-| Local (Development) | `src/environments/environment.ts` | `http://localhost:8080/jbh-api` |
+| Local (Development) | `src/environments/environment.ts` | `/jbh-api` (proxied to `http://localhost:8080`) |
 | Staging | `src/environments/environment.stg.ts` | `https://stg-api.yourdomain.com/jbh-api` |
-| Production | `src/environments/environment.prod.ts` | `https://api.yourdomain.com/jbh-api` |
+| Production | `src/environments/environment.prod.ts` | `/jbh-api` (same host: `https://jbh.usemagus.cloud`, Nginx sends it to the gateway) |
 
 ## Environment Configuration Structure
 
@@ -154,9 +154,9 @@ import { EnvironmentConfig } from '@core/infrastructure/config/environment.confi
 constructor(private envConfig: EnvironmentConfig) {
   // Build full URL
   const url = this.envConfig.buildApiUrl('/users');
-  // Returns: http://localhost:8080/jbh-api/users (local)
+  // Returns: /jbh-api/users (local, proxied to http://localhost:8080)
   //      or: https://stg-api.yourdomain.com/jbh-api/users (staging)
-  //      or: https://api.yourdomain.com/jbh-api/users (production)
+  //      or: /jbh-api/users → https://jbh.usemagus.cloud/jbh-api/users (production)
 }
 ```
 

@@ -25,10 +25,11 @@ import { JBHError } from '@core/domain/models/jbh-error.model';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
-import { ViewportService } from '@core/infrastructure/viewport/viewport.service';
+import { SelectInterface, ViewportService } from '@core/infrastructure/viewport/viewport.service';
 import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 import { JbhDatePipe } from '@shared/pipes/jbh-date.pipe';
 import { JbhCurrencyPipe } from '@shared/pipes/jbh-currency.pipe';
+import { JbhDisplayNamePipe } from '@shared/pipes/jbh-display-name.pipe';
 import { ProductSelectComponent } from '@shared/components/product-select/product-select.component';
 
 @Component({
@@ -44,6 +45,7 @@ import { ProductSelectComponent } from '@shared/components/product-select/produc
     AppHeaderComponent,
     JbhDatePipe,
     JbhCurrencyPipe,
+    JbhDisplayNamePipe,
     ProductSelectComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -54,7 +56,7 @@ export class ProductMovementsPage implements OnInit, OnDestroy, ViewWillEnter, V
   selectedProductId: string = '';
   isLoadingProducts = true;
   isLoadingMovements = false;
-  selectInterface = 'action-sheet';
+  selectInterface: SelectInterface = 'action-sheet';
 
   private destroy$ = new Subject<void>();
 

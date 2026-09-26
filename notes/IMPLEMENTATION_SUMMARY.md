@@ -257,9 +257,9 @@ FirebaseMessaging.getInstance().send(message);
 ionic build --prod
 
 # Serve locally (service workers only work with production build)
-npx http-server www -p 8080
+npx http-server www -p 8081 -P http://localhost:8080   # not 8080: jbh-gateway uses it. -P sends /jbh-api calls to the gateway (the prod build uses a relative /jbh-api)
 
-# Open: http://localhost:8080
+# Open: http://localhost:8081
 
 # Make a change, rebuild, and watch for update notification
 ```

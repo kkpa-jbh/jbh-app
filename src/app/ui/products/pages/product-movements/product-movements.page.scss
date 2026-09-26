@@ -4,15 +4,18 @@
 }
 
 .movements-table-header {
-  display: flex;
   background: var(--jbh-background-light);
   border-bottom: 1px solid var(--jbh-border-color);
-  padding: var(--jbh-spacing-sm) var(--jbh-spacing-md);
   font-size: var(--jbh-font-size-xs);
   font-weight: var(--jbh-font-weight-semibold);
   color: var(--jbh-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
+
+  .movements-table-row {
+    padding-top: var(--jbh-spacing-sm);
+    padding-bottom: var(--jbh-spacing-sm);
+  }
 }
 
 .movements-table-row {

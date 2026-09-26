@@ -6,7 +6,7 @@ Your Ionic/Angular application now supports **three separate environments**:
 
 ### 1. Local Development
 - **File**: `src/environments/environment.ts`
-- **API**: `http://localhost:8080/jbh-api`
+- **API**: `/jbh-api` (relative; `proxy.conf.json` sends it to `jbh-gateway` at `http://localhost:8080`)
 - **Command**: `ionic serve`
 
 ### 2. Staging (STG)
@@ -16,7 +16,7 @@ Your Ionic/Angular application now supports **three separate environments**:
 
 ### 3. Production (PROD)
 - **File**: `src/environments/environment.prod.ts`
-- **API**: `https://api.yourdomain.com/jbh-api` *(update this)*
+- **API**: `/jbh-api` (same host as the app: `https://jbh.usemagus.cloud`)
 - **Command**: `ionic build --configuration=production`
 
 ---
@@ -81,7 +81,7 @@ export class UserRepositoryImpl extends ApiBaseService {
 
   getUsers(): Observable<User[]> {
     return this.get<User[]>('/users');
-    // Local: http://localhost:8080/jbh-api/users
+    // Local: /jbh-api/users (proxied to http://localhost:8080)
     // Staging: https://stg-api.yourdomain.com/jbh-api/users
     // Production: https://api.yourdomain.com/jbh-api/users
   }

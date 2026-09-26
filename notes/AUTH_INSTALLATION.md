@@ -279,7 +279,7 @@ export const routes: Routes = [
 **src/environments/environment.ts** (already configured):
 ```typescript
 api: {
-  baseUrl: 'http://localhost:8080/jbh-api',
+  baseUrl: '/jbh-api',  // relative: proxy.conf.json sends it to jbh-gateway (http://localhost:8080)
   timeout: 30000,
   retryAttempts: 3
 }

@@ -54,10 +54,9 @@ http://localhost:8100/login
 
 ### 1. Make Sure Your Backend API is Running
 
-Your backend should be running at:
-```
-http://localhost:8080/jbh-api
-```
+The app calls `jbh-gateway` at `http://localhost:8080/jbh-api` (through the dev proxy).
+The gateway needs `jbh-iam` and `jbh-personal-finance` running and registered in Consul.
+See `kkpa-jbh/README.md` (start order) for the full list.
 
 ### 2. Test Login Flow
 
@@ -115,7 +114,7 @@ Make sure your backend API has CORS enabled for `http://localhost:8100`
 ### Issue: Cannot connect to API
 
 **Solution:**
-1. Verify backend is running: `curl http://localhost:8080/jbh-api/health`
+1. Verify the gateway is running: `curl http://localhost:8080/actuator/health`
 2. Check API URL in `src/environments/environment.ts`
 3. Check browser Network tab for the actual API call
 
@@ -184,7 +183,7 @@ ionic cap open android
 ### Local Development (default)
 ```bash
 npm start
-# Uses: http://localhost:8080/jbh-api
+# Uses: /jbh-api, proxied to http://localhost:8080 (jbh-gateway)
 ```
 
 ### Staging
@@ -252,7 +251,7 @@ Open console in browser, you should see:
 === Environment Configuration ===
 Environment: local
 Production: false
-API Base URL: http://localhost:8080/jbh-api
+API Base URL: /jbh-api
 Debug Mode: true
 ================================
 ```

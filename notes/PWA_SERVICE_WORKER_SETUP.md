@@ -177,10 +177,10 @@ this.swUpdateService.updateAvailable$.subscribe(async (status) => {
 ionic build --prod
 
 # Serve the build (service workers only work in production mode)
-npx http-server www -p 8080
+npx http-server www -p 8081 -P http://localhost:8080   # not 8080: jbh-gateway uses it. -P sends /jbh-api calls to the gateway (the prod build uses a relative /jbh-api)
 ```
 
-Open: http://localhost:8080
+Open: http://localhost:8081
 
 ### 2. Simulate an Update
 
@@ -288,7 +288,7 @@ const CACHE_NAME = `jbh-app-${APP_VERSION}`;
 **Solution**: Build and serve production version:
 ```bash
 ionic build --prod
-npx http-server www -p 8080
+npx http-server www -p 8081 -P http://localhost:8080   # not 8080: jbh-gateway uses it. -P sends /jbh-api calls to the gateway (the prod build uses a relative /jbh-api)
 ```
 
 ---

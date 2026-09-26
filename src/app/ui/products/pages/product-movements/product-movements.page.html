@@ -113,8 +113,8 @@
                 </div>
 
                 <div class="movements-cell movements-cell-category" role="cell">
-                  @if (movement.categoryLabel) {
-                    <span>{{ movement.categoryLabel }}</span>
+                  @if (movement.category) {
+                    <span>{{ movement.category.displayName | jbhDisplayName : movement.category.alias }}</span>
                   } @else {
                     <span class="jbh-text-muted">-</span>
                   }
@@ -188,10 +188,10 @@
                 {{ movement.description || ('movements.noDescription' | translate) }}
               </div>
 
-              @if (movement.categoryLabel) {
+              @if (movement.category) {
                 <div class="movement-card-category">
                   <span class="label">{{ 'movements.table.category' | translate }}:</span>
-                  <span>{{ movement.categoryLabel }}</span>
+                  <span>{{ movement.category.displayName | jbhDisplayName : movement.category.alias }}</span>
                 </div>
               }
 

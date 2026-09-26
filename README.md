@@ -74,8 +74,17 @@ All colors are defined in `src/theme/custom-components.scss`.
 
 ## Documentation
 
-- [Architecture](docs/architecture.md)
-- [Theming](docs/theming.md)
-- [Forms](docs/forms.md)
-- [i18n](docs/i18n.md)
-- [Responsive](docs/responsive.md)
+- [Architecture](.claude/docs/architecture.md)
+- [UX & Design System](.claude/docs/ux-design-system.md)
+- [Theming](.claude/docs/theming.md)
+- [Forms](.claude/docs/forms.md)
+- [i18n](.claude/docs/i18n.md)
+- [Responsive](.claude/docs/responsive.md)
+- Setup and auth guides: [`notes/`](notes/) (environments, auth, refresh token, CORS, PWA, Firebase)
+
+## Backend connection
+
+- All API calls use the base URL `/jbh-api` (`src/environments/environment.ts`).
+- In local dev, `proxy.conf.json` sends `/jbh-api` to `jbh-gateway` at `http://localhost:8080`.
+- The app never calls `jbh-iam` or `jbh-personal-finance` directly.
+- See the `README.md` in the parent folder for the full system map.

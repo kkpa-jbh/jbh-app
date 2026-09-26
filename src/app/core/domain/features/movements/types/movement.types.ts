@@ -13,6 +13,7 @@ export type MovementType = 'DEPOSIT' | 'WITHDRAWAL' | 'BALANCE_SNAPSHOT';
 export interface CategoryTypeApiResponse {
   source: 'INCOME' | 'EXPENSE';
   alias: string;
+  displayName?: Record<string, string>;
 }
 
 /**

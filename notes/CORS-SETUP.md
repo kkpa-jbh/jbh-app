@@ -1,5 +1,7 @@
 # CORS Configuration Guide
 
+> **Production (current setup):** the app and the API share one host, `https://jbh.usemagus.cloud`. Nginx serves the app at `/` and sends `/jbh-api` to `jbh-gateway`. Same origin means **no CORS is needed**. The CORS steps below apply only if you split the app and the API into two domains, or ship native mobile builds.
+
 ## Overview
 This document explains the Cross-Origin Resource Sharing (CORS) setup for the JBH application.
 
