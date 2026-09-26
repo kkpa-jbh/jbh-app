@@ -8,7 +8,7 @@ This project supports three environments: **Local**, **Staging (STG)**, and **Pr
 |-------------|------|---------|
 | Local (Development) | `src/environments/environment.ts` | `/jbh-api` (proxied to `http://localhost:8080`) |
 | Staging | `src/environments/environment.stg.ts` | `https://stg-api.yourdomain.com/jbh-api` |
-| Production | `src/environments/environment.prod.ts` | `/jbh-api` (same host: `https://jbh.usemagus.cloud`, Nginx sends it to the gateway) |
+| Production | `src/environments/environment.prod.ts` | `/jbh-api` (same host: `https://jbh.usemagus.cloud`, Caddy sends it to the gateway) |
 
 ## Environment Configuration Structure
 

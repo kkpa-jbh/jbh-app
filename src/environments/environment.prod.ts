@@ -3,7 +3,7 @@ export const environment = {
   environmentName: 'production',
   appVersion: '1.0.0',
   api: {
-    // Relative: the app and the API share one host (https://jbh.usemagus.cloud). Nginx sends /jbh-api to jbh-gateway.
+    // Relative: the app and the API share one host (https://jbh.usemagus.cloud). Magus's Caddy sends /jbh-api to jbh-gateway.
     baseUrl: '/jbh-api',
     timeout: 30000,
     retryAttempts: 3

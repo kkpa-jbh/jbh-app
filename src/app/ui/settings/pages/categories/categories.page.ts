@@ -42,8 +42,7 @@ export class CategoriesPage implements OnInit, OnDestroy, ViewWillEnter, ViewWil
 
   ionViewWillEnter(): void {
     this.headerActions.setPageConfig({
-      title: 'categories.title',
-      showBackButton: true
+      title: 'categories.title'
     });
     this.loadCategories();
   }

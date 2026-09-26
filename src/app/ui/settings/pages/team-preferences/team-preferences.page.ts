@@ -33,8 +33,7 @@ export class TeamPreferencesPage implements OnInit, OnDestroy, ViewWillEnter, Vi
 
   ionViewWillEnter(): void {
     this.headerActions.setPageConfig({
-      title: 'settings.teamPreferences.title',
-      showBackButton: true
+      title: 'settings.teamPreferences.title'
     });
   }
 
