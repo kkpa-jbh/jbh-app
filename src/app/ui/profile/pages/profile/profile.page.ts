@@ -151,6 +151,7 @@ export class ProfilePage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLe
       .subscribe({
         next: async () => {
           this.isSubmitting = false;
+          this.translationService.setLanguage(request.defaultLang.toLowerCase());
           await this.showToast(this.translationService.instant('profile.success'), 'success');
         },
         error: async (error) => {
