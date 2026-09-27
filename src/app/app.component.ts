@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { IonApp, IonRouterOutlet, IonMenu, IonContent, ToastController } from '@ionic/angular/standalone';
+import { IonApp, IonRouterOutlet, IonMenu, IonContent } from '@ionic/angular/standalone';
 import { EMPTY, catchError, distinctUntilChanged, filter, map, switchMap } from 'rxjs';
 import { TranslationService } from './core/infrastructure/i18n/translation.service';
 import { PushNotificationService } from './core/infrastructure/push/push-notification.service';
-import { SwUpdateService } from './core/infrastructure/pwa/sw-update.service';
+import { ServiceWorkerCleanupService } from './core/infrastructure/pwa/service-worker-cleanup.service';
 import { LoggerService } from './core/infrastructure/logging/logger.service';
 import { AppMenuComponent } from './shared/components/app-menu/app-menu.component';
 import { AuthUseCase } from './core/domain/use-cases/auth.use-case';
@@ -18,8 +18,7 @@ export class AppComponent implements OnInit {
   constructor(
     private translationService: TranslationService,
     private pushNotificationService: PushNotificationService,
-    private swUpdateService: SwUpdateService,
-    private toastController: ToastController,
+    private serviceWorkerCleanup: ServiceWorkerCleanupService,
     private logger: LoggerService,
     private authUseCase: AuthUseCase,
     private preferencesUseCase: PreferencesUseCase
@@ -30,6 +29,9 @@ export class AppComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this.applyUserLanguage();
 
+    // No service worker any more: remove the old one, which served stale app versions and cached API data.
+    await this.serviceWorkerCleanup.cleanUp();
+
     // Initialize push notifications (native apps only)
     await this.pushNotificationService.initialize();
 
@@ -39,36 +41,6 @@ export class AppComponent implements OnInit {
         this.logger.debug('FCM Token ready to send to backend:', 'AppComponent', token);
         // Send token to your Java microservice
         this.pushNotificationService.sendTokenToBackend(token);
-      }
-    });
-
-    // Initialize service worker for PWA auto-updates (web only)
-    await this.swUpdateService.initialize();
-
-    // Subscribe to update notifications
-    this.swUpdateService.updateAvailable$.subscribe(async (status) => {
-      if (status.available) {
-        // Show toast notification for available update
-        const toast = await this.toastController.create({
-          message: this.translationService.instant('pwa.updateAvailable'),
-          duration: 0, // Don't auto-dismiss
-          position: 'bottom',
-          color: 'primary',
-          buttons: [
-            {
-              text: this.translationService.instant('pwa.updateNow'),
-              role: 'confirm',
-              handler: () => {
-                this.swUpdateService.applyUpdate();
-              }
-            },
-            {
-              text: this.translationService.instant('common.cancel'),
-              role: 'cancel'
-            }
-          ]
-        });
-        await toast.present();
       }
     });
   }

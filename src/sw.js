@@ -1,114 +1,23 @@
-// JBH App Service Worker
-// Handles automatic updates for PWA
+// Kill switch for the old JBH service worker.
+//
+// The old worker answered every request from its cache first, including index.html and /jbh-api calls,
+// so browsers kept showing an old app version and old data after a deploy. Browsers that still have it
+// fetch this file on their next visit (the bytes changed), install it, and this worker then deletes every
+// cache, unregisters itself and reloads the open tabs from the network.
+//
+// Keep this file published for some months, so browsers that visit rarely also get cleaned. It has no
+// fetch handler on purpose: every request goes to the network.
 
-const CACHE_NAME = 'jbh-app-v1';
-const AUTO_UPDATE_INTERVAL = 60000; // Check for updates every 60 seconds
-
-// Assets to cache on install
-const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/styles.css',
-  '/main.js',
-  '/polyfills.js',
-  '/runtime.js'
-];
-
-// Install event - cache initial assets
-self.addEventListener('install', (event) => {
-  console.log('[ServiceWorker] Installing...');
-
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      console.log('[ServiceWorker] Caching app shell');
-      return cache.addAll(ASSETS_TO_CACHE);
-    }).then(() => {
-      // Force this service worker to become active immediately
-      return self.skipWaiting();
-    })
-  );
+self.addEventListener('install', () => {
+  self.skipWaiting();
 });
 
-// Activate event - clean old caches
 self.addEventListener('activate', (event) => {
-  console.log('[ServiceWorker] Activating...');
-
-  event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('[ServiceWorker] Removing old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    }).then(() => {
-      // Take control of all clients immediately
-      return self.clients.claim();
-    })
-  );
+  event.waitUntil((async () => {
+    const cacheNames = await caches.keys();
+    await Promise.all(cacheNames.map((name) => caches.delete(name)));
+    await self.registration.unregister();
+    const windows = await self.clients.matchAll({ type: 'window' });
+    windows.forEach((client) => client.navigate(client.url));
+  })());
 });
-
-// Fetch event - serve from cache, fallback to network
-self.addEventListener('fetch', (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      // Cache hit - return response
-      if (response) {
-        return response;
-      }
-
-      // Clone the request
-      const fetchRequest = event.request.clone();
-
-      return fetch(fetchRequest).then((response) => {
-        // Check if valid response
-        if (!response || response.status !== 200 || response.type !== 'basic') {
-          return response;
-        }
-
-        // Clone the response
-        const responseToCache = response.clone();
-
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
-        });
-
-        return response;
-      });
-    })
-  );
-});
-
-// Listen for messages from app
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
-
-  if (event.data && event.data.type === 'CHECK_UPDATE') {
-    // Force update check
-    self.registration.update().then(() => {
-      console.log('[ServiceWorker] Update check completed');
-    });
-  }
-});
-
-// Periodic background sync (if supported)
-self.addEventListener('periodicsync', (event) => {
-  if (event.tag === 'update-check') {
-    event.waitUntil(checkForUpdates());
-  }
-});
-
-async function checkForUpdates() {
-  try {
-    const registration = await self.registration.update();
-    console.log('[ServiceWorker] Background update check completed');
-  } catch (error) {
-    console.error('[ServiceWorker] Background update check failed:', error);
-  }
-}
-
-console.log('[ServiceWorker] Service Worker loaded');

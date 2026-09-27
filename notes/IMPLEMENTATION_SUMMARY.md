@@ -206,6 +206,10 @@ FirebaseMessaging.getInstance().send(message);
 
 ## 3. PWA Auto-Updates (Service Worker)
 
+> **Removed on 2026-09-26.** The cache version in `src/sw.js` was never raised, so browsers never saw an update and
+> kept serving an old app and old `/jbh-api` data from the cache. `src/sw.js` is now a kill switch that deletes the
+> caches and unregisters itself; `ServiceWorkerCleanupService` does the same from the app. The text below is history.
+
 ### What Was Implemented
 
 **Files Created:**
