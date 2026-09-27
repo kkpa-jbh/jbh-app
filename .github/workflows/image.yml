@@ -45,10 +45,10 @@ jobs:
             ghcr.io/kkpa-jbh/jbh-web:${{ github.sha }}
             ghcr.io/kkpa-jbh/jbh-web:latest
 
-      # GitHub Free: 500 MB for private packages. Keep the 5 newest images; that is the rollback window.
+      # GitHub Free: 500 MB for private packages. Keep the 2 newest images: the running one and one to roll back to.
       - name: Delete old images
         uses: actions/delete-package-versions@v5
         with:
           package-name: jbh-web
           package-type: container
-          min-versions-to-keep: 5
+          min-versions-to-keep: 2
