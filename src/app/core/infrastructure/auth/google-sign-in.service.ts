@@ -58,7 +58,13 @@ export class GoogleSignInService {
         script.async = true;
         script.defer = true;
         script.onload = () => {
-          const accountsId = (window as Window & { google: { accounts: { id: GoogleAccountsId } } }).google.accounts.id;
+          // Optional property: the cast must overlap with Window, which has no `google`.
+          const accountsId = (window as Window & { google?: { accounts: { id: GoogleAccountsId } } }).google?.accounts.id;
+          if (!accountsId) {
+            this.loading = null;
+            reject(new Error('Google Identity Services loaded without accounts.id'));
+            return;
+          }
           accountsId.initialize({
             client_id: this.envConfig.googleClientId,
             // Google calls this outside Angular's zone; re-enter it so the page updates.
