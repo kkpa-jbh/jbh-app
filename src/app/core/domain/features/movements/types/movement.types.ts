@@ -21,5 +21,6 @@ export interface CategoryTypeApiResponse {
  * Can store arbitrary key-value pairs for additional information.
  */
 export interface MovementMetadata {
-  [key: string]: any;
+  // jbh-personal-finance sends Map<MovementMetadataKey, Object>: check the type before use.
+  [key: string]: unknown;
 }

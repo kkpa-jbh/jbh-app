@@ -42,7 +42,7 @@ export class ErrorInterceptor implements HttpInterceptor {
     return this._tokenRefreshService;
   }
 
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<JBHError>> {
+  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
         const isPublicApi = request.context.get(IS_PUBLIC_API);
@@ -68,7 +68,7 @@ export class ErrorInterceptor implements HttpInterceptor {
     );
   }
 
-  private handle401Error(request: HttpRequest<any>, next: HttpHandler, error: HttpErrorResponse): Observable<HttpEvent<any>> {
+  private handle401Error(request: HttpRequest<unknown>, next: HttpHandler, error: HttpErrorResponse): Observable<HttpEvent<unknown>> {
     const isTokenError = this.isTokenRelatedError(error);
 
     if (!isTokenError) {
@@ -141,7 +141,7 @@ export class ErrorInterceptor implements HttpInterceptor {
     ));
   }
 
-  private async addTokenToRequest(request: HttpRequest<any>): Promise<HttpRequest<any>> {
+  private async addTokenToRequest(request: HttpRequest<unknown>): Promise<HttpRequest<unknown>> {
     const token = await this.tokenStorage.getAccessToken();
     if (token) {
       return request.clone({

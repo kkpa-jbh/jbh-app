@@ -58,7 +58,7 @@ export class GoogleSignInService {
         script.async = true;
         script.defer = true;
         script.onload = () => {
-          const accountsId: GoogleAccountsId = (window as any).google.accounts.id;
+          const accountsId = (window as Window & { google: { accounts: { id: GoogleAccountsId } } }).google.accounts.id;
           accountsId.initialize({
             client_id: this.envConfig.googleClientId,
             // Google calls this outside Angular's zone; re-enter it so the page updates.

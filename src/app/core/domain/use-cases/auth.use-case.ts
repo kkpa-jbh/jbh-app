@@ -4,6 +4,7 @@ import { tap, switchMap, catchError, map } from 'rxjs/operators';
 import { AuthRepository } from '../repositories/auth.repository';
 import { User } from '../models/user.model';
 import { AuthToken } from '../models/auth-token.model';
+import { SignUpRequest } from '../features/auth';
 import { LoginCredentials } from '../models/login-credentials.model';
 import { TokenStorageService } from '../../infrastructure/persistence/token-storage.service';
 
@@ -126,7 +127,7 @@ export class AuthUseCase {
    * Register new user
    * @param userData - User registration data
    */
-  register(userData: any): Observable<User> {
+  register(userData: SignUpRequest): Observable<void> {
     return this.authRepository.register(userData);
   }
 

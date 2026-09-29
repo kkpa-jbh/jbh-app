@@ -2,6 +2,7 @@ import { Observable } from 'rxjs';
 import { User } from '../models/user.model';
 import { AuthToken } from '../models/auth-token.model';
 import { LoginCredentials } from '../models/login-credentials.model';
+import { SignUpRequest } from '../features/auth';
 
 /**
  * Authentication repository interface (Port)
@@ -46,9 +47,9 @@ export abstract class AuthRepository {
   /**
    * Register a new user
    * @param userData - User registration data
-   * @returns Observable of user
+   * @returns Observable that completes when the user exists. IAM answers only success/message, no user.
    */
-  abstract register(userData: any): Observable<User>;
+  abstract register(userData: SignUpRequest): Observable<void>;
 
   /**
    * Verify user's email or token

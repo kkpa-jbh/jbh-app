@@ -67,7 +67,7 @@ export class PwaInstallService {
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
 
     // iOS specific check
-    const isIOSStandalone = (window.navigator as any).standalone === true;
+    const isIOSStandalone = (window.navigator as Navigator & { standalone?: boolean }).standalone === true;
 
     return isStandalone || isIOSStandalone;
   }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
+import { TranslateService, type InterpolationParameters } from '@ngx-translate/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { LoggerService } from '../logging/logger.service';
 
@@ -85,14 +85,14 @@ export class TranslationService {
   /**
    * Get translation for a key
    */
-  instant(key: string, params?: any): string {
+  instant(key: string, params?: InterpolationParameters): string {
     return this.translate.instant(key, params);
   }
 
   /**
    * Get translation as observable
    */
-  get(key: string, params?: any): Observable<string> {
+  get(key: string, params?: InterpolationParameters): Observable<string> {
     return this.translate.get(key, params);
   }
 

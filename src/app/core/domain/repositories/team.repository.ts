@@ -4,7 +4,7 @@ import { AcceptInvitationResponse, CreateTeamRequest, CreateTeamResponse, Team, 
 export interface InviteMemberRequest {
   emailOrUsername: string;
   teamName: string;
-  teamID: any;
+  teamID: string;
 }
 
 export abstract class TeamRepository {

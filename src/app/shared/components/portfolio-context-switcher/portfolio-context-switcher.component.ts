@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, SelectCustomEvent } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { PortfolioContextService } from '@core/infrastructure/context/portfolio-context.service';
@@ -57,7 +57,7 @@ export class PortfolioContextSwitcherComponent implements OnInit, OnDestroy {
       });
   }
 
-  async onContextChange(event: any): Promise<void> {
+  async onContextChange(event: SelectCustomEvent<string>): Promise<void> {
     const value = event.detail.value;
 
     if (value === 'personal') {

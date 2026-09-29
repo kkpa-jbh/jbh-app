@@ -279,7 +279,7 @@ export class EditProductPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
     };
   }
 
-  private getDefaultValue(valueType: MetadataValueType): any {
+  private getDefaultValue(valueType: MetadataValueType): string | boolean | null {
     switch (valueType) {
       case MetadataValueType.BOOLEAN:
         return false;
@@ -355,7 +355,7 @@ export class EditProductPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
     this.isSubmitting = true;
 
     const formData = this.productForm.getRawValue();
-    const metadata: Record<string, any> = {};
+    const metadata: Record<string, unknown> = {};
 
     this.metadataConfigs.forEach(config => {
       if (formData[config.key] !== null && formData[config.key] !== undefined) {

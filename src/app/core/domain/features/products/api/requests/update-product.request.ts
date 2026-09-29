@@ -1,4 +1,4 @@
 export interface UpdateProductRequest {
   name: string;
-  metadata: Record<string, any>;
+  metadata: Record<string, unknown>;
 }

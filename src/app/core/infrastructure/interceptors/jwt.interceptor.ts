@@ -16,7 +16,7 @@ export class JwtInterceptor implements HttpInterceptor {
 
   constructor(private tokenStorage: TokenStorageService) {}
 
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     const isPublicApi = request.context.get(IS_PUBLIC_API);
 
     if (!this.isApiRequest(request.url)) {

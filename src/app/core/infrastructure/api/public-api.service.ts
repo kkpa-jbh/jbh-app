@@ -36,7 +36,7 @@ export class PublicApiService {
    * @param body - Request body
    * @param options - HTTP options
    */
-  post<T>(endpoint: string, body: any, options?: HttpOptions): Observable<T> {
+  post<T>(endpoint: string, body: unknown, options?: HttpOptions): Observable<T> {
     const url = this.envConfig.buildApiUrl(endpoint);
     return this.http.post<T>(url, body, this.addPublicContext(options));
   }
@@ -47,7 +47,7 @@ export class PublicApiService {
    * @param body - Request body
    * @param options - HTTP options
    */
-  put<T>(endpoint: string, body: any, options?: HttpOptions): Observable<T> {
+  put<T>(endpoint: string, body: unknown, options?: HttpOptions): Observable<T> {
     const url = this.envConfig.buildApiUrl(endpoint);
     return this.http.put<T>(url, body, this.addPublicContext(options));
   }

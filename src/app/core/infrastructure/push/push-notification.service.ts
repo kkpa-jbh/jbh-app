@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Platform } from '@ionic/angular';
-import { PushNotifications, Token, PushNotificationSchema, ActionPerformed } from '@capacitor/push-notifications';
+import { PushNotifications, Token, PushNotificationSchema, ActionPerformed, RegistrationError } from '@capacitor/push-notifications';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { LoggerService } from '../logging/logger.service';
 
 export interface NotificationPayload {
   title: string;
   body: string;
-  data?: any;
+  data?: Record<string, unknown>;
 }
 
 @Injectable({
@@ -70,7 +70,7 @@ export class PushNotificationService {
     });
 
     // Handle registration errors
-    PushNotifications.addListener('registrationError', (error: any) => {
+    PushNotifications.addListener('registrationError', (error: RegistrationError) => {
       this.logger.error('Push Notifications: Registration error', 'PushNotification', error);
     });
 

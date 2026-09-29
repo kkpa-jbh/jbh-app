@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpHeaders, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, TimeoutError } from 'rxjs';
 import { catchError, retry, timeout } from 'rxjs/operators';
 import { EnvironmentConfig } from '../config/environment.config';
@@ -12,7 +12,7 @@ export interface HttpOptions {
   reportProgress?: boolean;
   responseType?: 'json';
   withCredentials?: boolean;
-  context?: any;
+  context?: HttpContext;
 }
 
 @Injectable({
@@ -49,7 +49,7 @@ export class ApiBaseService {
    * @param body - Request body
    * @param options - HTTP options
    */
-  protected post<T>(endpoint: string, body: any, options?: HttpOptions): Observable<T> {
+  protected post<T>(endpoint: string, body: unknown, options?: HttpOptions): Observable<T> {
     const url = this.envConfig.buildApiUrl(endpoint);
     return this.http.post<T>(url, body, options).pipe(
       timeout(this.envConfig.apiTimeout),
@@ -63,7 +63,7 @@ export class ApiBaseService {
    * @param body - Request body
    * @param options - HTTP options
    */
-  protected put<T>(endpoint: string, body: any, options?: HttpOptions): Observable<T> {
+  protected put<T>(endpoint: string, body: unknown, options?: HttpOptions): Observable<T> {
     const url = this.envConfig.buildApiUrl(endpoint);
     return this.http.put<T>(url, body, options).pipe(
       timeout(this.envConfig.apiTimeout),
@@ -77,7 +77,7 @@ export class ApiBaseService {
    * @param body - Request body
    * @param options - HTTP options
    */
-  protected patch<T>(endpoint: string, body: any, options?: HttpOptions): Observable<T> {
+  protected patch<T>(endpoint: string, body: unknown, options?: HttpOptions): Observable<T> {
     const url = this.envConfig.buildApiUrl(endpoint);
     return this.http.patch<T>(url, body, options).pipe(
       timeout(this.envConfig.apiTimeout),
@@ -104,7 +104,7 @@ export class ApiBaseService {
    */
   private handleError(error: HttpErrorResponse | TimeoutError | Error): Observable<never> {
     // Check if error was already processed by ErrorInterceptor (e.g., 422 business errors)
-    if (error instanceof Error && (error as any).status === 422) {
+    if (error instanceof Error && (error as Error & { status?: number }).status === 422) {
       return throwError(() => error);
     }
 

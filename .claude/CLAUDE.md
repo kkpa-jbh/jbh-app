@@ -511,6 +511,7 @@ import { MovementType, ProductMovement } from '@core/domain/features/movements';
 
 ##### Available Features
 
+- `@core/domain/features/auth` - Sign-up request, token and user-info responses (IAM names)
 - `@core/domain/features/products` - Product types, metadata, CRUD operations
 - `@core/domain/features/movements` - Deposits, withdrawals, balance snapshots
 - `@core/domain/features/teams` - Team management, members, invitations

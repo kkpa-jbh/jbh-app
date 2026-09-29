@@ -49,7 +49,8 @@ export class ProductMovement {
   }
 
   get targetAccountName(): string | null {
-    return this.metadata['TARGET_INTERNAL_ACCOUNT_NAME'] || null;
+    const name = this.metadata['TARGET_INTERNAL_ACCOUNT_NAME'];
+    return typeof name === 'string' && name ? name : null;
   }
 
   get categoryLabel(): string | null {
