@@ -518,6 +518,7 @@ import { MovementType, ProductMovement } from '@core/domain/features/movements';
 - `@core/domain/features/categories` - Income/expense categories
 - `@core/domain/features/balance-history` - Monthly balance reports, trends
 - `@core/domain/features/preferences` - User preferences, settings
+- `@core/domain/features/statements` - Bank statement import: categorized movements, totals check
 
 #### Responsive
 

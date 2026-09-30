@@ -1,0 +1,77 @@
+.import-statement-content {
+  --background: var(--jbh-background-light);
+}
+
+.jbh-field-hint {
+  font-size: var(--jbh-font-size-xs);
+  color: var(--jbh-text-secondary);
+  margin-top: var(--jbh-spacing-xs);
+  margin-bottom: 0;
+}
+
+.import-statement-file-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
+}
+
+.import-statement-file-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--jbh-spacing-xs);
+  cursor: pointer;
+}
+
+.import-statement-file-name {
+  display: flex;
+  align-items: center;
+  gap: var(--jbh-spacing-xs);
+  word-break: break-all;
+}
+
+.import-statement-result {
+  margin-top: var(--jbh-spacing-md);
+}
+
+.import-statement-table-scroll {
+  overflow-x: auto;
+}
+
+.import-statement-table {
+  min-width: 720px;
+}
+
+.import-statement-row-review {
+  background: var(--jbh-warning-background);
+}
+
+.import-statement-cell-date {
+  flex: 1;
+}
+
+.import-statement-cell-description {
+  flex: 2.5;
+  word-break: break-word;
+}
+
+.import-statement-cell-amount {
+  flex: 1.2;
+  justify-content: flex-end;
+}
+
+.import-statement-cell-direction {
+  flex: 1;
+}
+
+.import-statement-cell-category {
+  flex: 2;
+  flex-wrap: wrap;
+}
+
+.import-statement-cell-confidence {
+  flex: 0.8;
+  justify-content: flex-end;
+}

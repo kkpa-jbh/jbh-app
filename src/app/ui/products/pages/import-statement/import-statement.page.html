@@ -1,0 +1,143 @@
+<app-header></app-header>
+<ion-content class="import-statement-content">
+  <div class="jbh-container">
+
+    <div class="jbh-form-card">
+      <div class="jbh-form-header">
+        <div class="jbh-form-icon">
+          <ion-icon name="document-text-outline"></ion-icon>
+        </div>
+        <h1 class="jbh-form-title">{{ 'transactions.importStatement.title' | translate }}</h1>
+        <p class="jbh-form-subtitle">{{ 'transactions.importStatement.intro' | translate }}</p>
+      </div>
+
+      <form [formGroup]="statementForm" (ngSubmit)="onSubmit()" class="jbh-form-animated">
+
+        <div class="jbh-form-field">
+          <label class="jbh-label" for="statementFile">{{ 'transactions.importStatement.fileLabel' | translate }}</label>
+          <input
+            #fileInput
+            id="statementFile"
+            type="file"
+            accept="application/pdf,.pdf"
+            class="import-statement-file-input"
+            (change)="onFileSelected($event)"
+          />
+          <label for="statementFile" class="jbh-button-secondary jbh-button-block import-statement-file-button">
+            <ion-icon name="cloud-upload-outline"></ion-icon>
+            <span>{{ 'transactions.importStatement.fileLabel' | translate }}</span>
+          </label>
+          @if (selectedFile) {
+            <p class="jbh-field-hint import-statement-file-name">
+              <ion-icon name="document-text-outline"></ion-icon>
+              <span>{{ selectedFile.name }}</span>
+            </p>
+          }
+        </div>
+
+        <div class="jbh-form-field">
+          <label class="jbh-label" for="statementPassword">
+            {{ 'transactions.importStatement.passwordLabel' | translate }}
+            <span class="jbh-label-optional">{{ 'common.optional' | translate }}</span>
+          </label>
+          <div class="jbh-input-wrapper">
+            <ion-icon name="lock-closed-outline" class="jbh-input-icon left"></ion-icon>
+            <input
+              id="statementPassword"
+              type="password"
+              class="jbh-input jbh-input-icon-left"
+              formControlName="password"
+              autocomplete="off"
+            />
+          </div>
+          <p class="jbh-field-hint">{{ 'transactions.importStatement.passwordHint' | translate }}</p>
+        </div>
+
+        <button
+          type="submit"
+          class="jbh-button-primary jbh-button-block"
+          [class.jbh-button-loading]="isProcessing"
+          [disabled]="!selectedFile || isProcessing"
+        >
+          @if (isProcessing) {
+            <ion-spinner name="crescent"></ion-spinner>
+            <span aria-live="polite">{{ 'transactions.importStatement.processing' | translate }}</span>
+          } @else {
+            <ion-icon name="cloud-upload-outline"></ion-icon>
+            <span>{{ 'transactions.importStatement.submit' | translate }}</span>
+          }
+        </button>
+      </form>
+    </div>
+
+    @if (result) {
+      <div class="jbh-form-card import-statement-result">
+
+        @if (result.hasTotalsMismatch) {
+          <div class="jbh-alert-warning" role="alert">
+            <ion-icon name="warning-outline"></ion-icon>
+            <span class="jbh-alert-content">{{ 'transactions.importStatement.totalsMismatch' | translate }}</span>
+          </div>
+        }
+
+        @if (result.totalsNotAvailable) {
+          <div class="jbh-alert-info" role="status">
+            <ion-icon name="information-circle-outline"></ion-icon>
+            <span class="jbh-alert-content">{{ 'transactions.importStatement.totalsNotAvailable' | translate }}</span>
+          </div>
+        }
+
+        @if (result.movements.length === 0) {
+          <div class="jbh-empty-state">
+            <div class="jbh-empty-state-icon">
+              <ion-icon name="document-text-outline"></ion-icon>
+            </div>
+            <p class="jbh-empty-state-message">{{ 'transactions.importStatement.emptyResult' | translate }}</p>
+          </div>
+        } @else {
+          <div class="import-statement-table-scroll">
+            <div class="import-statement-table" role="table" [attr.aria-label]="'transactions.importStatement.title' | translate">
+              <div class="jbh-table-header" role="rowgroup">
+                <div class="jbh-table-row" role="row">
+                  <div class="jbh-table-cell import-statement-cell-date" role="columnheader">{{ 'transactions.importStatement.table.date' | translate }}</div>
+                  <div class="jbh-table-cell import-statement-cell-description" role="columnheader">{{ 'transactions.importStatement.table.description' | translate }}</div>
+                  <div class="jbh-table-cell import-statement-cell-amount" role="columnheader">{{ 'transactions.importStatement.table.amount' | translate }}</div>
+                  <div class="jbh-table-cell import-statement-cell-direction" role="columnheader">{{ 'transactions.importStatement.table.direction' | translate }}</div>
+                  <div class="jbh-table-cell import-statement-cell-category" role="columnheader">{{ 'transactions.importStatement.table.category' | translate }}</div>
+                  <div class="jbh-table-cell import-statement-cell-confidence" role="columnheader">{{ 'transactions.importStatement.table.confidence' | translate }}</div>
+                </div>
+              </div>
+              <div role="rowgroup">
+                @for (movement of result.movements; track $index) {
+                  <div class="jbh-table-row" [class.import-statement-row-review]="movement.lowConfidence" role="row">
+                    <div class="jbh-table-cell import-statement-cell-date" role="cell">{{ movement.date | date:'mediumDate' }}</div>
+                    <div class="jbh-table-cell import-statement-cell-description" role="cell">{{ movement.description }}</div>
+                    <div class="jbh-table-cell import-statement-cell-amount" role="cell">{{ movement.amount | jbhCurrency }}</div>
+                    <div class="jbh-table-cell import-statement-cell-direction" role="cell">
+                      {{ (movement.direction === 'CREDIT' ? 'transactions.importStatement.directionCredit' : 'transactions.importStatement.directionDebit') | translate }}
+                    </div>
+                    <div class="jbh-table-cell import-statement-cell-category" role="cell">
+                      <span>{{ movement.categoryDisplayName | jbhDisplayName: movement.categoryAlias }}</span>
+                      @if (movement.lowConfidence) {
+                        <span class="jbh-status-badge status-pending">
+                          <ion-icon
+                            name="warning-outline"
+                            role="img"
+                            [attr.aria-label]="'transactions.importStatement.lowConfidence' | translate"
+                          ></ion-icon>
+                          {{ 'transactions.importStatement.lowConfidence' | translate }}
+                        </span>
+                      }
+                    </div>
+                    <div class="jbh-table-cell import-statement-cell-confidence" role="cell">{{ movement.confidence | percent:'1.0-0' }}</div>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
+  </div>
+</ion-content>

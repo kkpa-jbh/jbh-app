@@ -106,6 +106,7 @@
       "title": "Configuración"
     },
     "transactions": {
+      "importStatement": "Importar extracto",
       "recordMovement": "Registrar Movimiento",
       "title": "Transacciones",
       "transfer": "Transferir Fondos"
@@ -733,6 +734,32 @@
     }
   },
   "transactions": {
+    "importStatement": {
+      "directionCredit": "Entrada",
+      "directionDebit": "Salida",
+      "emptyResult": "No se encontraron movimientos en este PDF.",
+      "errors": {
+        "generic": "No se pudo procesar el extracto. Intenta de nuevo."
+      },
+      "fileLabel": "Extracto bancario (PDF)",
+      "intro": "Sube un extracto bancario. Leemos sus movimientos y sugerimos una categoría para cada uno. No se guarda nada.",
+      "lowConfidence": "Revisa esta categoría",
+      "passwordHint": "Solo para PDF protegidos. No se guarda.",
+      "passwordLabel": "Contraseña del PDF",
+      "processing": "Leyendo el extracto. Puede tardar hasta un minuto.",
+      "submit": "Leer extracto",
+      "table": {
+        "amount": "Monto",
+        "category": "Categoría",
+        "confidence": "Confianza",
+        "date": "Fecha",
+        "description": "Descripción",
+        "direction": "Tipo"
+      },
+      "title": "Importar extracto",
+      "totalsMismatch": "Los movimientos no suman el cambio de saldo del extracto. Puede faltar o estar mal alguna fila.",
+      "totalsNotAvailable": "El extracto no muestra saldos, así que no se pudo verificar el total."
+    },
     "recordMovement": {
       "title": "Registrar Movimiento"
     },

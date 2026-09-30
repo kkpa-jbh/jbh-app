@@ -62,6 +62,11 @@ export const routes: Routes = [
     loadComponent: () => import('./ui/products/pages/add-movement/add-movement.page').then(m => m.AddMovementPage),
     canActivate: [authGuard, teamReadOnlyGuard]
   },
+  {
+    path: 'transactions/import-statement',
+    loadComponent: () => import('./ui/products/pages/import-statement/import-statement.page').then(m => m.ImportStatementPage),
+    canActivate: [authGuard, teamReadOnlyGuard]
+  },
 
   // Reports
   {

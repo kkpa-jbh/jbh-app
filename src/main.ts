@@ -24,6 +24,8 @@ import { BalanceHistoryRepository } from './app/core/domain/repositories/balance
 import { BalanceHistoryRepositoryImpl } from './app/core/infrastructure/repositories/balance-history.repository.impl';
 import { CategoryRepository } from './app/core/domain/repositories/category.repository';
 import { CategoryRepositoryImpl } from './app/core/infrastructure/repositories/category.repository.impl';
+import { StatementRepository } from './app/core/domain/repositories/statement.repository';
+import { StatementRepositoryImpl } from './app/core/infrastructure/repositories/statement.repository.impl';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -59,5 +61,6 @@ bootstrapApplication(AppComponent, {
     { provide: PreferencesRepository, useClass: PreferencesRepositoryImpl },
     { provide: BalanceHistoryRepository, useClass: BalanceHistoryRepositoryImpl },
     { provide: CategoryRepository, useClass: CategoryRepositoryImpl },
+    { provide: StatementRepository, useClass: StatementRepositoryImpl },
   ],
 });

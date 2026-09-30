@@ -106,6 +106,7 @@
       "title": "Settings"
     },
     "transactions": {
+      "importStatement": "Import Statement",
       "recordMovement": "Record Movement",
       "title": "Transactions",
       "transfer": "Transfer Funds"
@@ -733,6 +734,32 @@
     }
   },
   "transactions": {
+    "importStatement": {
+      "directionCredit": "Money in",
+      "directionDebit": "Money out",
+      "emptyResult": "No movements found in this PDF.",
+      "errors": {
+        "generic": "The statement could not be processed. Try again."
+      },
+      "fileLabel": "Bank statement (PDF)",
+      "intro": "Upload a bank statement. We read its movements and suggest a category for each one. Nothing is saved.",
+      "lowConfidence": "Check this category",
+      "passwordHint": "Only for locked PDFs. It is not saved.",
+      "passwordLabel": "PDF password",
+      "processing": "Reading the statement. This can take up to a minute.",
+      "submit": "Read statement",
+      "table": {
+        "amount": "Amount",
+        "category": "Category",
+        "confidence": "Confidence",
+        "date": "Date",
+        "description": "Description",
+        "direction": "Type"
+      },
+      "title": "Import Statement",
+      "totalsMismatch": "The movements do not add up to the balance change on the statement. Some rows may be missing or wrong.",
+      "totalsNotAvailable": "The statement shows no balances, so the totals could not be checked."
+    },
     "recordMovement": {
       "title": "Record Movement"
     },

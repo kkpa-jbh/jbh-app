@@ -29,7 +29,8 @@ import {
   settingsOutline,
   notificationsOutline,
   receiptOutline,
-  pricetagOutline
+  pricetagOutline,
+  documentTextOutline
 } from 'ionicons/icons';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
@@ -98,7 +99,8 @@ export class AppMenuComponent implements OnInit, OnDestroy {
       settingsOutline,
       notificationsOutline,
       receiptOutline,
-      pricetagOutline
+      pricetagOutline,
+      documentTextOutline
     });
   }
 
@@ -166,6 +168,12 @@ export class AppMenuComponent implements OnInit, OnDestroy {
             translationKey: 'menu.transactions.recordMovement',
             icon: 'cash-outline',
             route: '/transactions/record-movement'
+          },
+          {
+            id: 'transactions-import-statement',
+            translationKey: 'menu.transactions.importStatement',
+            icon: 'document-text-outline',
+            route: '/transactions/import-statement'
           }
         ]
       }] : []),

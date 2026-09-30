@@ -48,11 +48,12 @@ export class ApiBaseService {
    * @param endpoint - API endpoint path
    * @param body - Request body
    * @param options - HTTP options
+   * @param timeoutMs - Optional timeout for slow calls; defaults to the environment API timeout
    */
-  protected post<T>(endpoint: string, body: unknown, options?: HttpOptions): Observable<T> {
+  protected post<T>(endpoint: string, body: unknown, options?: HttpOptions, timeoutMs?: number): Observable<T> {
     const url = this.envConfig.buildApiUrl(endpoint);
     return this.http.post<T>(url, body, options).pipe(
-      timeout(this.envConfig.apiTimeout),
+      timeout(timeoutMs ?? this.envConfig.apiTimeout),
       catchError(this.handleError.bind(this))
     );
   }
