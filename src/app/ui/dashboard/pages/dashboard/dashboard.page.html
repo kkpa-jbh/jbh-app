@@ -31,14 +31,14 @@
 
       @if (context.isPersonal) {
         <div class="jbh-dashboard-actions">
-          <ion-button expand="block" routerLink="/portfolio/create" class="jbh-button-primary">
-            <ion-icon name="add-circle-outline" slot="start"></ion-icon>
+          <button type="button" routerLink="/portfolio/create" class="jbh-button-primary jbh-button-block">
+            <ion-icon name="add-circle-outline"></ion-icon>
             {{ 'dashboard.addProduct' | translate }}
-          </ion-button>
-          <ion-button expand="block" routerLink="/transactions/record-movement" class="jbh-button-secondary">
-            <ion-icon name="cash-outline" slot="start"></ion-icon>
+          </button>
+          <button type="button" routerLink="/transactions/record-movement" class="jbh-button-secondary jbh-button-block">
+            <ion-icon name="cash-outline"></ion-icon>
             {{ 'dashboard.recordMovement' | translate }}
-          </ion-button>
+          </button>
         </div>
       }
     }

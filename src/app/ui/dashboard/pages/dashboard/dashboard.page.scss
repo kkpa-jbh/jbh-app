@@ -11,9 +11,16 @@
 
 .jbh-dashboard-summary {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
   gap: var(--jbh-spacing-md);
   margin-bottom: var(--jbh-spacing-lg);
+
+  // ion-card-header already pads the text. The ion-card margin and the
+  // .jbh-card padding on top left almost no room for it on phones.
+  ion-card {
+    margin: 0;
+    padding: 0;
+  }
 }
 
 .jbh-dashboard-actions {

@@ -36,18 +36,25 @@
 
 .jbh-product-card-header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
+  gap: var(--jbh-spacing-sm);
   padding: var(--jbh-spacing-md);
   border-bottom: 1px solid var(--jbh-border-color);
 }
 
+// Phones: the name takes the full row and the actions move to the next row.
 .jbh-product-info {
   display: flex;
   align-items: center;
   gap: var(--jbh-spacing-sm);
-  flex: 1;
+  flex: 1 1 100%;
   min-width: 0;
+
+  @media (min-width: 768px) {
+    flex: 1;
+  }
 }
 
 .jbh-product-type-icon {
@@ -100,8 +107,18 @@
 .jbh-product-header-actions {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: var(--jbh-spacing-sm);
   flex-shrink: 0;
+  width: 100%;
+
+  @media (min-width: 768px) {
+    width: auto;
+  }
+
+  &:empty {
+    display: none;
+  }
 }
 
 .jbh-product-actions {
