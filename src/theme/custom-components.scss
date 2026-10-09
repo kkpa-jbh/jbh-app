@@ -40,6 +40,15 @@
   --jbh-background-light: #f7f8fa;
   --jbh-background-white: #ffffff;
 
+  // Text and icons on a colored fill (gradient, brand or semantic color).
+  // It stays white in dark mode. --jbh-background-white does not: never use it as a text color.
+  --jbh-text-on-color: #ffffff;
+
+  // Tonal fill: a soft tint of the primary color (secondary button). Text is Tailwind indigo-700.
+  --jbh-tonal-background: rgba(102, 126, 234, 0.12);
+  --jbh-tonal-background-hover: rgba(102, 126, 234, 0.2);
+  --jbh-tonal-text: #4c51bf;
+
   // Background Colors
   --jbh-error-background: #fff5f5;
   --jbh-success-background: #f0fff4;
@@ -128,7 +137,7 @@
 .jbh-button-primary {
   @extend .jbh-button;
   background: var(--jbh-gradient-primary);
-  color: var(--jbh-background-white);
+  color: var(--jbh-text-on-color);
   box-shadow: var(--jbh-shadow-primary);
 
   &:hover:not(:disabled) {
@@ -144,14 +153,11 @@
 
 .jbh-button-secondary {
   @extend .jbh-button;
-  background: var(--jbh-background-white);
-  color: var(--jbh-primary-color);
-  border: 2px solid var(--jbh-border-color);
-  box-shadow: var(--jbh-shadow-sm);
+  background: var(--jbh-tonal-background);
+  color: var(--jbh-tonal-text);
 
   &:hover:not(:disabled) {
-    background: var(--jbh-background-light);
-    border-color: var(--jbh-primary-color);
+    background: var(--jbh-tonal-background-hover);
   }
 }
 
@@ -163,7 +169,7 @@
 
   &:hover:not(:disabled) {
     background: var(--jbh-primary-color);
-    color: var(--jbh-background-white);
+    color: var(--jbh-text-on-color);
   }
 }
 
@@ -181,7 +187,7 @@
 .jbh-button-danger {
   @extend .jbh-button;
   background: var(--jbh-error-color);
-  color: var(--jbh-background-white);
+  color: var(--jbh-text-on-color);
 
   &:hover:not(:disabled) {
     background: #e53e3e;
@@ -192,7 +198,7 @@
 .jbh-button-success {
   @extend .jbh-button;
   background: var(--jbh-success-color);
-  color: var(--jbh-background-white);
+  color: var(--jbh-text-on-color);
 
   &:hover:not(:disabled) {
     background: #38a169;
@@ -234,12 +240,10 @@
 
   // The pointer is over Google's iframe, so hover and focus are read from the wrapper.
   &:hover .jbh-button-secondary {
-    background: var(--jbh-background-light);
-    border-color: var(--jbh-primary-color);
+    background: var(--jbh-tonal-background-hover);
   }
 
   &:focus-within .jbh-button-secondary {
-    border-color: var(--jbh-primary-color);
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25);
   }
 }
@@ -666,7 +670,7 @@
 
   ion-icon {
     font-size: 32px;
-    color: var(--jbh-background-white);
+    color: var(--jbh-text-on-color);
   }
 }
 
@@ -723,6 +727,9 @@
     --jbh-border-color: #4a5568;
     --jbh-background-light: #2d3748;
     --jbh-background-white: #1a202c;
+    --jbh-tonal-background: rgba(102, 126, 234, 0.18);
+    --jbh-tonal-background-hover: rgba(102, 126, 234, 0.28);
+    --jbh-tonal-text: #c3dafe;
     --jbh-error-background: #742a2a;
     --jbh-success-background: #22543d;
     --jbh-warning-background: #7c2d12;
@@ -1028,7 +1035,7 @@ ion-textarea.jbh-textarea {
 
   ion-icon {
     font-size: 32px;
-    color: var(--jbh-background-white);
+    color: var(--jbh-text-on-color);
   }
 }
 
@@ -1146,7 +1153,7 @@ ion-menu ion-content::part(scroll) {
   overflow: hidden;
   padding: var(--jbh-spacing-lg) var(--jbh-spacing-md);
   background: var(--jbh-gradient-primary);
-  color: var(--jbh-background-white);
+  color: var(--jbh-text-on-color);
   box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
   flex-shrink: 0;
 
@@ -1203,7 +1210,7 @@ ion-menu ion-content::part(scroll) {
 
   ion-icon {
     font-size: 28px;
-    color: var(--jbh-background-white);
+    color: var(--jbh-text-on-color);
   }
 
   @media (min-width: 768px) {
@@ -1220,7 +1227,7 @@ ion-menu ion-content::part(scroll) {
   font-size: var(--jbh-font-size-lg);
   font-weight: var(--jbh-font-weight-bold);
   margin: 0 0 4px 0;
-  color: var(--jbh-background-white);
+  color: var(--jbh-text-on-color);
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 
   @media (min-width: 768px) {
@@ -1232,7 +1239,7 @@ ion-menu ion-content::part(scroll) {
   font-size: var(--jbh-font-size-xs);
   margin: 0;
   opacity: 0.9;
-  color: var(--jbh-background-white);
+  color: var(--jbh-text-on-color);
 
   @media (min-width: 768px) {
     font-size: var(--jbh-font-size-sm);
@@ -1588,7 +1595,7 @@ ion-menu ion-content::part(scroll) {
 
   ion-icon {
     font-size: 28px;
-    color: var(--jbh-background-white);
+    color: var(--jbh-text-on-color);
   }
 }
 
@@ -2056,7 +2063,7 @@ ion-menu ion-content::part(scroll) {
 
   ion-icon {
     font-size: 24px;
-    color: var(--jbh-background-white);
+    color: var(--jbh-text-on-color);
   }
 }
 
@@ -2682,7 +2689,7 @@ ion-menu ion-content::part(scroll) {
   &:hover {
     background: var(--jbh-primary-color);
     border-color: var(--jbh-primary-color);
-    color: var(--jbh-background-white);
+    color: var(--jbh-text-on-color);
   }
 }
 
@@ -2742,7 +2749,7 @@ ion-menu ion-content::part(scroll) {
 
   ion-icon {
     font-size: 24px;
-    color: var(--jbh-background-white);
+    color: var(--jbh-text-on-color);
   }
 }
 
@@ -2796,19 +2803,19 @@ ion-menu ion-content::part(scroll) {
 }
 
 .jbh-context-switcher-icon {
-  color: var(--jbh-background-white);
+  color: var(--jbh-text-on-color);
   font-size: 20px;
 }
 
 .jbh-context-select {
   max-width: 100%;
-  color: var(--jbh-background-white);
+  color: var(--jbh-text-on-color);
   font-weight: var(--jbh-font-weight-semibold);
 }
 
 .jbh-context-label {
   font-size: 0.875rem;
-  color: var(--jbh-background-white);
+  color: var(--jbh-text-on-color);
   margin-right: var(--jbh-spacing-xs);
   opacity: 0.9;
 }
@@ -2844,7 +2851,7 @@ ion-menu ion-content::part(scroll) {
 
   ion-icon {
     font-size: 24px;
-    color: var(--jbh-background-white);
+    color: var(--jbh-text-on-color);
   }
 }
 
@@ -2864,7 +2871,7 @@ ion-menu ion-content::part(scroll) {
 .jbh-top-banner-title {
   font-size: var(--jbh-font-size-lg);
   font-weight: var(--jbh-font-weight-bold);
-  color: var(--jbh-background-white);
+  color: var(--jbh-text-on-color);
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -2885,11 +2892,11 @@ ion-menu ion-content::part(scroll) {
 
   ion-icon {
     font-size: 20px;
-    color: var(--jbh-background-white);
+    color: var(--jbh-text-on-color);
   }
 
   span {
-    color: var(--jbh-background-white);
+    color: var(--jbh-text-on-color);
     font-weight: var(--jbh-font-weight-semibold);
     font-size: var(--jbh-font-size-sm);
   }

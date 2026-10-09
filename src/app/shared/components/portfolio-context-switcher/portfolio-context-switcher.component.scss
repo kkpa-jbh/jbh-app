@@ -23,19 +23,19 @@
 }
 
 .jbh-context-switcher-icon {
-  color: var(--jbh-background-white);
+  color: var(--jbh-text-on-color);
   font-size: 20px;
 }
 
 .jbh-context-select {
   max-width: 100%;
-  color: var(--jbh-background-white);
+  color: var(--jbh-text-on-color);
   font-weight: var(--jbh-font-weight-semibold);
 }
 
 .jbh-context-label {
   font-size: 0.875rem;
-  color: var(--jbh-background-white);
+  color: var(--jbh-text-on-color);
   margin-right: var(--jbh-spacing-xs);
   opacity: 0.9;
 }

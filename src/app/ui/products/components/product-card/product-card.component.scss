@@ -68,7 +68,7 @@
 
   ion-icon {
     font-size: 24px;
-    color: var(--jbh-background-white);
+    color: var(--jbh-text-on-color);
   }
 }
 
@@ -295,6 +295,6 @@
   &:hover {
     background: var(--jbh-primary-color);
     border-color: var(--jbh-primary-color);
-    color: var(--jbh-background-white);
+    color: var(--jbh-text-on-color);
   }
 }

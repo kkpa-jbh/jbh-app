@@ -25,7 +25,7 @@
 
   ion-icon {
     font-size: 24px;
-    color: var(--jbh-background-white);
+    color: var(--jbh-text-on-color);
   }
 }
 
@@ -45,7 +45,7 @@
 .jbh-top-banner-title {
   font-size: var(--jbh-font-size-lg);
   font-weight: var(--jbh-font-weight-bold);
-  color: var(--jbh-background-white);
+  color: var(--jbh-text-on-color);
   margin: 0;
   white-space: nowrap;
   overflow: hidden;

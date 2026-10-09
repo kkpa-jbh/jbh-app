@@ -32,7 +32,7 @@
   overflow: hidden;
   padding: var(--jbh-spacing-lg) var(--jbh-spacing-md);
   background: var(--jbh-gradient-primary);
-  color: var(--jbh-background-white);
+  color: var(--jbh-text-on-color);
   box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
   flex-shrink: 0;
 
@@ -80,7 +80,7 @@
 
   ion-icon {
     font-size: 28px;
-    color: var(--jbh-background-white);
+    color: var(--jbh-text-on-color);
   }
 
   @media (min-width: 768px) {
@@ -97,7 +97,7 @@
   font-size: var(--jbh-font-size-lg);
   font-weight: var(--jbh-font-weight-bold);
   margin: 0 0 4px 0;
-  color: var(--jbh-background-white);
+  color: var(--jbh-text-on-color);
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 
   @media (min-width: 768px) {
@@ -109,7 +109,7 @@
   font-size: var(--jbh-font-size-xs);
   margin: 0;
   opacity: 0.9;
-  color: var(--jbh-background-white);
+  color: var(--jbh-text-on-color);
 
   @media (min-width: 768px) {
     font-size: var(--jbh-font-size-sm);

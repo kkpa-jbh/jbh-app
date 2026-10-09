@@ -39,7 +39,7 @@ These are reusable across all features:
 | Class | Description |
 |-------|-------------|
 | `jbh-button-primary` | Primary action (gradient) |
-| `jbh-button-secondary` | Secondary action (white/border) |
+| `jbh-button-secondary` | Secondary action (tonal: soft indigo tint) |
 | `jbh-button-outline` | Outlined button |
 | `jbh-button-text` | Text-only button |
 | `jbh-button-danger` | Destructive action |
@@ -97,6 +97,14 @@ These are reusable across all features:
 --jbh-secondary-color: #764ba2;
 --jbh-error-color: #f56565;
 --jbh-success-color: #48bb78;
+
+// Text on a colored fill (gradient, brand, error, success). White in both modes.
+--jbh-text-on-color: #ffffff;
+// NEVER use --jbh-background-white as a text color: dark mode turns it into #1a202c.
+
+// Tonal fill (secondary button). Dark mode has its own values.
+--jbh-tonal-background: rgba(102, 126, 234, 0.12);
+--jbh-tonal-text: #4c51bf;
 
 // Spacing
 --jbh-spacing-xs: 0.5rem;   // 8px
