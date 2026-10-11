@@ -1,0 +1,16 @@
+<div class="jbh-line-chart">
+  <ngx-charts-line-chart
+    [results]="results()"
+    [scheme]="colorScheme"
+    [animations]="false"
+    [xAxis]="true"
+    [yAxis]="true"
+    [showXAxisLabel]="false"
+    [showYAxisLabel]="false"
+    [legend]="showLegend()"
+    [legendPosition]="legendPosition"
+    [autoScale]="true"
+    [timeline]="false"
+    [yAxisTickFormatting]="valueFormatter()"
+  />
+</div>

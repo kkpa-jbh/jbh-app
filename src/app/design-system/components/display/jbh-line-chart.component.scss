@@ -1,0 +1,34 @@
+:host {
+  display: block;
+}
+
+.jbh-line-chart {
+  width: 100%;
+  height: 250px;
+
+  @media (min-width: 768px) {
+    height: 350px;
+  }
+
+  // The chart draws its SVG in its own components, so the theme needs ::ng-deep to reach it.
+  ::ng-deep {
+    .ngx-charts {
+      text {
+        fill: var(--jbh-text-secondary);
+      }
+
+      .line-series .line {
+        stroke-width: 3px;
+      }
+
+      .grid-panel.odd {
+        fill: rgba(0, 0, 0, 0.02);
+      }
+
+      .gridline-path {
+        stroke: var(--jbh-border-color);
+        stroke-dasharray: 4, 4;
+      }
+    }
+  }
+}

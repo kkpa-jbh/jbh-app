@@ -7,7 +7,13 @@
   "request": "Create a jbh-* component adapter layer for jbh-app so pages stop using Ionic and external libraries directly. Goal: make future migrations easy (upgrade Angular/Ionic, remove Ionic, move to Vue). Agreed scope from discussion: 3 adapter layers — (1) UI components in their own folder, separate from the feature pages under src/app/ui (jbh-text-field, jbh-date-field, jbh-textarea, jbh-toggle, jbh-button, jbh-icon, jbh-table, jbh-card, empty state, skeleton, page header), each with its own CSS; (2) platform adapters (jbh-page shell + page-enter event, DialogService, ToastService, navigation) that hide Ionic-only behavior; (3) framework-free core (formatting logic in plain TS, pipes as thin adapters). Plain HTML (div, p, span, h1, label) is NOT wrapped. Wrap only: external-library elements, styled controls with behavior, repeated markup. Add a guard: a lint/check that forbids <ion-*> tags and @ionic/angular imports inside src/app/ui/**. Proposal, design and tasks only for now — the user wants to review the artifacts before any implementation.",
   "status": "in-progress",
   "rollup": {
-    "current": [],
+    "current": [
+      "3.8",
+      "3.9",
+      "3.10",
+      "3.11",
+      "3.12"
+    ],
     "pending": [
       "3.1",
       "3.2",
@@ -16,11 +22,6 @@
       "3.5",
       "3.6",
       "3.7",
-      "3.8",
-      "3.9",
-      "3.10",
-      "3.11",
-      "3.12",
       "3.13",
       "3.14",
       "3.15",
@@ -66,7 +67,7 @@
     ]
   },
   "created_at": "2026-10-11T13:07:40Z",
-  "updated_at": "2026-10-11T13:42:47Z",
+  "updated_at": "2026-10-11T13:52:01Z",
   "leader": {
     "assistant": "Claude Code",
     "model": "claude-opus-5-5"
@@ -442,14 +443,23 @@
         "2.4"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "awaiting-user-verification",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T13:43:22Z",
+      "completed_at": "2026-10-11T13:51:43Z",
+      "duration_seconds": 501,
+      "notes": "button/a/label[jbhButton] and button[jbhIconButton] + specs (variants, block, loading spinner, aria-busy, native submit). Sizes left out: no template uses them. Adds :focus-visible outline.",
+      "budget": {
+        "five_hour_pct_start": 72,
+        "five_hour_pct_end": 81,
+        "five_hour_pct_delta": 9,
+        "cost_usd_delta": 2.48,
+        "context_pct_end": 15,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker for 3.8-3.12; wave delta copied onto each task"
+      }
     },
     {
       "id": "3.9",
@@ -460,14 +470,23 @@
         "2.4"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "awaiting-user-verification",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T13:43:22Z",
+      "completed_at": "2026-10-11T13:51:43Z",
+      "duration_seconds": 501,
+      "notes": "jbh-card, jbh-alert, jbh-empty-state, jbh-skeleton, jbh-page-header + specs. title input sets [attr.title]=null to avoid a native tooltip. Skeleton table shape 400 px.",
+      "budget": {
+        "five_hour_pct_start": 72,
+        "five_hour_pct_end": 81,
+        "five_hour_pct_delta": 9,
+        "cost_usd_delta": 2.48,
+        "context_pct_end": 15,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker for 3.8-3.12; wave delta copied onto each task"
+      }
     },
     {
       "id": "3.10",
@@ -478,14 +497,23 @@
         "2.4"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "awaiting-user-verification",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T13:43:22Z",
+      "completed_at": "2026-10-11T13:51:43Z",
+      "duration_seconds": 501,
+      "notes": "jbh-table, jbh-table-row, jbh-table-cell, 3 template directives + spec (roles, card list below 768 px, empty rows, trackBy). Row context typed any. No outer margin.",
+      "budget": {
+        "five_hour_pct_start": 72,
+        "five_hour_pct_end": 81,
+        "five_hour_pct_delta": 9,
+        "cost_usd_delta": 2.48,
+        "context_pct_end": 15,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker for 3.8-3.12; wave delta copied onto each task"
+      }
     },
     {
       "id": "3.11",
@@ -496,14 +524,23 @@
         "2.4"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "awaiting-user-verification",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T13:43:22Z",
+      "completed_at": "2026-10-11T13:51:43Z",
+      "duration_seconds": 501,
+      "notes": "jbh-segment (casts ionChange Event) and jbh-nav-item (activate is output<void>, aria-current when active) + specs. Wave 6.6 must check handleMenuItemClick event use.",
+      "budget": {
+        "five_hour_pct_start": 72,
+        "five_hour_pct_end": 81,
+        "five_hour_pct_delta": 9,
+        "cost_usd_delta": 2.48,
+        "context_pct_end": 15,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker for 3.8-3.12; wave delta copied onto each task"
+      }
     },
     {
       "id": "3.12",
@@ -514,14 +551,23 @@
         "2.4"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "awaiting-user-verification",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T13:43:22Z",
+      "completed_at": "2026-10-11T13:51:43Z",
+      "duration_seconds": 501,
+      "notes": "jbh-line-chart: ngx-charts, animations off, hex palette, ::ng-deep kept inside the layer; spec with provideNoopAnimations().",
+      "budget": {
+        "five_hour_pct_start": 72,
+        "five_hour_pct_end": 81,
+        "five_hour_pct_delta": 9,
+        "cost_usd_delta": 2.48,
+        "context_pct_end": 15,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker for 3.8-3.12; wave delta copied onto each task"
+      }
     },
     {
       "id": "3.13",
@@ -1182,6 +1228,15 @@
       "decision": "Add npm script test:layer (ng test, no watch, ChromeHeadless, only design-system and core/formatting specs). Use it at every test ask point; document it in wave 8.1.",
       "why": "The command runs after many waves and in 8.5. npm script chosen over a new Makefile: jbh-app keeps tooling in package.json.",
       "covered_by": null
+    },
+    {
+      "id": "D13",
+      "at": "2026-10-11T13:43:22Z",
+      "scope": "change",
+      "made_by": "user",
+      "decision": "Split wave 3: run Track B (3.8-3.12) now, then stop and arm a wake-up for 11:02 local; Tracks A and C after the 5-hour reset.",
+      "why": "5h bucket 72%; full wave 3 projected at 20-30%, over the 90% checkpoint. Track B alone is about 8%.",
+      "covered_by": null
     }
   ],
   "events": [
@@ -1269,6 +1324,16 @@
       "at": "2026-10-11T13:42:47Z",
       "agent": "leader",
       "event": "user verified wave 2: ran npm run test:layer, 68 of 68 specs SUCCESS (ChromeHeadless); 2.1-2.5 done. The run also compiled the @design-system alias."
+    },
+    {
+      "at": "2026-10-11T13:43:22Z",
+      "agent": "leader",
+      "event": "checkpoint gate before wave 3: 5h 72% (resets_at 1791734400), context 14%; full wave projected over 90%. Dispatched one serial app worker (sonnet) for wave 3 Track B (3.8-3.12)"
+    },
+    {
+      "at": "2026-10-11T13:52:01Z",
+      "agent": "leader",
+      "event": "Track B reconciled: 3.8-3.12 awaiting-user-verification. Worker timestamps were wrong (before dispatch); leader used dispatch and return times. Leader ESLint on design-system: clean. Budget end 5h 81%, context 15%, cost_usd 5.38"
     }
   ]
 }

@@ -1,0 +1,51 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border: none;
+  border-radius: var(--jbh-radius-sm);
+  background: transparent;
+  color: var(--jbh-text-secondary);
+  font-size: 24px;
+  cursor: pointer;
+  transition: all var(--jbh-transition-base);
+}
+
+:host(:focus-visible) {
+  outline: 2px solid var(--jbh-primary-color);
+  outline-offset: 2px;
+}
+
+:host(:disabled) {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+:host(:hover:not(:disabled)) {
+  background: rgba(102, 126, 234, 0.1);
+  color: var(--jbh-primary-color);
+}
+
+:host(:active:not(:disabled)) {
+  transform: scale(0.95);
+}
+
+:host(.jbh-icon-button--sm) {
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+}
+
+:host(.jbh-icon-button--primary) {
+  color: var(--jbh-primary-color);
+}
+
+:host(.jbh-icon-button--danger:hover:not(:disabled)) {
+  background: rgba(245, 101, 101, 0.1);
+  color: var(--jbh-error-color);
+}

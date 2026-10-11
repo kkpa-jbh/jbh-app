@@ -1,0 +1,10 @@
+@if (icon(); as iconName) {
+  <div class="jbh-empty-state__icon">
+    <jbh-icon [name]="iconName" />
+  </div>
+}
+<h3 class="jbh-empty-state__title">{{ title() }}</h3>
+@if (message()) {
+  <p class="jbh-empty-state__message">{{ message() }}</p>
+}
+<ng-content />

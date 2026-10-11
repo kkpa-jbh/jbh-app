@@ -37,11 +37,11 @@ Track A — only `src/app/design-system/components/forms/**`:
 
 Track B — only `src/app/design-system/components/display/**`:
 
-- [ ] 3.8 `button[jbhButton]` / `a[jbhButton]` / `label[jbhButton]` and `button[jbhIconButton]` + specs (D5). Export from `display/index.ts`.
-- [ ] 3.9 `jbh-card`, `jbh-alert`, `jbh-empty-state`, `jbh-skeleton`, `jbh-page-header` + specs.
-- [ ] 3.10 `jbh-table`, `jbh-table-row`, `jbh-table-cell` and the `jbhTableHead` / `jbhTableRow` / `jbhTableCard` template directives + spec (D11).
-- [ ] 3.11 `jbh-segment` and `jbh-nav-item` + specs (D21).
-- [ ] 3.12 `jbh-line-chart` (ngx-charts, animations off) + spec (D21).
+- [x] 3.8 `button[jbhButton]` / `a[jbhButton]` / `label[jbhButton]` and `button[jbhIconButton]` + specs (D5). Export from `display/index.ts`.
+- [x] 3.9 `jbh-card`, `jbh-alert`, `jbh-empty-state`, `jbh-skeleton`, `jbh-page-header` + specs.
+- [x] 3.10 `jbh-table`, `jbh-table-row`, `jbh-table-cell` and the `jbhTableHead` / `jbhTableRow` / `jbhTableCard` template directives + spec (D11).
+- [x] 3.11 `jbh-segment` and `jbh-nav-item` + specs (D21).
+- [x] 3.12 `jbh-line-chart` (ngx-charts, animations off) + spec (D21).
 
 Track C — `src/app/design-system/platform/**` (except `viewport/`), `src/app/core/infrastructure/platform/`, `src/app/core/infrastructure/header/`, the 3 core services, `src/main.ts`, `src/assets/i18n/*.json`:
 

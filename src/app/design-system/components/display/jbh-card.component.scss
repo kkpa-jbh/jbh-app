@@ -1,0 +1,36 @@
+:host {
+  display: block;
+  background: var(--jbh-background-white);
+  border-radius: var(--jbh-radius-lg);
+  padding: var(--jbh-spacing-lg);
+  box-shadow: var(--jbh-shadow-md);
+
+  @media (min-width: 768px) {
+    padding: var(--jbh-spacing-xl);
+  }
+}
+
+:host(.jbh-card--elevated) {
+  box-shadow: var(--jbh-shadow-xl);
+}
+
+:host(.jbh-card--flat) {
+  box-shadow: none;
+  border: 1px solid var(--jbh-border-color);
+}
+
+:host(.jbh-card--form) {
+  box-shadow: var(--jbh-shadow-xl);
+  animation: jbh-card-slide-up 0.6s ease-out;
+}
+
+@keyframes jbh-card-slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
