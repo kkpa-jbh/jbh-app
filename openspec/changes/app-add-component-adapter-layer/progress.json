@@ -1334,6 +1334,11 @@
       "at": "2026-10-11T13:52:01Z",
       "agent": "leader",
       "event": "Track B reconciled: 3.8-3.12 awaiting-user-verification. Worker timestamps were wrong (before dispatch); leader used dispatch and return times. Leader ESLint on design-system: clean. Budget end 5h 81%, context 15%, cost_usd 5.38"
+    },
+    {
+      "at": "2026-10-11T13:52:09Z",
+      "agent": "leader",
+      "event": "resume-armed — Track B commit 60ff16b; 5h 81%, context 15%; Tracks A+C projected over 90%. five_hour_resets_at 1791734400, wake epoch 1791734520 (11:02 local); then wave 3 Tracks A (3.1-3.7) and C (3.13-3.17)"
     }
   ]
 }
