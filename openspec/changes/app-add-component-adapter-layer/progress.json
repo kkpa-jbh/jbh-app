@@ -1,0 +1,1111 @@
+{
+  "schema_version": 1,
+  "kind": "change",
+  "change": "app-add-component-adapter-layer",
+  "module": "app",
+  "roadmap": null,
+  "request": "Create a jbh-* component adapter layer for jbh-app so pages stop using Ionic and external libraries directly. Goal: make future migrations easy (upgrade Angular/Ionic, remove Ionic, move to Vue). Agreed scope from discussion: 3 adapter layers — (1) UI components in their own folder, separate from the feature pages under src/app/ui (jbh-text-field, jbh-date-field, jbh-textarea, jbh-toggle, jbh-button, jbh-icon, jbh-table, jbh-card, empty state, skeleton, page header), each with its own CSS; (2) platform adapters (jbh-page shell + page-enter event, DialogService, ToastService, navigation) that hide Ionic-only behavior; (3) framework-free core (formatting logic in plain TS, pipes as thin adapters). Plain HTML (div, p, span, h1, label) is NOT wrapped. Wrap only: external-library elements, styled controls with behavior, repeated markup. Add a guard: a lint/check that forbids <ion-*> tags and @ionic/angular imports inside src/app/ui/**. Proposal, design and tasks only for now — the user wants to review the artifacts before any implementation.",
+  "status": "proposed",
+  "rollup": {
+    "current": [],
+    "pending": [
+      "1.1",
+      "1.2",
+      "1.3",
+      "1.4",
+      "2.1",
+      "2.2",
+      "2.3",
+      "2.4",
+      "2.5",
+      "3.1",
+      "3.2",
+      "3.3",
+      "3.4",
+      "3.5",
+      "3.6",
+      "3.7",
+      "3.8",
+      "3.9",
+      "3.10",
+      "3.11",
+      "3.12",
+      "3.13",
+      "3.14",
+      "3.15",
+      "3.16",
+      "3.17",
+      "4.1",
+      "4.2",
+      "5.1",
+      "5.2",
+      "5.3",
+      "6.1",
+      "6.2",
+      "6.3",
+      "6.4",
+      "6.5",
+      "6.6",
+      "6.7",
+      "6.8",
+      "7.1",
+      "7.2",
+      "7.3",
+      "7.4",
+      "7.5",
+      "7.6",
+      "7.7",
+      "8.1",
+      "8.2",
+      "8.3",
+      "8.4",
+      "8.5"
+    ],
+    "blocked": [],
+    "done": []
+  },
+  "created_at": "2026-10-11T13:07:40Z",
+  "updated_at": "2026-10-11T13:07:40Z",
+  "leader": {
+    "assistant": "Claude Code",
+    "model": "claude-opus-5-5"
+  },
+  "git": {
+    "strategy": "auto",
+    "branch": "ft/CH1-JBH-52-app-add-component-adapter-layer",
+    "base": "main",
+    "ticket": "JBH-52",
+    "ticket_url": "https://linear.app/kkpa/issue/JBH-52/jbh-app-add-a-jbh-component-adapter-layer",
+    "ticket_tracker": "linear",
+    "created_at": "2026-10-11T11:42:00Z"
+  },
+  "tasks": [
+    {
+      "id": "1.1",
+      "title": "Add the path alias `\"@design-system/*\": [\"src/app/design-system/*\"]` to `tsconfig.json` (D1).",
+      "module": "app",
+      "depends_on": [],
+      "parallel_ok": false,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "1.2",
+      "title": "Create `.eslintrc.boundary.json` with the 4 overrides of D2, in that order (all rules `error`).",
+      "module": "app",
+      "depends_on": [],
+      "parallel_ok": false,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "1.3",
+      "title": "Add `scripts/check-scss-boundary.mjs` and the `lint:boundary` script to `package.json` (D2).",
+      "module": "app",
+      "depends_on": [],
+      "parallel_ok": false,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "1.4",
+      "title": "Run the 8 stdin checks of the \"Guard\" test contract; each result must match.",
+      "module": "app",
+      "depends_on": [
+        "1.2",
+        "1.3"
+      ],
+      "parallel_ok": false,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "2.1",
+      "title": "Create `src/app/core/formatting/` with `currency.ts`, `growth.ts`, `date.ts`, `relative-time.ts`, `display-name.ts`, `translation-key.ts`, …",
+      "module": "app",
+      "depends_on": [
+        "1.2"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "2.2",
+      "title": "Write one `*.spec.ts` per file of 2.1 with the exact values of the \"Formatting core\" test contract.",
+      "module": "app",
+      "depends_on": [
+        "2.1"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "2.3",
+      "title": "Create the layer skeleton: `src/app/design-system/components/index.ts`, `components/internal/next-id.ts` (+ spec: two calls give different …",
+      "module": "app",
+      "depends_on": [
+        "1.1"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "2.4",
+      "title": "Build `components/icon/`: `icon-registry.ts` with every icon name used today (template names, `getTypeIcon()`, `getMovementIcon()`, `getSta…",
+      "module": "app",
+      "depends_on": [
+        "2.3"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "2.5",
+      "title": "Build the viewport helper in `src/app/design-system/platform/viewport/` (`wide` signal, ≥ 1024 px, 100 ms debounced resize, no Ionic)",
+      "module": "app",
+      "depends_on": [
+        "2.3"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "3.1",
+      "title": "`jbh-field` (label, requirement marker, hint, error, ids)",
+      "module": "app",
+      "depends_on": [
+        "2.3",
+        "2.4"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "3.2",
+      "title": "`jbh-text-field` (CVA, native input, password reveal, `[jbhFieldSuffix]` slot)",
+      "module": "app",
+      "depends_on": [
+        "3.1"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "3.3",
+      "title": "`jbh-number-field` (CVA, core decimal helpers, `APP_CONFIG_TOKEN` separators)",
+      "module": "app",
+      "depends_on": [
+        "3.1",
+        "2.1"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "3.4",
+      "title": "`jbh-textarea` (CVA, auto-grow, counter with `maxlength`)",
+      "module": "app",
+      "depends_on": [
+        "3.1"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "3.5",
+      "title": "`jbh-date-field` (CVA, unique picker id, `toDateValue`, translated picker buttons)",
+      "module": "app",
+      "depends_on": [
+        "3.1",
+        "2.1"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "3.6",
+      "title": "`jbh-select` and `jbh-select-option` (CVA, projected options, overlay type from the viewport helper, label as overlay header, loading)",
+      "module": "app",
+      "depends_on": [
+        "3.1",
+        "2.5"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "3.7",
+      "title": "`jbh-toggle` (CVA, `checked` model, `disabled` input, required label)",
+      "module": "app",
+      "depends_on": [
+        "3.1"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "3.8",
+      "title": "`button[jbhButton]` / `a[jbhButton]` / `label[jbhButton]` and `button[jbhIconButton]` + specs (D5).",
+      "module": "app",
+      "depends_on": [
+        "2.3",
+        "2.4"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "3.9",
+      "title": "`jbh-card`, `jbh-alert`, `jbh-empty-state`, `jbh-skeleton`, `jbh-page-header` + specs.",
+      "module": "app",
+      "depends_on": [
+        "2.3",
+        "2.4"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "3.10",
+      "title": "`jbh-table`, `jbh-table-row`, `jbh-table-cell` and the `jbhTableHead` / `jbhTableRow` / `jbhTableCard` template directives + spec (D11).",
+      "module": "app",
+      "depends_on": [
+        "2.3",
+        "2.4"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "3.11",
+      "title": "`jbh-segment` and `jbh-nav-item` + specs (D21).",
+      "module": "app",
+      "depends_on": [
+        "2.3",
+        "2.4"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "3.12",
+      "title": "`jbh-line-chart` (ngx-charts, animations off)",
+      "module": "app",
+      "depends_on": [
+        "2.3",
+        "2.4"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "3.13",
+      "title": "`jbh-page` (header slot, `pageEnter` / `pageLeave` from the parent element, `--jbh-page-*` properties)",
+      "module": "app",
+      "depends_on": [
+        "2.3",
+        "2.4"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "3.14",
+      "title": "`jbh-toolbar` (title, back / menu button, `backHref`, actions)",
+      "module": "app",
+      "depends_on": [
+        "2.3",
+        "2.4"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "3.15",
+      "title": "`ToastService`, `DialogService`, `NavigationService` + specs (D13).",
+      "module": "app",
+      "depends_on": [
+        "2.3",
+        "2.4"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "3.16",
+      "title": "`DevicePlatform` port in `core/infrastructure/platform/device-platform.ts`; `IonicDevicePlatform` + spec; binding in `src/main.ts`; rewire …",
+      "module": "app",
+      "depends_on": [
+        "2.3",
+        "2.4"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "3.17",
+      "title": "Add optional `defaultBackHref` to `PageHeaderConfig` in `header-actions.service.ts`.",
+      "module": "app",
+      "depends_on": [
+        "2.3",
+        "2.4"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "4.1",
+      "title": "Make the 7 pipes in `src/app/shared/pipes/` thin adapters over `@core/formatting` (same names, purity and output).",
+      "module": "app",
+      "depends_on": [
+        "2.1"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "4.2",
+      "title": "Rebuild `app-category-select` and `app-product-select` on `jbh-select`, `jbh-select-option` and `jbh-icon`.",
+      "module": "app",
+      "depends_on": [
+        "3.6"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "5.1",
+      "title": "Migrate `src/app/ui/products/pages/add-movement/` (HTML, TS, SCSS): `jbh-page` root with `<app-header jbhPageHeader>`; `(pageEnter)` / `(pa…",
+      "module": "app",
+      "depends_on": [
+        "2.1",
+        "2.2",
+        "2.3",
+        "2.4",
+        "2.5",
+        "3.1",
+        "3.2",
+        "3.3",
+        "3.4",
+        "3.5",
+        "3.6",
+        "3.7",
+        "3.8",
+        "3.9",
+        "3.10",
+        "3.11",
+        "3.12",
+        "3.13",
+        "3.14",
+        "3.15",
+        "3.16",
+        "3.17",
+        "4.1",
+        "4.2"
+      ],
+      "parallel_ok": false,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "5.2",
+      "title": "Run `npx eslint src/app/ui/products/pages/add-movement`: zero boundary errors.",
+      "module": "app",
+      "depends_on": [
+        "5.1"
+      ],
+      "parallel_ok": false,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "5.3",
+      "title": "Gate before wave 6.",
+      "module": "app",
+      "depends_on": [
+        "5.2"
+      ],
+      "parallel_ok": false,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "6.1",
+      "title": "Auth: `src/app/ui/auth/pages/login`, `src/app/ui/auth/pages/signup` (password reveal from `jbh-text-field`, status icons and spinners in `[…",
+      "module": "app",
+      "depends_on": [
+        "5.3"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "6.2",
+      "title": "Dashboard, reports, settings and profile: `src/app/ui/dashboard/pages/dashboard` (`ion-card` → `jbh-card`), `src/app/ui/reports/pages/growt…",
+      "module": "app",
+      "depends_on": [
+        "5.3"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "6.3",
+      "title": "Product forms: `src/app/ui/products/pages/create`, `edit`, `transfer`, `import-statement` (metadata fields by value type: `jbh-text-field`,…",
+      "module": "app",
+      "depends_on": [
+        "5.3"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "6.4",
+      "title": "Product lists and reports: `src/app/ui/products/pages/overview` with `components/product-card` and `components/balance-summary-cards`; `pag…",
+      "module": "app",
+      "depends_on": [
+        "5.3"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "6.5",
+      "title": "Teams: `src/app/ui/teams/pages/create`, `edit` (standard header with `showBackButton: true` and `defaultBackHref: '/settings/teams/overview…",
+      "module": "app",
+      "depends_on": [
+        "5.3"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "6.6",
+      "title": "Shared chrome: `src/app/shared/components/app-header` (`jbh-toolbar`, pass `defaultBackHref`), `app-menu` (`jbh-nav-item`, `NavigationServi…",
+      "module": "app",
+      "depends_on": [
+        "5.3"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "6.7",
+      "title": "Delete dead code: `src/app/ui/home/` (page, template, SCSS, spec)",
+      "module": "app",
+      "depends_on": [
+        "5.3"
+      ],
+      "parallel_ok": true,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "6.8",
+      "title": "After merging wave 6, run `npm run lint:boundary`: zero violations expected.",
+      "module": "app",
+      "depends_on": [
+        "6.1",
+        "6.2",
+        "6.3",
+        "6.4",
+        "6.5",
+        "6.6",
+        "6.7"
+      ],
+      "parallel_ok": false,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "7.1",
+      "title": "Remove the unused `selectInterface` input from `app-category-select` and `app-product-select`.",
+      "module": "app",
+      "depends_on": [
+        "6.8"
+      ],
+      "parallel_ok": false,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "7.2",
+      "title": "Remove the `JbhDatePipe` static helpers after checking no caller is left.",
+      "module": "app",
+      "depends_on": [
+        "7.1"
+      ],
+      "parallel_ok": false,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "7.3",
+      "title": "Delete `DecimalFormatDirective` and its export in `src/app/shared/directives/index.ts` after checking no template uses `jbhDecimalFormat`; …",
+      "module": "app",
+      "depends_on": [
+        "7.2"
+      ],
+      "parallel_ok": false,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "7.4",
+      "title": "Remove `importProvidersFrom(IonicModule.forRoot())` and the `IonicModule` import from `src/main.ts`; check that no file imports `IonicModul…",
+      "module": "app",
+      "depends_on": [
+        "7.3"
+      ],
+      "parallel_ok": false,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "7.5",
+      "title": "Clean `src/theme/custom-components.scss` with the D16 method: remove rules whose look moved into a component or whose classes have zero use…",
+      "module": "app",
+      "depends_on": [
+        "7.4"
+      ],
+      "parallel_ok": false,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "7.6",
+      "title": "Update `src/app/AGENTS.md`: the layer folders, public entry points, allowed imports, the guard, the `jbh-page` root rule, where specs live.",
+      "module": "app",
+      "depends_on": [
+        "7.5"
+      ],
+      "parallel_ok": false,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "7.7",
+      "title": "Run `npx eslint src/app src/main.ts`: zero boundary errors and zero selector-prefix errors.",
+      "module": "app",
+      "depends_on": [
+        "7.6"
+      ],
+      "parallel_ok": false,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "8.1",
+      "title": "Update `.claude/CLAUDE.md`: styles rule per D16; `jbh-select` instead of `ion-select`; `jbh-page` `(pageEnter)` / `(pageLeave)` and the roo…",
+      "module": "app",
+      "depends_on": [
+        "7.7"
+      ],
+      "parallel_ok": false,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "8.2",
+      "title": "Update `.claude/docs/theming.md`, `forms.md`, `architecture.md` (structure with `design-system/` and `core/formatting/`)",
+      "module": "app",
+      "depends_on": [
+        "7.7"
+      ],
+      "parallel_ok": false,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "8.3",
+      "title": "Final guard: `npm run lint:boundary` exits 0; the 8 stdin checks still match.",
+      "module": "app",
+      "depends_on": [
+        "7.7"
+      ],
+      "parallel_ok": false,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "8.4",
+      "title": "Add the boundary check to CI: in `.github/workflows/image.yml`, job `image`, add a step `name: Check UI boundary`, `run: npm run lint:bound…",
+      "module": "app",
+      "depends_on": [
+        "8.3"
+      ],
+      "parallel_ok": false,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    },
+    {
+      "id": "8.5",
+      "title": "Run `npx ng build --configuration production`; run `npx ng test --watch=false --browsers=ChromeHeadless --include='src/app/design-system/**…",
+      "module": "app",
+      "depends_on": [
+        "8.4"
+      ],
+      "parallel_ok": false,
+      "status": "pending",
+      "agent": null,
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": null,
+      "budget": null
+    }
+  ],
+  "review": {
+    "status": "pending",
+    "agent": null,
+    "brief": null,
+    "rounds": []
+  },
+  "decisions": [
+    {
+      "id": "D1",
+      "at": "2026-10-11T11:55:00Z",
+      "scope": "change",
+      "made_by": "user",
+      "decision": "The layer lives in src/app/design-system/ (components/ + platform/). Only it may use Ionic.",
+      "why": "Step 2 interview. One folder holds the whole vocabulary, the guard rule is one line, and it can become a library later.",
+      "covered_by": null
+    },
+    {
+      "id": "D2",
+      "at": "2026-10-11T11:57:00Z",
+      "scope": "change",
+      "made_by": "user",
+      "decision": "Migrate all pages in this change; the guard is an error from day one. One reference page moves first.",
+      "why": "Step 2 interview. The user chose full migration over layer plus one reference page. The reference-page-first order is the leader's safety rule.",
+      "covered_by": null
+    },
+    {
+      "id": "D3",
+      "at": "2026-10-11T11:59:00Z",
+      "scope": "change",
+      "made_by": "user",
+      "decision": "Unit tests for src/app/design-system/ and src/app/core/formatting/ only. None for pages or pipes.",
+      "why": "Step 2 interview. Overrides the project rule 'no spec.ts files' for those two folders only.",
+      "covered_by": null
+    },
+    {
+      "id": "D4",
+      "at": "2026-10-11T12:15:00Z",
+      "scope": "change",
+      "made_by": "leader",
+      "decision": "Artifact worker dispatched on opus (models.escalation) instead of sonnet.",
+      "why": "Cross-cutting design over about 70 files; the Ionic page lifecycle and the lint guard were open problems. Cost: the 5-hour bucket went from 4% to 54%.",
+      "covered_by": null
+    },
+    {
+      "id": "D5",
+      "at": "2026-10-11T13:00:00Z",
+      "scope": "change",
+      "made_by": "user",
+      "decision": "Acceptance = npm run lint:boundary exits 0. Add it to CI in wave 8 (task 8.4).",
+      "why": "design.md open questions 1 and 2. The 249 old prefer-inject errors stay out of scope.",
+      "covered_by": null
+    },
+    {
+      "id": "D6",
+      "at": "2026-10-11T13:00:00Z",
+      "scope": "change",
+      "made_by": "user",
+      "decision": "Delete HomePage and portfolio-top-banner; confirm design D5 (button); accept the 5 visible changes; dates sent as YYYY-MM-DD / YYYY-MM.",
+      "why": "design.md open questions 3 to 6, all answered as recommended.",
+      "covered_by": null
+    },
+    {
+      "id": "D7",
+      "at": "2026-10-11T11:43:00Z",
+      "scope": "change",
+      "made_by": "leader",
+      "decision": "Setup (openspec/config.yaml, AGENTS.md) committed on its own. OpenSpec files in .claude/ stay out of git.",
+      "why": "Setup is not part of the change. jbh-iam also keeps its OpenSpec .claude/ files out of git.",
+      "covered_by": null
+    },
+    {
+      "id": "D8",
+      "at": "2026-10-11T13:07:40Z",
+      "scope": "change",
+      "made_by": "leader",
+      "decision": "progress.json goes into the artifacts commit, not the wave-1 commit.",
+      "why": "The run pauses before wave 1 for the user's review. An untracked state file could be lost on a branch switch.",
+      "covered_by": null
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-10-11T11:42:25Z",
+      "agent": "leader",
+      "event": "branch created from main 49de35f; setup commit dc4ee92 (openspec init, AGENTS.md pipeline config)"
+    },
+    {
+      "at": "2026-10-11T12:15:00Z",
+      "agent": "leader",
+      "event": "dispatched artifact worker 'app' (opus), artifact mode"
+    },
+    {
+      "at": "2026-10-11T12:48:00Z",
+      "agent": "app",
+      "event": "artifacts written: 5 specs, design D1-D21, 50 tasks in 8 waves; openspec validate --strict passes"
+    },
+    {
+      "at": "2026-10-11T12:55:00Z",
+      "agent": "leader",
+      "event": "design briefing posted; user answered the 6 open questions (see decisions D5, D6)"
+    },
+    {
+      "at": "2026-10-11T13:06:27Z",
+      "agent": "app",
+      "event": "revision done: resolved questions in design.md, new leader task 8.4 (CI), user task now 8.5; 51 tasks; validate passes"
+    },
+    {
+      "at": "2026-10-11T13:07:40Z",
+      "agent": "leader",
+      "event": "design gate: no gated area touched (no database change), skipped"
+    },
+    {
+      "at": "2026-10-11T13:07:40Z",
+      "agent": "leader",
+      "event": "budget after artifacts: 5-hour bucket 54% (start 4%), session cost_usd 19.21 (start 1.41), context 23%"
+    },
+    {
+      "at": "2026-10-11T13:07:40Z",
+      "agent": "leader",
+      "event": "artifacts committed (Pipeline-Step: artifacts); paused before wave 1 at the user's request"
+    }
+  ]
+}
