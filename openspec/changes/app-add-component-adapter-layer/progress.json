@@ -1174,6 +1174,15 @@
       "decision": "Task 2.1 set to awaiting-user-verification, not done as the worker reported.",
       "why": "2.1 is the code the 2.2 specs test; the suite has not run. Done needs the user's pass.",
       "covered_by": null
+    },
+    {
+      "id": "D12",
+      "at": "2026-10-11T13:42:17Z",
+      "scope": "change",
+      "made_by": "user",
+      "decision": "Add npm script test:layer (ng test, no watch, ChromeHeadless, only design-system and core/formatting specs). Use it at every test ask point; document it in wave 8.1.",
+      "why": "The command runs after many waves and in 8.5. npm script chosen over a new Makefile: jbh-app keeps tooling in package.json.",
+      "covered_by": null
     }
   ],
   "events": [
@@ -1246,6 +1255,16 @@
       "at": "2026-10-11T13:32:43Z",
       "agent": "leader",
       "event": "wave 2 reconciled: 2.1-2.5 awaiting-user-verification; leader re-ran ESLint on design-system + core/formatting: clean (npx eslint needs ESLINT_USE_FLAT_CONFIG=false); budget end 5h 70%, context 13%, cost_usd 2.25"
+    },
+    {
+      "at": "2026-10-11T13:32:55Z",
+      "agent": "leader",
+      "event": "wave 2 commit 33a984a; checkpoint gate: 5h 70%, context 13%, both under limits; asked the user to run the specs; recommended /clear + resume before wave 3"
+    },
+    {
+      "at": "2026-10-11T13:42:17Z",
+      "agent": "leader",
+      "event": "leader added package.json script test:layer (D12); task 8.5 text unchanged, test:layer runs the same command"
     }
   ]
 }

@@ -10,6 +10,7 @@
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "lint": "ng lint",
+    "test:layer": "ng test --watch=false --browsers=ChromeHeadless --include='src/app/design-system/**/*.spec.ts' --include='src/app/core/formatting/**/*.spec.ts'",
     "lint:boundary": "ESLINT_USE_FLAT_CONFIG=false eslint --no-eslintrc -c .eslintrc.boundary.json \"src/**/*.{ts,html}\" && node scripts/check-scss-boundary.mjs",
     "i18n:lint": "i18n-lint",
     "i18n:lint:fix": "i18n-lint --fix",
