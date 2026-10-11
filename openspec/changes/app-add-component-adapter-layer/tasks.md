@@ -17,11 +17,11 @@ Rules for every task:
 
 ## 2. Wave 2 — Foundation (2.1→2.2 and 2.3→2.4, 2.5 run in parallel)
 
-- [ ] 2.1 Create `src/app/core/formatting/` with `currency.ts`, `growth.ts`, `date.ts`, `relative-time.ts`, `display-name.ts`, `translation-key.ts`, `decimal-input.ts` and `index.ts`, with the functions of D15. Plain TypeScript; no framework import. Depends on 1.2.
-- [ ] 2.2 Write one `*.spec.ts` per file of 2.1 with the exact values of the "Formatting core" test contract. Depends on 2.1.
-- [ ] 2.3 Create the layer skeleton: `src/app/design-system/components/index.ts`, `components/internal/next-id.ts` (+ spec: two calls give different ids), barrels `components/icon/index.ts`, `components/forms/index.ts`, `components/display/index.ts` (the last two start as `export {};`), and `src/app/design-system/platform/index.ts` (`export {};`). Depends on 1.1.
-- [ ] 2.4 Build `components/icon/`: `icon-registry.ts` with every icon name used today (template names, `getTypeIcon()`, `getMovementIcon()`, `getStatusIcon()`, `getGrowthIcon()`, menu items, header actions, `close`), `jbh-icon` and `jbh-spinner`, with specs per the contract; export them from `components/icon/index.ts` (D10). Depends on 2.3.
-- [ ] 2.5 Build the viewport helper in `src/app/design-system/platform/viewport/` (`wide` signal, ≥ 1024 px, 100 ms debounced resize, no Ionic) + spec; export it from `platform/index.ts` (D14). Depends on 2.3.
+- [x] 2.1 Create `src/app/core/formatting/` with `currency.ts`, `growth.ts`, `date.ts`, `relative-time.ts`, `display-name.ts`, `translation-key.ts`, `decimal-input.ts` and `index.ts`, with the functions of D15. Plain TypeScript; no framework import. Depends on 1.2.
+- [x] 2.2 Write one `*.spec.ts` per file of 2.1 with the exact values of the "Formatting core" test contract. Depends on 2.1.
+- [x] 2.3 Create the layer skeleton: `src/app/design-system/components/index.ts`, `components/internal/next-id.ts` (+ spec: two calls give different ids), barrels `components/icon/index.ts`, `components/forms/index.ts`, `components/display/index.ts` (the last two start as `export {};`), and `src/app/design-system/platform/index.ts` (`export {};`). Depends on 1.1.
+- [x] 2.4 Build `components/icon/`: `icon-registry.ts` with every icon name used today (template names, `getTypeIcon()`, `getMovementIcon()`, `getStatusIcon()`, `getGrowthIcon()`, menu items, header actions, `close`), `jbh-icon` and `jbh-spinner`, with specs per the contract; export them from `components/icon/index.ts` (D10). Depends on 2.3.
+- [x] 2.5 Build the viewport helper in `src/app/design-system/platform/viewport/` (`wide` signal, ≥ 1024 px, 100 ms debounced resize, no Ionic) + spec; export it from `platform/index.ts` (D14). Depends on 2.3.
 
 ## 3. Wave 3 — Layer components and platform (tracks A, B and C run in parallel)
 

@@ -7,13 +7,14 @@
   "request": "Create a jbh-* component adapter layer for jbh-app so pages stop using Ionic and external libraries directly. Goal: make future migrations easy (upgrade Angular/Ionic, remove Ionic, move to Vue). Agreed scope from discussion: 3 adapter layers — (1) UI components in their own folder, separate from the feature pages under src/app/ui (jbh-text-field, jbh-date-field, jbh-textarea, jbh-toggle, jbh-button, jbh-icon, jbh-table, jbh-card, empty state, skeleton, page header), each with its own CSS; (2) platform adapters (jbh-page shell + page-enter event, DialogService, ToastService, navigation) that hide Ionic-only behavior; (3) framework-free core (formatting logic in plain TS, pipes as thin adapters). Plain HTML (div, p, span, h1, label) is NOT wrapped. Wrap only: external-library elements, styled controls with behavior, repeated markup. Add a guard: a lint/check that forbids <ion-*> tags and @ionic/angular imports inside src/app/ui/**. Proposal, design and tasks only for now — the user wants to review the artifacts before any implementation.",
   "status": "in-progress",
   "rollup": {
-    "current": [],
-    "pending": [
+    "current": [
       "2.1",
       "2.2",
       "2.3",
       "2.4",
-      "2.5",
+      "2.5"
+    ],
+    "pending": [
       "3.1",
       "3.2",
       "3.3",
@@ -66,7 +67,7 @@
     ]
   },
   "created_at": "2026-10-11T13:07:40Z",
-  "updated_at": "2026-10-11T13:23:44Z",
+  "updated_at": "2026-10-11T13:32:43Z",
   "leader": {
     "assistant": "Claude Code",
     "model": "claude-opus-5-5"
@@ -188,14 +189,23 @@
         "1.2"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "awaiting-user-verification",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T13:27:23Z",
+      "completed_at": "2026-10-11T13:29:30Z",
+      "duration_seconds": 127,
+      "notes": "8 files in core/formatting with the D15 functions; plain TS, no framework import; ESLint clean. Verified by the 2.2 specs (not run yet).",
+      "budget": {
+        "five_hour_pct_start": 64,
+        "five_hour_pct_end": 70,
+        "five_hour_pct_delta": 6,
+        "cost_usd_delta": 1.61,
+        "context_pct_end": 13,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker for tasks 2.1-2.5; wave delta copied onto each task"
+      }
     },
     {
       "id": "2.2",
@@ -205,14 +215,23 @@
         "2.1"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "awaiting-user-verification",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T13:29:30Z",
+      "completed_at": "2026-10-11T13:30:30Z",
+      "duration_seconds": 60,
+      "notes": "7 specs, one per core file, with the exact contract values. Not run. parseDecimal now strips thousands separators and returns null for '-' (old directive did neither).",
+      "budget": {
+        "five_hour_pct_start": 64,
+        "five_hour_pct_end": 70,
+        "five_hour_pct_delta": 6,
+        "cost_usd_delta": 1.61,
+        "context_pct_end": 13,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker for tasks 2.1-2.5; wave delta copied onto each task"
+      }
     },
     {
       "id": "2.3",
@@ -222,14 +241,23 @@
         "1.1"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "awaiting-user-verification",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T13:30:30Z",
+      "completed_at": "2026-10-11T13:30:50Z",
+      "duration_seconds": 20,
+      "notes": "Layer skeleton: components and platform barrels, internal/next-id.ts + spec. Not run.",
+      "budget": {
+        "five_hour_pct_start": 64,
+        "five_hour_pct_end": 70,
+        "five_hour_pct_delta": 6,
+        "cost_usd_delta": 1.61,
+        "context_pct_end": 13,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker for tasks 2.1-2.5; wave delta copied onto each task"
+      }
     },
     {
       "id": "2.4",
@@ -239,14 +267,23 @@
         "2.3"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "awaiting-user-verification",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T13:30:50Z",
+      "completed_at": "2026-10-11T13:31:30Z",
+      "duration_seconds": 40,
+      "notes": "icon-registry.ts with 74 names (adds help-circle-outline, chevron-up/down-outline), idempotent registerJbhIcons(), jbh-icon, jbh-spinner, 3 specs. Static scan only: wave 6 must check runtime-built names. Not run.",
+      "budget": {
+        "five_hour_pct_start": 64,
+        "five_hour_pct_end": 70,
+        "five_hour_pct_delta": 6,
+        "cost_usd_delta": 1.61,
+        "context_pct_end": 13,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker for tasks 2.1-2.5; wave delta copied onto each task"
+      }
     },
     {
       "id": "2.5",
@@ -256,14 +293,23 @@
         "2.3"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "awaiting-user-verification",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T13:31:00Z",
+      "completed_at": "2026-10-11T13:31:41Z",
+      "duration_seconds": 41,
+      "notes": "JbhViewportService: wide signal (>= 1024 px, WIDE_VIEWPORT_MIN_WIDTH), 100 ms debounce, no Ionic; spec uses spyOnProperty on innerWidth. Exported from platform/index.ts. Not run.",
+      "budget": {
+        "five_hour_pct_start": 64,
+        "five_hour_pct_end": 70,
+        "five_hour_pct_delta": 6,
+        "cost_usd_delta": 1.61,
+        "context_pct_end": 13,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker for tasks 2.1-2.5; wave delta copied onto each task"
+      }
     },
     {
       "id": "3.1",
@@ -1119,6 +1165,15 @@
       "decision": "Wave 1 tasks set to done without a user test run.",
       "why": "No app code changed. Their acceptance is the guard checks, which the policy lets the leader run. The build check of the new alias comes at the 5.3 gate.",
       "covered_by": "design.md test contract, Guard section"
+    },
+    {
+      "id": "D11",
+      "at": "2026-10-11T13:32:43Z",
+      "scope": "task:2.1",
+      "made_by": "leader",
+      "decision": "Task 2.1 set to awaiting-user-verification, not done as the worker reported.",
+      "why": "2.1 is the code the 2.2 specs test; the suite has not run. Done needs the user's pass.",
+      "covered_by": null
     }
   ],
   "events": [
@@ -1170,7 +1225,27 @@
     {
       "at": "2026-10-11T13:23:44Z",
       "agent": "leader",
-      "event": "wave 1 reconciled: 1.1-1.4 done; baseline lint:boundary = 478 ESLint + 33 SCSS violations; budget end 5h 61%, cost_usd 1.93, context 15%"
+      "event": "wave 1 reconciled: 1.1-1.4 done; baseline lint:boundary = 478 ESLint + 33 SCSS violations; budget end 5h 61%, cost_usd 1.93, context 15%; commit 67a237a"
+    },
+    {
+      "at": "2026-10-11T13:24:22Z",
+      "agent": "leader",
+      "event": "Linear JBH-52: Todo -> In Progress, comment posted (implementation started)"
+    },
+    {
+      "at": "2026-10-11T13:24:22Z",
+      "agent": "leader",
+      "event": "checkpoint gate after wave 1: 5h 61%, context 16%, both under limits; recommended /clear + resume (8-wave change)"
+    },
+    {
+      "at": "2026-10-11T13:27:23Z",
+      "agent": "leader",
+      "event": "resume: new session; budget 5h 64%, context 10%, cost_usd 0.64. Dispatched one serial app worker (sonnet) for wave 2 (tasks 2.1-2.5)"
+    },
+    {
+      "at": "2026-10-11T13:32:43Z",
+      "agent": "leader",
+      "event": "wave 2 reconciled: 2.1-2.5 awaiting-user-verification; leader re-ran ESLint on design-system + core/formatting: clean (npx eslint needs ESLINT_USE_FLAT_CONFIG=false); budget end 5h 70%, context 13%, cost_usd 2.25"
     }
   ]
 }

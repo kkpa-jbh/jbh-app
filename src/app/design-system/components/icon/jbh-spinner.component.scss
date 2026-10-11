@@ -1,0 +1,17 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: inherit;
+  color: inherit;
+}
+
+.jbh-spinner {
+  display: inline-flex;
+}
+
+ion-spinner {
+  --color: currentColor;
+  width: var(--jbh-spinner-size, 1.25em);
+  height: var(--jbh-spinner-size, 1.25em);
+}
