@@ -10,10 +10,10 @@ Rules for every task:
 
 ## 1. Wave 1 — Tooling and guard [leader]
 
-- [ ] 1.1 [leader] Add the path alias `"@design-system/*": ["src/app/design-system/*"]` to `tsconfig.json` (D1).
-- [ ] 1.2 [leader] Create `.eslintrc.boundary.json` with the 4 overrides of D2, in that order (all rules `error`). Add `"extends": ["./.eslintrc.boundary.json"]` to `.eslintrc.json`. Change `@angular-eslint/component-selector` and `@angular-eslint/directive-selector` to accept the prefixes `app` and `jbh` (D2).
-- [ ] 1.3 [leader] Add `scripts/check-scss-boundary.mjs` and the `lint:boundary` script to `package.json` (D2).
-- [ ] 1.4 [leader] Run the 8 stdin checks of the "Guard" test contract; each result must match. Run `npm run lint:boundary` and record the baseline number of violations in the wave notes (expected: more than 0). Depends on 1.2, 1.3.
+- [x] 1.1 [leader] Add the path alias `"@design-system/*": ["src/app/design-system/*"]` to `tsconfig.json` (D1).
+- [x] 1.2 [leader] Create `.eslintrc.boundary.json` with the 4 overrides of D2, in that order (all rules `error`). Add `"extends": ["./.eslintrc.boundary.json"]` to `.eslintrc.json`. Change `@angular-eslint/component-selector` and `@angular-eslint/directive-selector` to accept the prefixes `app` and `jbh` (D2).
+- [x] 1.3 [leader] Add `scripts/check-scss-boundary.mjs` and the `lint:boundary` script to `package.json` (D2).
+- [x] 1.4 [leader] Run the 8 stdin checks of the "Guard" test contract; each result must match. Run `npm run lint:boundary` and record the baseline number of violations in the wave notes (expected: more than 0). Depends on 1.2, 1.3.
 
 ## 2. Wave 2 — Foundation (2.1→2.2 and 2.3→2.4, 2.5 run in parallel)
 
