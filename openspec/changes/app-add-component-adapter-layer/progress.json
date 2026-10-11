@@ -1237,6 +1237,15 @@
       "decision": "Split wave 3: run Track B (3.8-3.12) now, then stop and arm a wake-up for 11:02 local; Tracks A and C after the 5-hour reset.",
       "why": "5h bucket 72%; full wave 3 projected at 20-30%, over the 90% checkpoint. Track B alone is about 8%.",
       "covered_by": null
+    },
+    {
+      "id": "D14",
+      "at": "2026-10-11T14:04:16Z",
+      "scope": "task:3.11",
+      "made_by": "leader",
+      "decision": "Leader fixed the jbh-segment spec itself instead of re-dispatching a worker.",
+      "why": "A 3-line test-only fix with a clear cause; a worker dispatch would re-read the whole doc pack. The component code was right.",
+      "covered_by": null
     }
   ],
   "events": [
@@ -1339,6 +1348,11 @@
       "at": "2026-10-11T13:52:09Z",
       "agent": "leader",
       "event": "resume-armed — Track B commit 60ff16b; 5h 81%, context 15%; Tracks A+C projected over 90%. five_hour_resets_at 1791734400, wake epoch 1791734520 (11:02 local); then wave 3 Tracks A (3.1-3.7) and C (3.13-3.17)"
+    },
+    {
+      "at": "2026-10-11T14:04:16Z",
+      "agent": "leader",
+      "event": "user ran npm run test:layer: 108 of 110 SUCCESS, 2 FAILED (jbh-segment spec: triggerEventHandler also calls IonSegment's own listener, which reads $event.target). Leader fixed the spec: dispatch a real CustomEvent. Component unchanged. 3.8-3.12 stay awaiting-user-verification."
     }
   ]
 }

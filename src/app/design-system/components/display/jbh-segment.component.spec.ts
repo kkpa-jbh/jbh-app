@@ -17,6 +17,11 @@ class HostComponent {
   readonly selected = signal('INCOME');
 }
 
+// A real DOM event, because Ionic's own ionChange listener on the segment reads event.target.
+function dispatchIonChange(root: HTMLElement, detail: { value?: string }): void {
+  root.querySelector('ion-segment')!.dispatchEvent(new CustomEvent('ionChange', { detail }));
+}
+
 describe('JbhSegmentComponent', () => {
   function setup() {
     TestBed.configureTestingModule({ providers: [provideIonicAngular()] });
@@ -52,7 +57,7 @@ describe('JbhSegmentComponent', () => {
     const segment = fixture.debugElement.query(By.directive(JbhSegmentComponent)).componentInstance as JbhSegmentComponent;
     segment.value.subscribe(value => emitted.push(value));
 
-    fixture.debugElement.query(By.css('ion-segment')).triggerEventHandler('ionChange', { detail: { value: 'EXPENSE' } });
+    dispatchIonChange(fixture.nativeElement, { value: 'EXPENSE' });
     fixture.detectChanges();
 
     expect(emitted).toEqual(['EXPENSE']);
@@ -62,7 +67,7 @@ describe('JbhSegmentComponent', () => {
   it('ignores a change without a value', () => {
     const fixture = setup();
 
-    fixture.debugElement.query(By.css('ion-segment')).triggerEventHandler('ionChange', { detail: {} });
+    dispatchIonChange(fixture.nativeElement, {});
     fixture.detectChanges();
 
     expect(fixture.componentInstance.selected()).toBe('INCOME');
