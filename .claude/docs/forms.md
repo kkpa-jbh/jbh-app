@@ -1,40 +1,87 @@
 # Forms: Mobile-First Standards
 
 ## Overview
-All forms use Angular Reactive Forms with Ionic components for native mobile experience.
+All forms use Angular Reactive Forms with the `jbh-*` form controls from `@design-system/components`.
+Each control is a `ControlValueAccessor`: put `formControlName` on it.
+Pages never use `<ion-input>`, `<ion-select>`, raw `<input>` fields or Ionic imports.
+
+**Reference page**: `src/app/ui/products/pages/add-movement/` (text, number, date, select, textarea, loading button, toast, skeleton).
+
+## Form controls
+
+| Control | Use for | Main inputs |
+|---|---|---|
+| `jbh-text-field` | text, email, password | `label`, `type`, `icon`, `placeholder`, `autocomplete`, `hint`, `error`, `requirement`; slot `[jbhFieldSuffix]`; password reveal built in |
+| `jbh-number-field` | amounts, numbers | `label`, `decimals`, `icon`, `placeholder`, `hint`, `error`, `requirement`. Value: `number \| null` |
+| `jbh-textarea` | long text | `label`, `rows`, `maxlength`, `icon`, `placeholder`, `hint`, `error`, `requirement` |
+| `jbh-date-field` | dates | `label`, `mode` (`date` \| `month`), `min`, `max`, `hint`, `error`, `requirement`. Value: `YYYY-MM-DD` or `YYYY-MM` |
+| `jbh-select` + `jbh-select-option` | dropdowns | `label`, `placeholder`, `icon`, `loading`, `hint`, `error`, `requirement`; options are projected |
+| `jbh-toggle` | on / off | `label`, `checked`, `disabled` |
+| `jbh-field` | rare custom controls only | `label`, `controlId`, `hint`, `error`, `requirement` |
+
+- **Errors**: `error` is `string | null`. A non-empty string shows it, with `role="alert"`.
+- **Selects**: the overlay type is chosen by the layer (popover from 1024 px, action sheet below). Do not pass an interface.
+- **Number input**: `jbh-number-field` formats the number while the user types and on blur. Its `valueChanges` emits while typing.
+- **App selects**: `app-category-select` and `app-product-select` (in `shared/components/`) wrap `jbh-select` with domain data. Put a `<label class="jbh-label">` above them.
 
 ## TypeScript Pattern
 
 ```typescript
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { IonicModule, ToastController } from '@ionic/angular';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
+import {
+  JbhButtonComponent,
+  JbhCardComponent,
+  JbhPageHeaderComponent,
+  JbhSelectComponent,
+  JbhSelectOptionComponent,
+  JbhTextFieldComponent
+} from '@design-system/components';
+import { JbhPageComponent, ToastService } from '@design-system/platform';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
+import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 
 @Component({
   selector: 'app-feature',
   templateUrl: './feature.page.html',
   styleUrls: ['./feature.page.scss'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, IonicModule, TranslateModule]
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    ReactiveFormsModule,
+    TranslateModule,
+    AppHeaderComponent,
+    JbhButtonComponent,
+    JbhCardComponent,
+    JbhPageComponent,
+    JbhPageHeaderComponent,
+    JbhSelectComponent,
+    JbhSelectOptionComponent,
+    JbhTextFieldComponent
+  ]
 })
 export class FeaturePage implements OnInit, OnDestroy {
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly translationService = inject(TranslationService);
+  private readonly toast = inject(ToastService);
+
   myForm!: FormGroup;
   isLoading = false;
   isSubmitting = false;
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private translationService: TranslationService,
-    private toastController: ToastController
-  ) {}
-
   ngOnInit(): void {
     this.initForm();
+  }
+
+  onPageEnter(): void {
+    // API calls and header setup
+  }
+
+  onPageLeave(): void {
+    // headerActions.clearPageConfig()
   }
 
   ngOnDestroy(): void {
@@ -45,22 +92,18 @@ export class FeaturePage implements OnInit, OnDestroy {
   private initForm(): void {
     this.myForm = this.formBuilder.group({
       fieldName: ['', [Validators.required]],
+      selectField: [null, [Validators.required]]
     });
   }
 
-  async onSubmit(): Promise<void> {
+  onSubmit(): void {
     if (this.myForm.invalid) {
-      this.markFormGroupTouched(this.myForm);
+      this.myForm.markAllAsTouched();
       return;
     }
     this.isSubmitting = true;
-    // Handle submission...
-  }
-
-  private markFormGroupTouched(formGroup: FormGroup): void {
-    Object.keys(formGroup.controls).forEach(key => {
-      formGroup.get(key)?.markAsTouched();
-    });
+    // Handle submission, then:
+    // this.toast.show(this.translationService.instant('feature.saved'), 'success');
   }
 
   hasError(fieldName: string, errorType?: string): boolean {
@@ -90,111 +133,77 @@ export class FeaturePage implements OnInit, OnDestroy {
 ## HTML Pattern
 
 ```html
-<ion-content [fullscreen]="true">
+<jbh-page (pageEnter)="onPageEnter()" (pageLeave)="onPageLeave()">
+  <app-header jbhPageHeader></app-header>
+
   <div class="jbh-container">
-    <div class="jbh-form-card">
+    <jbh-card variant="form">
+      <jbh-page-header
+        variant="form"
+        icon="create-outline"
+        [title]="'feature.title' | translate"
+        [subtitle]="'feature.subtitle' | translate"
+      />
 
-      <!-- Header -->
-      <div class="jbh-form-header">
-        <div class="jbh-form-icon">
-          <ion-icon name="icon-outline"></ion-icon>
-        </div>
-        <h1 class="jbh-form-title">{{ 'feature.title' | translate }}</h1>
-        <p class="jbh-form-subtitle">{{ 'feature.subtitle' | translate }}</p>
-      </div>
+      <form [formGroup]="myForm" (ngSubmit)="onSubmit()">
+        <jbh-text-field
+          formControlName="fieldName"
+          icon="text-outline"
+          [label]="'feature.field.label' | translate"
+          [placeholder]="'feature.field.placeholder' | translate"
+          [error]="hasError('fieldName') ? getErrorMessage('fieldName') : ''"
+        />
 
-      <!-- Form -->
-      <form [formGroup]="myForm" (ngSubmit)="onSubmit()" class="jbh-form-animated">
-
-        <!-- Text Input -->
-        <div class="jbh-form-field">
-          <label class="jbh-label">{{ 'feature.field.label' | translate }}</label>
-          <div class="jbh-input-wrapper">
-            <ion-icon name="icon-outline" class="jbh-input-icon left"></ion-icon>
-            <input
-              type="text"
-              class="jbh-input jbh-input-icon-left"
-              formControlName="fieldName"
-              [placeholder]="'feature.field.placeholder' | translate"
-              [class.error]="hasError('fieldName')"
-            />
-          </div>
-          @if (hasError('fieldName')) {
-            <div class="jbh-field-error">
-              <ion-icon name="information-circle"></ion-icon>
-              <span>{{ getErrorMessage('fieldName') }}</span>
-            </div>
+        <jbh-select
+          formControlName="selectField"
+          icon="list-outline"
+          [label]="'feature.select.label' | translate"
+          [placeholder]="'feature.select.placeholder' | translate"
+          [error]="hasError('selectField') ? getErrorMessage('selectField') : ''"
+        >
+          @for (option of options; track option.value) {
+            <jbh-select-option [value]="option.value">{{ option.labelKey | translate }}</jbh-select-option>
           }
-        </div>
+        </jbh-select>
 
-        <!-- Select (Mobile Native) -->
-        <div class="jbh-form-field">
-          <label class="jbh-label">{{ 'feature.select.label' | translate }}</label>
-          <div class="jbh-ion-select-wrapper" [class.error]="hasError('selectField')">
-            <ion-icon name="icon-outline" class="jbh-ion-select-icon"></ion-icon>
-            <ion-select
-              formControlName="selectField"
-              [placeholder]="'feature.select.placeholder' | translate"
-              interface="action-sheet"
-              class="jbh-ion-select"
-            >
-              @for (option of options; track option.value) {
-                <ion-select-option [value]="option.value">
-                  {{ option.label }}
-                </ion-select-option>
-              }
-            </ion-select>
-          </div>
-        </div>
-
-        <!-- Submit Button -->
         <button
           type="submit"
-          class="jbh-button-primary jbh-button-block"
-          [disabled]="isSubmitting || myForm.invalid"
-          [class.jbh-button-loading]="isSubmitting"
+          jbhButton
+          block
+          icon="save-outline"
+          [loading]="isSubmitting"
+          [disabled]="isSubmitting"
         >
-          @if (isSubmitting) {
-            <ion-spinner name="crescent"></ion-spinner>
-            <span>{{ 'feature.saving' | translate }}</span>
-          } @else {
-            <ion-icon name="save-outline"></ion-icon>
-            <span>{{ 'feature.save' | translate }}</span>
-          }
+          {{ (isSubmitting ? 'feature.saving' : 'feature.save') | translate }}
         </button>
-
       </form>
-    </div>
+    </jbh-card>
   </div>
-</ion-content>
+</jbh-page>
 ```
 
 ## Mobile-Specific Rules
 
-### Use ion-select for Dropdowns
+### Use jbh-select for Dropdowns
 ```html
 <!-- ✅ CORRECT -->
-<ion-select interface="action-sheet">
-  <ion-select-option>
+<jbh-select formControlName="type" [label]="'feature.type' | translate">
+  <jbh-select-option [value]="'A'">A</jbh-select-option>
+</jbh-select>
 
 <!-- ❌ WRONG -->
+<ion-select interface="action-sheet">
 <select class="jbh-select">
-  <option>
 ```
 
-### Interface Options
-- `action-sheet` - Bottom sheet (recommended)
-- `alert` - Modal dialog
-- `popover` - Better for tablets
-
 ### Touch Targets
-Minimum 44px (handled by theme classes)
+Minimum 44px (handled by the layer components)
 
 ## Angular Control Flow
 Use new syntax (`@if`, `@for`), not deprecated directives:
 ```html
 <!-- ✅ CORRECT -->
-@if (isLoading) { <div class="jbh-skeleton"></div> }
+@if (isLoading) { <jbh-skeleton shape="input" /> }
 @for (item of items; track item.id) { ... }
 
 <!-- ❌ DEPRECATED -->
@@ -214,11 +223,14 @@ this.form = this.formBuilder.group({
 ```
 
 ## Checklist
-- [ ] Uses `jbh-form-card` container
-- [ ] Has header with icon, title, subtitle
-- [ ] Uses `ion-select` for dropdowns
-- [ ] Has `hasError()` and `getErrorMessage()` methods
+- [ ] `jbh-page` is the root element; data loads in `(pageEnter)`
+- [ ] Form sits in `<jbh-card variant="form">` with a `jbh-page-header variant="form"`
+- [ ] Uses `jbh-*` form controls with `formControlName`
+- [ ] Uses `jbh-select` for dropdowns
+- [ ] Has `hasError()` and `getErrorMessage()` methods; passes `[error]` to each control
+- [ ] Submit is `button[jbhButton]` with `[loading]`
 - [ ] Loading states: `isLoading`, `isSubmitting`
 - [ ] Cleanup with `destroy$` subject
 - [ ] ALL text uses translate pipe
-- [ ] In Ionic standlone components, icons must be explicitly registered using addIcons from ionicons.
+- [ ] Toasts through `ToastService`
+- [ ] Icons: `jbh-icon` names come from `design-system/components/icon/icon-registry.ts`. Add a new icon there.
