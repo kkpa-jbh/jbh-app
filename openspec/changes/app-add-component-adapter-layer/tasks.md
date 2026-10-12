@@ -73,17 +73,17 @@ Each task: routed templates have `jbh-page` as the only root; no `<ion-*>` or `<
 - [x] 6.5 Teams: `src/app/ui/teams/pages/create`, `edit` (standard header with `showBackButton: true` and `defaultBackHref: '/settings/teams/overview'`; add a `(pageLeave)` clear), `invite`, `overview` (`jbh-table` with card template, three confirms), `accept-invitation` (standard header set in `(pageEnter)`; keep its data loading where it is today).
 - [x] 6.6 Shared chrome: `src/app/shared/components/app-header` (`jbh-toolbar`, pass `defaultBackHref`), `app-menu` (`jbh-nav-item`, `NavigationService.closeMenu`, `ToastService`), `install-app-button` (`jbh-nav-item`, `DialogService.open(…, { sheet: true })`, `ToastService`), `ios-install-modal` (plain scroll content, `DialogService.close`, layer buttons), `portfolio-context-switcher` (`jbh-select`).
 - [x] 6.7 Delete dead code: `src/app/ui/home/` (page, template, SCSS, spec) and `src/app/shared/components/portfolio-top-banner/`; remove the `home.*` keys from `en.json` and `es.json`.
-- [ ] 6.8 [leader] After merging wave 6, run `npm run lint:boundary`: zero violations expected. Depends on 6.1–6.7.
+- [x] 6.8 [leader] After merging wave 6, run `npm run lint:boundary`: zero violations expected. Depends on 6.1–6.7.
 
 ## 7. Wave 7 — Cleanup (one worker, in this order)
 
-- [ ] 7.1 Remove the unused `selectInterface` input from `app-category-select` and `app-product-select`. Delete `src/app/core/infrastructure/viewport/` after checking no import is left.
-- [ ] 7.2 Remove the `JbhDatePipe` static helpers after checking no caller is left.
-- [ ] 7.3 Delete `DecimalFormatDirective` and its export in `src/app/shared/directives/index.ts` after checking no template uses `jbhDecimalFormat`; delete the folder if it is empty.
-- [ ] 7.4 Remove `importProvidersFrom(IonicModule.forRoot())` and the `IonicModule` import from `src/main.ts`; check that no file imports `IonicModule`.
-- [ ] 7.5 Clean `src/theme/custom-components.scss` with the D16 method: remove rules whose look moved into a component or whose classes have zero uses; keep tokens, dark overrides, utilities and Ionic overlay rules. List the removed sections in the task notes.
-- [ ] 7.6 Update `src/app/AGENTS.md`: the layer folders, public entry points, allowed imports, the guard, the `jbh-page` root rule, where specs live.
-- [ ] 7.7 Run `npx eslint src/app src/main.ts`: zero boundary errors and zero selector-prefix errors. Report the remaining count of old `prefer-inject` errors.
+- [x] 7.1 Remove the unused `selectInterface` input from `app-category-select` and `app-product-select`. Delete `src/app/core/infrastructure/viewport/` after checking no import is left.
+- [x] 7.2 Remove the `JbhDatePipe` static helpers after checking no caller is left.
+- [x] 7.3 Delete `DecimalFormatDirective` and its export in `src/app/shared/directives/index.ts` after checking no template uses `jbhDecimalFormat`; delete the folder if it is empty.
+- [x] 7.4 Remove `importProvidersFrom(IonicModule.forRoot())` and the `IonicModule` import from `src/main.ts`; check that no file imports `IonicModule`.
+- [x] 7.5 Clean `src/theme/custom-components.scss` with the D16 method: remove rules whose look moved into a component or whose classes have zero uses; keep tokens, dark overrides, utilities and Ionic overlay rules. List the removed sections in the task notes.
+- [x] 7.6 Update `src/app/AGENTS.md`: the layer folders, public entry points, allowed imports, the guard, the `jbh-page` root rule, where specs live.
+- [x] 7.7 Run `npx eslint src/app src/main.ts`: zero boundary errors and zero selector-prefix errors. Report the remaining count of old `prefer-inject` errors.
 
 ## 8. Wave 8 — Docs and final checks [leader / user]
 

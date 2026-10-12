@@ -38,8 +38,6 @@ import { JbhDisplayNamePipe } from '@shared/pipes';
 export class CategorySelectComponent implements ControlValueAccessor {
   readonly categories = input<Category[]>([]);
   readonly isLoading = input(false);
-  /** Not used: the overlay type now comes from `jbh-select`. Kept so pages not yet moved still compile. */
-  readonly selectInterface = input<'action-sheet' | 'popover' | 'alert'>('action-sheet');
   readonly placeholder = input('');
   readonly hasError = input(false);
 

@@ -7,17 +7,8 @@
   "request": "Create a jbh-* component adapter layer for jbh-app so pages stop using Ionic and external libraries directly. Goal: make future migrations easy (upgrade Angular/Ionic, remove Ionic, move to Vue). Agreed scope from discussion: 3 adapter layers — (1) UI components in their own folder, separate from the feature pages under src/app/ui (jbh-text-field, jbh-date-field, jbh-textarea, jbh-toggle, jbh-button, jbh-icon, jbh-table, jbh-card, empty state, skeleton, page header), each with its own CSS; (2) platform adapters (jbh-page shell + page-enter event, DialogService, ToastService, navigation) that hide Ionic-only behavior; (3) framework-free core (formatting logic in plain TS, pipes as thin adapters). Plain HTML (div, p, span, h1, label) is NOT wrapped. Wrap only: external-library elements, styled controls with behavior, repeated markup. Add a guard: a lint/check that forbids <ion-*> tags and @ionic/angular imports inside src/app/ui/**. Proposal, design and tasks only for now — the user wants to review the artifacts before any implementation.",
   "status": "in-progress",
   "rollup": {
-    "current": [
-      "6.8"
-    ],
+    "current": [],
     "pending": [
-      "7.1",
-      "7.2",
-      "7.3",
-      "7.4",
-      "7.5",
-      "7.6",
-      "7.7",
       "8.1",
       "8.2",
       "8.3",
@@ -63,11 +54,19 @@
       "6.2",
       "6.4",
       "6.5",
-      "6.7"
+      "6.7",
+      "6.8",
+      "7.1",
+      "7.2",
+      "7.3",
+      "7.4",
+      "7.5",
+      "7.6",
+      "7.7"
     ]
   },
   "created_at": "2026-10-11T13:07:40Z",
-  "updated_at": "2026-10-12T15:55:10Z",
+  "updated_at": "2026-10-12T16:09:02Z",
   "leader": {
     "assistant": "Claude Code",
     "model": "claude-opus-5-5"
@@ -1107,13 +1106,13 @@
         "6.7"
       ],
       "parallel_ok": false,
-      "status": "in-progress",
+      "status": "done",
       "agent": "leader",
       "model": "claude-opus-5-5",
       "started_at": "2026-10-12T15:55:10Z",
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": "First run: 1 violation, core/infrastructure/viewport/viewport.service.ts (@ionic/angular). No users left; 7.1 deletes it. Re-run after 7.1 (D23).",
+      "completed_at": "2026-10-12T16:09:02Z",
+      "duration_seconds": 832,
+      "notes": "Re-run after 7.1 (D23): npm run lint:boundary exit 0. ESLint boundary: no output; SCSS boundary: no violations.",
       "budget": null
     },
     {
@@ -1124,14 +1123,23 @@
         "6.8"
       ],
       "parallel_ok": false,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T16:01:02Z",
+      "completed_at": "2026-10-12T16:02:30Z",
+      "duration_seconds": 88,
+      "notes": "Removed the unused selectInterface input from both selects; deleted core/infrastructure/viewport/. No importers left.",
+      "budget": {
+        "five_hour_pct_start": 74,
+        "five_hour_pct_end": 82,
+        "five_hour_pct_delta": 8,
+        "cost_usd_delta": 2.24,
+        "context_pct_end": 13,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker ran 7.1-7.7; one shared wave delta"
+      }
     },
     {
       "id": "7.2",
@@ -1141,14 +1149,23 @@
         "7.1"
       ],
       "parallel_ok": false,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T16:02:30Z",
+      "completed_at": "2026-10-12T16:03:30Z",
+      "duration_seconds": 60,
+      "notes": "Removed the 7 JbhDatePipe static helpers; no caller left. The pipe imports only DateFormat and formatDate from @core/formatting.",
+      "budget": {
+        "five_hour_pct_start": 74,
+        "five_hour_pct_end": 82,
+        "five_hour_pct_delta": 8,
+        "cost_usd_delta": 2.24,
+        "context_pct_end": 13,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker ran 7.1-7.7; one shared wave delta"
+      }
     },
     {
       "id": "7.3",
@@ -1158,14 +1175,23 @@
         "7.2"
       ],
       "parallel_ok": false,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T16:03:30Z",
+      "completed_at": "2026-10-12T16:04:00Z",
+      "duration_seconds": 30,
+      "notes": "Deleted src/app/shared/directives/ (directive and barrel). No jbhDecimalFormat or DecimalFormatDirective reference left.",
+      "budget": {
+        "five_hour_pct_start": 74,
+        "five_hour_pct_end": 82,
+        "five_hour_pct_delta": 8,
+        "cost_usd_delta": 2.24,
+        "context_pct_end": 13,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker ran 7.1-7.7; one shared wave delta"
+      }
     },
     {
       "id": "7.4",
@@ -1175,14 +1201,23 @@
         "7.3"
       ],
       "parallel_ok": false,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T16:04:00Z",
+      "completed_at": "2026-10-12T16:04:30Z",
+      "duration_seconds": 30,
+      "notes": "Removed IonicModule and importProvidersFrom(IonicModule.forRoot()) from main.ts. No file imports IonicModule or @ionic/angular.",
+      "budget": {
+        "five_hour_pct_start": 74,
+        "five_hour_pct_end": 82,
+        "five_hour_pct_delta": 8,
+        "cost_usd_delta": 2.24,
+        "context_pct_end": 13,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker ran 7.1-7.7; one shared wave delta"
+      }
     },
     {
       "id": "7.5",
@@ -1192,14 +1227,23 @@
         "7.4"
       ],
       "parallel_ok": false,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T16:04:30Z",
+      "completed_at": "2026-10-12T16:06:30Z",
+      "duration_seconds": 120,
+      "notes": "D16 method: 2,915 -> ~1,310 lines; 152 rules, 5 keyframes removed. Gone: old buttons, inputs, alerts, selects, menu items, empty state, icon buttons, tables, skeletons, balance history, context switcher, top banner. Kept: tokens, dark, ion-menu, used feature classes. Full list in the wave 7 commit.",
+      "budget": {
+        "five_hour_pct_start": 74,
+        "five_hour_pct_end": 82,
+        "five_hour_pct_delta": 8,
+        "cost_usd_delta": 2.24,
+        "context_pct_end": 13,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker ran 7.1-7.7; one shared wave delta"
+      }
     },
     {
       "id": "7.6",
@@ -1209,14 +1253,23 @@
         "7.5"
       ],
       "parallel_ok": false,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T16:06:30Z",
+      "completed_at": "2026-10-12T16:07:20Z",
+      "duration_seconds": 50,
+      "notes": "src/app/AGENTS.md: layer folders, two entry points, import rules, named exceptions, the guard, jbh-page root rule, spec locations.",
+      "budget": {
+        "five_hour_pct_start": 74,
+        "five_hour_pct_end": 82,
+        "five_hour_pct_delta": 8,
+        "cost_usd_delta": 2.24,
+        "context_pct_end": 13,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker ran 7.1-7.7; one shared wave delta"
+      }
     },
     {
       "id": "7.7",
@@ -1226,14 +1279,23 @@
         "7.6"
       ],
       "parallel_ok": false,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T16:07:20Z",
+      "completed_at": "2026-10-12T16:07:44Z",
+      "duration_seconds": 24,
+      "notes": "npx eslint src/app src/main.ts: 298 files, 105 errors, all old prefer-inject (baseline 249). Zero boundary and zero selector-prefix errors.",
+      "budget": {
+        "five_hour_pct_start": 74,
+        "five_hour_pct_end": 82,
+        "five_hour_pct_delta": 8,
+        "cost_usd_delta": 2.24,
+        "context_pct_end": 13,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker ran 7.1-7.7; one shared wave delta"
+      }
     },
     {
       "id": "8.1",
@@ -1746,6 +1808,26 @@
       "at": "2026-10-12T15:55:10Z",
       "agent": "leader",
       "event": "leader (assistantRunsTests): npx ng build exit 1 (2 TS2769 in overview-team.page.html), fixed (D21), npx ng build exit 0; npm run test:layer exit 0, 193 of 193 SUCCESS. 6.1-6.7 done. Initial bundle 1.59 MB -> 1.87 MB raw (347 -> 397.5 kB transfer): check in review. npm run lint:boundary: 1 violation (D23)."
+    },
+    {
+      "at": "2026-10-12T15:55:27Z",
+      "agent": "leader",
+      "event": "wave 6 commit 8497291."
+    },
+    {
+      "at": "2026-10-12T16:00:43Z",
+      "agent": "leader",
+      "event": "resume in a fresh session. wave 7 dispatched: 1 serial app worker (sonnet), tasks 7.1-7.7. 6.8 re-runs after the wave (D23). Budget start 5h 74%, context 12%, cost_usd 0.37"
+    },
+    {
+      "at": "2026-10-12T16:09:02Z",
+      "agent": "leader",
+      "event": "wave 7 worker back: report complete (doc pack, D-ids, notes). Worker ran git rm --cached on viewport.service.ts (a git write it must not do); harmless, staged deletion matches the tree. Budget end 5h 82%, context 13%, cost_usd 2.61"
+    },
+    {
+      "at": "2026-10-12T16:09:02Z",
+      "agent": "leader",
+      "event": "leader (assistantRunsTests): npx ng build exit 0; npm run test:layer exit 0, 193 of 193 SUCCESS; npm run lint:boundary exit 0 (6.8 done). Initial bundle 1.87 MB -> 1.65 MB raw (397.5 -> 346.3 kB transfer). 7.1-7.7 done. 7.5 visuals not yet checked in the app (8.5)."
     }
   ]
 }

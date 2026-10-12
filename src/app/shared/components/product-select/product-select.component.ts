@@ -29,8 +29,6 @@ import { JbhSelectComponent, JbhSelectOptionComponent } from '@design-system/com
 export class ProductSelectComponent implements ControlValueAccessor {
   readonly products = input<ProductListItem[]>([]);
   readonly isLoading = input(false);
-  /** Not used: the overlay type now comes from `jbh-select`. Kept so pages not yet moved still compile. */
-  readonly selectInterface = input<'action-sheet' | 'popover' | 'alert'>('action-sheet');
   readonly placeholder = input('');
   /** Marks the field invalid. The red frame and message show only when `errorMessage` is also set. */
   readonly hasError = input(false);
