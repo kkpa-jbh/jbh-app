@@ -7,10 +7,12 @@
     "edit": "Editar",
     "error": "Error",
     "gotIt": "Entendido",
+    "hidePassword": "Ocultar contraseña",
     "loading": "Cargando...",
     "optional": "(opcional)",
     "or": "o",
     "save": "Guardar",
+    "showPassword": "Mostrar contraseña",
     "success": "Éxito"
   },
   "categories": {

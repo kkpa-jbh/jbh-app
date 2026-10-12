@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Platform } from '@ionic/angular';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { LoggerService } from '../logging/logger.service';
+import { DevicePlatform } from '../platform/device-platform';
 
 export interface InstallPromptEvent extends Event {
   prompt(): Promise<void>;
@@ -17,7 +17,7 @@ export class PwaInstallService {
   public installable$: Observable<boolean> = this.installableSubject.asObservable();
 
   constructor(
-    private platform: Platform,
+    private devicePlatform: DevicePlatform,
     private logger: LoggerService
   ) {
     this.initInstallPrompt();
@@ -28,7 +28,7 @@ export class PwaInstallService {
    * Only works on Android/Chrome, not iOS Safari
    */
   private initInstallPrompt(): void {
-    if (!this.platform.is('hybrid')) {
+    if (!this.devicePlatform.isNativeApp()) {
       window.addEventListener('beforeinstallprompt', (e: Event) => {
         e.preventDefault();
         this.deferredPrompt = e as InstallPromptEvent;
@@ -49,14 +49,14 @@ export class PwaInstallService {
    * Detect if running on iOS Safari
    */
   isIOS(): boolean {
-    return this.platform.is('ios') && !this.platform.is('hybrid');
+    return this.devicePlatform.isIos() && !this.devicePlatform.isNativeApp();
   }
 
   /**
    * Detect if running on Android Chrome (or other browser supporting PWA)
    */
   isAndroid(): boolean {
-    return this.platform.is('android') && !this.platform.is('hybrid');
+    return this.devicePlatform.isAndroid() && !this.devicePlatform.isNativeApp();
   }
 
   /**

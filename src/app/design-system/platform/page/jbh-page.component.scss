@@ -1,0 +1,13 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+// Set from outside, so these rules win over the defaults inside the Ionic element.
+ion-content {
+  flex: 1 1 auto;
+  --background: var(--jbh-page-background, var(--ion-background-color, #fff));
+  --padding-top: var(--jbh-page-padding-top, 0px);
+  --padding-bottom: var(--jbh-page-padding-bottom, 0px);
+}

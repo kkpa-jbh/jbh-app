@@ -27,13 +27,13 @@ Rules for every task:
 
 Track A — only `src/app/design-system/components/forms/**`:
 
-- [ ] 3.1 `jbh-field` (label, requirement marker, hint, error, ids) + spec (D6). Export from `forms/index.ts`.
-- [ ] 3.2 `jbh-text-field` (CVA, native input, password reveal, `[jbhFieldSuffix]` slot) + spec. Depends on 3.1.
-- [ ] 3.3 `jbh-number-field` (CVA, core decimal helpers, `APP_CONFIG_TOKEN` separators) + spec (D7). Depends on 3.1, 2.1.
-- [ ] 3.4 `jbh-textarea` (CVA, auto-grow, counter with `maxlength`) + spec. Depends on 3.1.
-- [ ] 3.5 `jbh-date-field` (CVA, unique picker id, `toDateValue`, translated picker buttons) + spec (D8). Depends on 3.1, 2.1.
-- [ ] 3.6 `jbh-select` and `jbh-select-option` (CVA, projected options, overlay type from the viewport helper, label as overlay header, loading) + spec (D9). Depends on 3.1, 2.5.
-- [ ] 3.7 `jbh-toggle` (CVA, `checked` model, `disabled` input, required label) + spec. Depends on 3.1.
+- [x] 3.1 `jbh-field` (label, requirement marker, hint, error, ids) + spec (D6). Export from `forms/index.ts`.
+- [x] 3.2 `jbh-text-field` (CVA, native input, password reveal, `[jbhFieldSuffix]` slot) + spec. Depends on 3.1.
+- [x] 3.3 `jbh-number-field` (CVA, core decimal helpers, `APP_CONFIG_TOKEN` separators) + spec (D7). Depends on 3.1, 2.1.
+- [x] 3.4 `jbh-textarea` (CVA, auto-grow, counter with `maxlength`) + spec. Depends on 3.1.
+- [x] 3.5 `jbh-date-field` (CVA, unique picker id, `toDateValue`, translated picker buttons) + spec (D8). Depends on 3.1, 2.1.
+- [x] 3.6 `jbh-select` and `jbh-select-option` (CVA, projected options, overlay type from the viewport helper, label as overlay header, loading) + spec (D9). Depends on 3.1, 2.5.
+- [x] 3.7 `jbh-toggle` (CVA, `checked` model, `disabled` input, required label) + spec. Depends on 3.1.
 
 Track B — only `src/app/design-system/components/display/**`:
 
@@ -45,11 +45,11 @@ Track B — only `src/app/design-system/components/display/**`:
 
 Track C — `src/app/design-system/platform/**` (except `viewport/`), `src/app/core/infrastructure/platform/`, `src/app/core/infrastructure/header/`, the 3 core services, `src/main.ts`, `src/assets/i18n/*.json`:
 
-- [ ] 3.13 `jbh-page` (header slot, `pageEnter` / `pageLeave` from the parent element, `--jbh-page-*` properties) + spec (D12). Export from `platform/index.ts`.
-- [ ] 3.14 `jbh-toolbar` (title, back / menu button, `backHref`, actions) + spec (D12).
-- [ ] 3.15 `ToastService`, `DialogService`, `NavigationService` + specs (D13).
-- [ ] 3.16 `DevicePlatform` port in `core/infrastructure/platform/device-platform.ts`; `IonicDevicePlatform` + spec; binding in `src/main.ts`; rewire `token-refresh.service.ts`, `push-notification.service.ts` and `pwa-install.service.ts` to the port (D14).
-- [ ] 3.17 Add optional `defaultBackHref` to `PageHeaderConfig` in `header-actions.service.ts`. Add `common.showPassword` and `common.hidePassword` to `en.json` and `es.json`, sorted (D18).
+- [x] 3.13 `jbh-page` (header slot, `pageEnter` / `pageLeave` from the parent element, `--jbh-page-*` properties) + spec (D12). Export from `platform/index.ts`.
+- [x] 3.14 `jbh-toolbar` (title, back / menu button, `backHref`, actions) + spec (D12).
+- [x] 3.15 `ToastService`, `DialogService`, `NavigationService` + specs (D13).
+- [x] 3.16 `DevicePlatform` port in `core/infrastructure/platform/device-platform.ts`; `IonicDevicePlatform` + spec; binding in `src/main.ts`; rewire `token-refresh.service.ts`, `push-notification.service.ts` and `pwa-install.service.ts` to the port (D14).
+- [x] 3.17 Add optional `defaultBackHref` to `PageHeaderConfig` in `header-actions.service.ts`. Add `common.showPassword` and `common.hidePassword` to `en.json` and `es.json`, sorted (D18).
 
 ## 4. Wave 4 — Pipes and shared selects (4.1 and 4.2 run in parallel)
 

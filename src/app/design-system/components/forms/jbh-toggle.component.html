@@ -1,0 +1,8 @@
+<ion-toggle
+  class="jbh-toggle__control"
+  justify="space-between"
+  [checked]="checked()"
+  [disabled]="isDisabled()"
+  (ionChange)="onToggle($event)"
+  (ionBlur)="onBlur()"
+>{{ label() }}</ion-toggle>

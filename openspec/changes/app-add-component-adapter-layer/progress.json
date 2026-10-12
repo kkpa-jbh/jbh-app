@@ -7,8 +7,7 @@
   "request": "Create a jbh-* component adapter layer for jbh-app so pages stop using Ionic and external libraries directly. Goal: make future migrations easy (upgrade Angular/Ionic, remove Ionic, move to Vue). Agreed scope from discussion: 3 adapter layers — (1) UI components in their own folder, separate from the feature pages under src/app/ui (jbh-text-field, jbh-date-field, jbh-textarea, jbh-toggle, jbh-button, jbh-icon, jbh-table, jbh-card, empty state, skeleton, page header), each with its own CSS; (2) platform adapters (jbh-page shell + page-enter event, DialogService, ToastService, navigation) that hide Ionic-only behavior; (3) framework-free core (formatting logic in plain TS, pipes as thin adapters). Plain HTML (div, p, span, h1, label) is NOT wrapped. Wrap only: external-library elements, styled controls with behavior, repeated markup. Add a guard: a lint/check that forbids <ion-*> tags and @ionic/angular imports inside src/app/ui/**. Proposal, design and tasks only for now — the user wants to review the artifacts before any implementation.",
   "status": "in-progress",
   "rollup": {
-    "current": [],
-    "pending": [
+    "current": [
       "3.1",
       "3.2",
       "3.3",
@@ -20,7 +19,9 @@
       "3.14",
       "3.15",
       "3.16",
-      "3.17",
+      "3.17"
+    ],
+    "pending": [
       "4.1",
       "4.2",
       "5.1",
@@ -66,7 +67,7 @@
     ]
   },
   "created_at": "2026-10-11T13:07:40Z",
-  "updated_at": "2026-10-11T14:24:42Z",
+  "updated_at": "2026-10-12T12:40:41Z",
   "leader": {
     "assistant": "Claude Code",
     "model": "claude-opus-5-5"
@@ -319,14 +320,23 @@
         "2.4"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "awaiting-user-verification",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T16:29:12Z",
+      "completed_at": "2026-10-11T20:38:56Z",
+      "duration_seconds": 14984,
+      "notes": "jbh-field (label, requirement marker, hint, error, ids) + field-aria.ts; 6th input native (false = aria-labelledby, no label for). Spec written.",
+      "budget": {
+        "five_hour_pct_start": null,
+        "five_hour_pct_end": 63,
+        "five_hour_pct_delta": null,
+        "cost_usd_delta": 13.24,
+        "context_pct_end": 20,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "parallel Tracks A+C share one delta; window was new at start (pct null), so delta is about 63"
+      }
     },
     {
       "id": "3.2",
@@ -336,14 +346,23 @@
         "3.1"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "awaiting-user-verification",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T16:29:12Z",
+      "completed_at": "2026-10-11T20:38:56Z",
+      "duration_seconds": 14984,
+      "notes": "jbh-text-field: CVA, native input, password reveal (common.showPassword/hidePassword), [jbhFieldSuffix] slot, aria attributes. Shares _control.scss mixin. Spec written.",
+      "budget": {
+        "five_hour_pct_start": null,
+        "five_hour_pct_end": 63,
+        "five_hour_pct_delta": null,
+        "cost_usd_delta": 13.24,
+        "context_pct_end": 20,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "parallel Tracks A+C share one delta; window was new at start (pct null), so delta is about 63"
+      }
     },
     {
       "id": "3.3",
@@ -354,14 +373,23 @@
         "2.1"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "awaiting-user-verification",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T16:29:12Z",
+      "completed_at": "2026-10-11T20:38:56Z",
+      "duration_seconds": 14984,
+      "notes": "jbh-number-field: core decimal helpers, APP_CONFIG_TOKEN separators, number|null; rejects bad keys/pastes; strips grouping on focus, groups on blur; skips unchanged blur. Spec written.",
+      "budget": {
+        "five_hour_pct_start": null,
+        "five_hour_pct_end": 63,
+        "five_hour_pct_delta": null,
+        "cost_usd_delta": 13.24,
+        "context_pct_end": 20,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "parallel Tracks A+C share one delta; window was new at start (pct null), so delta is about 63"
+      }
     },
     {
       "id": "3.4",
@@ -371,14 +399,23 @@
         "3.1"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "awaiting-user-verification",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T16:29:12Z",
+      "completed_at": "2026-10-11T20:38:56Z",
+      "duration_seconds": 14984,
+      "notes": "jbh-textarea on ion-textarea: auto-grow, counter with maxlength (string accepted), counter sits before the error. Spec written.",
+      "budget": {
+        "five_hour_pct_start": null,
+        "five_hour_pct_end": 63,
+        "five_hour_pct_delta": null,
+        "cost_usd_delta": 13.24,
+        "context_pct_end": 20,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "parallel Tracks A+C share one delta; window was new at start (pct null), so delta is about 63"
+      }
     },
     {
       "id": "3.5",
@@ -389,14 +426,23 @@
         "2.1"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "awaiting-user-verification",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T16:29:12Z",
+      "completed_at": "2026-10-11T20:38:56Z",
+      "duration_seconds": 14984,
+      "notes": "jbh-date-field: unique picker id, toDateValue, translated buttons, touched on dismiss, calendar icon always on. Aria set on Ionic host: check it reaches the inner control (wave 5 gate). Spec written.",
+      "budget": {
+        "five_hour_pct_start": null,
+        "five_hour_pct_end": 63,
+        "five_hour_pct_delta": null,
+        "cost_usd_delta": 13.24,
+        "context_pct_end": 20,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "parallel Tracks A+C share one delta; window was new at start (pct null), so delta is about 63"
+      }
     },
     {
       "id": "3.6",
@@ -407,14 +453,23 @@
         "2.5"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "awaiting-user-verification",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T16:29:12Z",
+      "completed_at": "2026-10-11T20:38:56Z",
+      "duration_seconds": 14984,
+      "notes": "jbh-select + jbh-select-option (no spec): overlay from viewport wide, label as header, loading spinner. Imports @design-system/platform/viewport directly to avoid a barrel cycle. Spec written.",
+      "budget": {
+        "five_hour_pct_start": null,
+        "five_hour_pct_end": 63,
+        "five_hour_pct_delta": null,
+        "cost_usd_delta": 13.24,
+        "context_pct_end": 20,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "parallel Tracks A+C share one delta; window was new at start (pct null), so delta is about 63"
+      }
     },
     {
       "id": "3.7",
@@ -424,14 +479,23 @@
         "3.1"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "awaiting-user-verification",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T16:29:12Z",
+      "completed_at": "2026-10-11T20:38:56Z",
+      "duration_seconds": 14984,
+      "notes": "jbh-toggle: CVA, checked model, disabled input, required label; no jbh-field, no outer margin. Ignores same-value ionChange. Spec written.",
+      "budget": {
+        "five_hour_pct_start": null,
+        "five_hour_pct_end": 63,
+        "five_hour_pct_delta": null,
+        "cost_usd_delta": 13.24,
+        "context_pct_end": 20,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "parallel Tracks A+C share one delta; window was new at start (pct null), so delta is about 63"
+      }
     },
     {
       "id": "3.8",
@@ -577,14 +641,23 @@
         "2.4"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "awaiting-user-verification",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T16:29:12Z",
+      "completed_at": "2026-10-11T17:17:52Z",
+      "duration_seconds": 2920,
+      "notes": "jbh-page: header slot, pageEnter/pageLeave from parentElement via Renderer2.listen, removed on destroy; --jbh-page-* properties. Spec 5 cases.",
+      "budget": {
+        "five_hour_pct_start": null,
+        "five_hour_pct_end": 63,
+        "five_hour_pct_delta": null,
+        "cost_usd_delta": 13.24,
+        "context_pct_end": 20,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "parallel Tracks A+C share one delta; window was new at start (pct null), so delta is about 63"
+      }
     },
     {
       "id": "3.14",
@@ -595,14 +668,23 @@
         "2.4"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "awaiting-user-verification",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T16:29:12Z",
+      "completed_at": "2026-10-11T17:17:52Z",
+      "duration_seconds": 2920,
+      "notes": "jbh-toolbar: title (attr.title null), back or menu button, backHref, actions (JbhToolbarAction); action icon 24 px is a guess, check by eye. Spec 5 cases.",
+      "budget": {
+        "five_hour_pct_start": null,
+        "five_hour_pct_end": 63,
+        "five_hour_pct_delta": null,
+        "cost_usd_delta": 13.24,
+        "context_pct_end": 20,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "parallel Tracks A+C share one delta; window was new at start (pct null), so delta is about 63"
+      }
     },
     {
       "id": "3.15",
@@ -613,14 +695,23 @@
         "2.4"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "awaiting-user-verification",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T16:29:12Z",
+      "completed_at": "2026-10-11T17:17:52Z",
+      "duration_seconds": 2920,
+      "notes": "ToastService, DialogService, NavigationService with controller-spy specs. DialogService.open adds optional cssClass (needed by 6.6 iOS modal), beyond the contract.",
+      "budget": {
+        "five_hour_pct_start": null,
+        "five_hour_pct_end": 63,
+        "five_hour_pct_delta": null,
+        "cost_usd_delta": 13.24,
+        "context_pct_end": 20,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "parallel Tracks A+C share one delta; window was new at start (pct null), so delta is about 63"
+      }
     },
     {
       "id": "3.16",
@@ -631,14 +722,23 @@
         "2.4"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "awaiting-user-verification",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T16:29:12Z",
+      "completed_at": "2026-10-11T17:17:52Z",
+      "duration_seconds": 2920,
+      "notes": "DevicePlatform port in core/infrastructure/platform (no providedIn), IonicDevicePlatform + spec, bound in main.ts; token-refresh, push, pwa services use the port. 9 old prefer-inject errors remain.",
+      "budget": {
+        "five_hour_pct_start": null,
+        "five_hour_pct_end": 63,
+        "five_hour_pct_delta": null,
+        "cost_usd_delta": 13.24,
+        "context_pct_end": 20,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "parallel Tracks A+C share one delta; window was new at start (pct null), so delta is about 63"
+      }
     },
     {
       "id": "3.17",
@@ -649,14 +749,23 @@
         "2.4"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "awaiting-user-verification",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T16:29:12Z",
+      "completed_at": "2026-10-11T17:17:52Z",
+      "duration_seconds": 2920,
+      "notes": "defaultBackHref added to PageHeaderConfig; common.showPassword and common.hidePassword added to en.json and es.json, sorted.",
+      "budget": {
+        "five_hour_pct_start": null,
+        "five_hour_pct_end": 63,
+        "five_hour_pct_delta": null,
+        "cost_usd_delta": 13.24,
+        "context_pct_end": 20,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "parallel Tracks A+C share one delta; window was new at start (pct null), so delta is about 63"
+      }
     },
     {
       "id": "4.1",
@@ -1245,6 +1354,15 @@
       "decision": "Leader fixed the jbh-segment spec itself instead of re-dispatching a worker.",
       "why": "A 3-line test-only fix with a clear cause; a worker dispatch would re-read the whole doc pack. The component code was right.",
       "covered_by": null
+    },
+    {
+      "id": "D15",
+      "at": "2026-10-11T16:29:12Z",
+      "scope": "change",
+      "made_by": "leader",
+      "decision": "Tracks A (3.1-3.7) and C (3.13-3.17) dispatched as two parallel sonnet workers.",
+      "why": "tasks.md plans them parallel, files are disjoint, bucket just reset. Cost: doc pack read twice. Only Track A may append to icon-registry.ts.",
+      "covered_by": null
     }
   ],
   "events": [
@@ -1357,6 +1475,21 @@
       "at": "2026-10-11T14:24:42Z",
       "agent": "leader",
       "event": "user verified Track B: ran npm run test:layer, 110 of 110 SUCCESS (ChromeHeadless); 3.8-3.12 done. Wake-up for Tracks A and C still armed (11:02 local)."
+    },
+    {
+      "at": "2026-10-11T16:29:12Z",
+      "agent": "leader",
+      "event": "resume-auto — wake fired 16:28Z, past five_hour_resets_at; budget.sh: five_hour_pct null (new window, no use yet), context 19%, available. Continue wave 3."
+    },
+    {
+      "at": "2026-10-11T16:29:12Z",
+      "agent": "leader",
+      "event": "dispatched 2 parallel app workers (sonnet): Track A forms 3.1-3.7, Track C platform 3.13-3.17"
+    },
+    {
+      "at": "2026-10-12T12:40:41Z",
+      "agent": "leader",
+      "event": "wave 3 Tracks A+C reconciled: 3.1-3.7, 3.13-3.17 awaiting-user-verification. Worker timestamps were guesses; leader used dispatch time + agent duration (C 49 min, A 4 h 10 min). Leader ESLint on design-system + main.ts: clean; i18n keys present. Budget: new window, 5h 63%, context 20%, cost_usd 19.57"
     }
   ]
 }

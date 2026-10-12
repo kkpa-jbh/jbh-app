@@ -26,6 +26,8 @@ import { CategoryRepository } from './app/core/domain/repositories/category.repo
 import { CategoryRepositoryImpl } from './app/core/infrastructure/repositories/category.repository.impl';
 import { StatementRepository } from './app/core/domain/repositories/statement.repository';
 import { StatementRepositoryImpl } from './app/core/infrastructure/repositories/statement.repository.impl';
+import { DevicePlatform } from './app/core/infrastructure/platform/device-platform';
+import { IonicDevicePlatform } from '@design-system/platform';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -62,5 +64,8 @@ bootstrapApplication(AppComponent, {
     { provide: BalanceHistoryRepository, useClass: BalanceHistoryRepositoryImpl },
     { provide: CategoryRepository, useClass: CategoryRepositoryImpl },
     { provide: StatementRepository, useClass: StatementRepositoryImpl },
+
+    // Device questions go through a port; the UI layer answers them with Ionic
+    { provide: DevicePlatform, useClass: IonicDevicePlatform },
   ],
 });

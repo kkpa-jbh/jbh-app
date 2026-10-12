@@ -1,0 +1,27 @@
+@use './control';
+
+:host {
+  display: block;
+}
+
+.jbh-number-field__wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.jbh-number-field__input {
+  @include control.control-surface;
+
+  &--icon {
+    padding-left: 48px;
+  }
+}
+
+.jbh-number-field__icon {
+  position: absolute;
+  left: 16px;
+  font-size: 20px;
+  color: var(--jbh-text-secondary);
+  pointer-events: none;
+}
