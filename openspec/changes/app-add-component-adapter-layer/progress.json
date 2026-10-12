@@ -7,11 +7,8 @@
   "request": "Create a jbh-* component adapter layer for jbh-app so pages stop using Ionic and external libraries directly. Goal: make future migrations easy (upgrade Angular/Ionic, remove Ionic, move to Vue). Agreed scope from discussion: 3 adapter layers — (1) UI components in their own folder, separate from the feature pages under src/app/ui (jbh-text-field, jbh-date-field, jbh-textarea, jbh-toggle, jbh-button, jbh-icon, jbh-table, jbh-card, empty state, skeleton, page header), each with its own CSS; (2) platform adapters (jbh-page shell + page-enter event, DialogService, ToastService, navigation) that hide Ionic-only behavior; (3) framework-free core (formatting logic in plain TS, pipes as thin adapters). Plain HTML (div, p, span, h1, label) is NOT wrapped. Wrap only: external-library elements, styled controls with behavior, repeated markup. Add a guard: a lint/check that forbids <ion-*> tags and @ionic/angular imports inside src/app/ui/**. Proposal, design and tasks only for now — the user wants to review the artifacts before any implementation.",
   "status": "in-progress",
   "rollup": {
-    "current": [
-      "5.1"
-    ],
+    "current": [],
     "pending": [
-      "5.3",
       "6.1",
       "6.2",
       "6.3",
@@ -63,11 +60,13 @@
       "3.15",
       "4.1",
       "4.2",
-      "5.2"
+      "5.2",
+      "5.1",
+      "5.3"
     ]
   },
   "created_at": "2026-10-11T13:07:40Z",
-  "updated_at": "2026-10-12T14:06:05Z",
+  "updated_at": "2026-10-12T15:39:05Z",
   "leader": {
     "assistant": "Claude Code",
     "model": "claude-opus-5-5"
@@ -850,7 +849,7 @@
         "4.2"
       ],
       "parallel_ok": false,
-      "status": "awaiting-user-verification",
+      "status": "done",
       "agent": "app",
       "model": "claude-sonnet-5-5",
       "started_at": "2026-10-12T13:32:42Z",
@@ -902,13 +901,13 @@
         "5.2"
       ],
       "parallel_ok": false,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
+      "status": "done",
+      "agent": "leader",
+      "model": "claude-opus-5-5",
+      "started_at": "2026-10-12T15:20:00Z",
+      "completed_at": "2026-10-12T15:39:05Z",
+      "duration_seconds": 1145,
+      "notes": "User confirmed gate 5.3 after the leader ran checks a-h in Chrome. Light mode and 2 layout points left to the user. Old bugs on main noted, out of scope.",
       "budget": null
     },
     {
@@ -1426,6 +1425,15 @@
       "decision": "Leader fixed 3 spec type errors itself and moved 3.4 and 3.15 from done back to awaiting-user-verification.",
       "why": "Test-only fixes with clear causes, like D14. The earlier pass report could not cover specs that do not compile, so done was not true.",
       "covered_by": null
+    },
+    {
+      "id": "D19",
+      "at": "2026-10-12T15:39:05Z",
+      "scope": "task:5.3",
+      "made_by": "user",
+      "decision": "gate 5.3 confirmed; wave 6 may start",
+      "why": "Leader Chrome run passed a-h; user accepted the result and the out-of-scope list of old bugs.",
+      "covered_by": null
     }
   ],
   "events": [
@@ -1608,6 +1616,21 @@
       "at": "2026-10-12T14:06:05Z",
       "agent": "leader",
       "event": "wave 5 commit eef1bc7. User ran npx ng build after wave 5: success. Initial bundle 1.44 MB -> 1.59 MB raw (322.87 -> 347.00 kB transfer); check in review. Gate 5.3 app checks (ionic serve) still pending."
+    },
+    {
+      "at": "2026-10-12T15:38:32Z",
+      "agent": "leader",
+      "event": "gate 5.3 env blocker: finance left Consul 1 min after start (health check on 127.0.0.1 inside Docker). Fixed in jbh-personal-finance e91dd4c (local main, user's choice). Not a JBH-52 defect."
+    },
+    {
+      "at": "2026-10-12T15:38:32Z",
+      "agent": "leader",
+      "event": "gate 5.3 run by the leader in Chrome (user asked): a, b, c, d (popover wide, action sheet 371px), e (entryDate 2026-10-08), f (1,234.56 on blur, number in body), g, h (success toast bottom + close) pass. i: dark OK, light not checked. One 1.00 test deposit saved. Pre-existing bugs found, not regressions. Awaiting the user's OK."
+    },
+    {
+      "at": "2026-10-12T15:39:05Z",
+      "agent": "leader",
+      "event": "gate 5.3 confirmed by the user; 5.1 and 5.3 done. Budget 5h 35%, context 22%, cost_usd 6.36"
     }
   ]
 }
