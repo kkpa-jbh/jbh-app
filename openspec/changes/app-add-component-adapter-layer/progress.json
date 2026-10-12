@@ -7,16 +7,10 @@
   "request": "Create a jbh-* component adapter layer for jbh-app so pages stop using Ionic and external libraries directly. Goal: make future migrations easy (upgrade Angular/Ionic, remove Ionic, move to Vue). Agreed scope from discussion: 3 adapter layers — (1) UI components in their own folder, separate from the feature pages under src/app/ui (jbh-text-field, jbh-date-field, jbh-textarea, jbh-toggle, jbh-button, jbh-icon, jbh-table, jbh-card, empty state, skeleton, page header), each with its own CSS; (2) platform adapters (jbh-page shell + page-enter event, DialogService, ToastService, navigation) that hide Ionic-only behavior; (3) framework-free core (formatting logic in plain TS, pipes as thin adapters). Plain HTML (div, p, span, h1, label) is NOT wrapped. Wrap only: external-library elements, styled controls with behavior, repeated markup. Add a guard: a lint/check that forbids <ion-*> tags and @ionic/angular imports inside src/app/ui/**. Proposal, design and tasks only for now — the user wants to review the artifacts before any implementation.",
   "status": "in-progress",
   "rollup": {
-    "current": [],
+    "current": [
+      "6.8"
+    ],
     "pending": [
-      "6.1",
-      "6.2",
-      "6.3",
-      "6.4",
-      "6.5",
-      "6.6",
-      "6.7",
-      "6.8",
       "7.1",
       "7.2",
       "7.3",
@@ -62,11 +56,18 @@
       "4.2",
       "5.2",
       "5.1",
-      "5.3"
+      "5.3",
+      "6.1",
+      "6.6",
+      "6.3",
+      "6.2",
+      "6.4",
+      "6.5",
+      "6.7"
     ]
   },
   "created_at": "2026-10-11T13:07:40Z",
-  "updated_at": "2026-10-12T15:39:05Z",
+  "updated_at": "2026-10-12T15:55:10Z",
   "leader": {
     "assistant": "Claude Code",
     "model": "claude-opus-5-5"
@@ -918,14 +919,23 @@
         "5.3"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T15:45:05Z",
+      "completed_at": "2026-10-12T15:49:48Z",
+      "duration_seconds": 283,
+      "notes": "Login and signup on jbh-page, text fields with built-in password reveal, jbh-alert, status icons in jbhFieldSuffix. Google overlay kept; its hover rules copied into page SCSS (global selector uses the old class, fix in wave 7).",
+      "budget": {
+        "five_hour_pct_start": 38,
+        "five_hour_pct_end": 71,
+        "five_hour_pct_delta": 33,
+        "cost_usd_delta": 8.0,
+        "context_pct_end": 14,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "wave delta: 4 parallel workers (6.1-6.7) jointly"
+      }
     },
     {
       "id": "6.2",
@@ -935,14 +945,23 @@
         "5.3"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T15:49:16Z",
+      "completed_at": "2026-10-12T15:50:58Z",
+      "duration_seconds": 102,
+      "notes": "dashboard, growth-analysis, categories, team-preferences, profile moved: jbh-card, jbh-segment, jbh-empty-state, jbh-skeleton, jbh-toggle, jbh-select, jbh-number-field. Leader added profile.savingsGoal.required (D22).",
+      "budget": {
+        "five_hour_pct_start": 38,
+        "five_hour_pct_end": 71,
+        "five_hour_pct_delta": 33,
+        "cost_usd_delta": 8.0,
+        "context_pct_end": 14,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "wave delta: 4 parallel workers (6.1-6.7) jointly"
+      }
     },
     {
       "id": "6.3",
@@ -952,14 +971,23 @@
         "5.3"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T15:45:30Z",
+      "completed_at": "2026-10-12T15:49:16Z",
+      "duration_seconds": 226,
+      "notes": "create, edit, transfer, import-statement on jbh-page. Metadata fields by value type; jbh-table result; label[jbhButton] file picker; transfer passes errorMessage (D17). Edit: product type is a disabled text field.",
+      "budget": {
+        "five_hour_pct_start": 38,
+        "five_hour_pct_end": 71,
+        "five_hour_pct_delta": 33,
+        "cost_usd_delta": 8.0,
+        "context_pct_end": 14,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "wave delta: 4 parallel workers (6.1-6.7) jointly"
+      }
     },
     {
       "id": "6.4",
@@ -969,14 +997,23 @@
         "5.3"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T15:45:05Z",
+      "completed_at": "2026-10-12T15:51:00Z",
+      "duration_seconds": 355,
+      "notes": "overview, product-movements, balance-history and 5 components moved: jbh-table with card template, DialogService.confirm, jbh-line-chart, core formatCurrency/formatPeriod. Layer notes for review: table head double padding, jbh-toggle colour and label.",
+      "budget": {
+        "five_hour_pct_start": 38,
+        "five_hour_pct_end": 71,
+        "five_hour_pct_delta": 33,
+        "cost_usd_delta": 8.0,
+        "context_pct_end": 14,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "wave delta: 4 parallel workers (6.1-6.7) jointly"
+      }
     },
     {
       "id": "6.5",
@@ -986,14 +1023,23 @@
         "5.3"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T15:45:05Z",
+      "completed_at": "2026-10-12T15:52:30Z",
+      "duration_seconds": 445,
+      "notes": "Five teams pages moved; three confirms via DialogService; members on jbh-table. Leader fixed 2 template type errors (D21). Undefined page background vars dropped. Times: one serial worker, completion approx.",
+      "budget": {
+        "five_hour_pct_start": 38,
+        "five_hour_pct_end": 71,
+        "five_hour_pct_delta": 33,
+        "cost_usd_delta": 8.0,
+        "context_pct_end": 14,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "wave delta: 4 parallel workers (6.1-6.7) jointly"
+      }
     },
     {
       "id": "6.6",
@@ -1003,14 +1049,23 @@
         "5.3"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T15:45:05Z",
+      "completed_at": "2026-10-12T15:49:48Z",
+      "duration_seconds": 283,
+      "notes": "Header, menu, install button, iOS modal, context switcher on jbh-toolbar, jbh-nav-item, jbh-select and platform services. Inputs unchanged; defaultBackHref new. Install pulse and custom toasts gone. Times: one serial worker, split unknown.",
+      "budget": {
+        "five_hour_pct_start": 38,
+        "five_hour_pct_end": 71,
+        "five_hour_pct_delta": 33,
+        "cost_usd_delta": 8.0,
+        "context_pct_end": 14,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "wave delta: 4 parallel workers (6.1-6.7) jointly"
+      }
     },
     {
       "id": "6.7",
@@ -1020,14 +1075,23 @@
         "5.3"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T15:45:05Z",
+      "completed_at": "2026-10-12T15:52:30Z",
+      "duration_seconds": 445,
+      "notes": "Deleted ui/home and portfolio-top-banner; removed home.* keys from en/es. /home redirect stays. Docs ux-design-system.md still mention the banner (wave 8). Times: one serial worker, split unknown.",
+      "budget": {
+        "five_hour_pct_start": 38,
+        "five_hour_pct_end": 71,
+        "five_hour_pct_delta": 33,
+        "cost_usd_delta": 8.0,
+        "context_pct_end": 14,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "wave delta: 4 parallel workers (6.1-6.7) jointly"
+      }
     },
     {
       "id": "6.8",
@@ -1043,13 +1107,13 @@
         "6.7"
       ],
       "parallel_ok": false,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
+      "status": "in-progress",
+      "agent": "leader",
+      "model": "claude-opus-5-5",
+      "started_at": "2026-10-12T15:55:10Z",
       "completed_at": null,
       "duration_seconds": null,
-      "notes": null,
+      "notes": "First run: 1 violation, core/infrastructure/viewport/viewport.service.ts (@ionic/angular). No users left; 7.1 deletes it. Re-run after 7.1 (D23).",
       "budget": null
     },
     {
@@ -1434,6 +1498,42 @@
       "decision": "gate 5.3 confirmed; wave 6 may start",
       "why": "Leader Chrome run passed a-h; user accepted the result and the out-of-scope list of old bugs.",
       "covered_by": null
+    },
+    {
+      "id": "D20",
+      "at": "2026-10-12T15:45:05Z",
+      "scope": "change",
+      "made_by": "leader",
+      "decision": "Wave 6 runs as 4 parallel sonnet workers: W1 6.4; W2 6.5+6.7; W3 6.3+6.2; W4 6.1+6.6.",
+      "why": "About 11.5k lines: one worker would overflow its context; 7 workers read the doc pack 7 times. Folders are disjoint; icon registry and barrels stay leader-only.",
+      "covered_by": "design.md wave 6 plan (parallel by feature folder)"
+    },
+    {
+      "id": "D21",
+      "at": "2026-10-12T15:55:10Z",
+      "scope": "task:6.5",
+      "made_by": "leader",
+      "decision": "Leader fixed 2 build errors in overview-team.page.html: `nickName | slice:0:1 | uppercase` became `nickName | uppercase | slice:0:1`.",
+      "why": "jbh-table row context is any, so slice picked the array overload. Same output, clear cause, like D14 and D18; a re-dispatch costs a doc pack read.",
+      "covered_by": null
+    },
+    {
+      "id": "D22",
+      "at": "2026-10-12T15:55:10Z",
+      "scope": "task:6.2",
+      "made_by": "leader",
+      "decision": "Leader added profile.savingsGoal.required to en.json and es.json. Not defaultLang / defaultCurrency.",
+      "why": "Old gap made visible: the new number field can be cleared and shows the raw key. The two selects always hold a value, so their keys never show.",
+      "covered_by": "design.md: page tasks report i18n needs to the leader"
+    },
+    {
+      "id": "D23",
+      "at": "2026-10-12T15:55:10Z",
+      "scope": "task:6.8",
+      "made_by": "leader",
+      "decision": "6.8 stays in-progress; it re-runs after 7.1 instead of deleting viewport.service.ts now.",
+      "why": "The only violation is a file 7.1 already deletes. Keeping the plan order avoids doing 7.1 work out of turn.",
+      "covered_by": null
     }
   ],
   "events": [
@@ -1631,6 +1731,21 @@
       "at": "2026-10-12T15:39:05Z",
       "agent": "leader",
       "event": "gate 5.3 confirmed by the user; 5.1 and 5.3 done. Budget 5h 35%, context 22%, cost_usd 6.36"
+    },
+    {
+      "at": "2026-10-12T15:45:05Z",
+      "agent": "leader",
+      "event": "resume in a fresh session. wave 6 dispatched: 4 parallel app workers (sonnet): W1 6.4, W2 6.5+6.7, W3 6.3+6.2, W4 6.1+6.6. Budget start 5h 38%, context 11%, cost_usd 0.72"
+    },
+    {
+      "at": "2026-10-12T15:52:41Z",
+      "agent": "leader",
+      "event": "wave 6 workers back: reports complete (doc pack, D-ids, notes). Worker timestamps were guesses; leader used bracket start and notification times. Budget end 5h 71%, context 14%, cost_usd 8.72"
+    },
+    {
+      "at": "2026-10-12T15:55:10Z",
+      "agent": "leader",
+      "event": "leader (assistantRunsTests): npx ng build exit 1 (2 TS2769 in overview-team.page.html), fixed (D21), npx ng build exit 0; npm run test:layer exit 0, 193 of 193 SUCCESS. 6.1-6.7 done. Initial bundle 1.59 MB -> 1.87 MB raw (347 -> 397.5 kB transfer): check in review. npm run lint:boundary: 1 violation (D23)."
     }
   ]
 }

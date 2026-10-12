@@ -2,13 +2,11 @@
   <!-- Header -->
   <div class="modal-header">
     <h2 class="jbh-title">{{ 'pwa.ios.title' | translate }}</h2>
-    <ion-button fill="clear" (click)="closeModal()">
-      <ion-icon name="close" slot="icon-only"></ion-icon>
-    </ion-button>
+    <button jbhIconButton icon="close" [label]="'common.cancel' | translate" (click)="closeModal()"></button>
   </div>
 
   <!-- Content -->
-  <ion-content class="modal-content">
+  <div class="modal-content">
     <p class="jbh-subtitle">{{ 'pwa.ios.subtitle' | translate }}</p>
 
     <!-- Step 1: Tap Share Button -->
@@ -16,7 +14,7 @@
       <div class="step-number">1</div>
       <div class="step-content">
         <div class="step-icon-wrapper">
-          <ion-icon name="share-outline" class="step-icon share-icon"></ion-icon>
+          <jbh-icon name="share-outline" class="step-icon share-icon" />
         </div>
         <p class="step-text">{{ 'pwa.ios.step1' | translate }}</p>
         <p class="step-hint">{{ 'pwa.ios.step1Hint' | translate }}</p>
@@ -28,7 +26,7 @@
       <div class="step-number">2</div>
       <div class="step-content">
         <div class="step-icon-wrapper">
-          <ion-icon name="add-circle-outline" class="step-icon add-icon"></ion-icon>
+          <jbh-icon name="add-circle-outline" class="step-icon add-icon" />
         </div>
         <p class="step-text">{{ 'pwa.ios.step2' | translate }}</p>
         <p class="step-hint">{{ 'pwa.ios.step2Hint' | translate }}</p>
@@ -40,7 +38,7 @@
       <div class="step-number">3</div>
       <div class="step-content">
         <div class="step-icon-wrapper">
-          <ion-icon name="checkmark-circle-outline" class="step-icon check-icon"></ion-icon>
+          <jbh-icon name="checkmark-circle-outline" class="step-icon check-icon" />
         </div>
         <p class="step-text">{{ 'pwa.ios.step3' | translate }}</p>
         <p class="step-hint">{{ 'pwa.ios.step3Hint' | translate }}</p>
@@ -52,24 +50,24 @@
       <p class="guide-title">{{ 'pwa.ios.visualGuide' | translate }}</p>
       <div class="guide-diagram">
         <div class="safari-bar">
-          <ion-icon name="share-outline" class="diagram-icon"></ion-icon>
+          <jbh-icon name="share-outline" class="diagram-icon" />
         </div>
         <div class="arrow-down">
-          <ion-icon name="arrow-down"></ion-icon>
+          <jbh-icon name="arrow-down" />
         </div>
         <div class="share-menu">
           <div class="menu-item">
-            <ion-icon name="add-circle-outline"></ion-icon>
+            <jbh-icon name="add-circle-outline" />
             <span>{{ 'pwa.ios.addToHomeScreen' | translate }}</span>
           </div>
         </div>
       </div>
     </div>
-  </ion-content>
+  </div>
 
   <!-- Footer -->
   <div class="modal-footer">
-    <button class="jbh-button-primary jbh-button-block" (click)="closeModal()">
+    <button jbhButton block (click)="closeModal()">
       {{ 'common.gotIt' | translate }}
     </button>
   </div>

@@ -1,95 +1,50 @@
-<app-header></app-header>
-<ion-content class="create-product-content">
+<jbh-page (pageEnter)="onPageEnter()" (pageLeave)="onPageLeave()">
+  <app-header jbhPageHeader></app-header>
+
   <div class="jbh-container">
-    <div class="jbh-form-card">
+    <jbh-card variant="form">
+      <jbh-page-header
+        variant="form"
+        icon="cube-outline"
+        [title]="'products.create.formTitle' | translate"
+        [subtitle]="'products.create.formSubtitle' | translate"
+      />
 
-      <!-- Form Header -->
-      <div class="jbh-form-header">
-        <div class="jbh-form-icon">
-          <ion-icon name="cube-outline"></ion-icon>
-        </div>
-        <h1 class="jbh-form-title">{{ 'products.create.formTitle' | translate }}</h1>
-        <p class="jbh-form-subtitle">{{ 'products.create.formSubtitle' | translate }}</p>
-      </div>
+      <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
 
-      <!-- Form -->
-      <form [formGroup]="productForm" (ngSubmit)="onSubmit()" class="jbh-form-animated">
+        <jbh-text-field
+          formControlName="name"
+          icon="cube-outline"
+          requirement="required"
+          [label]="'products.create.name.label' | translate"
+          [placeholder]="'products.create.name.placeholder' | translate"
+          [error]="hasError('name') ? getErrorMessage('name') : ''"
+        />
 
-        <!-- Product Name Field -->
-        <div class="jbh-form-field">
-          <label class="jbh-label">
-            {{ 'products.create.name.label' | translate }}
-            <span class="required-indicator">*</span>
-          </label>
-          <div class="jbh-input-wrapper">
-            <ion-icon name="cube-outline" class="jbh-input-icon left"></ion-icon>
-            <input
-              type="text"
-              class="jbh-input jbh-input-icon-left"
-              formControlName="name"
-              [placeholder]="'products.create.name.placeholder' | translate"
-              [class.error]="hasError('name')"
-            />
-          </div>
-          @if (hasError('name')) {
-            <div class="jbh-field-error">
-              <ion-icon name="information-circle"></ion-icon>
-              <span>{{ getErrorMessage('name') }}</span>
-            </div>
+        <jbh-select
+          formControlName="productType"
+          icon="pricetag-outline"
+          [label]="'products.create.productType.label' | translate"
+          [placeholder]="'products.create.productType.placeholder' | translate"
+          [loading]="isLoadingTypes"
+          [error]="hasError('productType') ? ('products.create.productType.required' | translate) : ''"
+        >
+          @for (type of productTypes; track type.name) {
+            <jbh-select-option [value]="type.name">{{ getProductTypeName(type) }}</jbh-select-option>
           }
-        </div>
+        </jbh-select>
 
-        <!-- Product Type Field -->
-        <div class="jbh-form-field">
-          <label class="jbh-label">{{ 'products.create.productType.label' | translate }}</label>
-
-          <!-- Loading Skeleton -->
-          @if (isLoadingTypes) {
-            <div class="jbh-skeleton jbh-skeleton-select"></div>
-          }
-
-          <!-- Select Field -->
-          @if (!isLoadingTypes) {
-            <div class="jbh-ion-select-wrapper" [class.error]="hasError('productType')">
-              <ion-icon name="pricetag-outline" class="jbh-ion-select-icon"></ion-icon>
-              <ion-select
-                formControlName="productType"
-                [placeholder]="'products.create.productType.placeholder' | translate"
-                [interface]="selectInterface"
-                [interfaceOptions]="{ header: ('products.create.productType.label' | translate) }"
-                class="jbh-ion-select"
-              >
-                @for (type of productTypes; track type.name) {
-                  <ion-select-option [value]="type.name">
-                    {{ getProductTypeName(type) }}
-                  </ion-select-option>
-                }
-              </ion-select>
-            </div>
-          }
-
-          <!-- Error Message -->
-          @if (hasError('productType')) {
-            <div class="jbh-field-error">
-              <ion-icon name="information-circle"></ion-icon>
-              <span>{{ 'products.create.productType.required' | translate }}</span>
-            </div>
-          }
-        </div>
-
-        <!-- Loading Metadata Skeleton -->
         @if (isLoadingMetadata) {
           <div class="dynamic-fields-loading">
             @for (i of [1, 2, 3, 4]; track i) {
-              <div class="jbh-form-field">
-                <div class="jbh-skeleton jbh-skeleton-label"></div>
-                <div class="jbh-skeleton jbh-skeleton-input"></div>
+              <div class="dynamic-field-skeleton">
+                <jbh-skeleton shape="label" />
+                <jbh-skeleton shape="input" />
               </div>
             }
           </div>
         }
 
-        <!-- Dynamic Fields -->
         @if (!isLoadingMetadata && metadataConfigs.length > 0) {
           <div class="dynamic-fields-section">
             <div class="jbh-divider">
@@ -97,113 +52,71 @@
             </div>
 
             @for (config of metadataConfigs; track config.key) {
-              <div class="jbh-form-field">
-                <label class="jbh-label">
-                  {{ getFieldLabel(config) }}
-                  @if (config.required) {
-                    <span class="required-indicator">*</span>
-                  }
-                </label>
+              @let rangeHint = config.minValue !== null && config.maxValue !== null
+                ? ('products.create.dynamicFields.range' | translate: { min: config.minValue, max: config.maxValue })
+                : config.minValue !== null
+                  ? ('products.create.dynamicFields.minHint' | translate: { min: config.minValue })
+                  : config.maxValue !== null
+                    ? ('products.create.dynamicFields.maxHint' | translate: { max: config.maxValue })
+                    : '';
 
-                <!-- Boolean Field (Toggle) -->
-                @if (config.valueType === MetadataValueType.BOOLEAN) {
-                  <div class="jbh-toggle-wrapper">
-                    <ion-toggle
-                      [formControlName]="config.key"
-                      mode="ios"
-                    ></ion-toggle>
-                  </div>
+              @switch (config.valueType) {
+                @case (MetadataValueType.BOOLEAN) {
+                  <jbh-toggle
+                    class="dynamic-field-toggle"
+                    [formControlName]="config.key"
+                    [label]="getFieldLabel(config)"
+                  />
                 }
-
-                <!-- Date Field -->
-                @if (config.valueType === MetadataValueType.DATE) {
-                  <div class="jbh-ion-select-wrapper" [class.error]="hasError(config.key)">
-                    <ion-icon name="calendar-outline" class="jbh-ion-select-icon"></ion-icon>
-                    <ion-datetime-button datetime="datetime-{{config.key}}" class="jbh-datetime-button"></ion-datetime-button>
-                    <ion-modal [keepContentsMounted]="true">
-                      <ng-template>
-                        <ion-datetime
-                          id="datetime-{{config.key}}"
-                          [formControlName]="config.key"
-                          presentation="date"
-                          [preferWheel]="true"
-                        ></ion-datetime>
-                      </ng-template>
-                    </ion-modal>
-                  </div>
+                @case (MetadataValueType.DATE) {
+                  <jbh-date-field
+                    [formControlName]="config.key"
+                    [label]="getFieldLabel(config)"
+                    [requirement]="config.required ? 'required' : null"
+                    [hint]="rangeHint"
+                    [error]="hasError(config.key) ? getErrorMessage(config.key) : ''"
+                  />
                 }
-
-                <!-- Text/Number Fields -->
-                @if (config.valueType !== MetadataValueType.BOOLEAN && config.valueType !== MetadataValueType.DATE) {
-                  <div class="jbh-input-wrapper">
-                    @if (config.valueType === MetadataValueType.STRING) {
-                      <ion-icon name="text-outline" class="jbh-input-icon left"></ion-icon>
-                      <input
-                        type="text"
-                        class="jbh-input jbh-input-icon-left"
-                        [formControlName]="config.key"
-                        [placeholder]="getFieldLabel(config)"
-                        [class.error]="hasError(config.key)"
-                      />
-                    }
-                    @if (config.valueType === MetadataValueType.INT || config.valueType === MetadataValueType.BIGDECIMAL) {
-                      <ion-icon name="calculator-outline" class="jbh-input-icon left"></ion-icon>
-                      <input
-                        type="text"
-                        inputmode="decimal"
-                        class="jbh-input jbh-input-icon-left"
-                        [formControlName]="config.key"
-                        [placeholder]="getFieldLabel(config)"
-                        [jbhDecimalFormat]="getMaxDecimals(config.valueType)!"
-                        [class.error]="hasError(config.key)"
-                      />
-                    }
-                  </div>
+                @case (MetadataValueType.STRING) {
+                  <jbh-text-field
+                    [formControlName]="config.key"
+                    icon="text-outline"
+                    [label]="getFieldLabel(config)"
+                    [placeholder]="getFieldLabel(config)"
+                    [requirement]="config.required ? 'required' : null"
+                    [hint]="rangeHint"
+                    [error]="hasError(config.key) ? getErrorMessage(config.key) : ''"
+                  />
                 }
-
-                <!-- Error Message -->
-                @if (hasError(config.key)) {
-                  <div class="jbh-field-error">
-                    <ion-icon name="information-circle"></ion-icon>
-                    <span>{{ getErrorMessage(config.key) }}</span>
-                  </div>
+                @default {
+                  <jbh-number-field
+                    [formControlName]="config.key"
+                    icon="calculator-outline"
+                    [decimals]="getMaxDecimals(config.valueType) ?? 2"
+                    [label]="getFieldLabel(config)"
+                    [placeholder]="getFieldLabel(config)"
+                    [requirement]="config.required ? 'required' : null"
+                    [hint]="rangeHint"
+                    [error]="hasError(config.key) ? getErrorMessage(config.key) : ''"
+                  />
                 }
-
-                <!-- Min/Max Hint -->
-                @if ((config.minValue !== null || config.maxValue !== null) && config.valueType !== MetadataValueType.BOOLEAN) {
-                  <div class="jbh-field-hint">
-                    @if (config.minValue !== null && config.maxValue !== null) {
-                      {{ 'products.create.dynamicFields.range' | translate:{ min: config.minValue, max: config.maxValue } }}
-                    } @else if (config.minValue !== null) {
-                      {{ 'products.create.dynamicFields.minHint' | translate:{ min: config.minValue } }}
-                    } @else if (config.maxValue !== null) {
-                      {{ 'products.create.dynamicFields.maxHint' | translate:{ max: config.maxValue } }}
-                    }
-                  </div>
-                }
-              </div>
+              }
             }
           </div>
         }
 
-        <!-- Submit Button -->
         <button
           type="submit"
-          class="jbh-button-primary jbh-button-block"
+          jbhButton
+          block
+          icon="save-outline"
+          [loading]="isSubmitting"
           [disabled]="isSubmitting || productForm.invalid || isLoadingTypes || isLoadingMetadata"
-          [class.jbh-button-loading]="isSubmitting"
         >
-          @if (isSubmitting) {
-            <ion-spinner name="crescent"></ion-spinner>
-            <span>{{ 'products.create.saving' | translate }}</span>
-          } @else {
-            <ion-icon name="save-outline" class="button-icon"></ion-icon>
-            <span>{{ 'products.create.saveButton' | translate }}</span>
-          }
+          {{ (isSubmitting ? 'products.create.saving' : 'products.create.saveButton') | translate }}
         </button>
 
       </form>
-
-    </div>
+    </jbh-card>
   </div>
-</ion-content>
+</jbh-page>

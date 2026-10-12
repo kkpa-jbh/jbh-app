@@ -1,28 +1,17 @@
-<div class="jbh-context-switcher jbh-context-switcher-highlighted">
-  <ion-item lines="none" class="jbh-context-switcher-item">
-    @if (currentContext$ | async; as context) {
-      <ion-icon
-        [name]="context.isPersonal ? 'person-outline' : 'people-outline'"
-        slot="start"
-        class="jbh-context-switcher-icon">
-      </ion-icon>
+<div class="jbh-context-switcher">
+  @let context = currentContext$ | async;
+  <jbh-select
+    [formControl]="contextControl"
+    [label]="'context.viewing' | translate"
+    [icon]="context ? (context.isPersonal ? 'person-outline' : 'people-outline') : undefined"
+  >
+    <jbh-select-option value="personal">
+      {{ 'context.personalPortfolio' | translate }}
+    </jbh-select-option>
+    @for (team of teams; track team.id) {
+      <jbh-select-option [value]="'team_' + team.id">
+        {{ team.shortName }}
+      </jbh-select-option>
     }
-    <ion-label class="jbh-context-label">
-      {{ 'context.viewing' | translate }}
-    </ion-label>
-    <ion-select
-      [value]="getContextValue()"
-      (ionChange)="onContextChange($event)"
-      [interface]="selectInterface"
-      class="jbh-context-select">
-      <ion-select-option value="personal">
-        {{ 'context.personalPortfolio' | translate }}
-      </ion-select-option>
-      @for (team of teams; track team.id) {
-        <ion-select-option [value]="'team_' + team.id">
-          {{ team.shortName }}
-        </ion-select-option>
-      }
-    </ion-select>
-  </ion-item>
+  </jbh-select>
 </div>

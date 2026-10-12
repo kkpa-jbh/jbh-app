@@ -1,22 +1,8 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { IonicModule, ToastController, ViewWillEnter, ViewWillLeave } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil, distinctUntilChanged, filter } from 'rxjs';
-import { addIcons } from 'ionicons';
-import {
-  cubeOutline,
-  pricetagOutline,
-  informationCircle,
-  calendarOutline,
-  textOutline,
-  calculatorOutline,
-  saveOutline,
-  close,
-  arrowBackOutline
-} from 'ionicons/icons';
 import { ProductUseCase } from '@core/domain/use-cases/product.use-case';
 import {
   ProductType,
@@ -29,7 +15,18 @@ import { JBHError } from '@core/domain/models/jbh-error.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
 import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
-import { DecimalFormatDirective } from '@shared/directives';
+import {
+  JbhButtonComponent,
+  JbhCardComponent,
+  JbhDateFieldComponent,
+  JbhNumberFieldComponent,
+  JbhPageHeaderComponent,
+  JbhSkeletonComponent,
+  JbhSpinnerComponent,
+  JbhTextFieldComponent,
+  JbhToggleComponent
+} from '@design-system/components';
+import { JbhPageComponent, ToastService } from '@design-system/platform';
 import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 
 @Component({
@@ -39,15 +36,22 @@ import { AppHeaderComponent } from '@shared/components/app-header/app-header.com
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
-    IonicModule,
     TranslateModule,
-    DecimalFormatDirective,
+    JbhButtonComponent,
+    JbhCardComponent,
+    JbhDateFieldComponent,
+    JbhNumberFieldComponent,
+    JbhPageComponent,
+    JbhPageHeaderComponent,
+    JbhSkeletonComponent,
+    JbhSpinnerComponent,
+    JbhTextFieldComponent,
+    JbhToggleComponent,
     AppHeaderComponent
   ]
 })
-export class EditProductPage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLeave {
+export class EditProductPage implements OnInit, OnDestroy {
 
   productForm!: FormGroup;
   productTypes: ProductType[] = [];
@@ -65,29 +69,15 @@ export class EditProductPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
 
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private router: Router,
-    private route: ActivatedRoute,
-    private productUseCase: ProductUseCase,
-    private translationService: TranslationService,
-    private toastController: ToastController,
-    private logger: LoggerService,
-    private headerActions: HeaderActionsService,
-    private cdr: ChangeDetectorRef
-  ) {
-    addIcons({
-      cubeOutline,
-      pricetagOutline,
-      informationCircle,
-      calendarOutline,
-      textOutline,
-      calculatorOutline,
-      saveOutline,
-      close,
-      arrowBackOutline
-    });
-  }
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly productUseCase = inject(ProductUseCase);
+  private readonly translationService = inject(TranslationService);
+  private readonly toast = inject(ToastService);
+  private readonly logger = inject(LoggerService);
+  private readonly headerActions = inject(HeaderActionsService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     this.initForm();
@@ -101,7 +91,7 @@ export class EditProductPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
     this.destroy$.complete();
   }
 
-  ionViewWillEnter(): void {
+  onPageEnter(): void {
     this.headerActions.setPageConfig({
       title: 'products.edit.formTitle',
       showBackButton: true
@@ -109,7 +99,7 @@ export class EditProductPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
     this.loadProduct();
   }
 
-  ionViewWillLeave(): void {
+  onPageLeave(): void {
     this.headerActions.clearPageConfig();
   }
 
@@ -140,7 +130,7 @@ export class EditProductPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
           this.logger.error('Error loading product:', 'EditProductPage', error);
           this.isLoading = false;
           this.cdr.markForCheck();
-          this.showToast(this.translationService.instant('products.edit.errors.load'), 'danger');
+          this.toast.show(this.translationService.instant('products.edit.errors.load'), 'error');
           this.navigateToOverview();
         }
       });
@@ -151,7 +141,8 @@ export class EditProductPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
 
     this.productForm.patchValue({
       name: this.product.name,
-      productType: this.product.type
+      // The type is read-only; the field shows its translated name.
+      productType: this.getProductTypeLabel()
     });
 
     this.metadataConfigs.forEach(config => {
@@ -176,7 +167,7 @@ export class EditProductPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
           this.logger.error('Error loading product types:', 'EditProductPage', error);
           this.isLoadingTypes = false;
           this.cdr.markForCheck();
-          this.showToast(this.translationService.instant('products.edit.errors.loadTypes'), 'danger');
+          this.toast.show(this.translationService.instant('products.edit.errors.loadTypes'), 'error');
         }
       });
   }
@@ -208,7 +199,7 @@ export class EditProductPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
           this.logger.error('Error loading metadata config:', 'EditProductPage', error);
           this.isLoadingMetadata = false;
           this.cdr.markForCheck();
-          this.showToast(this.translationService.instant('products.edit.errors.loadMetadata'), 'danger');
+          this.toast.show(this.translationService.instant('products.edit.errors.loadMetadata'), 'error');
         }
       });
   }
@@ -373,7 +364,7 @@ export class EditProductPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
       .subscribe({
         next: async () => {
           this.isSubmitting = false;
-          await this.showToast(this.translationService.instant('products.edit.success'), 'success');
+          await this.toast.show(this.translationService.instant('products.edit.success'), 'success');
           this.router.navigate(['/products/overview']);
         },
         error: async (error: JBHError) => {
@@ -383,7 +374,7 @@ export class EditProductPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
           const errorMessage = (error.isValidationError)
             ? error.message
             : this.translationService.instant('products.edit.errors.update');
-          await this.showToast(errorMessage, 'danger');
+          await this.toast.show(errorMessage, 'error');
         }
       });
   }
@@ -436,21 +427,5 @@ export class EditProductPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
       return this.translationService.instant('products.edit.dynamicFields.maxDecimals', { max: maxDecimals });
     }
     return this.translationService.instant('validation.pattern');
-  }
-
-  private async showToast(message: string, color: 'success' | 'danger' | 'warning'): Promise<void> {
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-      color,
-      position: 'bottom',
-      buttons: [
-        {
-          icon: 'close',
-          role: 'cancel'
-        }
-      ]
-    });
-    await toast.present();
   }
 }

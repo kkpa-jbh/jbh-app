@@ -1,11 +1,7 @@
-import { Component, OnInit, OnDestroy, ViewChildren, QueryList, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnDestroy, ViewChildren, QueryList, ChangeDetectorRef, ChangeDetectionStrategy, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { IonicModule, ViewWillEnter, ViewWillLeave, ToastController, AlertController } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
-import { addIcons } from 'ionicons';
-import { refreshOutline, walletOutline, addOutline } from 'ionicons/icons';
 import { ProductUseCase } from '@core/domain/use-cases/product.use-case';
 import { ProductListItem } from '@core/domain/features/products';
 import { JBHError } from '@core/domain/models/jbh-error.model';
@@ -14,6 +10,13 @@ import { TranslationService } from '@core/infrastructure/i18n/translation.servic
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
 import { PortfolioContextService } from '@core/infrastructure/context/portfolio-context.service';
 import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
+import {
+  JbhButtonComponent,
+  JbhEmptyStateComponent,
+  JbhPageHeaderComponent,
+  JbhSkeletonComponent
+} from '@design-system/components';
+import { DialogService, JbhPageComponent, ToastService } from '@design-system/platform';
 import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 
 @Component({
@@ -22,36 +25,36 @@ import { AppHeaderComponent } from '@shared/components/app-header/app-header.com
   styleUrls: ['./products-overview.page.scss'],
   standalone: true,
   imports: [
-    CommonModule,
-    IonicModule,
     TranslateModule,
+    JbhButtonComponent,
+    JbhEmptyStateComponent,
+    JbhPageComponent,
+    JbhPageHeaderComponent,
+    JbhSkeletonComponent,
     ProductCardComponent,
     AppHeaderComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProductsOverviewPage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLeave {
+export class ProductsOverviewPage implements OnInit, OnDestroy {
   @ViewChildren(ProductCardComponent) productCards!: QueryList<ProductCardComponent>;
 
   products: ProductListItem[] = [];
   isLoading = true;
-  currentContext$ = this.portfolioContext.context$;
   isPersonalContext = true;
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private productUseCase: ProductUseCase,
-    private router: Router,
-    private toastController: ToastController,
-    private alertController: AlertController,
-    private logger: LoggerService,
-    private translationService: TranslationService,
-    private portfolioContext: PortfolioContextService,
-    private cdr: ChangeDetectorRef,
-    private headerActions: HeaderActionsService
-  ) {
-    addIcons({ refreshOutline, walletOutline, addOutline });
-  }
+  private readonly productUseCase = inject(ProductUseCase);
+  private readonly router = inject(Router);
+  private readonly toast = inject(ToastService);
+  private readonly dialog = inject(DialogService);
+  private readonly logger = inject(LoggerService);
+  private readonly translationService = inject(TranslationService);
+  private readonly portfolioContext = inject(PortfolioContextService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly headerActions = inject(HeaderActionsService);
+
+  currentContext$ = this.portfolioContext.context$;
 
   ngOnInit(): void {
     this.loadProducts();
@@ -64,7 +67,7 @@ export class ProductsOverviewPage implements OnInit, OnDestroy, ViewWillEnter, V
       });
   }
 
-  ionViewWillEnter(): void {
+  onPageEnter(): void {
     this.headerActions.setPageConfig({
       title: 'products.overview.title',
       actions: [
@@ -78,7 +81,7 @@ export class ProductsOverviewPage implements OnInit, OnDestroy, ViewWillEnter, V
     this.refreshProducts();
   }
 
-  ionViewWillLeave(): void {
+  onPageLeave(): void {
     this.headerActions.clearPageConfig();
     const activeElement = document.activeElement as HTMLElement;
     if (activeElement && activeElement.blur) {
@@ -104,10 +107,7 @@ export class ProductsOverviewPage implements OnInit, OnDestroy, ViewWillEnter, V
         error: (error) => {
           this.logger.error('Error loading products', 'ProductsOverviewPage', error);
           this.isLoading = false;
-          this.showToast(
-            this.translationService.instant('products.overview.errors.load'),
-            'danger'
-          );
+          this.toast.show(this.translationService.instant('products.overview.errors.load'), 'error');
           this.cdr.markForCheck();
         }
       });
@@ -115,6 +115,7 @@ export class ProductsOverviewPage implements OnInit, OnDestroy, ViewWillEnter, V
 
   refreshProducts(): void {
     this.isLoading = true;
+    this.cdr.markForCheck();
     this.productUseCase.refreshProducts()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -126,10 +127,7 @@ export class ProductsOverviewPage implements OnInit, OnDestroy, ViewWillEnter, V
         error: (error) => {
           this.logger.error('Error refreshing products', 'ProductsOverviewPage', error);
           this.isLoading = false;
-          this.showToast(
-            this.translationService.instant('products.overview.errors.load'),
-            'danger'
-          );
+          this.toast.show(this.translationService.instant('products.overview.errors.load'), 'error');
           this.cdr.markForCheck();
         }
       });
@@ -162,22 +160,16 @@ export class ProductsOverviewPage implements OnInit, OnDestroy, ViewWillEnter, V
   }
 
   async confirmDeleteProduct(product: ProductListItem): Promise<void> {
-    const alert = await this.alertController.create({
-      header: this.translationService.instant('products.deleteProduct.title'),
+    const confirmed = await this.dialog.confirm({
+      title: this.translationService.instant('products.deleteProduct.title'),
       message: this.translationService.instant('products.deleteProduct.message', { name: product.name }),
-      buttons: [
-        {
-          text: this.translationService.instant('common.cancel'),
-          role: 'cancel'
-        },
-        {
-          text: this.translationService.instant('common.delete'),
-          role: 'destructive',
-          handler: () => this.deleteProduct(product)
-        }
-      ]
+      confirmText: this.translationService.instant('common.delete'),
+      cancelText: this.translationService.instant('common.cancel'),
+      destructive: true
     });
-    await alert.present();
+    if (confirmed) {
+      this.deleteProduct(product);
+    }
   }
 
   private deleteProduct(product: ProductListItem): void {
@@ -185,10 +177,7 @@ export class ProductsOverviewPage implements OnInit, OnDestroy, ViewWillEnter, V
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
-          this.showToast(
-            this.translationService.instant('products.deleteProduct.success'),
-            'success'
-          );
+          this.toast.show(this.translationService.instant('products.deleteProduct.success'), 'success');
           this.refreshProducts();
         },
         error: (error: JBHError) => {
@@ -196,7 +185,7 @@ export class ProductsOverviewPage implements OnInit, OnDestroy, ViewWillEnter, V
           const errorMessage = error.isValidationError
             ? error.message
             : this.translationService.instant('products.deleteProduct.error');
-          this.showToast(errorMessage, 'danger');
+          this.toast.show(errorMessage, 'error');
         }
       });
   }
@@ -245,22 +234,8 @@ export class ProductsOverviewPage implements OnInit, OnDestroy, ViewWillEnter, V
           const errorMessage = error.isValidationError
             ? error.message
             : this.translationService.instant('products.card.status.error');
-          this.showToast(errorMessage, 'danger');
+          this.toast.show(errorMessage, 'error');
         }
       });
-  }
-
-  trackByProductId(index: number, product: ProductListItem): string {
-    return product.id;
-  }
-
-  private async showToast(message: string, color: 'success' | 'danger' | 'warning' = 'success'): Promise<void> {
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-      position: 'bottom',
-      color
-    });
-    await toast.present();
   }
 }

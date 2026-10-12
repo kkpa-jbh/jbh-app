@@ -1,23 +1,20 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonicModule, ToastController } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
-import { addIcons } from 'ionicons';
-import {
-  peopleOutline,
-  checkmarkCircleOutline,
-  closeCircleOutline,
-  alertCircleOutline,
-  mailOutline,
-  arrowForwardOutline,
-  homeOutline
-} from 'ionicons/icons';
 import { TeamUseCase } from '@core/domain/use-cases/team.use-case';
 import { JBHError } from '@core/domain/models/jbh-error.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
+import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
+import {
+  JbhButtonComponent,
+  JbhCardComponent,
+  JbhIconComponent,
+  JbhSpinnerComponent
+} from '@design-system/components';
+import { JbhPageComponent, ToastService } from '@design-system/platform';
+import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 
 type PageState = 'loading' | 'ready' | 'accepting' | 'success' | 'error';
 
@@ -27,10 +24,15 @@ type PageState = 'loading' | 'ready' | 'accepting' | 'success' | 'error';
   styleUrls: ['./accept-invitation.page.scss'],
   standalone: true,
   imports: [
-    CommonModule,
-    IonicModule,
-    TranslateModule
-  ]
+    TranslateModule,
+    JbhButtonComponent,
+    JbhCardComponent,
+    JbhIconComponent,
+    JbhPageComponent,
+    JbhSpinnerComponent,
+    AppHeaderComponent
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AcceptInvitationPage implements OnInit, OnDestroy {
 
@@ -42,24 +44,14 @@ export class AcceptInvitationPage implements OnInit, OnDestroy {
 
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private route: ActivatedRoute,
-    private router: Router,
-    private teamUseCase: TeamUseCase,
-    private translationService: TranslationService,
-    private toastController: ToastController,
-    private logger: LoggerService
-  ) {
-    addIcons({
-      peopleOutline,
-      checkmarkCircleOutline,
-      closeCircleOutline,
-      alertCircleOutline,
-      mailOutline,
-      arrowForwardOutline,
-      homeOutline
-    });
-  }
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
+  private readonly teamUseCase = inject(TeamUseCase);
+  private readonly translationService = inject(TranslationService);
+  private readonly toast = inject(ToastService);
+  private readonly logger = inject(LoggerService);
+  private readonly headerActions = inject(HeaderActionsService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     this.extractParams();
@@ -68,6 +60,16 @@ export class AcceptInvitationPage implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  onPageEnter(): void {
+    this.headerActions.setPageConfig({
+      title: 'teams.acceptInvitation.title'
+    });
+  }
+
+  onPageLeave(): void {
+    this.headerActions.clearPageConfig();
   }
 
   private extractParams(): void {
@@ -79,6 +81,7 @@ export class AcceptInvitationPage implements OnInit, OnDestroy {
         if (!this.teamId) {
           this.pageState = 'error';
           this.errorMessage = this.translationService.instant('teams.acceptInvitation.errors.invalidLink');
+          this.cdr.markForCheck();
           return;
         }
 
@@ -94,6 +97,7 @@ export class AcceptInvitationPage implements OnInit, OnDestroy {
               }
             }
             this.pageState = 'ready';
+            this.cdr.markForCheck();
           });
       });
   }
@@ -111,7 +115,8 @@ export class AcceptInvitationPage implements OnInit, OnDestroy {
         next: async (response) => {
           this.successTeamName = response.groupName || this.teamName || '';
           this.pageState = 'success';
-          await this.showToast(
+          this.cdr.markForCheck();
+          await this.toast.show(
             this.translationService.instant('teams.acceptInvitation.success'),
             'success'
           );
@@ -120,7 +125,8 @@ export class AcceptInvitationPage implements OnInit, OnDestroy {
           this.logger.error('Error accepting invitation:', 'AcceptInvitationPage', error);
           this.pageState = 'error';
           this.errorMessage = this.getErrorMessage(error);
-          await this.showToast(this.errorMessage, 'danger');
+          this.cdr.markForCheck();
+          await this.toast.show(this.errorMessage, 'error');
         }
       });
   }
@@ -150,16 +156,5 @@ export class AcceptInvitationPage implements OnInit, OnDestroy {
 
   navigateToHome(): void {
     this.router.navigate(['/home']);
-  }
-
-  private async showToast(message: string, color: 'success' | 'danger' | 'warning'): Promise<void> {
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-      color,
-      position: 'bottom',
-      buttons: [{ icon: 'close', role: 'cancel' }]
-    });
-    await toast.present();
   }
 }

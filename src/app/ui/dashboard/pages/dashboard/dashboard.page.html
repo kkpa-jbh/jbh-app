@@ -1,6 +1,6 @@
-<app-header></app-header>
+<jbh-page (pageEnter)="onPageEnter()" (pageLeave)="onPageLeave()">
+  <app-header jbhPageHeader></app-header>
 
-<ion-content>
   <div class="jbh-container">
     @if (currentContext$ | async; as context) {
       <div class="jbh-dashboard-header">
@@ -14,33 +14,27 @@
       </div>
 
       <div class="jbh-dashboard-summary">
-        <ion-card class="jbh-card">
-          <ion-card-header>
-            <ion-card-subtitle>{{ 'dashboard.totalBalance' | translate }}</ion-card-subtitle>
-            <ion-card-title>{{ totalBalance | jbhCurrency }}</ion-card-title>
-          </ion-card-header>
-        </ion-card>
+        <jbh-card>
+          <p class="jbh-dashboard-stat-label">{{ 'dashboard.totalBalance' | translate }}</p>
+          <p class="jbh-dashboard-stat-value">{{ totalBalance | jbhCurrency }}</p>
+        </jbh-card>
 
-        <ion-card class="jbh-card">
-          <ion-card-header>
-            <ion-card-subtitle>{{ 'dashboard.activeProducts' | translate }}</ion-card-subtitle>
-            <ion-card-title>{{ activeProductsCount }}</ion-card-title>
-          </ion-card-header>
-        </ion-card>
+        <jbh-card>
+          <p class="jbh-dashboard-stat-label">{{ 'dashboard.activeProducts' | translate }}</p>
+          <p class="jbh-dashboard-stat-value">{{ activeProductsCount }}</p>
+        </jbh-card>
       </div>
 
       @if (context.isPersonal) {
         <div class="jbh-dashboard-actions">
-          <button type="button" routerLink="/portfolio/create" class="jbh-button-primary jbh-button-block">
-            <ion-icon name="add-circle-outline"></ion-icon>
+          <button type="button" routerLink="/portfolio/create" jbhButton block icon="add-circle-outline">
             {{ 'dashboard.addProduct' | translate }}
           </button>
-          <button type="button" routerLink="/transactions/record-movement" class="jbh-button-secondary jbh-button-block">
-            <ion-icon name="cash-outline"></ion-icon>
+          <button type="button" routerLink="/transactions/record-movement" jbhButton="secondary" block icon="cash-outline">
             {{ 'dashboard.recordMovement' | translate }}
           </button>
         </div>
       }
     }
   </div>
-</ion-content>
+</jbh-page>

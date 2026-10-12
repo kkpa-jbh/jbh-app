@@ -1,27 +1,16 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { addIcons } from 'ionicons';
-import {
-  shieldCheckmark,
-  alertCircle,
-  personOutline,
-  informationCircle,
-  lockClosedOutline,
-  eyeOutline,
-  eyeOffOutline,
-  logoGoogle
-} from 'ionicons/icons';
 import { AuthUseCase } from '@core/domain/use-cases/auth.use-case';
 import { JBHError } from '@core/domain/models/jbh-error.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
 import { GoogleSignInService } from '@core/infrastructure/auth/google-sign-in.service';
+import { JbhAlertComponent, JbhButtonComponent, JbhIconComponent, JbhTextFieldComponent } from '@design-system/components';
+import { JbhPageComponent } from '@design-system/platform';
 
 @Component({
   selector: 'app-login',
@@ -29,11 +18,13 @@ import { GoogleSignInService } from '@core/infrastructure/auth/google-sign-in.se
   styleUrls: ['./login.page.scss'],
   standalone: true,
   imports: [
-    CommonModule,
-    FormsModule,
     ReactiveFormsModule,
-    IonicModule,
-    TranslateModule
+    TranslateModule,
+    JbhAlertComponent,
+    JbhButtonComponent,
+    JbhIconComponent,
+    JbhPageComponent,
+    JbhTextFieldComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -45,7 +36,6 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
   loginForm!: FormGroup;
   isLoading = false;
   errorMessage = '';
-  showPassword = false;
   readonly currentYear = new Date().getFullYear();
   private returnUrl: string = '/home';
 
@@ -58,18 +48,7 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
     private logger: LoggerService,
     private cdr: ChangeDetectorRef,
     private googleSignIn: GoogleSignInService
-  ) {
-    addIcons({
-      shieldCheckmark,
-      alertCircle,
-      personOutline,
-      informationCircle,
-      lockClosedOutline,
-      eyeOutline,
-      eyeOffOutline,
-      logoGoogle
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.initForm();
@@ -171,13 +150,6 @@ export class LoginPage implements OnInit, AfterViewInit, OnDestroy {
           this.cdr.markForCheck();
         }
       });
-  }
-
-  /**
-   * Toggle password visibility
-   */
-  togglePasswordVisibility() {
-    this.showPassword = !this.showPassword;
   }
 
   /**

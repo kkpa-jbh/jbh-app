@@ -4,7 +4,7 @@
     <div class="jbh-menu-header-gradient"></div>
     <div class="jbh-menu-header-content">
       <div class="jbh-menu-logo">
-        <ion-icon name="apps-outline"></ion-icon>
+        <jbh-icon name="apps-outline" />
       </div>
       <h2 class="jbh-menu-header-title">{{ 'menu.appName' | translate }}</h2>
       <p class="jbh-menu-header-subtitle">{{ 'menu.appTagline' | translate }}</p>
@@ -16,7 +16,7 @@
 
   <!-- Menu Items -->
   <div class="jbh-menu-content">
-    <ion-list class="jbh-menu-list">
+    <div class="jbh-menu-list">
       @for (item of menuItems; track item.id) {
         <!-- Install App Button (shown before divider/logout) -->
         @if (item.id === 'divider-1') {
@@ -31,69 +31,40 @@
         <!-- Menu Item (Parent) -->
         @if (!item.divider) {
           <div class="jbh-menu-item-wrapper">
-            <ion-item
-              [button]="true"
-              [detail]="false"
-              lines="none"
-              class="jbh-menu-item"
-              [class.jbh-menu-item-active]="isActive(item)"
-              [class.jbh-menu-item-expanded]="item.expanded"
-              (click)="handleMenuItemClick(item, $event)">
-              <ion-icon [name]="item.icon" slot="start" class="jbh-menu-item-icon"></ion-icon>
-              <ion-label class="jbh-menu-item-label">
-                {{ item.translationKey | translate }}
-              </ion-label>
-              @if (item.children) {
-                <ion-icon
-                  [name]="item.expanded ? 'chevron-up-outline' : 'chevron-down-outline'"
-                  slot="end"
-                  class="jbh-menu-item-chevron">
-                </ion-icon>
-              }
-            </ion-item>
+            <jbh-nav-item
+              [icon]="item.icon"
+              [level]="1"
+              [active]="isActive(item)"
+              [expanded]="item.children ? !!item.expanded : null"
+              (activate)="handleMenuItemClick(item)">
+              {{ item.translationKey | translate }}
+            </jbh-nav-item>
 
             <!-- Submenu (Children) -->
             @if (item.children && item.expanded) {
               <div class="jbh-menu-submenu">
                 @for (child of item.children; track child.id) {
                   <div class="jbh-menu-subitem-wrapper">
-                    <ion-item
-                      [button]="true"
-                      [detail]="false"
-                      lines="none"
-                      class="jbh-menu-subitem"
-                      [class.jbh-menu-subitem-active]="isActive(child)"
-                      [class.jbh-menu-subitem-expanded]="child.expanded"
-                      (click)="handleMenuItemClick(child, $event)">
-                      <ion-icon [name]="child.icon" slot="start" class="jbh-menu-subitem-icon"></ion-icon>
-                      <ion-label class="jbh-menu-subitem-label">
-                        {{ child.translationKey | translate }}
-                      </ion-label>
-                      @if (child.children) {
-                        <ion-icon
-                          [name]="child.expanded ? 'chevron-up-outline' : 'chevron-down-outline'"
-                          slot="end"
-                          class="jbh-menu-subitem-chevron">
-                        </ion-icon>
-                      }
-                    </ion-item>
+                    <jbh-nav-item
+                      [icon]="child.icon"
+                      [level]="2"
+                      [active]="isActive(child)"
+                      [expanded]="child.children ? !!child.expanded : null"
+                      (activate)="handleMenuItemClick(child)">
+                      {{ child.translationKey | translate }}
+                    </jbh-nav-item>
 
                     <!-- Nested Submenu -->
                     @if (child.children && child.expanded) {
                       <div class="jbh-menu-nested-submenu">
                         @for (nestedChild of child.children; track nestedChild.id) {
-                          <ion-item
-                            [button]="true"
-                            [detail]="false"
-                            lines="none"
-                            class="jbh-menu-nested-subitem"
-                            [class.jbh-menu-nested-subitem-active]="isActive(nestedChild)"
-                            (click)="handleMenuItemClick(nestedChild, $event)">
-                            <ion-icon [name]="nestedChild.icon" slot="start" class="jbh-menu-nested-subitem-icon"></ion-icon>
-                            <ion-label class="jbh-menu-nested-subitem-label">
-                              {{ nestedChild.translationKey | translate }}
-                            </ion-label>
-                          </ion-item>
+                          <jbh-nav-item
+                            [icon]="nestedChild.icon"
+                            [level]="3"
+                            [active]="isActive(nestedChild)"
+                            (activate)="handleMenuItemClick(nestedChild)">
+                            {{ nestedChild.translationKey | translate }}
+                          </jbh-nav-item>
                         }
                       </div>
                     }
@@ -104,7 +75,7 @@
           </div>
         }
       }
-    </ion-list>
+    </div>
   </div>
 
   <!-- Menu Footer -->

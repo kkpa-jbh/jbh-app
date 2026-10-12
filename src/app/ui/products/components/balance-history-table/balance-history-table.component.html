@@ -1,107 +1,106 @@
-<!-- Desktop Table -->
-<div class="jbh-balance-table jbh-hide-mobile" role="table" [attr.aria-label]="'products.balanceHistory.table.ariaLabel' | translate">
-  <div class="jbh-balance-table-header" role="rowgroup">
-    <div class="jbh-balance-table-row" role="row">
-      <div class="jbh-balance-cell jbh-cell-period" role="columnheader">{{ 'products.balanceHistory.table.period' | translate }}</div>
+<jbh-table
+  class="balance-table"
+  [rows]="sortedBalances"
+  [trackBy]="trackByPeriod"
+  [label]="'products.balanceHistory.table.ariaLabel' | translate"
+>
+  <ng-template jbhTableHead>
+    <jbh-table-row class="balance-head-row">
+      <jbh-table-cell header class="balance-cell-period">{{ 'products.balanceHistory.table.period' | translate }}</jbh-table-cell>
       @if (showProductColumn) {
-        <div class="jbh-balance-cell jbh-cell-product" role="columnheader">{{ 'products.balanceHistory.table.productName' | translate }}</div>
+        <jbh-table-cell header class="balance-cell-product">{{ 'products.balanceHistory.table.productName' | translate }}</jbh-table-cell>
       }
-      <div class="jbh-balance-cell jbh-cell-balance" role="columnheader">{{ 'products.balanceHistory.table.openingBalance' | translate }}</div>
-      <div class="jbh-balance-cell jbh-cell-balance" role="columnheader">{{ 'products.balanceHistory.table.closingBalance' | translate }}</div>
-      <div class="jbh-balance-cell jbh-cell-balance" role="columnheader">{{ 'products.balanceHistory.table.totalDebits' | translate }}</div>
-      <div class="jbh-balance-cell jbh-cell-balance" role="columnheader">{{ 'products.balanceHistory.table.totalCredits' | translate }}</div>
-      <div class="jbh-balance-cell jbh-cell-profit" role="columnheader">{{ 'products.balanceHistory.table.profit' | translate }}</div>
-      <div class="jbh-balance-cell jbh-cell-growth" role="columnheader">{{ 'products.balanceHistory.table.growthRate' | translate }}</div>
-      <div class="jbh-balance-cell jbh-cell-movements" role="columnheader">{{ 'products.balanceHistory.table.movements' | translate }}</div>
-      <div class="jbh-balance-cell jbh-cell-badges" role="columnheader">{{ 'products.balanceHistory.table.status' | translate }}</div>
-    </div>
-  </div>
+      <jbh-table-cell header class="balance-cell-amount">{{ 'products.balanceHistory.table.openingBalance' | translate }}</jbh-table-cell>
+      <jbh-table-cell header class="balance-cell-amount">{{ 'products.balanceHistory.table.closingBalance' | translate }}</jbh-table-cell>
+      <jbh-table-cell header class="balance-cell-amount">{{ 'products.balanceHistory.table.totalDebits' | translate }}</jbh-table-cell>
+      <jbh-table-cell header class="balance-cell-amount">{{ 'products.balanceHistory.table.totalCredits' | translate }}</jbh-table-cell>
+      <jbh-table-cell header class="balance-cell-profit">{{ 'products.balanceHistory.table.profit' | translate }}</jbh-table-cell>
+      <jbh-table-cell header class="balance-cell-growth">{{ 'products.balanceHistory.table.growthRate' | translate }}</jbh-table-cell>
+      <jbh-table-cell header class="balance-cell-movements">{{ 'products.balanceHistory.table.movements' | translate }}</jbh-table-cell>
+      <jbh-table-cell header class="balance-cell-badges">{{ 'products.balanceHistory.table.status' | translate }}</jbh-table-cell>
+    </jbh-table-row>
+  </ng-template>
 
-  <div role="rowgroup">
-    @for (balance of sortedBalances; track trackByPeriod($index, balance)) {
-      <div class="jbh-balance-table-row" [class.gap-period]="balance.isGapPeriod" role="row">
-        <div class="jbh-balance-cell jbh-cell-period" role="cell">{{ balance.period | jbhDate:'monthYear' }}</div>
-        @if (showProductColumn) {
-          <div class="jbh-balance-cell jbh-cell-product" role="cell">{{ balance.productName }}</div>
+  <ng-template jbhTableRow let-balance>
+    <jbh-table-row [class.gap-period]="balance.isGapPeriod">
+      <jbh-table-cell class="balance-cell-period">{{ balance.period | jbhDate:'monthYear' }}</jbh-table-cell>
+      @if (showProductColumn) {
+        <jbh-table-cell class="balance-cell-product">{{ balance.productName }}</jbh-table-cell>
+      }
+      <jbh-table-cell class="balance-cell-amount">{{ balance.openingBalance | jbhCurrency:currency }}</jbh-table-cell>
+      <jbh-table-cell class="balance-cell-amount">{{ balance.closingBalance | jbhCurrency:currency }}</jbh-table-cell>
+      <jbh-table-cell class="balance-cell-amount">{{ balance.totalDebits | jbhCurrency:currency }}</jbh-table-cell>
+      <jbh-table-cell class="balance-cell-amount">{{ balance.totalCredits | jbhCurrency:currency }}</jbh-table-cell>
+      <jbh-table-cell class="balance-cell-profit" [ngClass]="getProfitClass(balance.profit)">
+        {{ balance.profit | jbhProfit:currency }}
+      </jbh-table-cell>
+      <jbh-table-cell class="balance-cell-growth" [ngClass]="getGrowthClass(balance.growthRate)">
+        {{ balance.growthRate | jbhGrowth }}
+      </jbh-table-cell>
+      <jbh-table-cell class="balance-cell-movements">{{ balance.movementCount }}</jbh-table-cell>
+      <jbh-table-cell class="balance-cell-badges">
+        @if (balance.isGapPeriod) {
+          <span class="balance-badge-gap">{{ 'products.balanceHistory.gapPeriod' | translate }}</span>
         }
-        <div class="jbh-balance-cell jbh-cell-balance" role="cell">{{ balance.openingBalance | jbhCurrency:currency }}</div>
-        <div class="jbh-balance-cell jbh-cell-balance" role="cell">{{ balance.closingBalance | jbhCurrency:currency }}</div>
-        <div class="jbh-balance-cell jbh-cell-balance" role="cell">{{ balance.totalDebits | jbhCurrency:currency }}</div>
-        <div class="jbh-balance-cell jbh-cell-balance" role="cell">{{ balance.totalCredits | jbhCurrency:currency }}</div>
-        <div class="jbh-balance-cell jbh-cell-profit" [ngClass]="getProfitClass(balance.profit)" role="cell">
-          {{ balance.profit | jbhProfit:currency }}
-        </div>
-        <div class="jbh-balance-cell jbh-cell-growth" [ngClass]="getGrowthClass(balance.growthRate)" role="cell">
-          {{ balance.growthRate | jbhGrowth }}
-        </div>
-        <div class="jbh-balance-cell jbh-cell-movements" role="cell">{{ balance.movementCount }}</div>
-        <div class="jbh-balance-cell jbh-cell-badges" role="cell">
-          @if (balance.isGapPeriod) {
-            <span class="jbh-badge-gap">{{ 'products.balanceHistory.gapPeriod' | translate }}</span>
-          }
-          @if (balance.isOfficialReport) {
-            <span class="jbh-badge-official">{{ 'products.balanceHistory.officialReport' | translate }}</span>
-          }
-        </div>
-      </div>
-    }
-  </div>
-</div>
+        @if (balance.isOfficialReport) {
+          <span class="balance-badge-official">{{ 'products.balanceHistory.officialReport' | translate }}</span>
+        }
+      </jbh-table-cell>
+    </jbh-table-row>
+  </ng-template>
 
-<!-- Mobile Cards -->
-<div class="jbh-balance-cards jbh-hide-desktop" role="list" [attr.aria-label]="'products.balanceHistory.table.ariaLabel' | translate">
-  @for (balance of sortedBalances; track trackByPeriod($index, balance)) {
-    <div class="jbh-balance-card" [class.gap-period]="balance.isGapPeriod" role="listitem">
-      <div class="jbh-balance-card-header">
-        <div class="jbh-balance-card-header-text">
-          <span class="jbh-balance-card-period">{{ balance.period | jbhDate:'monthYear' }}</span>
+  <ng-template jbhTableCard let-balance>
+    <div class="balance-card" [class.gap-period]="balance.isGapPeriod">
+      <div class="balance-card-header">
+        <div class="balance-card-header-text">
+          <span class="balance-card-period">{{ balance.period | jbhDate:'monthYear' }}</span>
           @if (showProductColumn) {
-            <span class="jbh-balance-card-product">{{ balance.productName }}</span>
+            <span class="balance-card-product">{{ balance.productName }}</span>
           }
         </div>
-        <div class="jbh-balance-card-badges">
+        <div class="balance-card-badges">
           @if (balance.isGapPeriod) {
-            <span class="jbh-badge-gap">{{ 'products.balanceHistory.gapPeriod' | translate }}</span>
+            <span class="balance-badge-gap">{{ 'products.balanceHistory.gapPeriod' | translate }}</span>
           }
           @if (balance.isOfficialReport) {
-            <span class="jbh-badge-official">{{ 'products.balanceHistory.officialReport' | translate }}</span>
+            <span class="balance-badge-official">{{ 'products.balanceHistory.officialReport' | translate }}</span>
           }
         </div>
       </div>
-      <div class="jbh-balance-card-body">
-        <div class="jbh-balance-card-item">
-          <span class="jbh-balance-card-label">{{ 'products.balanceHistory.openingBalance' | translate }}</span>
-          <span class="jbh-balance-card-value">{{ balance.openingBalance | jbhCurrency:currency }}</span>
+      <div class="balance-card-body">
+        <div class="balance-card-item">
+          <span class="balance-card-label">{{ 'products.balanceHistory.openingBalance' | translate }}</span>
+          <span class="balance-card-value">{{ balance.openingBalance | jbhCurrency:currency }}</span>
         </div>
-        <div class="jbh-balance-card-item">
-          <span class="jbh-balance-card-label">{{ 'products.balanceHistory.closingBalance' | translate }}</span>
-          <span class="jbh-balance-card-value">{{ balance.closingBalance | jbhCurrency:currency }}</span>
+        <div class="balance-card-item">
+          <span class="balance-card-label">{{ 'products.balanceHistory.closingBalance' | translate }}</span>
+          <span class="balance-card-value">{{ balance.closingBalance | jbhCurrency:currency }}</span>
         </div>
-        <div class="jbh-balance-card-item">
-          <span class="jbh-balance-card-label">{{ 'products.balanceHistory.totalDebits' | translate }}</span>
-          <span class="jbh-balance-card-value">{{ balance.totalDebits | jbhCurrency:currency }}</span>
+        <div class="balance-card-item">
+          <span class="balance-card-label">{{ 'products.balanceHistory.totalDebits' | translate }}</span>
+          <span class="balance-card-value">{{ balance.totalDebits | jbhCurrency:currency }}</span>
         </div>
-        <div class="jbh-balance-card-item">
-          <span class="jbh-balance-card-label">{{ 'products.balanceHistory.totalCredits' | translate }}</span>
-          <span class="jbh-balance-card-value">{{ balance.totalCredits | jbhCurrency:currency }}</span>
+        <div class="balance-card-item">
+          <span class="balance-card-label">{{ 'products.balanceHistory.totalCredits' | translate }}</span>
+          <span class="balance-card-value">{{ balance.totalCredits | jbhCurrency:currency }}</span>
         </div>
-        <div class="jbh-balance-card-item">
-          <span class="jbh-balance-card-label">{{ 'products.balanceHistory.profit' | translate }}</span>
-          <span class="jbh-balance-card-value" [ngClass]="getProfitClass(balance.profit)">
+        <div class="balance-card-item">
+          <span class="balance-card-label">{{ 'products.balanceHistory.profit' | translate }}</span>
+          <span class="balance-card-value" [ngClass]="getProfitClass(balance.profit)">
             {{ balance.profit | jbhProfit:currency }}
           </span>
         </div>
-        <div class="jbh-balance-card-item">
-          <span class="jbh-balance-card-label">{{ 'products.balanceHistory.growthRate' | translate }}</span>
-          <span class="jbh-balance-card-value" [ngClass]="getGrowthClass(balance.growthRate)">
+        <div class="balance-card-item">
+          <span class="balance-card-label">{{ 'products.balanceHistory.growthRate' | translate }}</span>
+          <span class="balance-card-value" [ngClass]="getGrowthClass(balance.growthRate)">
             {{ balance.growthRate | jbhGrowth }}
           </span>
         </div>
-        <div class="jbh-balance-card-item">
-          <span class="jbh-balance-card-label">{{ 'products.balanceHistory.movements' | translate }}</span>
-          <span class="jbh-balance-card-value">{{ balance.movementCount }}</span>
+        <div class="balance-card-item">
+          <span class="balance-card-label">{{ 'products.balanceHistory.movements' | translate }}</span>
+          <span class="balance-card-value">{{ balance.movementCount }}</span>
         </div>
       </div>
     </div>
-  }
-</div>
+  </ng-template>
+</jbh-table>

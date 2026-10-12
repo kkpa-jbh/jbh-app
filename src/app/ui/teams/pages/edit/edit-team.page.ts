@@ -1,39 +1,42 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { IonicModule, ToastController, ViewWillEnter } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
-import { addIcons } from 'ionicons';
-import {
-  peopleOutline,
-  textOutline,
-  informationCircle,
-  saveOutline,
-  close,
-  alertCircleOutline,
-  arrowBackOutline
-} from 'ionicons/icons';
 import { TeamUseCase } from '@core/domain/use-cases/team.use-case';
 import { UpdateTeamRequest, TeamWithMembers } from '@core/domain/features/teams';
 import { JBHError } from '@core/domain/models/jbh-error.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
+import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
+import {
+  JbhButtonComponent,
+  JbhCardComponent,
+  JbhPageHeaderComponent,
+  JbhSpinnerComponent,
+  JbhTextFieldComponent
+} from '@design-system/components';
+import { JbhPageComponent, ToastService } from '@design-system/platform';
+import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 
 @Component({
   selector: 'app-edit-team',
   templateUrl: './edit-team.page.html',
-  styleUrls: ['./edit-team.page.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
-    IonicModule,
-    TranslateModule
-  ]
+    TranslateModule,
+    JbhButtonComponent,
+    JbhCardComponent,
+    JbhPageComponent,
+    JbhPageHeaderComponent,
+    JbhSpinnerComponent,
+    JbhTextFieldComponent,
+    AppHeaderComponent
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EditTeamPage implements OnInit, OnDestroy, ViewWillEnter {
+export class EditTeamPage implements OnInit, OnDestroy {
 
   teamForm!: FormGroup;
   isSubmitting = false;
@@ -43,25 +46,15 @@ export class EditTeamPage implements OnInit, OnDestroy, ViewWillEnter {
 
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private router: Router,
-    private route: ActivatedRoute,
-    private teamUseCase: TeamUseCase,
-    private translationService: TranslationService,
-    private toastController: ToastController,
-    private logger: LoggerService
-  ) {
-    addIcons({
-      peopleOutline,
-      textOutline,
-      informationCircle,
-      saveOutline,
-      close,
-      alertCircleOutline,
-      arrowBackOutline
-    });
-  }
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly teamUseCase = inject(TeamUseCase);
+  private readonly translationService = inject(TranslationService);
+  private readonly toast = inject(ToastService);
+  private readonly logger = inject(LoggerService);
+  private readonly headerActions = inject(HeaderActionsService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     this.initForm();
@@ -73,8 +66,17 @@ export class EditTeamPage implements OnInit, OnDestroy, ViewWillEnter {
     this.destroy$.complete();
   }
 
-  ionViewWillEnter(): void {
+  onPageEnter(): void {
+    this.headerActions.setPageConfig({
+      title: 'teams.edit.title',
+      showBackButton: true,
+      defaultBackHref: '/settings/teams/overview'
+    });
     this.loadTeam();
+  }
+
+  onPageLeave(): void {
+    this.headerActions.clearPageConfig();
   }
 
   private loadTeam(): void {
@@ -84,6 +86,7 @@ export class EditTeamPage implements OnInit, OnDestroy, ViewWillEnter {
     }
 
     this.isLoading = true;
+    this.cdr.markForCheck();
     this.teamUseCase.getMyTeams()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -92,15 +95,17 @@ export class EditTeamPage implements OnInit, OnDestroy, ViewWillEnter {
           if (this.team) {
             this.populateForm();
           } else {
-            this.showToast(this.translationService.instant('teams.edit.errors.notFound'), 'danger');
+            this.toast.show(this.translationService.instant('teams.edit.errors.notFound'), 'error');
             this.navigateToOverview();
           }
           this.isLoading = false;
+          this.cdr.markForCheck();
         },
         error: (error) => {
           this.logger.error('Error loading team:', 'EditTeamPage', error);
           this.isLoading = false;
-          this.showToast(this.translationService.instant('teams.edit.errors.load'), 'danger');
+          this.cdr.markForCheck();
+          this.toast.show(this.translationService.instant('teams.edit.errors.load'), 'error');
           this.navigateToOverview();
         }
       });
@@ -151,16 +156,18 @@ export class EditTeamPage implements OnInit, OnDestroy, ViewWillEnter {
       .subscribe({
         next: async () => {
           this.isSubmitting = false;
-          await this.showToast(this.translationService.instant('teams.edit.success'), 'success');
+          this.cdr.markForCheck();
+          await this.toast.show(this.translationService.instant('teams.edit.success'), 'success');
           this.router.navigate(['/teams/overview']);
         },
         error: async (error) => {
           this.logger.error('Error updating team:', 'EditTeamPage', error);
           this.isSubmitting = false;
+          this.cdr.markForCheck();
           const errorMessage = (error instanceof JBHError && error.isValidationError)
             ? error.message
             : this.translationService.instant('teams.edit.errors.update');
-          await this.showToast(errorMessage, 'danger');
+          await this.toast.show(errorMessage, 'error');
         }
       });
   }
@@ -201,21 +208,5 @@ export class EditTeamPage implements OnInit, OnDestroy, ViewWillEnter {
       return this.translationService.instant(`teams.edit.${fieldName}.pattern`);
     }
     return this.translationService.instant('validation.pattern');
-  }
-
-  private async showToast(message: string, color: 'success' | 'danger' | 'warning'): Promise<void> {
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-      color,
-      position: 'bottom',
-      buttons: [
-        {
-          icon: 'close',
-          role: 'cancel'
-        }
-      ]
-    });
-    await toast.present();
   }
 }

@@ -1,10 +1,11 @@
-<app-header></app-header>
-<ion-content>
+<jbh-page (pageEnter)="onPageEnter()" (pageLeave)="onPageLeave()">
+  <app-header jbhPageHeader></app-header>
+
   <div class="jbh-container">
-    <div class="jbh-card jbh-coming-soon">
-      <ion-icon name="construct-outline" size="large"></ion-icon>
+    <jbh-card class="jbh-coming-soon">
+      <jbh-icon name="construct-outline" />
       <h2>{{ 'common.comingSoon' | translate }}</h2>
       <p>{{ 'reports.growthAnalysis.comingSoonMessage' | translate }}</p>
-    </div>
+    </jbh-card>
   </div>
-</ion-content>
+</jbh-page>

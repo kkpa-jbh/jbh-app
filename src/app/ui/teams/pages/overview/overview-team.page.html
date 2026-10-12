@@ -1,63 +1,49 @@
-<app-header></app-header>
-<ion-content class="overview-team-content">
+<jbh-page (pageEnter)="onPageEnter()" (pageLeave)="onPageLeave()">
+  <app-header jbhPageHeader></app-header>
+
   <div class="jbh-container jbh-container-wide">
 
-    <!-- Page Header -->
-    <div class="jbh-page-header">
-      <div class="jbh-page-header-content">
-        <div class="jbh-page-header-icon">
-          <ion-icon name="people-outline"></ion-icon>
-        </div>
-        <div class="jbh-page-header-text">
-          <h1 class="jbh-page-title">{{ 'teams.overview.formTitle' | translate }}</h1>
-          <p class="jbh-page-subtitle">{{ 'teams.overview.formSubtitle' | translate }}</p>
-        </div>
-      </div>
-      <div class="jbh-page-header-actions">
-        @if (!canCreateTeam && !isLoading) {
-          <span class="jbh-limit-badge">{{ 'teams.overview.limitReached' | translate:{ max: maxTeams } }}</span>
-        }
-        <button class="jbh-button-primary" (click)="navigateToCreate()" [disabled]="!canCreateTeam">
-          <ion-icon name="add-outline"></ion-icon>
-          <span>{{ 'teams.overview.createButton' | translate }}</span>
-        </button>
-      </div>
-    </div>
+    <jbh-page-header
+      icon="people-outline"
+      [title]="'teams.overview.formTitle' | translate"
+      [subtitle]="'teams.overview.formSubtitle' | translate"
+    >
+      @if (!canCreateTeam && !isLoading) {
+        <span class="jbh-limit-badge">{{ 'teams.overview.limitReached' | translate:{ max: maxTeams } }}</span>
+      }
+      <button type="button" jbhButton icon="add-outline" (click)="navigateToCreate()" [disabled]="!canCreateTeam">
+        {{ 'teams.overview.createButton' | translate }}
+      </button>
+    </jbh-page-header>
 
-    <!-- Loading State -->
     @if (isLoading) {
       <div class="jbh-loading-container" role="status" aria-live="polite" aria-busy="true">
         @for (i of [1, 2]; track i) {
           <div class="jbh-team-card-skeleton">
-            <div class="jbh-skeleton jbh-skeleton-header"></div>
-            <div class="jbh-skeleton jbh-skeleton-table"></div>
+            <jbh-skeleton shape="header" />
+            <jbh-skeleton shape="table" height="120px" />
           </div>
         }
       </div>
     }
 
-    <!-- Empty State -->
     @if (!isLoading && teams.length === 0) {
-      <div class="jbh-empty-state">
-        <div class="jbh-empty-state-icon">
-          <ion-icon name="people-outline"></ion-icon>
-        </div>
-        <h2 class="jbh-empty-state-title">{{ 'teams.overview.empty.title' | translate }}</h2>
-        <p class="jbh-empty-state-message">{{ 'teams.overview.empty.message' | translate }}</p>
-        <button class="jbh-button-primary" (click)="navigateToCreate()">
-          <ion-icon name="add-outline"></ion-icon>
-          <span>{{ 'teams.overview.empty.createButton' | translate }}</span>
+      <jbh-empty-state
+        icon="people-outline"
+        [title]="'teams.overview.empty.title' | translate"
+        [message]="'teams.overview.empty.message' | translate"
+      >
+        <button type="button" jbhButton icon="add-outline" (click)="navigateToCreate()">
+          {{ 'teams.overview.empty.createButton' | translate }}
         </button>
-      </div>
+      </jbh-empty-state>
     }
 
-    <!-- Teams List -->
     @if (!isLoading && teams.length > 0) {
       <div class="jbh-teams-list">
         @for (team of teams; track team.id) {
           <div class="jbh-team-card" [class.expanded]="isTeamExpanded(team.id)">
 
-            <!-- Team Header -->
             <div class="jbh-team-header" (click)="toggleTeamExpansion(team.id)">
               <div class="jbh-team-info">
                 <div class="jbh-team-avatar">
@@ -67,114 +53,126 @@
                   <h3 class="jbh-team-name">{{ team.name }}</h3>
                   <span class="jbh-team-shortname">{{ team.shortName }}</span>
                   <span class="jbh-team-members-count">
-                    <ion-icon name="person-outline"></ion-icon>
+                    <jbh-icon name="person-outline" />
                     {{ team.members.length }} {{ 'teams.overview.members' | translate }}
                   </span>
                 </div>
               </div>
               <div class="jbh-team-actions">
                 @if (isTeamOwner(team)) {
-                  <button class="jbh-icon-button jbh-icon-button-primary" (click)="navigateToInvite(team.id); $event.stopPropagation()" [title]="'menu.teams.invite' | translate" [attr.aria-label]="'menu.teams.invite' | translate">
-                    <ion-icon name="person-add-outline"></ion-icon>
-                  </button>
-                  <button class="jbh-icon-button" (click)="editTeam(team); $event.stopPropagation()" [title]="'common.edit' | translate" [attr.aria-label]="'common.edit' | translate">
-                    <ion-icon name="create-outline"></ion-icon>
-                  </button>
-                  <button class="jbh-icon-button jbh-icon-button-danger" (click)="confirmDeleteTeam(team); $event.stopPropagation()" [title]="'common.delete' | translate" [attr.aria-label]="'common.delete' | translate">
-                    <ion-icon name="trash-outline"></ion-icon>
-                  </button>
+                  <button
+                    type="button"
+                    jbhIconButton="primary"
+                    icon="person-add-outline"
+                    [label]="'menu.teams.invite' | translate"
+                    (click)="navigateToInvite(team.id); $event.stopPropagation()"
+                  ></button>
+                  <button
+                    type="button"
+                    jbhIconButton
+                    icon="create-outline"
+                    [label]="'common.edit' | translate"
+                    (click)="editTeam(team); $event.stopPropagation()"
+                  ></button>
+                  <button
+                    type="button"
+                    jbhIconButton="danger"
+                    icon="trash-outline"
+                    [label]="'common.delete' | translate"
+                    (click)="confirmDeleteTeam(team); $event.stopPropagation()"
+                  ></button>
                 }
-                <ion-icon
+                <jbh-icon
+                  class="jbh-team-chevron"
                   [name]="isTeamExpanded(team.id) ? 'chevron-up-outline' : 'chevron-down-outline'"
-                  class="jbh-team-chevron">
-                </ion-icon>
+                />
               </div>
             </div>
 
-            <!-- Team Members Table -->
             @if (isTeamExpanded(team.id)) {
               <div class="jbh-team-body">
                 @if (team.members.length === 0) {
                   <div class="jbh-no-members">
-                    <ion-icon name="person-outline"></ion-icon>
+                    <jbh-icon name="person-outline" />
                     <span>{{ 'teams.overview.noMembers' | translate }}</span>
                   </div>
                 } @else {
-                  <!-- Desktop Table -->
-                  <div class="jbh-members-table jbh-hide-mobile" role="table" [attr.aria-label]="'teams.overview.table.ariaLabel' | translate">
-                    <div class="jbh-table-header" role="rowgroup">
-                      <div class="jbh-table-row" role="row">
-                        <div class="jbh-table-cell jbh-cell-user" role="columnheader">{{ 'teams.overview.table.user' | translate }}</div>
-                        <div class="jbh-table-cell jbh-cell-email" role="columnheader">{{ 'teams.overview.table.email' | translate }}</div>
-                        <div class="jbh-table-cell jbh-cell-status" role="columnheader">{{ 'teams.overview.table.status' | translate }}</div>
-                        <div class="jbh-table-cell jbh-cell-role" role="columnheader">{{ 'teams.overview.table.role' | translate }}</div>
-                        <div class="jbh-table-cell jbh-cell-actions" role="columnheader">{{ 'teams.overview.table.actions' | translate }}</div>
-                      </div>
-                    </div>
-                    <div role="rowgroup">
-                      @for (member of team.members; track member.email) {
-                        <div class="jbh-table-row" role="row">
-                          <div class="jbh-table-cell jbh-cell-user" role="cell">
-                            <div class="jbh-member-avatar">
-                              {{ member.nickName | slice:0:1 | uppercase }}
-                            </div>
-                            <span class="jbh-member-name">{{ member.nickName }}</span>
+                  <jbh-table
+                    [rows]="team.members"
+                    [trackBy]="trackByMember"
+                    [label]="'teams.overview.table.ariaLabel' | translate"
+                  >
+                    <ng-template jbhTableHead>
+                      <jbh-table-row>
+                        <jbh-table-cell header class="jbh-cell-user">{{ 'teams.overview.table.user' | translate }}</jbh-table-cell>
+                        <jbh-table-cell header class="jbh-cell-email">{{ 'teams.overview.table.email' | translate }}</jbh-table-cell>
+                        <jbh-table-cell header class="jbh-cell-status">{{ 'teams.overview.table.status' | translate }}</jbh-table-cell>
+                        <jbh-table-cell header class="jbh-cell-role">{{ 'teams.overview.table.role' | translate }}</jbh-table-cell>
+                        <jbh-table-cell header class="jbh-cell-actions">{{ 'teams.overview.table.actions' | translate }}</jbh-table-cell>
+                      </jbh-table-row>
+                    </ng-template>
+
+                    <ng-template jbhTableRow let-member>
+                      <jbh-table-row>
+                        <jbh-table-cell class="jbh-cell-user">
+                          <div class="jbh-member-avatar">
+                            {{ member.nickName | uppercase | slice:0:1 }}
                           </div>
-                          <div class="jbh-table-cell jbh-cell-email" role="cell">
-                            <span class="jbh-member-email">{{ member.email }}</span>
-                          </div>
-                          <div class="jbh-table-cell jbh-cell-status" role="cell">
-                            <span class="jbh-status-badge" [ngClass]="getStatusClass(member.status)">
-                              <ion-icon [name]="getStatusIcon(member.status)"></ion-icon>
-                              {{ 'teams.overview.status.' + member.status | translate }}
+                          <span class="jbh-member-name">{{ member.nickName }}</span>
+                        </jbh-table-cell>
+                        <jbh-table-cell class="jbh-cell-email">
+                          <span class="jbh-member-email">{{ member.email }}</span>
+                        </jbh-table-cell>
+                        <jbh-table-cell class="jbh-cell-status">
+                          <span class="jbh-status-badge" [class]="getStatusClass(member.status)">
+                            <jbh-icon [name]="getStatusIcon(member.status)" />
+                            {{ 'teams.overview.status.' + member.status | translate }}
+                          </span>
+                        </jbh-table-cell>
+                        <jbh-table-cell class="jbh-cell-role">
+                          @if (member.isGroupOwner) {
+                            <span class="jbh-role-badge jbh-role-owner">
+                              <jbh-icon name="shield-outline" />
+                              {{ 'teams.overview.role.owner' | translate }}
                             </span>
-                          </div>
-                          <div class="jbh-table-cell jbh-cell-role" role="cell">
-                            @if (member.isGroupOwner) {
-                              <span class="jbh-role-badge jbh-role-owner">
-                                <ion-icon name="shield-outline"></ion-icon>
-                                {{ 'teams.overview.role.owner' | translate }}
-                              </span>
-                            } @else {
-                              <span class="jbh-role-badge jbh-role-member">
-                                {{ 'teams.overview.role.member' | translate }}
-                              </span>
+                          } @else {
+                            <span class="jbh-role-badge jbh-role-member">
+                              {{ 'teams.overview.role.member' | translate }}
+                            </span>
+                          }
+                        </jbh-table-cell>
+                        <jbh-table-cell class="jbh-cell-actions">
+                          <div class="jbh-action-buttons">
+                            @if (canReinvite(member)) {
+                              <button
+                                type="button"
+                                jbhIconButton
+                                size="sm"
+                                icon="mail-outline"
+                                [label]="'teams.overview.reinviteMember.title' | translate"
+                                (click)="confirmReinviteMember(team, member)"
+                              ></button>
+                            }
+                            @if (canDelete(member)) {
+                              <button
+                                type="button"
+                                jbhIconButton="danger"
+                                size="sm"
+                                icon="trash-outline"
+                                [label]="'teams.overview.deleteMember.title' | translate"
+                                (click)="confirmDeleteMember(team, member)"
+                              ></button>
                             }
                           </div>
-                          <div class="jbh-table-cell jbh-cell-actions" role="cell">
-                            <div class="jbh-action-buttons">
-                              @if (canReinvite(member)) {
-                                <button
-                                  class="jbh-icon-button jbh-icon-button-small"
-                                  (click)="confirmReinviteMember(team, member)"
-                                  [title]="'teams.overview.reinviteMember.title' | translate"
-                                  [attr.aria-label]="'teams.overview.reinviteMember.title' | translate">
-                                  <ion-icon name="mail-outline"></ion-icon>
-                                </button>
-                              }
-                              @if (canDelete(member)) {
-                                <button
-                                  class="jbh-icon-button jbh-icon-button-small jbh-icon-button-danger"
-                                  (click)="confirmDeleteMember(team, member)"
-                                  [title]="'teams.overview.deleteMember.title' | translate"
-                                  [attr.aria-label]="'teams.overview.deleteMember.title' | translate">
-                                  <ion-icon name="trash-outline"></ion-icon>
-                                </button>
-                              }
-                            </div>
-                          </div>
-                        </div>
-                      }
-                    </div>
-                  </div>
+                        </jbh-table-cell>
+                      </jbh-table-row>
+                    </ng-template>
 
-                  <!-- Mobile Cards -->
-                  <div class="jbh-members-cards jbh-hide-desktop" role="list" [attr.aria-label]="'teams.overview.table.ariaLabel' | translate">
-                    @for (member of team.members; track member.email) {
-                      <div class="jbh-member-card" role="listitem">
+                    <ng-template jbhTableCard let-member>
+                      <div class="jbh-member-card">
                         <div class="jbh-member-card-header">
                           <div class="jbh-member-avatar">
-                            {{ member.nickName | slice:0:1 | uppercase }}
+                            {{ member.nickName | uppercase | slice:0:1 }}
                           </div>
                           <div class="jbh-member-card-info">
                             <span class="jbh-member-name">{{ member.nickName }}</span>
@@ -182,39 +180,41 @@
                           </div>
                           @if (member.isGroupOwner) {
                             <span class="jbh-role-badge jbh-role-owner">
-                              <ion-icon name="shield-outline"></ion-icon>
+                              <jbh-icon name="shield-outline" />
                             </span>
                           }
                         </div>
                         <div class="jbh-member-card-footer">
-                          <span class="jbh-status-badge" [ngClass]="getStatusClass(member.status)">
-                            <ion-icon [name]="getStatusIcon(member.status)"></ion-icon>
+                          <span class="jbh-status-badge" [class]="getStatusClass(member.status)">
+                            <jbh-icon [name]="getStatusIcon(member.status)" />
                             {{ 'teams.overview.status.' + member.status | translate }}
                           </span>
                           <div class="jbh-action-buttons">
                             @if (canReinvite(member)) {
                               <button
-                                class="jbh-icon-button jbh-icon-button-small"
+                                type="button"
+                                jbhIconButton
+                                size="sm"
+                                icon="mail-outline"
+                                [label]="'teams.overview.reinviteMember.title' | translate"
                                 (click)="confirmReinviteMember(team, member)"
-                                [attr.aria-label]="'teams.overview.reinviteMember.title' | translate"
-                                [title]="'teams.overview.reinviteMember.title' | translate">
-                                <ion-icon name="mail-outline"></ion-icon>
-                              </button>
+                              ></button>
                             }
                             @if (canDelete(member)) {
                               <button
-                                class="jbh-icon-button jbh-icon-button-small jbh-icon-button-danger"
+                                type="button"
+                                jbhIconButton="danger"
+                                size="sm"
+                                icon="trash-outline"
+                                [label]="'teams.overview.deleteMember.title' | translate"
                                 (click)="confirmDeleteMember(team, member)"
-                                [attr.aria-label]="'teams.overview.deleteMember.title' | translate"
-                                [title]="'teams.overview.deleteMember.title' | translate">
-                                <ion-icon name="trash-outline"></ion-icon>
-                              </button>
+                              ></button>
                             }
                           </div>
                         </div>
                       </div>
-                    }
-                  </div>
+                    </ng-template>
+                  </jbh-table>
                 }
               </div>
             }
@@ -224,4 +224,4 @@
     }
 
   </div>
-</ion-content>
+</jbh-page>

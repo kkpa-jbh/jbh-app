@@ -40,13 +40,6 @@
     "welcomePersonal": "Welcome to your Dashboard",
     "welcomeTeam": "Welcome to {{teamName}} Dashboard"
   },
-  "home": {
-    "description": "Start with Ionic",
-    "title": "Home",
-    "titleLarge": "Home",
-    "uiComponents": "UI Components",
-    "welcome": "Ready to create an app?"
-  },
   "login": {
     "continueWith": "Continue with {{provider}}",
     "continueWithGoogle": "Continue with Google",
@@ -465,7 +458,8 @@
     "savingsGoal": {
       "label": "Savings Goal",
       "min": "Savings goal must be 0 or greater",
-      "placeholder": "Enter your savings goal"
+      "placeholder": "Enter your savings goal",
+      "required": "Savings goal is required"
     },
     "success": "Preferences updated successfully!",
     "title": "Profile",

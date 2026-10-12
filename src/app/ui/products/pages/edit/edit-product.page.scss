@@ -1,7 +1,24 @@
-// Component-specific layout styles only
-// All theming is in custom-components.scss
+jbh-page {
+  --jbh-page-padding-top: var(--jbh-spacing-md);
+  --jbh-page-padding-bottom: var(--jbh-spacing-md);
+}
 
-.edit-product-content {
-  --padding-top: var(--jbh-spacing-md);
-  --padding-bottom: var(--jbh-spacing-md);
+.edit-product-loading {
+  display: flex;
+  justify-content: center;
+  padding: var(--jbh-spacing-lg) 0;
+  color: var(--jbh-primary-color);
+  font-size: 2rem;
+}
+
+.dynamic-fields-section {
+  margin-top: var(--jbh-spacing-md);
+}
+
+.dynamic-field-skeleton {
+  margin-bottom: var(--jbh-spacing-md);
+}
+
+.dynamic-field-toggle {
+  margin-bottom: var(--jbh-spacing-md);
 }

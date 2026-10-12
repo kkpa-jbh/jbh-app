@@ -10,8 +10,8 @@
  * Use theme classes: jbh-button-primary, jbh-input, jbh-card, etc.
  */
 
-.signup-content {
-  --background: var(--jbh-gradient-primary);
+jbh-page {
+  --jbh-page-background: var(--jbh-gradient-primary);
 }
 
 .signup-container {
@@ -96,6 +96,11 @@
 .logo-container {
   display: inline-flex;
   margin-bottom: var(--jbh-spacing-md);
+
+  jbh-icon {
+    font-size: 32px;
+    color: var(--jbh-text-on-color);
+  }
 }
 
 // ============================================
@@ -105,6 +110,15 @@
 .signup-form {
   .social-login {
     margin-bottom: var(--jbh-spacing-md);
+  }
+
+  // The global hover and focus rules name the old button class, so they are repeated here.
+  .jbh-google-button:hover .jbh-button--secondary {
+    background: var(--jbh-tonal-background-hover);
+  }
+
+  .jbh-google-button:focus-within .jbh-button--secondary {
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25);
   }
 
   .login-link {
@@ -124,61 +138,15 @@
 }
 
 // ============================================
-// Input Status Icons
+// Availability Status Icons (inside the field suffix)
 // ============================================
 
-.jbh-input-status {
-  display: flex;
-  align-items: center;
-  padding-right: 12px;
-
-  ion-icon {
-    font-size: 20px;
-
-    &[color="success"] {
-      color: var(--jbh-success-color);
-    }
-
-    &[color="danger"] {
-      color: var(--jbh-error-color);
-    }
-  }
-}
-
-.jbh-input-action {
-  ion-spinner {
-    width: 20px;
-    height: 20px;
-  }
-}
-
-// ============================================
-// Success Field Message
-// ============================================
-
-.jbh-field-success {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 6px;
-  font-size: var(--jbh-font-size-sm);
+.status-success {
   color: var(--jbh-success-color);
-
-  ion-icon {
-    font-size: 16px;
-  }
 }
 
-// ============================================
-// Input Success State
-// ============================================
-
-.jbh-input.success {
-  border-color: var(--jbh-success-color);
-
-  &:focus {
-    box-shadow: 0 0 0 3px rgba(var(--jbh-success-color-rgb, 34, 197, 94), 0.15);
-  }
+.status-error {
+  color: var(--jbh-error-color);
 }
 
 // ============================================
