@@ -1,34 +1,20 @@
-<div class="jbh-ion-select-wrapper" [class.error]="hasError">
-  <ion-icon name="pricetag-outline" class="jbh-ion-select-icon"></ion-icon>
-  <ion-select
-    [value]="selectedCategoryId"
-    [interface]="selectInterface"
-    [placeholder]="placeholder"
-    [disabled]="isDisabled"
-    class="jbh-ion-select"
-    (ionChange)="onSelectionChange($event)"
-  >
-    @for (category of categories; track category.id) {
-      <ion-select-option [value]="category.id">
-        {{ category.displayName | jbhDisplayName : category.alias }}
-      </ion-select-option>
-    }
-  </ion-select>
-  @if (isLoading) {
-    <ion-spinner name="crescent" class="jbh-select-spinner"></ion-spinner>
+<jbh-select
+  icon="pricetag-outline"
+  [formControl]="control"
+  [placeholder]="placeholder()"
+  [loading]="isLoading()"
+  [error]="hasError() ? ('products.addMovement.validation.required' | translate) : null"
+>
+  @for (category of categories(); track category.id) {
+    <jbh-select-option [value]="category.id">
+      {{ category.displayName | jbhDisplayName : category.alias }}
+    </jbh-select-option>
   }
-</div>
-
-@if (hasError) {
-  <div class="jbh-field-error">
-    <ion-icon name="alert-circle-outline"></ion-icon>
-    <span>{{ 'products.addMovement.validation.required' | translate }}</span>
-  </div>
-}
+</jbh-select>
 
 @if (hasDescription()) {
   <div class="category-description-hint jbh-animate-fade-in">
-    <ion-icon name="information-circle-outline"></ion-icon>
-    <p>{{ selectedCategory!.description | jbhDisplayName }}</p>
+    <jbh-icon name="information-circle-outline" />
+    <p>{{ selectedCategory()!.description | jbhDisplayName }}</p>
   </div>
 }

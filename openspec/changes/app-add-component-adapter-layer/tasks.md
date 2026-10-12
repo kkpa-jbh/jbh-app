@@ -53,8 +53,8 @@ Track C — `src/app/design-system/platform/**` (except `viewport/`), `src/app/c
 
 ## 4. Wave 4 — Pipes and shared selects (4.1 and 4.2 run in parallel)
 
-- [ ] 4.1 Make the 7 pipes in `src/app/shared/pipes/` thin adapters over `@core/formatting` (same names, purity and output). `JbhDatePipe` static methods delegate to the core until task 7.2 (D15). Depends on 2.1.
-- [ ] 4.2 Rebuild `app-category-select` and `app-product-select` on `jbh-select`, `jbh-select-option` and `jbh-icon`. Keep their inputs, the category description hint and `emptyOption`. Keep `selectInterface` as an unused input until task 7.1, so pages not yet moved still compile (D4, D9). Depends on 3.6.
+- [x] 4.1 Make the 7 pipes in `src/app/shared/pipes/` thin adapters over `@core/formatting` (same names, purity and output). `JbhDatePipe` static methods delegate to the core until task 7.2 (D15). Depends on 2.1.
+- [x] 4.2 Rebuild `app-category-select` and `app-product-select` on `jbh-select`, `jbh-select-option` and `jbh-icon`. Keep their inputs, the category description hint and `emptyOption`. Keep `selectInterface` as an unused input until task 7.1, so pages not yet moved still compile (D4, D9). Depends on 3.6.
 
 ## 5. Wave 5 — Reference page, alone
 

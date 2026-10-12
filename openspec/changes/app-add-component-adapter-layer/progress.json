@@ -7,10 +7,11 @@
   "request": "Create a jbh-* component adapter layer for jbh-app so pages stop using Ionic and external libraries directly. Goal: make future migrations easy (upgrade Angular/Ionic, remove Ionic, move to Vue). Agreed scope from discussion: 3 adapter layers — (1) UI components in their own folder, separate from the feature pages under src/app/ui (jbh-text-field, jbh-date-field, jbh-textarea, jbh-toggle, jbh-button, jbh-icon, jbh-table, jbh-card, empty state, skeleton, page header), each with its own CSS; (2) platform adapters (jbh-page shell + page-enter event, DialogService, ToastService, navigation) that hide Ionic-only behavior; (3) framework-free core (formatting logic in plain TS, pipes as thin adapters). Plain HTML (div, p, span, h1, label) is NOT wrapped. Wrap only: external-library elements, styled controls with behavior, repeated markup. Add a guard: a lint/check that forbids <ion-*> tags and @ionic/angular imports inside src/app/ui/**. Proposal, design and tasks only for now — the user wants to review the artifacts before any implementation.",
   "status": "in-progress",
   "rollup": {
-    "current": [],
-    "pending": [
+    "current": [
       "4.1",
-      "4.2",
+      "4.2"
+    ],
+    "pending": [
       "5.1",
       "5.2",
       "5.3",
@@ -66,7 +67,7 @@
     ]
   },
   "created_at": "2026-10-11T13:07:40Z",
-  "updated_at": "2026-10-12T13:26:17Z",
+  "updated_at": "2026-10-12T13:29:13Z",
   "leader": {
     "assistant": "Claude Code",
     "model": "claude-opus-5-5"
@@ -774,14 +775,23 @@
         "2.1"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "awaiting-user-verification",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T13:27:05Z",
+      "completed_at": "2026-10-12T13:28:30Z",
+      "duration_seconds": 85,
+      "notes": "All 7 pipes delegate to @core/formatting; names, purity and output unchanged. jbhDisplayName and jbhTranslationKey stay impure, cache kept. JbhDatePipe statics delegate to core (removal: 7.2). Two pipes moved to inject(). ESLint clean.",
+      "budget": {
+        "five_hour_pct_start": 6,
+        "five_hour_pct_end": 9,
+        "five_hour_pct_delta": 3,
+        "cost_usd_delta": 0.78,
+        "context_pct_end": 12,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker ran 4.1 and 4.2; one shared delta"
+      }
     },
     {
       "id": "4.2",
@@ -791,14 +801,23 @@
         "3.6"
       ],
       "parallel_ok": true,
-      "status": "pending",
-      "agent": null,
-      "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": null,
-      "budget": null
+      "status": "awaiting-user-verification",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T13:27:05Z",
+      "completed_at": "2026-10-12T13:28:30Z",
+      "duration_seconds": 85,
+      "notes": "category-select and product-select on jbh-select, jbh-select-option, jbh-icon via an inner FormControl. Hint and emptyOption kept; selectInterface unused. Added optional errorMessage to product-select (beyond the task). isLoading now disables category-select. ESLint clean.",
+      "budget": {
+        "five_hour_pct_start": 6,
+        "five_hour_pct_end": 9,
+        "five_hour_pct_delta": 3,
+        "cost_usd_delta": 0.78,
+        "context_pct_end": 12,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker ran 4.1 and 4.2; one shared delta"
+      }
     },
     {
       "id": "5.1",
@@ -1362,6 +1381,24 @@
       "decision": "Tracks A (3.1-3.7) and C (3.13-3.17) dispatched as two parallel sonnet workers.",
       "why": "tasks.md plans them parallel, files are disjoint, bucket just reset. Cost: doc pack read twice. Only Track A may append to icon-registry.ts.",
       "covered_by": null
+    },
+    {
+      "id": "D16",
+      "at": "2026-10-12T13:26:43Z",
+      "scope": "change",
+      "made_by": "leader",
+      "decision": "Wave 4 (4.1, 4.2) runs as ONE serial sonnet worker, not two parallel workers.",
+      "why": "Two small tasks; one worker reads the doc pack once. Parallel saves little time and costs a second doc pack read.",
+      "covered_by": null
+    },
+    {
+      "id": "D17",
+      "at": "2026-10-12T13:29:13Z",
+      "scope": "task:4.2",
+      "made_by": "leader",
+      "decision": "Accepted the worker's extra optional errorMessage input on app-product-select. Until a page passes it, hasError shows no red frame there; pages pass it as they move (5.1, 6.3, 6.4).",
+      "why": "jbh-select shows its error frame only with a message; a default message would duplicate the pages' own message.",
+      "covered_by": null
     }
   ],
   "events": [
@@ -1499,6 +1536,16 @@
       "at": "2026-10-12T13:26:17Z",
       "agent": "leader",
       "event": "user verified wave 3 Tracks A+C: ran npm run test:layer and npx ng build, both passed; 3.1-3.7, 3.13-3.17 done."
+    },
+    {
+      "at": "2026-10-12T13:26:43Z",
+      "agent": "leader",
+      "event": "wave 4 dispatched: 1 serial app worker (sonnet), tasks 4.1, 4.2. Budget start 5h 6%, context 12%, cost_usd 0.92"
+    },
+    {
+      "at": "2026-10-12T13:29:13Z",
+      "agent": "leader",
+      "event": "wave 4 reconciled: 4.1, 4.2 awaiting-user-verification. Report complete (D15, D4, D9 compliance; doc pack read). Leader ESLint on pipes + both selects: clean. Budget end 5h 9%, context 12%, cost_usd 1.71"
     }
   ]
 }
