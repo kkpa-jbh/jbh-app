@@ -1,35 +1,30 @@
-<app-header></app-header>
-<ion-content class="add-movement-content">
+<jbh-page (pageEnter)="onPageEnter()" (pageLeave)="onPageLeave()">
+  <app-header jbhPageHeader></app-header>
+
   <div class="jbh-container">
 
-    <!-- Loading State -->
     @if (isLoading) {
-      <div class="jbh-loading-container">
-        <div class="jbh-form-card">
-          <div class="jbh-skeleton jbh-skeleton-header"></div>
-          <div class="jbh-skeleton jbh-skeleton-input" style="margin-bottom: 16px;"></div>
-          <div class="jbh-skeleton jbh-skeleton-input" style="margin-bottom: 16px;"></div>
-          <div class="jbh-skeleton jbh-skeleton-input"></div>
-        </div>
-      </div>
+      <jbh-card variant="form">
+        <jbh-skeleton shape="header" />
+        <jbh-skeleton class="add-movement-skeleton" shape="input" />
+        <jbh-skeleton class="add-movement-skeleton" shape="input" />
+        <jbh-skeleton class="add-movement-skeleton" shape="input" />
+      </jbh-card>
     }
 
-    <!-- Form -->
     @if (!isLoading || !hasProductIdFromRoute) {
-      <div class="jbh-form-card">
-        <div class="jbh-form-header">
-          <div class="jbh-form-icon">
-            <ion-icon name="cash-outline"></ion-icon>
-          </div>
-          <h1 class="jbh-form-title">{{ 'products.addMovement.formTitle' | translate }}</h1>
-          <p class="jbh-form-subtitle">{{ 'products.addMovement.formSubtitle' | translate }}</p>
-        </div>
+      <jbh-card variant="form">
+        <jbh-page-header
+          variant="form"
+          icon="cash-outline"
+          [title]="'products.addMovement.formTitle' | translate"
+          [subtitle]="'products.addMovement.formSubtitle' | translate"
+        />
 
-        <!-- Product Info Card (when productId is from route) -->
         @if (hasProductIdFromRoute && product) {
           <div class="jbh-movement-product-info">
             <div class="jbh-movement-product-icon" [style.background]="product.getTypeColor()">
-              <ion-icon [name]="product.getTypeIcon()"></ion-icon>
+              <jbh-icon [name]="product.getTypeIcon()" />
             </div>
             <div class="jbh-movement-product-details">
               <span class="jbh-movement-product-name">{{ product.name }}</span>
@@ -38,97 +33,48 @@
           </div>
         }
 
-        <form [formGroup]="movementForm" (ngSubmit)="onSubmit()" class="jbh-form-animated">
+        <form [formGroup]="movementForm" (ngSubmit)="onSubmit()">
 
-          <!-- Product Selector (when no productId from route) -->
           @if (!hasProductIdFromRoute) {
-            <div class="jbh-form-field">
+            <div>
               <label class="jbh-label">{{ 'products.addMovement.product.label' | translate }}</label>
               <app-product-select
                 formControlName="productId"
                 [products]="products"
                 [isLoading]="isLoadingProducts"
-                [selectInterface]="selectInterface"
                 [placeholder]="'products.addMovement.product.placeholder' | translate"
                 [hasError]="hasError('productId')"
+                [errorMessage]="getErrorMessage('productId')"
               ></app-product-select>
-              @if (hasError('productId')) {
-                <div class="jbh-field-error">
-                  <ion-icon name="alert-circle-outline"></ion-icon>
-                  <span>{{ getErrorMessage('productId') }}</span>
-                </div>
-              }
             </div>
           }
 
-          <!-- Movement Type -->
-          <div class="jbh-form-field">
-            <label class="jbh-label">{{ 'products.addMovement.movementType.label' | translate }}</label>
-            <div class="jbh-ion-select-wrapper" [class.error]="hasError('movementType')">
-              <ion-icon name="wallet-outline" class="jbh-ion-select-icon"></ion-icon>
-              <ion-select
-                formControlName="movementType"
-                [interface]="selectInterface"
-                [placeholder]="'products.addMovement.movementType.placeholder' | translate"
-                class="jbh-ion-select"
-              >
-                @for (type of movementTypes; track type.value) {
-                  <ion-select-option [value]="type.value">
-                    {{ getMovementTypeLabel(type) }}
-                  </ion-select-option>
-                }
-              </ion-select>
-            </div>
-            @if (hasError('movementType')) {
-              <div class="jbh-field-error">
-                <ion-icon name="alert-circle-outline"></ion-icon>
-                <span>{{ getErrorMessage('movementType') }}</span>
-              </div>
+          <jbh-select
+            formControlName="movementType"
+            icon="wallet-outline"
+            [label]="'products.addMovement.movementType.label' | translate"
+            [placeholder]="'products.addMovement.movementType.placeholder' | translate"
+            [error]="hasError('movementType') ? getErrorMessage('movementType') : ''"
+          >
+            @for (type of movementTypes; track type.value) {
+              <jbh-select-option [value]="type.value">{{ type.labelKey | translate }}</jbh-select-option>
             }
-          </div>
+          </jbh-select>
 
-          <!-- Entry Date -->
-          <div class="jbh-form-field">
-            <label class="jbh-label">{{ 'products.addMovement.entryDate.label' | translate }}</label>
-            <div class="jbh-input-wrapper">
-              <ion-icon name="calendar-outline" class="jbh-input-icon left"></ion-icon>
-              <ion-datetime-button
-                datetime="entryDatePicker"
-                class="jbh-datetime-button"
-                [class.error]="hasError('entryDate')"
-              ></ion-datetime-button>
-              <ion-modal [keepContentsMounted]="true">
-                <ng-template>
-                  <ion-datetime
-                    id="entryDatePicker"
-                    formControlName="entryDate"
-                    presentation="date"
-                    [max]="maxDate"
-                    [showDefaultButtons]="true"
-                    [cancelText]="'common.cancel' | translate"
-                    [doneText]="'common.save' | translate"
-                  ></ion-datetime>
-                </ng-template>
-              </ion-modal>
-            </div>
-            @if (hasError('entryDate')) {
-              <div class="jbh-field-error">
-                <ion-icon name="alert-circle-outline"></ion-icon>
-                <span>{{ getErrorMessage('entryDate') }}</span>
-              </div>
-            }
-          </div>
+          <jbh-date-field
+            formControlName="entryDate"
+            [label]="'products.addMovement.entryDate.label' | translate"
+            [max]="maxDate"
+            [error]="hasError('entryDate') ? getErrorMessage('entryDate') : ''"
+          />
 
-          <!-- Conditional Fields for DEPOSIT/WITHDRAWAL -->
           @if (!isBalanceSnapshot()) {
-            <!-- Category -->
-            <div class="jbh-form-field">
+            <div>
               <label class="jbh-label">{{ 'products.addMovement.category.label' | translate }}</label>
               <app-category-select
                 formControlName="categoryId"
                 [categories]="categories"
                 [isLoading]="isLoadingCategories"
-                [selectInterface]="selectInterface"
                 [placeholder]="'products.addMovement.category.placeholder' | translate"
                 [hasError]="hasError('categoryId')"
               ></app-category-select>
@@ -137,104 +83,53 @@
               }
             </div>
 
-            <!-- Total Amount -->
-            <div class="jbh-form-field">
-              <label class="jbh-label">{{ 'products.addMovement.totalAmount.label' | translate }}</label>
-              <div class="jbh-input-wrapper">
-                <ion-icon name="cash-outline" class="jbh-input-icon left"></ion-icon>
-                <input
-                  type="text"
-                  inputmode="decimal"
-                  formControlName="totalAmount"
-                  class="jbh-input jbh-input-icon-left"
-                  [class.error]="hasError('totalAmount')"
-                  [placeholder]="'products.addMovement.totalAmount.placeholder' | translate"
-                  [jbhDecimalFormat]="2"
-                />
-              </div>
-              @if (hasError('totalAmount')) {
-                <div class="jbh-field-error">
-                  <ion-icon name="alert-circle-outline"></ion-icon>
-                  <span>{{ getErrorMessage('totalAmount') }}</span>
-                </div>
-              }
-            </div>
+            <jbh-number-field
+              formControlName="totalAmount"
+              icon="cash-outline"
+              [decimals]="2"
+              [label]="'products.addMovement.totalAmount.label' | translate"
+              [placeholder]="'products.addMovement.totalAmount.placeholder' | translate"
+              [error]="hasError('totalAmount') ? getErrorMessage('totalAmount') : ''"
+            />
           }
 
-          <!-- Conditional Field for BALANCE_SNAPSHOT -->
           @if (showOptionalBalanceSnapshotInfo()) {
-            <div class="jbh-form-field">
-              <label class="jbh-label">{{ 'products.addMovement.balanceSnapshot.label' | translate }}</label>
-              <div class="jbh-input-wrapper">
-                <ion-icon name="wallet-outline" class="jbh-input-icon left"></ion-icon>
-                <input
-                  type="text"
-                  inputmode="decimal"
-                  formControlName="balanceSnapshot"
-                  class="jbh-input jbh-input-icon-left"
-                  [class.error]="hasError('balanceSnapshot')"
-                  [placeholder]="'products.addMovement.balanceSnapshot.placeholder' | translate"
-                  [jbhDecimalFormat]="2"
-                />
-              </div>
-              @if (hasError('balanceSnapshot')) {
-                <div class="jbh-field-error">
-                  <ion-icon name="alert-circle-outline"></ion-icon>
-                  <span>{{ getErrorMessage('balanceSnapshot') }}</span>
-                </div>
-              }
-              <p class="jbh-field-hint">{{ 'products.addMovement.balanceSnapshot.hint' | translate }}</p>
-            </div>
+            <jbh-number-field
+              formControlName="balanceSnapshot"
+              icon="wallet-outline"
+              [decimals]="2"
+              [label]="'products.addMovement.balanceSnapshot.label' | translate"
+              [placeholder]="'products.addMovement.balanceSnapshot.placeholder' | translate"
+              [hint]="'products.addMovement.balanceSnapshot.hint' | translate"
+              [error]="hasError('balanceSnapshot') ? getErrorMessage('balanceSnapshot') : ''"
+            />
           }
 
-          <!-- Description (Optional) -->
-          <div class="jbh-form-field">
-            <label class="jbh-label">
-              {{ 'products.addMovement.description.label' | translate }}
-              <span class="jbh-label-optional">{{ 'common.optional' | translate }}</span>
-            </label>
-            <div class="jbh-input-wrapper">
-              <ion-icon name="document-text-outline" class="jbh-input-icon left"></ion-icon>
-              <ion-textarea
-                formControlName="description"
-                class="jbh-textarea jbh-input-icon-left"
-                [class.error]="hasError('description')"
-                [placeholder]="'products.addMovement.description.placeholder' | translate"
-                [autoGrow]="true"
-                [rows]="3"
-                [maxlength]="500"
-              ></ion-textarea>
-            </div>
-            @if (hasError('description')) {
-              <div class="jbh-field-error">
-                <ion-icon name="alert-circle-outline"></ion-icon>
-                <span>{{ getErrorMessage('description') }}</span>
-              </div>
-            }
-            <p class="jbh-field-hint">
-              {{ movementForm.get('description')?.value?.length || 0 }}/500 {{ 'common.characters' | translate }}
-            </p>
-          </div>
+          <jbh-textarea
+            formControlName="description"
+            icon="document-text-outline"
+            requirement="optional"
+            [rows]="3"
+            [maxlength]="500"
+            [label]="'products.addMovement.description.label' | translate"
+            [placeholder]="'products.addMovement.description.placeholder' | translate"
+            [error]="hasError('description') ? getErrorMessage('description') : ''"
+          />
 
-          <!-- Submit Button -->
           <button
             type="submit"
-            class="jbh-button-primary jbh-button-block"
-            [class.jbh-button-loading]="isSubmitting"
+            jbhButton
+            block
+            icon="save-outline"
+            [loading]="isSubmitting"
             [disabled]="isSubmitting"
           >
-            @if (isSubmitting) {
-              <ion-spinner name="crescent"></ion-spinner>
-              <span>{{ 'products.addMovement.saving' | translate }}</span>
-            } @else {
-              <ion-icon name="save-outline"></ion-icon>
-              <span>{{ 'products.addMovement.saveButton' | translate }}</span>
-            }
+            {{ (isSubmitting ? 'products.addMovement.saving' : 'products.addMovement.saveButton') | translate }}
           </button>
 
         </form>
-      </div>
+      </jbh-card>
     }
 
   </div>
-</ion-content>
+</jbh-page>
