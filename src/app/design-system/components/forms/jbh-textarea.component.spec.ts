@@ -89,8 +89,8 @@ describe('JbhTextareaComponent', () => {
 
     expect(textarea.getAttribute('aria-invalid')).toBe('true');
     expect(textarea.getAttribute('aria-describedby')).toContain('-error');
-    expect(textarea.getAttribute('aria-labelledby')).toBe(
-      (fixture.nativeElement as HTMLElement).querySelector('label')?.id
-    );
+    const labelId = (fixture.nativeElement as HTMLElement).querySelector('label')?.id;
+    expect(labelId).toBeTruthy();
+    expect(textarea.getAttribute('aria-labelledby')).toBe(labelId ?? null);
   });
 });

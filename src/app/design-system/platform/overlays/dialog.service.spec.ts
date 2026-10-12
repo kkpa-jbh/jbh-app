@@ -75,7 +75,7 @@ describe('DialogService', () => {
   it('uses the translated common.cancel and the confirm role when cancelText and destructive are missing', async () => {
     await TestBed.inject(DialogService).confirm({ title: 'T', message: 'M', confirmText: 'OK' });
 
-    const buttons = alertController.create.calls.mostRecent().args[0].buttons;
+    const buttons = alertController.create.calls.mostRecent().args[0]?.buttons;
     expect(buttons).toEqual([
       { text: 'common.cancel', role: 'cancel' },
       { text: 'OK', role: 'confirm' }

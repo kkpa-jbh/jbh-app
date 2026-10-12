@@ -9,7 +9,9 @@
   "rollup": {
     "current": [
       "4.1",
-      "4.2"
+      "4.2",
+      "3.4",
+      "3.15"
     ],
     "pending": [
       "5.1",
@@ -55,19 +57,17 @@
       "3.1",
       "3.2",
       "3.3",
-      "3.4",
       "3.5",
       "3.6",
       "3.7",
       "3.13",
       "3.14",
-      "3.15",
       "3.16",
       "3.17"
     ]
   },
   "created_at": "2026-10-11T13:07:40Z",
-  "updated_at": "2026-10-12T13:29:13Z",
+  "updated_at": "2026-10-12T13:31:20Z",
   "leader": {
     "assistant": "Claude Code",
     "model": "claude-opus-5-5"
@@ -399,7 +399,7 @@
         "3.1"
       ],
       "parallel_ok": true,
-      "status": "done",
+      "status": "awaiting-user-verification",
       "agent": "app",
       "model": "claude-sonnet-5-5",
       "started_at": "2026-10-11T16:29:12Z",
@@ -695,7 +695,7 @@
         "2.4"
       ],
       "parallel_ok": true,
-      "status": "done",
+      "status": "awaiting-user-verification",
       "agent": "app",
       "model": "claude-sonnet-5-5",
       "started_at": "2026-10-11T16:29:12Z",
@@ -1399,6 +1399,15 @@
       "decision": "Accepted the worker's extra optional errorMessage input on app-product-select. Until a page passes it, hasError shows no red frame there; pages pass it as they move (5.1, 6.3, 6.4).",
       "why": "jbh-select shows its error frame only with a message; a default message would duplicate the pages' own message.",
       "covered_by": null
+    },
+    {
+      "id": "D18",
+      "at": "2026-10-12T13:31:20Z",
+      "scope": "change",
+      "made_by": "leader",
+      "decision": "Leader fixed 3 spec type errors itself and moved 3.4 and 3.15 from done back to awaiting-user-verification.",
+      "why": "Test-only fixes with clear causes, like D14. The earlier pass report could not cover specs that do not compile, so done was not true.",
+      "covered_by": null
     }
   ],
   "events": [
@@ -1546,6 +1555,16 @@
       "at": "2026-10-12T13:29:13Z",
       "agent": "leader",
       "event": "wave 4 reconciled: 4.1, 4.2 awaiting-user-verification. Report complete (D15, D4, D9 compliance; doc pack read). Leader ESLint on pipes + both selects: clean. Budget end 5h 9%, context 12%, cost_usd 1.71"
+    },
+    {
+      "at": "2026-10-12T13:29:23Z",
+      "agent": "leader",
+      "event": "wave 4 commit 4d80ad9; asked the user to run npm run test:layer and npx ng build (pipes and shared selects changed; pages bind the selects)"
+    },
+    {
+      "at": "2026-10-12T13:31:20Z",
+      "agent": "leader",
+      "event": "user ran npm run test:layer: compile failed, 3 TS errors in wave 3 specs (jbh-textarea spec label id may be undefined; dialog and toast specs args[0] possibly undefined). Leader fixed the 3 specs; components unchanged. 3.4 and 3.15 back to awaiting-user-verification: the earlier wave 3 pass cannot have compiled these specs."
     }
   ]
 }

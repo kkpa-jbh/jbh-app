@@ -39,7 +39,7 @@ describe('ToastService', () => {
       toastController.create.calls.reset();
       await service.show('M', tone);
 
-      expect(toastController.create.calls.mostRecent().args[0].color).withContext(String(tone)).toBe(color);
+      expect(toastController.create.calls.mostRecent().args[0]?.color).withContext(String(tone)).toBe(color);
     }
   });
 });
