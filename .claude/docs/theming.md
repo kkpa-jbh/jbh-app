@@ -86,6 +86,11 @@ See [forms.md](forms.md): `jbh-text-field`, `jbh-number-field`, `jbh-textarea`, 
 --jbh-tonal-background: rgba(102, 126, 234, 0.12);
 --jbh-tonal-text: #4c51bf;
 
+// Soft tints: use the RGB channels, never a raw rgba() value.
+background: rgba(var(--jbh-primary-rgb), 0.1);   // also --jbh-secondary-rgb, --jbh-error-rgb
+--jbh-error-strong: #e53e3e;    // solid danger fill
+--jbh-success-strong: #38a169;  // solid success fill
+
 // Spacing
 --jbh-spacing-xs: 0.5rem;   // 8px
 --jbh-spacing-sm: 1rem;      // 16px

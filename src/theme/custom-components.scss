@@ -30,6 +30,14 @@
   --jbh-error-color: #f56565;
   --jbh-warning-color: #ed8936;
   --jbh-info-color: #4299e1;
+  // Darker fills for solid danger and success buttons, so white text stays readable.
+  --jbh-error-strong: #e53e3e;
+  --jbh-success-strong: #38a169;
+
+  // RGB channels for soft tints: rgba(var(--jbh-primary-rgb), 0.1).
+  --jbh-primary-rgb: 102, 126, 234;
+  --jbh-secondary-rgb: 118, 75, 162;
+  --jbh-error-rgb: 245, 101, 101;
 
   // Neutral Colors
   --jbh-text-primary: #2d3748;
@@ -47,6 +55,9 @@
   --jbh-tonal-background: rgba(102, 126, 234, 0.12);
   --jbh-tonal-background-hover: rgba(102, 126, 234, 0.2);
   --jbh-tonal-text: #4c51bf;
+
+  // Fill of every other row band in charts.
+  --jbh-chart-grid-odd: rgba(0, 0, 0, 0.02);
 
   // Background Colors
   --jbh-error-background: #fff5f5;
@@ -127,6 +138,15 @@
     // 0.01, not 0: some browsers ignore clicks on fully transparent iframes.
     opacity: 0.01;
   }
+
+  // The invisible Google iframe gets the pointer and the focus, so show them on the visible button.
+  &:hover [jbhButton] {
+    background: var(--jbh-tonal-background-hover);
+  }
+
+  &:focus-within [jbhButton] {
+    box-shadow: 0 0 0 3px rgba(var(--jbh-primary-rgb), 0.25);
+  }
 }
 
 // ============================================
@@ -159,6 +179,14 @@
   font-weight: var(--jbh-font-weight-medium);
   color: var(--jbh-text-primary);
   margin-bottom: var(--jbh-spacing-xs);
+}
+
+// A hint under an app select (app-category-select, app-product-select). Layer fields use their `hint` input.
+.jbh-field-hint {
+  font-size: var(--jbh-font-size-xs);
+  color: var(--jbh-text-secondary);
+  margin-top: var(--jbh-spacing-xs);
+  margin-bottom: 0;
 }
 
 .jbh-checkbox {

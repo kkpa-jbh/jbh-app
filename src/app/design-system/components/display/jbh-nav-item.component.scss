@@ -28,7 +28,7 @@
   #{$host} .jbh-nav-item__row {
     --background: transparent;
     --background-hover: #{$hover};
-    --background-activated: rgba(102, 126, 234, 0.08);
+    --background-activated: rgba(var(--jbh-primary-rgb), 0.08);
     --padding-start: #{$padding-start};
     --padding-end: #{$padding-end};
     --min-height: #{$min-height};
@@ -112,9 +112,9 @@
   var(--jbh-font-size-lg),
   var(--jbh-font-weight-medium),
   var(--jbh-text-primary),
-  rgba(102, 126, 234, 0.06),
-  linear-gradient(90deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.06) 100%),
-  inset 0 1px 3px rgba(102, 126, 234, 0.1),
+  rgba(var(--jbh-primary-rgb), 0.06),
+  linear-gradient(90deg, rgba(var(--jbh-primary-rgb), 0.12) 0%, rgba(var(--jbh-secondary-rgb), 0.06) 100%),
+  inset 0 1px 3px rgba(var(--jbh-primary-rgb), 0.1),
   false
 );
 
@@ -131,9 +131,9 @@
   var(--jbh-font-size-base),
   var(--jbh-font-weight-normal),
   var(--jbh-text-secondary),
-  rgba(102, 126, 234, 0.08),
-  rgba(102, 126, 234, 0.12),
-  0 1px 4px rgba(102, 126, 234, 0.15),
+  rgba(var(--jbh-primary-rgb), 0.08),
+  rgba(var(--jbh-primary-rgb), 0.12),
+  0 1px 4px rgba(var(--jbh-primary-rgb), 0.15),
   true
 );
 
@@ -150,9 +150,9 @@
   var(--jbh-font-size-sm),
   var(--jbh-font-weight-normal),
   var(--jbh-text-secondary),
-  rgba(102, 126, 234, 0.06),
-  rgba(102, 126, 234, 0.1),
-  0 1px 3px rgba(102, 126, 234, 0.12),
+  rgba(var(--jbh-primary-rgb), 0.06),
+  rgba(var(--jbh-primary-rgb), 0.1),
+  0 1px 3px rgba(var(--jbh-primary-rgb), 0.12),
   true
 );
 

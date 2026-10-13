@@ -9,8 +9,8 @@
   box-shadow: var(--jbh-shadow-md);
 }
 
+// No padding here: the head row is a jbh-table-row, which has its own.
 .jbh-table__head {
-  padding: var(--jbh-spacing-sm) var(--jbh-spacing-md);
   background: var(--jbh-background-light);
   border-bottom: 1px solid var(--jbh-border-color);
 }

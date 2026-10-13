@@ -116,15 +116,6 @@ jbh-page {
     margin-bottom: var(--jbh-spacing-md);
   }
 
-  // The global hover and focus rules name the old button class, so they are repeated here.
-  .jbh-google-button:hover .jbh-button--secondary {
-    background: var(--jbh-tonal-background-hover);
-  }
-
-  .jbh-google-button:focus-within .jbh-button--secondary {
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25);
-  }
-
   .signup-link {
     text-align: center;
     font-size: var(--jbh-font-size-base);

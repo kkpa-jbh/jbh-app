@@ -5,7 +5,7 @@
   "module": "app",
   "roadmap": null,
   "request": "Create a jbh-* component adapter layer for jbh-app so pages stop using Ionic and external libraries directly. Goal: make future migrations easy (upgrade Angular/Ionic, remove Ionic, move to Vue). Agreed scope from discussion: 3 adapter layers — (1) UI components in their own folder, separate from the feature pages under src/app/ui (jbh-text-field, jbh-date-field, jbh-textarea, jbh-toggle, jbh-button, jbh-icon, jbh-table, jbh-card, empty state, skeleton, page header), each with its own CSS; (2) platform adapters (jbh-page shell + page-enter event, DialogService, ToastService, navigation) that hide Ionic-only behavior; (3) framework-free core (formatting logic in plain TS, pipes as thin adapters). Plain HTML (div, p, span, h1, label) is NOT wrapped. Wrap only: external-library elements, styled controls with behavior, repeated markup. Add a guard: a lint/check that forbids <ion-*> tags and @ionic/angular imports inside src/app/ui/**. Proposal, design and tasks only for now — the user wants to review the artifacts before any implementation.",
-  "status": "in-review",
+  "status": "changes-requested",
   "rollup": {
     "current": [],
     "pending": [],
@@ -65,7 +65,7 @@
     ]
   },
   "created_at": "2026-10-11T13:07:40Z",
-  "updated_at": "2026-10-12T22:41:00Z",
+  "updated_at": "2026-10-13T11:40:00Z",
   "leader": {
     "assistant": "Claude Code",
     "model": "claude-opus-5-5"
@@ -1419,10 +1419,102 @@
     }
   ],
   "review": {
-    "status": "pending",
+    "status": "changes-requested",
     "agent": "app-reviewer",
     "brief": "Review change app-add-component-adapter-layer (module app, branch ft/CH1-JBH-52-app-add-component-adapter-layer, base main). Diff: git diff main...HEAD.\n\nUser decisions to check against (decisions[] made_by user): D1 layer in src/app/design-system/ (components + platform), only it uses Ionic. D2 all pages move in this change; the guard is an error from day one. D3 specs only under design-system and core/formatting; none for pages or pipes. D5 acceptance = npm run lint:boundary exits 0, and CI runs it (.github/workflows/image.yml). D6 HomePage and portfolio-top-banner deleted; design D5 (button) confirmed; the 5 visible changes in design.md accepted; dates sent as YYYY-MM-DD / YYYY-MM. D12 npm script test:layer. D13 wave 3 split. D19 gate 5.3 confirmed. No database objects in this change.\n\nDispatch values: Performance-Profile none. Test-Execution-Policy: assistant MAY run eslint only (npx eslint <paths> or npx ng lint); never ng build, ng test, npm test, npm run build, ionic build or ionic serve. The leader runs the build and the suite (assistantRunsTests). Language: English (B2).\n\nSignals: assistant-run by the leader: npx ng build --configuration production exit 0; npm run test:layer exit 0, 193 of 193; npm run lint:boundary exit 0; 8 guard stdin checks from design.md match; openspec validate --strict valid. User-reported: route smoke test passed (all routes, light/dark, narrow/wide). Judge test quality by reading the specs; do not run them.\n\nLook at in particular: (1) initial bundle went 1.44 -> 1.59 (wave 5) -> 1.87 (wave 6) -> 1.65 MB raw (wave 7); is anything heavy still pulled into the initial chunk? (2) wave 6 layer notes: jbh-table head has double padding; jbh-toggle colour and label. (3) src/theme/custom-components.scss kept feature classes after the 7.5 cleanup; check for rules that duplicate page SCSS or have no use left. (4) D24: ux-design-system.md sections 2, 4, 5, 10-13 still show old ion-* examples under a top note; is that acceptable doc-wise? (5) leader-made decisions D9-D11, D14, D17, D18, D21-D23. (6) worker ran git rm --cached in wave 7 (events); the tree matches, but confirm.",
-    "rounds": []
+    "rounds": [
+      {
+        "round": 1,
+        "at": "2026-10-12T23:30:00Z",
+        "reviewer": "app-reviewer",
+        "model": "claude-sonnet-5-5",
+        "verdict": "changes-requested",
+        "docs_read": [
+          ".claude/CLAUDE.md",
+          ".claude/docs/architecture.md",
+          ".claude/docs/theming.md",
+          ".claude/docs/forms.md",
+          "src/app/AGENTS.md",
+          "openspec/changes/app-add-component-adapter-layer/proposal.md",
+          "openspec/changes/app-add-component-adapter-layer/design.md",
+          "openspec/changes/app-add-component-adapter-layer/tasks.md",
+          "openspec/changes/app-add-component-adapter-layer/specs/*/spec.md (5 files)"
+        ],
+        "findings": [
+          {
+            "id": "R1-1",
+            "severity": "major",
+            "note": "Initial bundle: the whole layer, ngx-charts (20 ngx-charts-* component selectors) and ion-datetime sit in the one 1.3 MB chunk that main imports statically (www/chunk-IBECQ2J5.js from the last production build; ngx-charts part is about 250 KB raw / 68 KB gzip). Chain: app.component -> shared/components/app-menu/app-menu.component.ts:7 -> '@design-system/components' barrel (components/index.ts, display/index.ts) -> display/jbh-line-chart.component.ts:2 (LineChartModule). Before the change the chart lived in the lazy balance-history chunk. The design only accepted ~40 KB of icons in the shared chunk. Find why the barrel is not tree-shaken (for example sideEffects in package.json, or a non-pure top-level statement), or make the chart lazy, then rebuild and compare the initial size.",
+            "status": "open",
+            "triage": "accepted"
+          },
+          {
+            "id": "R1-2",
+            "severity": "minor",
+            "note": "Layer SCSS hard-codes colors, against the design-system-components requirement 'use only --jbh-* tokens for colors' and theming.md 'NEVER hardcode colors': display/jbh-button.component.scss:85,94 (#e53e3e), :104 (#38a169); jbh-icon-button.component.scss:30,49; jbh-nav-item.component.scss:31,115-155; jbh-line-chart.component.scss:25. Values were copied from the old global file (D16), so this is carried over, but the spec says SHALL. Add tokens (for example --jbh-error-solid, --jbh-primary-tint) in custom-components.scss or record the exception in the spec.",
+            "status": "open",
+            "triage": "accepted"
+          },
+          {
+            "id": "R1-3",
+            "severity": "minor",
+            "note": "jbh-table head has double padding: .jbh-table__head (display/table/jbh-table.component.scss:14) and jbh-table-row (jbh-table-row.component.scss:4) both pad. Two pages patch it locally (ui/products/components/balance-history-table/balance-history-table.component.scss:9-12, ui/products/pages/product-movements/product-movements.page.scss:14-17), but import-statement.page.html:84 and overview-team.page.html:106 have the same head row and no patch, so their head is taller than before. Fix once in the layer (zero padding for jbh-table-row inside .jbh-table__head) and delete the two page rules.",
+            "status": "open",
+            "triage": "accepted"
+          },
+          {
+            "id": "R1-4",
+            "severity": "minor",
+            "note": "Google button hover/focus rules are copied into two page SCSS files (ui/auth/pages/login/login.page.scss:119-126, ui/auth/pages/signup/signup.page.scss:115-122). They target the layer-internal host class .jbh-button--secondary and hard-code rgba(102,126,234,0.25). The comment says 'the global rules name the old button class', but those global rules no longer exist (removed in 7.5), so the comment is stale. Put the rule once in the global .jbh-google-button block (src/theme/custom-components.scss:117) using tokens, and fix or drop the comment.",
+            "status": "open",
+            "triage": "accepted"
+          },
+          {
+            "id": "R1-5",
+            "severity": "minor",
+            "note": "Missing i18n key now visible: ui/teams/pages/overview/overview-team.page.html:67 uses [label]=\"'menu.teams.invite' | translate\" for a jbhIconButton. The key is not in en.json/es.json (the existing key is menu.settings.teamManagement.invite), so aria-label and title show the raw key. The gap existed on main (as title/aria-label) but the layer makes label required and D18 says page workers report missing keys. Same class of gap as D22.",
+            "status": "open",
+            "triage": "accepted"
+          },
+          {
+            "id": "R1-6",
+            "severity": "minor",
+            "note": "Docs and CSS disagree: .claude/CLAUDE.md tells pages to use <p class=\"jbh-field-hint\"> under app-category-select, but the class has no rule in src/theme/custom-components.scss. It is defined twice in page SCSS (ui/products/pages/add-movement/add-movement.page.scss:9, ui/products/pages/import-statement/import-statement.page.scss:5). A new page that follows the doc gets no style. Move it to the global file (it is used by 2 pages) or change the doc.",
+            "status": "open",
+            "triage": "accepted"
+          },
+          {
+            "id": "R1-7",
+            "severity": "minor",
+            "note": ".claude/docs/ux-design-system.md still has 55 lines with <ion-*>, ionViewWillEnter or @ionic, mainly Section 2 'Page Templates' (lines 54-604), Sections 4, 5, 10-13. CLAUDE.md names this doc 'Page templates ... complete reference', so a worker reads Section 2 first. The top note and the guard limit the damage, so it is acceptable for this change, but track a follow-up to rewrite Section 2 on jbh-page / jbh-* components. | Triage: accepted as a follow-up (user choice D25); not fixed in this change.",
+            "status": "open",
+            "triage": "accepted"
+          }
+        ],
+        "checked_ok": [
+          "npx eslint boundary config over src/**/*.{ts,html}: no output; scripts/check-scss-boundary.mjs: no violations (re-run by the reviewer, static checks only)",
+          "all 19 routed *.page.html have jbh-page as first and last element; no ionView* method outside the layer",
+          "added comment lines scanned: no design.md, decision ID, ticket ID, tier or HTML-comment references",
+          "tasks.md and specs: only checkbox changes since the artifacts commit; design.md unchanged; progress.json statuses match the evidence",
+          "formatting core and pipes match the spec values; JbhDatePipe statics gone; all layer components OnPush with at most 8 inputs",
+          "custom-components.scss: all 102 remaining classes have at least one use in src/app html/ts/scss (comments stripped); no leftover dead rules",
+          "i18n: en/es key parity holds; only common.hidePassword/showPassword, profile.savingsGoal.required added and home.* removed",
+          "git status is clean; the staged deletion of viewport.service.ts from wave 7 matches the tree (file removed in HEAD)",
+          "4 pages call their API in ngOnInit (product-movements, products-overview, invite-member, overview-team); this is the same as on main, so it is not a regression"
+        ],
+        "duration_seconds": 385,
+        "budget": {
+          "five_hour_pct_start": 17,
+          "five_hour_pct_end": null,
+          "five_hour_pct_delta": null,
+          "cost_usd_delta": null,
+          "context_pct_end": 13,
+          "source": "statusline-cache",
+          "approx": true,
+          "note": "5-hour window reset before the end read; subagent cost is not in the leader's cost_usd"
+        }
+      }
+    ]
   },
   "decisions": [
     {
@@ -1639,6 +1731,15 @@
       "made_by": "leader",
       "decision": "ux-design-system.md: rewrote sections 3, 6, 7, 8A, 8C, 9A, 9B, 16; left old examples in sections 2, 4, 5, 10-13 with a top note that the layer wins.",
       "why": "Task names component library, form patterns, class reference. A full rewrite of 2,400 lines is new scope; about 110 old references remain, marked as not to copy.",
+      "covered_by": null
+    },
+    {
+      "id": "D25",
+      "at": "2026-10-13T11:15:00Z",
+      "scope": "review:R1-7",
+      "made_by": "user",
+      "decision": "Fix R1-1 to R1-6 in this change; R1-7 (rewrite ux-design-system.md section 2) becomes a follow-up.",
+      "why": "Doc rewrite is large and docs-only; the top note and the guard already stop copying the old examples.",
       "covered_by": null
     }
   ],
@@ -1922,6 +2023,21 @@
       "at": "2026-10-12T22:41:00Z",
       "agent": "leader",
       "event": "Step 7: review brief written; dispatching kkpa-module-reviewer as app-reviewer on claude-sonnet-5-5 (models.reviewer), round 1. Budget start 5h 17%, context 11%, cost_usd 10.25"
+    },
+    {
+      "at": "2026-10-13T11:15:00Z",
+      "agent": "leader",
+      "event": "review round 1: changes-requested (1 major, 6 minor). Leader re-checked all 7: real (initial chunk-IBECQ2J5 1.3 MB with 20 ngx-charts selectors and ion-datetime, imported by main). User triage D25: fix R1-1..R1-6, R1-7 follow-up. Leader fixes them (review fixes)."
+    },
+    {
+      "at": "2026-10-13T11:40:00Z",
+      "agent": "leader",
+      "event": "review round 1 fixes by leader: R1-1 ngx-charts moved to internal jbh-line-chart-plot loaded with @defer (on immediate), spec uses DeferBlockBehavior.Manual; R1-2 layer colours -> tokens (--jbh-*-rgb, --jbh-error-strong, --jbh-success-strong, --jbh-chart-grid-odd); R1-3 head padding removed in jbh-table, 2 page patches gone; R1-4 one global .jbh-google-button rule; R1-5 key teams.invite.title; R1-6 .jbh-field-hint global. theming.md lists the new tokens."
+    },
+    {
+      "at": "2026-10-13T11:40:00Z",
+      "agent": "leader",
+      "event": "leader (assistantRunsTests): npm run lint:boundary exit 0; npx ng build --configuration production exit 0, initial 1.65 MB -> 1.47 MB raw (346.3 -> 307.4 kB transfer), ngx-charts in lazy chunk jbh-line-chart-plot-component 182 kB; ion-datetime still initial (layer barrel); npm run test:layer exit 0, 193 of 193 SUCCESS; eslint on chart files exit 0."
     }
   ]
 }

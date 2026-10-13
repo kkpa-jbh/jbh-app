@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { TestBed } from '@angular/core/testing';
+import { DeferBlockBehavior, DeferBlockState, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { LineChartComponent } from '@swimlane/ngx-charts';
@@ -24,21 +24,26 @@ class HostComponent {
 }
 
 describe('JbhLineChartComponent', () => {
-  function setup(): LineChartComponent {
-    TestBed.configureTestingModule({ providers: [provideNoopAnimations()] });
+  async function setup(): Promise<LineChartComponent> {
+    TestBed.configureTestingModule({
+      providers: [provideNoopAnimations()],
+      deferBlockBehavior: DeferBlockBehavior.Manual
+    });
     const fixture = TestBed.createComponent(HostComponent);
     fixture.detectChanges();
+    const [chartBlock] = await fixture.getDeferBlocks();
+    await chartBlock.render(DeferBlockState.Complete);
     return fixture.debugElement.query(By.directive(LineChartComponent)).componentInstance as LineChartComponent;
   }
 
-  it('renders the chart with animations off', () => {
-    const chart = setup();
+  it('renders the chart with animations off', async () => {
+    const chart = await setup();
 
     expect(chart.animations).toBeFalse();
   });
 
-  it('maps points to the chart data format', () => {
-    const chart = setup();
+  it('maps points to the chart data format', async () => {
+    const chart = await setup();
 
     expect(chart.results).toEqual([
       {
@@ -51,14 +56,14 @@ describe('JbhLineChartComponent', () => {
     ]);
   });
 
-  it('formats the value axis with valueFormatter', () => {
-    const chart = setup();
+  it('formats the value axis with valueFormatter', async () => {
+    const chart = await setup();
 
     expect(chart.yAxisTickFormatting(1234.56)).toBe('X1234.56');
   });
 
-  it('shows the legend when asked', () => {
-    const chart = setup();
+  it('shows the legend when asked', async () => {
+    const chart = await setup();
 
     expect(chart.legend).toBeTrue();
   });
