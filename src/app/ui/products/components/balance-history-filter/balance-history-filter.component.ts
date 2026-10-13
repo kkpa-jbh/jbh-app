@@ -1,14 +1,11 @@
-import { Component, OnInit, Output, EventEmitter, Input, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, Output, EventEmitter, Input, ChangeDetectionStrategy, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { addIcons } from 'ionicons';
-import { calendarOutline, searchOutline } from 'ionicons/icons';
 import { ProductListItem } from '@core/domain/features/products';
 import { MonthlyBalanceRequest } from '@core/domain/features/balance-history';
-import { ViewportService, SelectInterface } from '@core/infrastructure/viewport/viewport.service';
-import { JbhDatePipe } from '@shared/pipes';
+import { TranslationService } from '@core/infrastructure/i18n/translation.service';
+import { normalizePeriod, toPeriod } from '@core/formatting';
+import { JbhButtonComponent, JbhDateFieldComponent } from '@design-system/components';
 import { ProductSelectComponent } from '@shared/components/product-select/product-select.component';
 
 export interface BalanceFilterEvent {
@@ -22,7 +19,7 @@ export interface BalanceFilterEvent {
   styleUrls: ['./balance-history-filter.component.scss'],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, IonicModule, ReactiveFormsModule, TranslateModule, ProductSelectComponent]
+  imports: [ReactiveFormsModule, TranslateModule, JbhButtonComponent, JbhDateFieldComponent, ProductSelectComponent]
 })
 export class BalanceHistoryFilterComponent implements OnInit {
   @Input() products: ProductListItem[] = [];
@@ -32,18 +29,15 @@ export class BalanceHistoryFilterComponent implements OnInit {
   filterForm!: FormGroup;
   maxDate: string;
   minStartDate: string;
-  selectInterface: SelectInterface = 'action-sheet';
 
-  constructor(
-    private fb: FormBuilder,
-    private viewportService: ViewportService
-  ) {
-    addIcons({ calendarOutline, searchOutline });
+  private readonly fb = inject(FormBuilder);
+  private readonly translationService = inject(TranslationService);
+
+  constructor() {
     const date = new Date();
     date.setMonth(date.getMonth() - 1);
-    this.maxDate = JbhDatePipe.toPeriod(date);
+    this.maxDate = toPeriod(date);
     this.minStartDate = '2020-01';
-    this.selectInterface = this.viewportService.selectInterface;
   }
 
   ngOnInit(): void {
@@ -54,11 +48,11 @@ export class BalanceHistoryFilterComponent implements OnInit {
     const now = new Date();
     const lastMonth = new Date(now);
     lastMonth.setMonth(lastMonth.getMonth() - 1);
-    const endPeriod = JbhDatePipe.toPeriod(lastMonth);
+    const endPeriod = toPeriod(lastMonth);
 
     const sixMonthsAgo = new Date(now);
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 5);
-    const startPeriod = JbhDatePipe.toPeriod(sixMonthsAgo);
+    const startPeriod = toPeriod(sixMonthsAgo);
 
     this.filterForm = this.fb.group({
       productId: [this.initialProductId || ''],
@@ -71,14 +65,14 @@ export class BalanceHistoryFilterComponent implements OnInit {
     const startRaw = group.get('startPeriod')?.value;
     const endRaw = group.get('endPeriod')?.value;
 
-    const start = startRaw ? JbhDatePipe.normalizePeriod(startRaw) : null;
-    const end = endRaw ? JbhDatePipe.normalizePeriod(endRaw) : null;
+    const start = startRaw ? normalizePeriod(startRaw) : null;
+    const end = endRaw ? normalizePeriod(endRaw) : null;
 
     if (start && end && start > end) {
       return { startAfterEnd: true };
     }
 
-    const maxPeriod = JbhDatePipe.toPeriod(new Date());
+    const maxPeriod = toPeriod(new Date());
     if (end && end > maxPeriod) {
       return { endInFuture: true };
     }
@@ -92,8 +86,8 @@ export class BalanceHistoryFilterComponent implements OnInit {
       this.filterApplied.emit({
         productId: formValue.productId || null,
         request: {
-          startPeriod: JbhDatePipe.normalizePeriod(formValue.startPeriod),
-          endPeriod: JbhDatePipe.normalizePeriod(formValue.endPeriod)
+          startPeriod: normalizePeriod(formValue.startPeriod),
+          endPeriod: normalizePeriod(formValue.endPeriod)
         }
       });
     }
@@ -108,7 +102,23 @@ export class BalanceHistoryFilterComponent implements OnInit {
     return this.filterForm.hasError(error);
   }
 
-  formatPeriodDisplay(period: string): string {
-    return JbhDatePipe.formatPeriod(period);
+  getStartPeriodError(): string {
+    if (this.hasError('startPeriod')) {
+      return this.translationService.instant('products.balanceHistory.startPeriod.required');
+    }
+    if (this.hasFormError('startAfterEnd')) {
+      return this.translationService.instant('products.balanceHistory.startPeriod.afterEndError');
+    }
+    return '';
+  }
+
+  getEndPeriodError(): string {
+    if (this.hasError('endPeriod')) {
+      return this.translationService.instant('products.balanceHistory.endPeriod.required');
+    }
+    if (this.hasFormError('endInFuture')) {
+      return this.translationService.instant('products.balanceHistory.endPeriod.futureError');
+    }
+    return '';
   }
 }

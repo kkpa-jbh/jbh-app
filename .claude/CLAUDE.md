@@ -36,9 +36,13 @@ Expert guidance for Ionic/Angular hybrid mobile apps using Clean Architecture, D
 src/app/
 ├── core/domain/          # Models, repositories, use-cases
 ├── core/infrastructure/  # API, persistence, implementations
-├── ui/                   # Lazy-loaded feature modules (pages,components)
-├── shared/               # Reusable components, pipes, directives, utilities
-└── theme/                # custom-components.scss (single source)
+├── core/formatting/      # Plain TS formatting (no framework); pipes call it
+├── design-system/        # jbh-* UI layer: the only place that touches Ionic, ionicons, ngx-charts
+│   ├── components/       # @design-system/components
+│   └── platform/         # @design-system/platform (jbh-page, toolbar, toast, dialog, navigation)
+├── ui/                   # Lazy-loaded feature pages and components
+└── shared/               # App compositions on the layer (header, menu, selects) and jbh* pipes
+src/theme/custom-components.scss  # Global tokens, utilities, feature classes
 ```
 
 ### Key Auth Files
@@ -60,9 +64,9 @@ src/app/core/infrastructure/
 
 - Do not use any function from console. Use the service `private logger: LoggerService` instead.
 - Do not do any calculations with numbers. All calculations must be done on the backend side. If you need to do any calculations, please stop the plan and alert the team.
-- **Formatting in templates only**: Use **pipes for display** (tables, cards) and **directives for form inputs**. No format conversions in component code.
+- **Formatting in templates only**: Use **pipes for display** (tables, cards) and **`jbh-number-field` for number input**. No format conversions in component code.
   - **Pipes** (`|`) for displaying values: `{{ value | jbhCurrency }}`
-  - **Directives** (`[]`) ONLY for `<input>` elements: `<input [jbhDecimalFormat]="2" />`
+  - **Number input**: `<jbh-number-field formControlName="amount" [decimals]="2" />`
 
 #### Performance (CRITICAL)
 
@@ -119,20 +123,16 @@ export class MyComponent implements OnInit, OnDestroy {
     - `JbhCurrencyPipe` (`jbhCurrency`) - for currency formatting
     - `JbhTranslationKeyPipe` (`jbhTranslationKey`) - for API JSON translation keys
     - Use pipes in templates, not formatting methods in components
+    - The pipes are thin adapters over `src/app/core/formatting/` (plain TypeScript, no framework). Put new formatting logic there.
 
-7. **Directives vs Pipes for Formatting (CRITICAL)**:
-    - **Directives are ONLY for form inputs** - they require `NgControl` and listen to user input events
-    - **Pipes are for displaying values** - use them for tables, cards, and read-only text
+7. **Pipes for display, `jbh-number-field` for number input (CRITICAL)**:
 
 ```html
-<!-- ❌ WRONG - Directive on display element (causes NG0201 error) -->
-<span [jbhDecimalFormat]="product.balance"></span>
-
-<!-- ✅ CORRECT - Pipe for displaying values -->
+<!-- ✅ Pipe for displaying values -->
 <span>{{ product.balance | jbhCurrency }}</span>
 
-<!-- ✅ CORRECT - Directive on form input -->
-<input type="text" [jbhDecimalFormat]="2" formControlName="amount" />
+<!-- ✅ Layer control for number input -->
+<jbh-number-field formControlName="amount" [decimals]="2" [label]="'feature.amount' | translate" />
 ```
 
 **Available pipes for display:**
@@ -141,9 +141,6 @@ export class MyComponent implements OnInit, OnDestroy {
 - `jbhTranslationKey` - Backend JSON translation keys
 - `jbhProfit` - Profit/loss formatting with color
 - `jbhGrowth` - Growth rate formatting with %
-
-**Available directives for form inputs:**
-- `jbhDecimalFormat` - Numeric input formatting (use ONLY on `<input>` elements)
 
 8. **Backend JSON Translation Keys**: When the API returns a `translationKey` field containing JSON like `{"en":"Salary","es":"Salario"}`, use the `jbhTranslationKey` pipe in templates:
 ```html
@@ -154,53 +151,29 @@ export class MyComponent implements OnInit, OnDestroy {
 {{ getCategoryName(category) }}
 ```
 
-#### Charts and Visualizations (ngx-charts)
+#### Charts and Visualizations
 
-1. **ALWAYS disable animations** for ngx-charts components to avoid Angular 20 compatibility issues:
-```html
-<ngx-charts-line-chart
-  [animations]="false"
-  ...
->
-</ngx-charts-line-chart>
-```
-
-2. **Why disable animations**:
-   - ngx-charts animations use `strokeDashoffset` which is not supported by Angular 20's animation system
-   - Causes browser warnings: "animationState is attempting to animate the following not animatable properties: strokeDashoffset"
-   - Can prevent chart elements from rendering properly
-   - Aligns with performance best practices (avoid expensive animations)
-
-3. **Affected components**: All ngx-charts components (line-chart, bar-chart, pie-chart, etc.)
+1. **Use `jbh-line-chart`**, never `ngx-charts-*` directly. Inputs: `series`, `showLegend`, `valueFormatter`.
+2. Animations are always off inside it. ngx-charts animations use `strokeDashoffset`, which Angular 20's animation system does not support, and charts may not render.
 
 **Reference implementation**: `src/app/ui/products/components/balance-chart/balance-chart.component.html`
 
 #### Accessibility (WCAG AA Target)
 
-1. **ALWAYS add `aria-label` to icon buttons**:
+1. **Icon buttons need a label**: `button[jbhIconButton]` requires `label`. It sets `aria-label` and `title`.
 ```html
 <button
-  class="jbh-icon-button"
-  (click)="action()"
-  aria-label="{{ 'button.action' | translate }}"
-  title="{{ 'button.action' | translate }}"
->
-  <ion-icon name="icon-outline"></ion-icon>
-</button>
+  type="button"
+  jbhIconButton
+  icon="trash-outline"
+  [label]="'button.delete' | translate"
+  (click)="delete()"
+></button>
 ```
 
-2. **Minimum touch target size:** 48px × 48px (current icon buttons are 36px - needs fix)
+2. **Minimum touch target size:** 48px × 48px
 
-3. **Add semantic roles to tables**:
-```html
-<div class="jbh-table" role="table">
-  <div class="jbh-table-header" role="rowgroup">
-    <div class="jbh-table-row" role="row">
-      <div class="jbh-table-cell" role="columnheader">Header</div>
-    </div>
-  </div>
-</div>
-```
+3. **Tables**: use `jbh-table`. It sets `role="table"`, the row groups and the cell roles. Pass `[label]` for its `aria-label`.
 
 4. **Add roles to state elements**:
 ```html
@@ -224,28 +197,31 @@ export class MyComponent implements OnInit, OnDestroy {
 
 **See:** [UX Design System - Accessibility](docs/ux-design-system.md#13-accessibility-guidelines) for complete guidelines
 
+#### UI Layer (CRITICAL)
+
+Pages never use Ionic, `ionicons` or ngx-charts directly. They use the `jbh-*` layer in `src/app/design-system/`.
+Plain HTML (`div`, `p`, `span`, `h1`, `label`) is not wrapped.
+
+- **Import only the two entry points**: `@design-system/components` and `@design-system/platform`. Never a deeper path.
+- **Components** (`@design-system/components`), a closed list:
+  - Icons: `jbh-icon`, `jbh-spinner`
+  - Forms: `jbh-field`, `jbh-text-field`, `jbh-number-field`, `jbh-textarea`, `jbh-date-field`, `jbh-select` + `jbh-select-option`, `jbh-toggle`
+  - Display: `button[jbhButton]` (also `a[jbhButton]`, `label[jbhButton]`), `button[jbhIconButton]`, `jbh-card`, `jbh-alert`, `jbh-empty-state`, `jbh-skeleton`, `jbh-page-header`, `jbh-table` (+ `jbhTableHead`, `jbhTableRow`, `jbhTableCard` templates, `jbh-table-row`, `jbh-table-cell`), `jbh-segment`, `jbh-nav-item`, `jbh-line-chart`
+- **Platform** (`@design-system/platform`): `jbh-page`, `jbh-toolbar`, `ToastService`, `DialogService`, `NavigationService`, `JbhViewportService`, `IonicDevicePlatform`.
+- **Toasts, confirms, modals and menu close** go through `ToastService`, `DialogService` and `NavigationService`. No local `showToast` copies.
+- **Icons**: `jbh-icon` with an Ionicons name. A new icon goes in `design-system/components/icon/icon-registry.ts`.
+- **Need a new component?** Add it to the layer, not to a page. Stop and tell the team first.
+- **Guard**: `npm run lint:boundary` must exit 0. It reports `<ion-*>` and `<ngx-charts-*>` tags, Ionic / ionicons / ngx-charts imports, deep layer imports and `ionView*` methods outside the layer, and `ion-*` selectors, `::part(` or `--ion-` variables in SCSS. CI runs it.
+- **Named exceptions**: `src/main.ts`, `src/app/app.component.*`, `src/global.scss`, `src/theme/**`.
+- Full rules: `src/app/AGENTS.md`.
+
 #### Theme System
 
-1. **ALL styles** in `src/theme/custom-components.scss` - NO feature-specific theme files
-   What Should Stay in custom-components.scss (Truly Global)
-These are reusable across all features:
-
-✅ Buttons (jbh-button-, jbh-icon-button-)
-✅ Forms (jbh-input, jbh-select, jbh-label, jbh-field-error, etc.)
-✅ Cards (jbh-card, jbh-card-elevated, jbh-card-flat)
-✅ Alerts (jbh-alert-error, jbh-alert-success, etc.)
-✅ Typography (jbh-title, jbh-heading-*, jbh-text-muted, etc.)
-✅ Layout Utilities (jbh-container, jbh-divider, jbh-spacer)
-✅ Links (jbh-link, jbh-link-muted)
-✅ Animations (jbh-animate-fade-in, jbh-animate-slide-up, etc.)
-✅ Generic Empty State (jbh-empty-state, jbh-empty-state-icon, etc.)
-✅ Generic Page Header (jbh-page-header, jbh-page-title, etc.)
-✅ Base Skeleton (jbh-skeleton, jbh-skeleton-loading animation)
-✅ Generic Table (jbh-table-header, jbh-table-row, jbh-table-cell)
-✅ Generic Badges (jbh-status-badge, jbh-role-badge
-2. **Use `jbh-*` classes**: `jbh-button-primary`, `jbh-input`, `jbh-card`, etc.
-3. **Use `--jbh-*` variables** for colors, spacing, typography
-4. Component SCSS = page layout only
+1. **Each layer component owns its look** in its own SCSS. Do not copy component styles into `src/theme/custom-components.scss`.
+2. **`custom-components.scss` keeps only global things**: tokens and dark overrides, typography (`jbh-title`, `jbh-text-muted`, …), layout utilities (`jbh-container`, `jbh-divider`, `jbh-hide-mobile`), links (`jbh-link`), animations (`jbh-animate-fade-in`, …), badges (`jbh-status-badge`, `jbh-role-badge`), feature classes that templates still use, and Ionic overlay rules (`ion-menu`, `::part`).
+3. **Remove a global rule** when its class has zero uses in `src/app/**/*.{html,ts,scss}`.
+4. **Use `--jbh-*` variables** for colors, spacing, typography.
+5. **Page SCSS = page layout only.** It may style `jbh-*` hosts (`jbh-icon { font-size: 24px }`). It never targets Ionic elements or internals.
 
 #### i18n
 
@@ -256,18 +232,44 @@ These are reusable across all features:
 
 #### Forms
 
-1. **Use `ion-select`** (not native `<select>`) with `interface="selectInterface"`
-   where in the TS file it should be: ` this.selectInterface = this.viewportService.selectInterface;    `
-2. **Angular control flow**: `@if`, `@for` (not `*ngIf`, `*ngFor`)
-3. **Reactive Forms** with `hasError()`, `getErrorMessage()` methods
+1. **Use the layer form controls**, never raw `<input>`, `<ion-input>` or `<ion-select>`:
+   `jbh-text-field`, `jbh-number-field`, `jbh-textarea`, `jbh-date-field`, `jbh-select` + `jbh-select-option`, `jbh-toggle`.
+   Each one is a `ControlValueAccessor`: use `formControlName` on it.
+2. **Errors**: pass `[error]="hasError('x') ? getErrorMessage('x') : ''"`. A non-empty string shows the error.
+3. **Numbers**: use `jbh-number-field` with `[decimals]`. Its value is `number | null`.
+4. **Dates**: `jbh-date-field` emits `YYYY-MM-DD`, or `YYYY-MM` with `mode="month"`.
+5. **Angular control flow**: `@if`, `@for` (not `*ngIf`, `*ngFor`)
+6. **Reactive Forms** with `hasError()`, `getErrorMessage()` methods
+
+```html
+<jbh-select
+  formControlName="movementType"
+  icon="wallet-outline"
+  [label]="'feature.type.label' | translate"
+  [placeholder]="'feature.type.placeholder' | translate"
+  [error]="hasError('movementType') ? getErrorMessage('movementType') : ''"
+>
+  @for (type of movementTypes; track type.value) {
+    <jbh-select-option [value]="type.value">{{ type.labelKey | translate }}</jbh-select-option>
+  }
+</jbh-select>
+
+<jbh-number-field
+  formControlName="totalAmount"
+  [decimals]="2"
+  [label]="'feature.amount.label' | translate"
+  [error]="hasError('totalAmount') ? getErrorMessage('totalAmount') : ''"
+/>
+```
 
 #### Components
 
 - Overview pages are snapshots, not reports.
 
-1. **Separate files**: HTML, TS, SCSS (never inline). NOT generate the `spec.ts` files
-2. **Standalone components** with proper imports
-3. **Always include** `TranslateModule` in imports
+1. **Separate files**: HTML, TS, SCSS (never inline).
+2. **Do NOT generate `spec.ts` files.** Exception: specs live next to their file under `src/app/design-system/**` and `src/app/core/formatting/**`.
+3. **Standalone components** with proper imports
+4. **Always include** `TranslateModule` in imports
 
 #### Shared Components (CRITICAL — reuse these, never recreate inline)
 
@@ -276,46 +278,57 @@ These are reusable across all features:
 Use this component whenever a page needs a category dropdown. It implements `ControlValueAccessor` so the parent uses `formControlName` directly on it.
 
 ```html
-<div class="jbh-form-field">
+<div>
   <label class="jbh-label">{{ 'your.category.label' | translate }}</label>
   <app-category-select
     formControlName="categoryId"
     [categories]="categories"
     [isLoading]="isLoadingCategories"
-    [selectInterface]="selectInterface"
     [placeholder]="'your.category.placeholder' | translate"
     [hasError]="hasError('categoryId')"
   ></app-category-select>
 </div>
 ```
 
-- Renders the `ion-select` with spinner + error message + description hint automatically
+- Renders a `jbh-select` with spinner + error message + description hint automatically
 - Shows selected category's `description` (multilanguage) as a contextual info box below the select
+- It has no `selectInterface` input. `jbh-select` picks the overlay type by itself.
 - Import: `import { CategorySelectComponent } from '@shared/components/category-select/category-select.component';`
 - Add to component `imports[]` array
 - Hint for missing product: add `<p class="jbh-field-hint">` below the component when no product is selected yet
+- `<app-product-select>` works the same way for products.
 
-#### Ionic Lifecycle (CRITICAL)
+#### Page Lifecycle (CRITICAL)
 
-1. **NEVER call APIs in `ngOnInit()`** - Ionic reuses component instances when navigating
-2. **Use `ionViewWillEnter()`** for API calls and data loading - this runs every time the page is displayed
-3. **Implement `ViewWillEnter`** interface: `implements OnInit, OnDestroy, ViewWillEnter`
-4. **Pattern**:
-    - `ngOnInit()`: Form initialization, static setup, event subscriptions
-    - `ionViewWillEnter()`: API calls, data refresh, dynamic state reset
+1. **`<jbh-page>` is the root element of every routed template.** Its parent is the routed page element, where the page events fire. In any other place the events never come.
+2. **NEVER call APIs in `ngOnInit()`** - the router reuses page instances when you navigate.
+3. **Use `(pageEnter)`** for API calls, data loading and header setup. It runs every time the page is shown.
+4. **Use `(pageLeave)`** to clear the header config.
+5. **NEVER write `ionViewWillEnter` / `ionViewWillLeave`.** The guard reports any `ionView*` method.
+6. **Pattern**:
+    - `ngOnInit()`: form setup, static setup, event subscriptions
+    - `(pageEnter)`: API calls, data refresh, dynamic state reset, `setPageConfig()`
+    - `(pageLeave)`: `clearPageConfig()`
+
+```html
+<jbh-page (pageEnter)="onPageEnter()" (pageLeave)="onPageLeave()">
+  <app-header jbhPageHeader></app-header>
+  <div class="jbh-container">...</div>
+</jbh-page>
+```
 
 #### Header Configuration (CRITICAL)
 
-1. **Use `HeaderActionsService`** in `ionViewWillEnter()` to configure the page header
-2. **Hamburger menu vs Back button**: The header shows EITHER a menu button OR a back button
-   - Omit `showBackButton` (or set to `false`) for **top-level pages** → shows hamburger menu
-   - Set `showBackButton: true` for **detail/child pages** → shows back button
-3. **Always clear config** in `ionViewWillLeave()`: `this.headerActions.clearPageConfig()`
+1. **Use `HeaderActionsService`** in `onPageEnter()` to configure the page header.
+2. **Hamburger menu vs Back button**: the header shows EITHER a menu button OR a back button.
+   - Omit `showBackButton` (or set it to `false`) for **top-level pages** → shows the menu button.
+   - Set `showBackButton: true` for **detail/child pages** → shows the back button. Add `defaultBackHref` for the page to open when there is no history.
+3. **Always clear the config** in `onPageLeave()`: `this.headerActions.clearPageConfig()`
 
 **Pattern**:
 ```typescript
 // Top-level page (e.g., /portfolio/overview, /reports/balance-trends)
-ionViewWillEnter(): void {
+onPageEnter(): void {
   this.headerActions.setPageConfig({
     title: 'feature.page.title',
     actions: [
@@ -329,20 +342,21 @@ ionViewWillEnter(): void {
   });
 }
 
-// Detail page (e.g., /portfolio/edit/:id, /transactions/details/:id)
-ionViewWillEnter(): void {
+// Detail page (e.g., /portfolio/edit/:id)
+onPageEnter(): void {
   this.headerActions.setPageConfig({
     title: 'feature.detail.title',
-    showBackButton: true  // Shows back button instead of menu
+    showBackButton: true,  // Shows back button instead of menu
+    defaultBackHref: '/portfolio/overview'
   });
 }
 
-ionViewWillLeave(): void {
+onPageLeave(): void {
   this.headerActions.clearPageConfig();
 }
 ```
 
-**Reference implementation**: `src/app/ui/products/pages/overview/products-overview.page.ts:67-87`
+**Reference implementation**: `src/app/ui/products/pages/add-movement/add-movement.page.ts` (and its `.html`)
 
 #### File Naming Convention
 
@@ -572,10 +586,10 @@ error: (error: JBHError) => {
 
 | Buttons | Forms | Layout |
 |---------|-------|--------|
-| `jbh-button-primary` | `jbh-form-field` | `jbh-container` |
-| `jbh-button-secondary` | `jbh-input` | `jbh-card` |
-| `jbh-button-block` | `jbh-label` | `jbh-card-elevated` |
-| `jbh-button-loading` | `jbh-field-error` | `jbh-form-card` |
+| `button[jbhButton]` (`primary`, `secondary`, …) | `jbh-text-field`, `jbh-number-field` | `jbh-container` |
+| `[block]`, `[loading]`, `icon` inputs | `jbh-select`, `jbh-date-field` | `<jbh-card>` |
+| `button[jbhIconButton]` | `jbh-textarea`, `jbh-toggle` | `jbh-divider` |
+| | `jbh-label` (plain label for app selects) | `jbh-hide-mobile` |
 
 ### CSS Variables
 

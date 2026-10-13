@@ -1,37 +1,11 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
-import { MenuController, ToastController } from '@ionic/angular/standalone';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { addIcons } from 'ionicons';
-import {
-  appsOutline,
-  homeOutline,
-  personOutline,
-  cubeOutline,
-  addCircleOutline,
-  listOutline,
-  swapHorizontalOutline,
-  logOutOutline,
-  chevronUpOutline,
-  chevronDownOutline,
-  peopleOutline,
-  personAddOutline,
-  analyticsOutline,
-  gridOutline,
-  briefcaseOutline,
-  cashOutline,
-  trendingUpOutline,
-  barChartOutline,
-  settingsOutline,
-  notificationsOutline,
-  receiptOutline,
-  pricetagOutline,
-  documentTextOutline
-} from 'ionicons/icons';
+import { JbhIconComponent, JbhNavItemComponent } from '@design-system/components';
+import { NavigationService, ToastService } from '@design-system/platform';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
 import { AuthUseCase } from '@core/domain/use-cases/auth.use-case';
@@ -56,7 +30,14 @@ export interface MenuItem {
   templateUrl: './app-menu.component.html',
   styleUrls: ['./app-menu.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, TranslateModule, InstallAppButtonComponent, PortfolioContextSwitcherComponent],
+  imports: [
+    CommonModule,
+    TranslateModule,
+    JbhIconComponent,
+    JbhNavItemComponent,
+    InstallAppButtonComponent,
+    PortfolioContextSwitcherComponent
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppMenuComponent implements OnInit, OnDestroy {
@@ -68,41 +49,15 @@ export class AppMenuComponent implements OnInit, OnDestroy {
 
   constructor(
     private router: Router,
-    private menuController: MenuController,
+    private navigation: NavigationService,
     private authUseCase: AuthUseCase,
-    private toastController: ToastController,
+    private toast: ToastService,
     public translationService: TranslationService,
     private logger: LoggerService,
     private cdr: ChangeDetectorRef,
     private portfolioContext: PortfolioContextService,
     private environmentConfig: EnvironmentConfig
-  ) {
-    addIcons({
-      appsOutline,
-      homeOutline,
-      personOutline,
-      cubeOutline,
-      addCircleOutline,
-      listOutline,
-      swapHorizontalOutline,
-      logOutOutline,
-      chevronUpOutline,
-      chevronDownOutline,
-      peopleOutline,
-      personAddOutline,
-      analyticsOutline,
-      gridOutline,
-      briefcaseOutline,
-      cashOutline,
-      trendingUpOutline,
-      barChartOutline,
-      settingsOutline,
-      notificationsOutline,
-      receiptOutline,
-      pricetagOutline,
-      documentTextOutline
-    });
-  }
+  ) {}
 
   ngOnInit(): void {
     this.appVersion = this.environmentConfig.appVersion;
@@ -278,18 +233,14 @@ export class AppMenuComponent implements OnInit, OnDestroy {
   }
 
   async navigateToRoute(route: string): Promise<void> {
-    await this.menuController.close();
+    await this.navigation.closeMenu();
     await this.router.navigate([route]);
   }
 
-  async handleMenuItemClick(item: MenuItem, event?: Event): Promise<void> {
-    if (event) {
-      event.stopPropagation();
-    }
-
+  async handleMenuItemClick(item: MenuItem): Promise<void> {
     if (item.action) {
       item.action();
-      await this.menuController.close();
+      await this.navigation.closeMenu();
     } else if (item.route) {
       await this.navigateToRoute(item.route);
     } else if (item.children) {
@@ -312,7 +263,7 @@ export class AppMenuComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: async () => {
-          await this.showToast(
+          await this.toast.show(
             this.translationService.instant('menu.logoutSuccess'),
             'success'
           );
@@ -320,21 +271,11 @@ export class AppMenuComponent implements OnInit, OnDestroy {
         },
         error: async (error) => {
           this.logger.error('Logout error:', 'AppMenu', error);
-          await this.showToast(
+          await this.toast.show(
             this.translationService.instant('menu.logoutError'),
-            'danger'
+            'error'
           );
         }
       });
-  }
-
-  private async showToast(message: string, color: string): Promise<void> {
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-      color,
-      position: 'bottom'
-    });
-    await toast.present();
   }
 }

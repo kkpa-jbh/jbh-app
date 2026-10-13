@@ -1,3 +1,7 @@
-.invite-member-content {
-  --background: var(--jbh-background-color);
+.invite-status--success {
+  color: var(--jbh-success-color);
+}
+
+.invite-status--error {
+  color: var(--jbh-error-color);
 }

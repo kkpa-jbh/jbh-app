@@ -7,10 +7,12 @@
     "edit": "Editar",
     "error": "Error",
     "gotIt": "Entendido",
+    "hidePassword": "Ocultar contraseña",
     "loading": "Cargando...",
     "optional": "(opcional)",
     "or": "o",
     "save": "Guardar",
+    "showPassword": "Mostrar contraseña",
     "success": "Éxito"
   },
   "categories": {
@@ -37,13 +39,6 @@
     "totalBalance": "Balance Total",
     "welcomePersonal": "Bienvenido a tu Panel",
     "welcomeTeam": "Bienvenido al Panel de {{teamName}}"
-  },
-  "home": {
-    "description": "Comienza con Ionic",
-    "title": "Inicio",
-    "titleLarge": "Inicio",
-    "uiComponents": "Componentes de UI",
-    "welcome": "¿Listo para crear una aplicación?"
   },
   "login": {
     "continueWith": "Continuar con {{provider}}",
@@ -463,7 +458,8 @@
     "savingsGoal": {
       "label": "Meta de Ahorro",
       "min": "La meta de ahorro debe ser 0 o mayor",
-      "placeholder": "Ingresa tu meta de ahorro"
+      "placeholder": "Ingresa tu meta de ahorro",
+      "required": "La meta de ahorro es obligatoria"
     },
     "success": "¡Preferencias actualizadas exitosamente!",
     "title": "Perfil",

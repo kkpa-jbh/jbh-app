@@ -1,21 +1,14 @@
-<div class="jbh-ion-select-wrapper" [class.error]="hasError">
-  <ion-icon name="wallet-outline" class="jbh-ion-select-icon"></ion-icon>
-  <ion-select
-    [value]="selectedValue"
-    [interface]="selectInterface"
-    [placeholder]="placeholder"
-    [disabled]="isDisabled || isLoading"
-    class="jbh-ion-select"
-    (ionChange)="onSelectionChange($event)"
-  >
-    @if (emptyOption !== undefined) {
-      <ion-select-option [value]="emptyOption.value">{{ emptyOption.label }}</ion-select-option>
-    }
-    @for (product of products; track product.id) {
-      <ion-select-option [value]="product.id">{{ product.name }}</ion-select-option>
-    }
-  </ion-select>
-  @if (isLoading) {
-    <ion-spinner name="crescent" class="jbh-select-spinner"></ion-spinner>
+<jbh-select
+  icon="wallet-outline"
+  [formControl]="control"
+  [placeholder]="placeholder()"
+  [loading]="isLoading()"
+  [error]="hasError() ? errorMessage() : null"
+>
+  @if (emptyOption(); as empty) {
+    <jbh-select-option [value]="empty.value">{{ empty.label }}</jbh-select-option>
   }
-</div>
+  @for (product of products(); track product.id) {
+    <jbh-select-option [value]="product.id">{{ product.name }}</jbh-select-option>
+  }
+</jbh-select>

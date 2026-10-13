@@ -1,29 +1,20 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, ValidationErrors } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { addIcons } from 'ionicons';
-import {
-  personAdd,
-  alertCircle,
-  personOutline,
-  atOutline,
-  mailOutline,
-  lockClosedOutline,
-  eyeOutline,
-  eyeOffOutline,
-  checkmarkCircle,
-  closeCircle,
-  informationCircle,
-  logoGoogle
-} from 'ionicons/icons';
 import { AuthUseCase } from '@core/domain/use-cases/auth.use-case';
 import { JBHError } from '@core/domain/models/jbh-error.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
 import { GoogleSignInService } from '@core/infrastructure/auth/google-sign-in.service';
+import {
+  JbhAlertComponent,
+  JbhButtonComponent,
+  JbhIconComponent,
+  JbhSpinnerComponent,
+  JbhTextFieldComponent
+} from '@design-system/components';
+import { JbhPageComponent } from '@design-system/platform';
 import { Subject, Observable, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap, map, catchError, takeUntil } from 'rxjs/operators';
 
@@ -33,11 +24,14 @@ import { debounceTime, distinctUntilChanged, switchMap, map, catchError, takeUnt
   styleUrls: ['./signup.page.scss'],
   standalone: true,
   imports: [
-    CommonModule,
-    FormsModule,
     ReactiveFormsModule,
-    IonicModule,
-    TranslateModule
+    TranslateModule,
+    JbhAlertComponent,
+    JbhButtonComponent,
+    JbhIconComponent,
+    JbhPageComponent,
+    JbhSpinnerComponent,
+    JbhTextFieldComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -47,8 +41,6 @@ export class SignupPage implements OnInit, AfterViewInit, OnDestroy {
   signupForm!: FormGroup;
   isLoading = false;
   errorMessage = '';
-  showPassword = false;
-  showConfirmPassword = false;
   readonly currentYear = new Date().getFullYear();
 
   usernameAvailable: boolean | null = null;
@@ -68,22 +60,7 @@ export class SignupPage implements OnInit, AfterViewInit, OnDestroy {
     private logger: LoggerService,
     private cdr: ChangeDetectorRef,
     private googleSignIn: GoogleSignInService
-  ) {
-    addIcons({
-      personAdd,
-      alertCircle,
-      personOutline,
-      atOutline,
-      mailOutline,
-      lockClosedOutline,
-      eyeOutline,
-      eyeOffOutline,
-      checkmarkCircle,
-      closeCircle,
-      informationCircle,
-      logoGoogle
-    });
-  }
+  ) {}
 
   ngOnInit() {
     this.initForm();
@@ -286,14 +263,6 @@ export class SignupPage implements OnInit, AfterViewInit, OnDestroy {
           this.router.navigate(['/login']);
         }
       });
-  }
-
-  togglePasswordVisibility() {
-    this.showPassword = !this.showPassword;
-  }
-
-  toggleConfirmPasswordVisibility() {
-    this.showConfirmPassword = !this.showConfirmPassword;
   }
 
   private markFormGroupTouched(formGroup: FormGroup) {

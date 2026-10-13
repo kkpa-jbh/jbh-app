@@ -1,70 +1,59 @@
-<app-header></app-header>
-<ion-content class="products-overview-content">
+<jbh-page (pageEnter)="onPageEnter()" (pageLeave)="onPageLeave()">
+  <app-header jbhPageHeader></app-header>
+
   <div class="jbh-container jbh-container-wide">
 
-    <!-- Page Header with Actions -->
-    <div class="jbh-page-header">
-      <div class="jbh-page-header-content">
-        <div class="jbh-page-header-icon">
-          <ion-icon name="wallet-outline"></ion-icon>
-        </div>
-        <div>
-          <h1 class="jbh-page-title">{{ 'products.overview.formTitle' | translate }}</h1>
-          <p class="jbh-page-subtitle">{{ 'products.overview.formSubtitle' | translate }}</p>
-        </div>
-      </div>
+    <jbh-page-header
+      icon="wallet-outline"
+      [title]="'products.overview.formTitle' | translate"
+      [subtitle]="'products.overview.formSubtitle' | translate"
+    >
       @if (canModifyProducts()) {
-        <button class="jbh-button-primary" (click)="navigateToCreate()">
-          <ion-icon name="add-outline"></ion-icon>
-          <span>{{ 'products.overview.createButton' | translate }}</span>
+        <button type="button" jbhButton icon="add-outline" (click)="navigateToCreate()">
+          {{ 'products.overview.createButton' | translate }}
         </button>
       }
-    </div>
+    </jbh-page-header>
 
-    <!-- Loading State -->
     @if (isLoading) {
       <div class="jbh-loading-container">
         @for (i of [1, 2, 3]; track i) {
-          <div class="jbh-product-card-skeleton">
-            <div class="jbh-skeleton-product-header">
-              <div class="jbh-skeleton jbh-skeleton-product-icon"></div>
-              <div class="jbh-skeleton-product-info">
-                <div class="jbh-skeleton jbh-skeleton-product-name"></div>
-                <div class="jbh-skeleton jbh-skeleton-product-type"></div>
+          <div class="overview-card-skeleton">
+            <div class="overview-skeleton-header">
+              <jbh-skeleton class="overview-skeleton-icon" />
+              <div class="overview-skeleton-info">
+                <jbh-skeleton class="overview-skeleton-name" />
+                <jbh-skeleton class="overview-skeleton-type" />
               </div>
             </div>
-            <div class="jbh-skeleton-product-balances">
+            <div class="overview-skeleton-balances">
               @for (j of [1, 2, 3, 4]; track j) {
-                <div class="jbh-skeleton jbh-skeleton-balance"></div>
+                <jbh-skeleton class="overview-skeleton-balance" />
               }
             </div>
-            <div class="jbh-skeleton jbh-skeleton-product-footer"></div>
+            <jbh-skeleton class="overview-skeleton-footer" />
           </div>
         }
       </div>
     }
 
-    <!-- Empty State -->
     @if (!isLoading && products.length === 0) {
-      <div class="jbh-empty-state">
-        <div class="jbh-empty-state-icon">
-          <ion-icon name="wallet-outline"></ion-icon>
-        </div>
-        <h2 class="jbh-empty-state-title">{{ 'products.overview.empty.title' | translate }}</h2>
-        <p class="jbh-empty-state-message">{{ 'products.overview.empty.message' | translate }}</p>
+      <jbh-empty-state
+        icon="wallet-outline"
+        [title]="'products.overview.empty.title' | translate"
+        [message]="'products.overview.empty.message' | translate"
+      >
         @if (canModifyProducts()) {
-          <button class="jbh-button-primary" (click)="navigateToCreate()">
-            <ion-icon name="add-outline"></ion-icon>
-            <span>{{ 'products.overview.empty.createButton' | translate }}</span>
+          <button type="button" jbhButton icon="add-outline" (click)="navigateToCreate()">
+            {{ 'products.overview.empty.createButton' | translate }}
           </button>
         }
-      </div>
+      </jbh-empty-state>
     }
 
-    <!-- Products List -->
     @if (!isLoading && products.length > 0) {
-      <div class="jbh-products-list">
-        @for (product of products; track trackByProductId($index, product)) {
+      <div class="overview-products-list">
+        @for (product of products; track product.id) {
           <app-product-card
             [product]="product"
             [showActions]="canModifyProducts()"
@@ -79,4 +68,4 @@
     }
 
   </div>
-</ion-content>
+</jbh-page>

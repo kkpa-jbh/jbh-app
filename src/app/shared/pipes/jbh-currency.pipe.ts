@@ -1,4 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { formatCurrency } from '@core/formatting';
 
 @Pipe({
   name: 'jbhCurrency',
@@ -6,13 +7,6 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class JbhCurrencyPipe implements PipeTransform {
   transform(value: number | null | undefined, currency = 'USD'): string {
-    if (value === null || value === undefined) return '';
-
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: currency,
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    }).format(value);
+    return formatCurrency(value, currency);
   }
 }

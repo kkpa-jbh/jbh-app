@@ -1,0 +1,105 @@
+{
+  "overrides": [
+    {
+      "files": ["src/**/*.html"],
+      "parser": "@angular-eslint/template-parser"
+    },
+    {
+      "files": ["src/**/*.ts"],
+      "parser": "@typescript-eslint/parser"
+    },
+    {
+      "files": ["src/**/*.html"],
+      "excludedFiles": ["src/app/design-system/**", "src/app/app.component.html"],
+      "parser": "@angular-eslint/template-parser",
+      "rules": {
+        "no-restricted-syntax": [
+          "error",
+          {
+            "selector": "Element[name=/^ion-/]",
+            "message": "Use a jbh-* component from src/app/design-system/."
+          },
+          {
+            "selector": "Element[name=/^ngx-charts-/]",
+            "message": "Use a jbh-* component from src/app/design-system/."
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/**/*.ts"],
+      "excludedFiles": ["src/app/design-system/**", "src/main.ts", "src/app/app.component.ts"],
+      "parser": "@typescript-eslint/parser",
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@ionic/*", "ionicons", "ionicons/*", "@swimlane/ngx-charts"],
+                "message": "Use a jbh-* component or a platform service from @design-system/components or @design-system/platform."
+              },
+              {
+                "group": ["@design-system/*/*"],
+                "message": "Import only from @design-system/components or @design-system/platform."
+              }
+            ]
+          }
+        ],
+        "no-restricted-syntax": [
+          "error",
+          {
+            "selector": "MethodDefinition[key.name=/^ionView/]",
+            "message": "Use (pageEnter) and (pageLeave) on jbh-page instead of Ionic page hooks."
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/app/design-system/**/*.ts"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "@ionic/angular",
+                "message": "Use @ionic/angular/standalone."
+              }
+            ],
+            "patterns": [
+              {
+                "group": ["@ui/*", "@shared/*"],
+                "message": "The design system must not import app features or shared app code."
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/app/core/formatting/**/*.ts"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["@angular/*", "rxjs", "rxjs/*", "@ngx-translate/*", "@capacitor/*", "@swimlane/*"],
+                "message": "Keep src/app/core/formatting free of framework and library imports."
+              },
+              {
+                "group": ["@ionic/*", "ionicons", "ionicons/*", "@swimlane/ngx-charts"],
+                "message": "Use a jbh-* component or a platform service from @design-system/components or @design-system/platform."
+              },
+              {
+                "group": ["@design-system/*/*"],
+                "message": "Import only from @design-system/components or @design-system/platform."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

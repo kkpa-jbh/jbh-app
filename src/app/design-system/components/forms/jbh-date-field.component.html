@@ -1,0 +1,37 @@
+<jbh-field
+  [label]="label()"
+  [controlId]="controlId"
+  [hint]="hint()"
+  [error]="error()"
+  [requirement]="requirement()"
+  [native]="false"
+>
+  <div class="jbh-date-field__wrapper" [class.jbh-date-field__wrapper--error]="hasError()">
+    <jbh-icon class="jbh-date-field__icon" name="calendar-outline" />
+    <ion-datetime-button
+      class="jbh-date-field__trigger"
+      [datetime]="pickerId"
+      [disabled]="disabledByForm()"
+      [attr.aria-labelledby]="labelId"
+      [attr.aria-invalid]="hasError() ? 'true' : null"
+      [attr.aria-describedby]="describedBy()"
+      [attr.aria-required]="requirement() === 'required' ? 'true' : null"
+    ></ion-datetime-button>
+    <ion-modal [keepContentsMounted]="true" (ionModalDidDismiss)="onPickerDismiss()">
+      <ng-template>
+        <ion-datetime
+          [id]="pickerId"
+          [presentation]="presentation()"
+          [value]="value()"
+          [min]="min()"
+          [max]="max()"
+          [disabled]="disabledByForm()"
+          [showDefaultButtons]="true"
+          [cancelText]="'common.cancel' | translate"
+          [doneText]="'common.save' | translate"
+          (ionChange)="onPickerChange($event)"
+        ></ion-datetime>
+      </ng-template>
+    </ion-modal>
+  </div>
+</jbh-field>

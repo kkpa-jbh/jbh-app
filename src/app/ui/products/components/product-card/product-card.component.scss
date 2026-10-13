@@ -66,7 +66,7 @@
   border-radius: var(--jbh-radius-md);
   flex-shrink: 0;
 
-  ion-icon {
+  jbh-icon {
     font-size: 24px;
     color: var(--jbh-text-on-color);
   }
@@ -138,7 +138,7 @@
   font-size: var(--jbh-font-size-xs);
   font-weight: var(--jbh-font-weight-medium);
 
-  ion-icon {
+  jbh-icon {
     font-size: 12px;
   }
 }
@@ -157,32 +157,15 @@
     pointer-events: none;
   }
 
-  .jbh-status-label {
-    font-size: var(--jbh-font-size-xs);
-    color: var(--jbh-text-secondary);
-    font-weight: var(--jbh-font-weight-medium);
+  jbh-toggle {
+    flex: 0 0 auto;
     white-space: nowrap;
-
-    @media (max-width: 480px) {
-      display: none;
-    }
-  }
-
-  ion-toggle {
-    --track-background: var(--jbh-border-color);
-    --track-background-checked: var(--jbh-success-color);
-    --handle-background: var(--jbh-background-white);
-    --handle-background-checked: var(--jbh-background-white);
-    padding: 0;
-    height: 24px;
-    width: 44px;
   }
 
   .jbh-toggle-spinner {
     position: absolute;
     right: -28px;
-    width: 20px;
-    height: 20px;
+    --jbh-spinner-size: 20px;
     color: var(--jbh-primary-color);
   }
 }
@@ -247,7 +230,7 @@
   font-size: var(--jbh-font-size-sm);
   font-weight: var(--jbh-font-weight-medium);
 
-  ion-icon {
+  jbh-icon {
     font-size: 16px;
   }
 
@@ -268,7 +251,7 @@
   font-size: var(--jbh-font-size-xs);
   color: var(--jbh-text-tertiary);
 
-  ion-icon {
+  jbh-icon {
     margin-right: 4px;
     font-size: 12px;
   }
@@ -288,7 +271,7 @@
   cursor: pointer;
   transition: all var(--jbh-transition-base);
 
-  ion-icon {
+  jbh-icon {
     font-size: 14px;
   }
 

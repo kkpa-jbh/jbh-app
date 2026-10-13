@@ -15,12 +15,26 @@
   gap: var(--jbh-spacing-md);
   margin-bottom: var(--jbh-spacing-lg);
 
-  // ion-card-header already pads the text. The ion-card margin and the
-  // .jbh-card padding on top left almost no room for it on phones.
-  ion-card {
-    margin: 0;
-    padding: 0;
+  // The card padding is large for a two-line stat, so keep the compact padding on every width.
+  jbh-card {
+    padding: var(--jbh-spacing-sm);
   }
+}
+
+.jbh-dashboard-stat-label {
+  margin: 0 0 var(--jbh-spacing-xs);
+  font-size: var(--jbh-font-size-xs);
+  font-weight: var(--jbh-font-weight-medium);
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: var(--jbh-text-secondary);
+}
+
+.jbh-dashboard-stat-value {
+  margin: 0;
+  font-size: var(--jbh-font-size-2xl);
+  font-weight: var(--jbh-font-weight-semibold);
+  color: var(--jbh-text-primary);
 }
 
 .jbh-dashboard-actions {

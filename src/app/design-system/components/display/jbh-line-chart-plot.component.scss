@@ -1,0 +1,28 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+// The chart draws its SVG in its own components, so the theme needs ::ng-deep to reach it.
+// :host keeps these rules inside this component.
+:host ::ng-deep {
+  .ngx-charts {
+    text {
+      fill: var(--jbh-text-secondary);
+    }
+
+    .line-series .line {
+      stroke-width: 3px;
+    }
+
+    .grid-panel.odd {
+      fill: var(--jbh-chart-grid-odd);
+    }
+
+    .gridline-path {
+      stroke: var(--jbh-border-color);
+      stroke-dasharray: 4, 4;
+    }
+  }
+}

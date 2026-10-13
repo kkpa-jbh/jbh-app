@@ -1,11 +1,8 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform, inject } from '@angular/core';
+import { parseTranslationKey } from '@core/formatting';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 
-interface TranslationKeyObject {
-  en: string;
-  es: string;
-}
-
+// Impure on purpose: the text must follow a language change. The cache avoids a JSON parse per cycle.
 @Pipe({
   name: 'jbhTranslationKey',
   standalone: true,
@@ -14,9 +11,8 @@ interface TranslationKeyObject {
 export class JbhTranslationKeyPipe implements PipeTransform {
   private cachedJson: string | null = null;
   private cachedLang: string | null = null;
-  private cachedResult: string = '';
-
-  constructor(private translationService: TranslationService) {}
+  private cachedResult = '';
+  private readonly translationService = inject(TranslationService);
 
   transform(jsonString: string | null | undefined): string {
     if (!jsonString) return '';
@@ -27,14 +23,9 @@ export class JbhTranslationKeyPipe implements PipeTransform {
       return this.cachedResult;
     }
 
-    try {
-      const parsed: TranslationKeyObject = JSON.parse(jsonString);
-      this.cachedJson = jsonString;
-      this.cachedLang = currentLang;
-      this.cachedResult = currentLang === 'es' ? parsed.es : parsed.en;
-      return this.cachedResult;
-    } catch {
-      return jsonString;
-    }
+    this.cachedJson = jsonString;
+    this.cachedLang = currentLang;
+    this.cachedResult = parseTranslationKey(jsonString, currentLang);
+    return this.cachedResult;
   }
 }

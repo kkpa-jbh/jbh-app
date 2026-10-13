@@ -1,24 +1,8 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { IonicModule, ToastController, ViewWillEnter, ViewWillLeave } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
-import { addIcons } from 'ionicons';
-import {
-  alertCircleOutline,
-  arrowDownOutline,
-  arrowUpOutline,
-  calendarOutline,
-  cashOutline,
-  close,
-  documentTextOutline,
-  pricetagOutline,
-  saveOutline,
-  syncOutline,
-  walletOutline
-} from 'ionicons/icons';
 import { ProductUseCase } from '@core/domain/use-cases/product.use-case';
 import { CategoryUseCase } from '@core/domain/use-cases/category.use-case';
 import { PreferencesUseCase } from '@core/domain/use-cases/preferences.use-case';
@@ -28,9 +12,20 @@ import { MovementType, AddMovementRequest, CategoryApiRequest } from '@core/doma
 import { JBHError } from '@core/domain/models/jbh-error.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
-import { ViewportService, SelectInterface } from '@core/infrastructure/viewport/viewport.service';
 import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
-import { DecimalFormatDirective } from '@shared/directives';
+import {
+  JbhButtonComponent,
+  JbhCardComponent,
+  JbhDateFieldComponent,
+  JbhIconComponent,
+  JbhNumberFieldComponent,
+  JbhPageHeaderComponent,
+  JbhSelectComponent,
+  JbhSelectOptionComponent,
+  JbhSkeletonComponent,
+  JbhTextareaComponent
+} from '@design-system/components';
+import { JbhPageComponent, ToastService } from '@design-system/platform';
 import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 import { CategorySelectComponent } from '@shared/components/category-select/category-select.component';
 import { ProductSelectComponent } from '@shared/components/product-select/product-select.component';
@@ -41,18 +36,26 @@ import { ProductSelectComponent } from '@shared/components/product-select/produc
   styleUrls: ['./add-movement.page.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
-    IonicModule,
     TranslateModule,
-    DecimalFormatDirective,
+    JbhButtonComponent,
+    JbhCardComponent,
+    JbhDateFieldComponent,
+    JbhIconComponent,
+    JbhNumberFieldComponent,
+    JbhPageComponent,
+    JbhPageHeaderComponent,
+    JbhSelectComponent,
+    JbhSelectOptionComponent,
+    JbhSkeletonComponent,
+    JbhTextareaComponent,
     AppHeaderComponent,
     CategorySelectComponent,
     ProductSelectComponent
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLeave {
+export class AddMovementPage implements OnInit, OnDestroy {
 
   movementForm!: FormGroup;
   product: ProductListItem | null = null;
@@ -71,40 +74,23 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
     { value: 'BALANCE_SNAPSHOT', labelKey: 'products.addMovement.types.balanceSnapshot', icon: 'sync-outline' }
   ];
 
-  selectInterface: SelectInterface = 'action-sheet';
+  /** Latest date the date field accepts. Set when the page shows, so a cached page does not keep an old day. */
+  maxDate = this.today();
 
   private productId: string | null = null;
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private router: Router,
-    private route: ActivatedRoute,
-    private productUseCase: ProductUseCase,
-    private categoryUseCase: CategoryUseCase,
-    private preferencesUseCase: PreferencesUseCase,
-    private translationService: TranslationService,
-    private toastController: ToastController,
-    private logger: LoggerService,
-    private viewportService: ViewportService,
-    private cdr: ChangeDetectorRef,
-    private headerActions: HeaderActionsService
-  ) {
-    this.selectInterface = this.viewportService.selectInterface;
-    addIcons({
-      alertCircleOutline,
-      arrowDownOutline,
-      arrowUpOutline,
-      calendarOutline,
-      cashOutline,
-      close,
-      documentTextOutline,
-      pricetagOutline,
-      saveOutline,
-      syncOutline,
-      walletOutline
-    });
-  }
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly productUseCase = inject(ProductUseCase);
+  private readonly categoryUseCase = inject(CategoryUseCase);
+  private readonly preferencesUseCase = inject(PreferencesUseCase);
+  private readonly translationService = inject(TranslationService);
+  private readonly toast = inject(ToastService);
+  private readonly logger = inject(LoggerService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly headerActions = inject(HeaderActionsService);
 
   ngOnInit(): void {
     this.initForm();
@@ -117,7 +103,8 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
     this.destroy$.complete();
   }
 
-  ionViewWillEnter(): void {
+  onPageEnter(): void {
+    this.maxDate = this.today();
     this.headerActions.setPageConfig({
       title: 'products.addMovement.title'
     });
@@ -143,12 +130,12 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
     }
   }
 
-  ionViewWillLeave(): void {
+  onPageLeave(): void {
     this.headerActions.clearPageConfig();
   }
 
   private initForm(): void {
-    const today = new Date().toISOString().split('T')[0];
+    const today = this.today();
     this.movementForm = this.formBuilder.group({
       productId: ['', [Validators.required]],
       movementType: ['WITHDRAWAL', [Validators.required]],
@@ -247,7 +234,7 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
           this.logger.error('Error loading products:', 'AddMovementPage', error);
           this.isLoadingProducts = false;
           this.movementForm.get('productId')?.enable();
-          this.showToast(this.translationService.instant('products.addMovement.errors.loadProducts'), 'danger');
+          this.toast.show(this.translationService.instant('products.addMovement.errors.loadProducts'), 'error');
           this.cdr.markForCheck();
         }
       });
@@ -264,7 +251,7 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
           this.isLoading = false;
           this.cdr.markForCheck();
           if (!product.allowsMovements) {
-            this.showToast(this.translationService.instant('products.addMovement.errors.notAllowed'), 'danger');
+            this.toast.show(this.translationService.instant('products.addMovement.errors.notAllowed'), 'error');
             this.router.navigate(['/portfolio/overview']);
             return;
           }
@@ -276,7 +263,7 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
         error: (error) => {
           this.logger.error('Error loading product:', 'AddMovementPage', error);
           this.isLoading = false;
-          this.showToast(this.translationService.instant('products.addMovement.errors.loadProduct'), 'danger');
+          this.toast.show(this.translationService.instant('products.addMovement.errors.loadProduct'), 'error');
           this.router.navigate(['/portfolio/overview']);
           this.cdr.markForCheck();
         }
@@ -305,14 +292,10 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
           this.logger.error('Error loading categories:', 'AddMovementPage', error);
           this.isLoadingCategories = false;
           this.movementForm.get('categoryId')?.enable();
-          this.showToast(this.translationService.instant('products.addMovement.errors.loadCategories'), 'danger');
+          this.toast.show(this.translationService.instant('products.addMovement.errors.loadCategories'), 'error');
           this.cdr.markForCheck();
         }
       });
-  }
-
-  getMovementTypeLabel(type: { value: MovementType; labelKey: string }): string {
-    return this.translationService.instant(type.labelKey);
   }
 
   onSubmit(): void {
@@ -358,7 +341,7 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
       .subscribe({
         next: async () => {
           this.isSubmitting = false;
-          await this.showToast(this.translationService.instant('products.addMovement.success'), 'success');
+          await this.toast.show(this.translationService.instant('products.addMovement.success'), 'success');
           this.router.navigate(['/portfolio/overview']);
         },
         error: async (error: JBHError) => {
@@ -368,7 +351,7 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
           const errorMessage = error.isValidationError
             ? error.message
             : this.translationService.instant('products.addMovement.errors.create');
-          await this.showToast(errorMessage, 'danger');
+          await this.toast.show(errorMessage, 'error');
         }
       });
   }
@@ -422,23 +405,7 @@ export class AddMovementPage implements OnInit, OnDestroy, ViewWillEnter, ViewWi
     return true;
   }
 
-  get maxDate(): string {
+  private today(): string {
     return new Date().toISOString().split('T')[0];
-  }
-
-  private async showToast(message: string, color: 'success' | 'danger' | 'warning'): Promise<void> {
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-      color,
-      position: 'bottom',
-      buttons: [
-        {
-          icon: 'close',
-          role: 'cancel'
-        }
-      ]
-    });
-    await toast.present();
   }
 }

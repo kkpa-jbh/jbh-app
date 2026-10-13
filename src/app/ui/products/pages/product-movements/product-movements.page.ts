@@ -1,22 +1,8 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { IonicModule, ViewWillEnter, ViewWillLeave, ToastController, AlertController } from '@ionic/angular';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
+import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
-import { addIcons } from 'ionicons';
-import {
-  listOutline,
-  refreshOutline,
-  trashOutline,
-  arrowUpCircle,
-  arrowDownCircle,
-  informationCircle,
-  chevronForwardOutline,
-  calendarOutline,
-  walletOutline,
-  documentTextOutline
-} from 'ionicons/icons';
 import { ProductMovementUseCase } from '@core/domain/use-cases/product-movement.use-case';
 import { ProductUseCase } from '@core/domain/use-cases/product.use-case';
 import { ProductMovement } from '@core/domain/features/movements';
@@ -25,7 +11,21 @@ import { JBHError } from '@core/domain/models/jbh-error.model';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
-import { SelectInterface, ViewportService } from '@core/infrastructure/viewport/viewport.service';
+import {
+  JbhCardComponent,
+  JbhEmptyStateComponent,
+  JbhIconButtonComponent,
+  JbhIconComponent,
+  JbhPageHeaderComponent,
+  JbhSkeletonComponent,
+  JbhTableCardDirective,
+  JbhTableCellComponent,
+  JbhTableComponent,
+  JbhTableHeadDirective,
+  JbhTableRowComponent,
+  JbhTableRowDirective
+} from '@design-system/components';
+import { DialogService, JbhPageComponent, ToastService } from '@design-system/platform';
 import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 import { JbhDatePipe } from '@shared/pipes/jbh-date.pipe';
 import { JbhCurrencyPipe } from '@shared/pipes/jbh-currency.pipe';
@@ -38,59 +38,53 @@ import { ProductSelectComponent } from '@shared/components/product-select/produc
   styleUrls: ['./product-movements.page.scss'],
   standalone: true,
   imports: [
-    CommonModule,
+    NgClass,
     FormsModule,
-    IonicModule,
     TranslateModule,
     AppHeaderComponent,
     JbhDatePipe,
     JbhCurrencyPipe,
     JbhDisplayNamePipe,
-    ProductSelectComponent
+    ProductSelectComponent,
+    JbhCardComponent,
+    JbhEmptyStateComponent,
+    JbhIconButtonComponent,
+    JbhIconComponent,
+    JbhPageComponent,
+    JbhPageHeaderComponent,
+    JbhSkeletonComponent,
+    JbhTableCardDirective,
+    JbhTableCellComponent,
+    JbhTableComponent,
+    JbhTableHeadDirective,
+    JbhTableRowComponent,
+    JbhTableRowDirective
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProductMovementsPage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLeave {
+export class ProductMovementsPage implements OnInit, OnDestroy {
   products: ProductListItem[] = [];
   movements: ProductMovement[] = [];
   selectedProductId: string = '';
   isLoadingProducts = true;
   isLoadingMovements = false;
-  selectInterface: SelectInterface = 'action-sheet';
 
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private productMovementUseCase: ProductMovementUseCase,
-    private productUseCase: ProductUseCase,
-    private toastController: ToastController,
-    private alertController: AlertController,
-    private logger: LoggerService,
-    private translationService: TranslationService,
-    private headerActions: HeaderActionsService,
-    private viewportService: ViewportService,
-    private cdr: ChangeDetectorRef
-  ) {
-    addIcons({
-      listOutline,
-      refreshOutline,
-      trashOutline,
-      arrowUpCircle,
-      arrowDownCircle,
-      informationCircle,
-      chevronForwardOutline,
-      calendarOutline,
-      walletOutline,
-      documentTextOutline
-    });
-  }
+  private readonly productMovementUseCase = inject(ProductMovementUseCase);
+  private readonly productUseCase = inject(ProductUseCase);
+  private readonly toast = inject(ToastService);
+  private readonly dialog = inject(DialogService);
+  private readonly logger = inject(LoggerService);
+  private readonly translationService = inject(TranslationService);
+  private readonly headerActions = inject(HeaderActionsService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
-    this.selectInterface = this.viewportService.selectInterface;
     this.loadProducts();
   }
 
-  ionViewWillEnter(): void {
+  onPageEnter(): void {
     this.headerActions.setPageConfig({
       title: 'movements.title',
       actions: [
@@ -103,7 +97,7 @@ export class ProductMovementsPage implements OnInit, OnDestroy, ViewWillEnter, V
     });
   }
 
-  ionViewWillLeave(): void {
+  onPageLeave(): void {
     this.headerActions.clearPageConfig();
   }
 
@@ -170,7 +164,7 @@ export class ProductMovementsPage implements OnInit, OnDestroy, ViewWillEnter, V
           const errorMessage = error.isValidationError
             ? error.message
             : this.translationService.instant('movements.errors.load');
-          this.showToast(errorMessage, 'danger');
+          this.toast.show(errorMessage, 'error');
         }
       });
   }
@@ -182,25 +176,18 @@ export class ProductMovementsPage implements OnInit, OnDestroy, ViewWillEnter, V
   }
 
   async confirmDelete(movement: ProductMovement): Promise<void> {
-    const alert = await this.alertController.create({
-      header: this.translationService.instant('movements.delete.title'),
+    const confirmed = await this.dialog.confirm({
+      title: this.translationService.instant('movements.delete.title'),
       message: this.translationService.instant('movements.delete.message', {
         description: movement.description || this.translationService.instant('movements.noDescription')
       }),
-      buttons: [
-        {
-          text: this.translationService.instant('common.cancel'),
-          role: 'cancel'
-        },
-        {
-          text: this.translationService.instant('common.delete'),
-          role: 'destructive',
-          handler: () => this.deleteMovement(movement)
-        }
-      ]
+      confirmText: this.translationService.instant('common.delete'),
+      cancelText: this.translationService.instant('common.cancel'),
+      destructive: true
     });
-
-    await alert.present();
+    if (confirmed) {
+      this.deleteMovement(movement);
+    }
   }
 
   private deleteMovement(movement: ProductMovement): void {
@@ -208,10 +195,7 @@ export class ProductMovementsPage implements OnInit, OnDestroy, ViewWillEnter, V
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
-          this.showToast(
-            this.translationService.instant('movements.delete.success'),
-            'success'
-          );
+          this.toast.show(this.translationService.instant('movements.delete.success'), 'success');
           this.loadMovements();
         },
         error: (error: JBHError) => {
@@ -220,7 +204,7 @@ export class ProductMovementsPage implements OnInit, OnDestroy, ViewWillEnter, V
           const errorMessage = error.isValidationError
             ? error.message
             : this.translationService.instant('movements.errors.delete');
-          this.showToast(errorMessage, 'danger');
+          this.toast.show(errorMessage, 'error');
         }
       });
   }
@@ -237,15 +221,7 @@ export class ProductMovementsPage implements OnInit, OnDestroy, ViewWillEnter, V
     return 'information-circle';
   }
 
-  private async showToast(message: string, color: 'success' | 'danger' | 'warning' = 'success'): Promise<void> {
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-      position: 'top',
-      color
-    });
-    await toast.present();
-  }
+  trackByMovement = (_index: number, movement: ProductMovement): string => movement.id;
 
   get hasSelectedProduct(): boolean {
     return !!this.selectedProductId;

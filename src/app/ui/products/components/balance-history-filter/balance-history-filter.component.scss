@@ -2,7 +2,7 @@
   display: block;
 }
 
-.jbh-balance-filter {
+.balance-filter {
   display: flex;
   flex-direction: column;
   gap: var(--jbh-spacing-md);
@@ -19,7 +19,7 @@
   }
 }
 
-.jbh-balance-filter-field {
+.balance-filter-field {
   flex: 1;
   min-width: 200px;
 
@@ -28,7 +28,7 @@
   }
 }
 
-.jbh-balance-filter-actions {
+.balance-filter-actions {
   display: flex;
   gap: var(--jbh-spacing-sm);
   margin-top: var(--jbh-spacing-sm);

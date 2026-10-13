@@ -1,35 +1,23 @@
 <!-- Show install button only if app is not installed and can be installed -->
 @if (!isInstalled && canInstall) {
   <div class="install-button-wrapper">
-    <ion-item
-      [button]="true"
-      [detail]="false"
-      lines="none"
-      class="jbh-menu-item install-item"
-      (click)="handleInstallClick()">
-      <ion-icon name="download-outline" slot="start" class="jbh-menu-item-icon install-icon"></ion-icon>
-      <ion-label class="jbh-menu-item-label">
-        {{ 'pwa.installApp' | translate }}
-      </ion-label>
-      <div slot="end" class="install-badge">
-        <span>{{ 'pwa.new' | translate }}</span>
-      </div>
-    </ion-item>
+    <jbh-nav-item
+      class="install-item"
+      icon="download-outline"
+      (activate)="handleInstallClick()">
+      {{ 'pwa.installApp' | translate }}
+      <span jbhNavItemEnd class="install-badge">{{ 'pwa.new' | translate }}</span>
+    </jbh-nav-item>
   </div>
 }
 
 <!-- Already installed indicator (optional) -->
 @if (isInstalled) {
   <div class="install-button-wrapper">
-    <ion-item
-      [button]="false"
-      [detail]="false"
-      lines="none"
-      class="jbh-menu-item installed-item">
-      <ion-icon name="checkmark-circle" slot="start" class="jbh-menu-item-icon installed-icon"></ion-icon>
-      <ion-label class="jbh-menu-item-label">
-        {{ 'pwa.appInstalled' | translate }}
-      </ion-label>
-    </ion-item>
+    <jbh-nav-item
+      class="installed-item"
+      icon="checkmark-circle">
+      {{ 'pwa.appInstalled' | translate }}
+    </jbh-nav-item>
   </div>
 }

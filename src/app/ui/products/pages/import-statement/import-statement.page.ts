@@ -1,24 +1,29 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild, inject } from '@angular/core';
+import { DatePipe, PercentPipe } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
-import { IonicModule, ToastController, ViewWillEnter, ViewWillLeave } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
-import { addIcons } from 'ionicons';
-import {
-  close,
-  cloudUploadOutline,
-  documentTextOutline,
-  informationCircleOutline,
-  lockClosedOutline,
-  warningOutline
-} from 'ionicons/icons';
 import { StatementUseCase } from '@core/domain/use-cases/statement.use-case';
 import { StatementClassification } from '@core/domain/features/statements';
 import { JBHError } from '@core/domain/models/jbh-error.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
 import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
+import {
+  JbhAlertComponent,
+  JbhButtonComponent,
+  JbhCardComponent,
+  JbhEmptyStateComponent,
+  JbhIconComponent,
+  JbhPageHeaderComponent,
+  JbhTableCellComponent,
+  JbhTableComponent,
+  JbhTableHeadDirective,
+  JbhTableRowComponent,
+  JbhTableRowDirective,
+  JbhTextFieldComponent
+} from '@design-system/components';
+import { JbhPageComponent, ToastService } from '@design-system/platform';
 import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 import { JbhCurrencyPipe, JbhDisplayNamePipe } from '@shared/pipes';
 
@@ -37,17 +42,30 @@ import { JbhCurrencyPipe, JbhDisplayNamePipe } from '@shared/pipes';
   styleUrls: ['./import-statement.page.scss'],
   standalone: true,
   imports: [
-    CommonModule,
+    DatePipe,
+    PercentPipe,
     ReactiveFormsModule,
-    IonicModule,
     TranslateModule,
+    JbhAlertComponent,
+    JbhButtonComponent,
+    JbhCardComponent,
+    JbhEmptyStateComponent,
+    JbhIconComponent,
+    JbhPageComponent,
+    JbhPageHeaderComponent,
+    JbhTableCellComponent,
+    JbhTableComponent,
+    JbhTableHeadDirective,
+    JbhTableRowComponent,
+    JbhTableRowDirective,
+    JbhTextFieldComponent,
     AppHeaderComponent,
     JbhCurrencyPipe,
     JbhDisplayNamePipe
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ImportStatementPage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLeave {
+export class ImportStatementPage implements OnInit, OnDestroy {
 
   @ViewChild('fileInput') fileInput?: ElementRef<HTMLInputElement>;
 
@@ -58,24 +76,13 @@ export class ImportStatementPage implements OnInit, OnDestroy, ViewWillEnter, Vi
 
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private statementUseCase: StatementUseCase,
-    private translationService: TranslationService,
-    private toastController: ToastController,
-    private logger: LoggerService,
-    private cdr: ChangeDetectorRef,
-    private headerActions: HeaderActionsService
-  ) {
-    addIcons({
-      close,
-      cloudUploadOutline,
-      documentTextOutline,
-      informationCircleOutline,
-      lockClosedOutline,
-      warningOutline
-    });
-  }
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly statementUseCase = inject(StatementUseCase);
+  private readonly translationService = inject(TranslationService);
+  private readonly toast = inject(ToastService);
+  private readonly logger = inject(LoggerService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly headerActions = inject(HeaderActionsService);
 
   ngOnInit(): void {
     this.statementForm = this.formBuilder.group({
@@ -88,14 +95,14 @@ export class ImportStatementPage implements OnInit, OnDestroy, ViewWillEnter, Vi
     this.destroy$.complete();
   }
 
-  ionViewWillEnter(): void {
+  onPageEnter(): void {
     this.headerActions.setPageConfig({
       title: 'transactions.importStatement.title'
     });
     this.resetState();
   }
 
-  ionViewWillLeave(): void {
+  onPageLeave(): void {
     this.headerActions.clearPageConfig();
   }
 
@@ -132,7 +139,7 @@ export class ImportStatementPage implements OnInit, OnDestroy, ViewWillEnter, Vi
           const errorMessage = error.isValidationError
             ? error.message
             : this.translationService.instant('transactions.importStatement.errors.generic');
-          await this.showToast(errorMessage, 'danger');
+          await this.toast.show(errorMessage, 'error');
         }
       });
   }
@@ -147,21 +154,5 @@ export class ImportStatementPage implements OnInit, OnDestroy, ViewWillEnter, Vi
       this.fileInput.nativeElement.value = '';
     }
     this.cdr.markForCheck();
-  }
-
-  private async showToast(message: string, color: 'success' | 'danger' | 'warning'): Promise<void> {
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-      color,
-      position: 'bottom',
-      buttons: [
-        {
-          icon: 'close',
-          role: 'cancel'
-        }
-      ]
-    });
-    await toast.present();
   }
 }

@@ -1,5 +1,6 @@
 {
   "root": true,
+  "extends": ["./.eslintrc.boundary.json"],
   "ignorePatterns": ["projects/**/*"],
   "overrides": [
     {
@@ -21,17 +22,24 @@
         ],
         "@angular-eslint/component-selector": [
           "error",
-          {
-            "type": "element",
-            "prefix": "app",
-            "style": "kebab-case"
-          }
+          [
+            {
+              "type": "element",
+              "prefix": ["app", "jbh"],
+              "style": "kebab-case"
+            },
+            {
+              "type": "attribute",
+              "prefix": ["app", "jbh"],
+              "style": "camelCase"
+            }
+          ]
         ],
         "@angular-eslint/directive-selector": [
           "error",
           {
             "type": "attribute",
-            "prefix": "app",
+            "prefix": ["app", "jbh"],
             "style": "camelCase"
           }
         ]

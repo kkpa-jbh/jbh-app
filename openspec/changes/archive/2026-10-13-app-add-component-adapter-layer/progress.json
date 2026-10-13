@@ -1,0 +1,2111 @@
+{
+  "schema_version": 1,
+  "kind": "change",
+  "change": "app-add-component-adapter-layer",
+  "module": "app",
+  "roadmap": null,
+  "request": "Create a jbh-* component adapter layer for jbh-app so pages stop using Ionic and external libraries directly. Goal: make future migrations easy (upgrade Angular/Ionic, remove Ionic, move to Vue). Agreed scope from discussion: 3 adapter layers — (1) UI components in their own folder, separate from the feature pages under src/app/ui (jbh-text-field, jbh-date-field, jbh-textarea, jbh-toggle, jbh-button, jbh-icon, jbh-table, jbh-card, empty state, skeleton, page header), each with its own CSS; (2) platform adapters (jbh-page shell + page-enter event, DialogService, ToastService, navigation) that hide Ionic-only behavior; (3) framework-free core (formatting logic in plain TS, pipes as thin adapters). Plain HTML (div, p, span, h1, label) is NOT wrapped. Wrap only: external-library elements, styled controls with behavior, repeated markup. Add a guard: a lint/check that forbids <ion-*> tags and @ionic/angular imports inside src/app/ui/**. Proposal, design and tasks only for now — the user wants to review the artifacts before any implementation.",
+  "status": "archived",
+  "rollup": {
+    "current": [],
+    "pending": [],
+    "blocked": [],
+    "done": [
+      "1.1",
+      "1.2",
+      "1.3",
+      "1.4",
+      "2.1",
+      "2.2",
+      "2.3",
+      "2.4",
+      "2.5",
+      "3.8",
+      "3.9",
+      "3.10",
+      "3.11",
+      "3.12",
+      "3.1",
+      "3.2",
+      "3.3",
+      "3.5",
+      "3.6",
+      "3.7",
+      "3.13",
+      "3.14",
+      "3.16",
+      "3.17",
+      "3.4",
+      "3.15",
+      "4.1",
+      "4.2",
+      "5.2",
+      "5.1",
+      "5.3",
+      "6.1",
+      "6.6",
+      "6.3",
+      "6.2",
+      "6.4",
+      "6.5",
+      "6.7",
+      "6.8",
+      "7.1",
+      "7.2",
+      "7.3",
+      "7.4",
+      "7.5",
+      "7.6",
+      "7.7",
+      "8.1",
+      "8.2",
+      "8.3",
+      "8.4",
+      "8.5"
+    ]
+  },
+  "created_at": "2026-10-11T13:07:40Z",
+  "updated_at": "2026-10-13T11:20:32Z",
+  "leader": {
+    "assistant": "Claude Code",
+    "model": "claude-opus-5-5"
+  },
+  "git": {
+    "strategy": "auto",
+    "branch": "ft/CH1-JBH-52-app-add-component-adapter-layer",
+    "base": "main",
+    "ticket": "JBH-52",
+    "ticket_url": "https://linear.app/kkpa/issue/JBH-52/jbh-app-add-a-jbh-component-adapter-layer",
+    "ticket_tracker": "linear",
+    "created_at": "2026-10-11T11:42:00Z"
+  },
+  "tasks": [
+    {
+      "id": "1.1",
+      "title": "Add the path alias `\"@design-system/*\": [\"src/app/design-system/*\"]` to `tsconfig.json` (D1).",
+      "module": "app",
+      "depends_on": [],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "leader",
+      "model": "claude-opus-5-5",
+      "started_at": "2026-10-11T13:20:59Z",
+      "completed_at": "2026-10-11T13:23:44Z",
+      "duration_seconds": 165,
+      "notes": "Alias @design-system/* added to tsconfig.json. tsconfig parsed fine by the ESLint project run; first real use in wave 2, so the 5.3 build confirms it.",
+      "budget": {
+        "five_hour_pct_start": 58,
+        "five_hour_pct_end": 61,
+        "five_hour_pct_delta": 3,
+        "cost_usd_delta": 1.25,
+        "context_pct_end": 15,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one leader bracket for tasks 1.1-1.4 together"
+      }
+    },
+    {
+      "id": "1.2",
+      "title": "Create `.eslintrc.boundary.json` with the 4 overrides of D2, in that order (all rules `error`).",
+      "module": "app",
+      "depends_on": [],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "leader",
+      "model": "claude-opus-5-5",
+      "started_at": "2026-10-11T13:20:59Z",
+      "completed_at": "2026-10-11T13:23:44Z",
+      "duration_seconds": 165,
+      "notes": ".eslintrc.boundary.json with the 4 D2 overrides, plus 2 parser-only overrides first (see D9). .eslintrc.json extends it; selector rules accept app and jbh (checked: jbh-x and button[jbhButton] pass, foo-bar fails).",
+      "budget": {
+        "five_hour_pct_start": 58,
+        "five_hour_pct_end": 61,
+        "five_hour_pct_delta": 3,
+        "cost_usd_delta": 1.25,
+        "context_pct_end": 15,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one leader bracket for tasks 1.1-1.4 together"
+      }
+    },
+    {
+      "id": "1.3",
+      "title": "Add `scripts/check-scss-boundary.mjs` and the `lint:boundary` script to `package.json` (D2).",
+      "module": "app",
+      "depends_on": [],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "leader",
+      "model": "claude-opus-5-5",
+      "started_at": "2026-10-11T13:20:59Z",
+      "completed_at": "2026-10-11T13:23:44Z",
+      "duration_seconds": 165,
+      "notes": "scripts/check-scss-boundary.mjs (no deps, keeps line numbers) and npm script lint:boundary added.",
+      "budget": {
+        "five_hour_pct_start": 58,
+        "five_hour_pct_end": 61,
+        "five_hour_pct_delta": 3,
+        "cost_usd_delta": 1.25,
+        "context_pct_end": 15,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one leader bracket for tasks 1.1-1.4 together"
+      }
+    },
+    {
+      "id": "1.4",
+      "title": "Run the 8 stdin checks of the \"Guard\" test contract; each result must match.",
+      "module": "app",
+      "depends_on": [
+        "1.2",
+        "1.3"
+      ],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "leader",
+      "model": "claude-opus-5-5",
+      "started_at": "2026-10-11T13:20:59Z",
+      "completed_at": "2026-10-11T13:23:44Z",
+      "duration_seconds": 165,
+      "notes": "All 8 guard stdin checks match, plus 4 extra (allowed barrel, main.ts and app.component.html exempt, ngx-charts in @if). Baseline: ESLint 478 errors in 71 files (88 imports, 390 tags/hooks), SCSS 33. No parse errors.",
+      "budget": {
+        "five_hour_pct_start": 58,
+        "five_hour_pct_end": 61,
+        "five_hour_pct_delta": 3,
+        "cost_usd_delta": 1.25,
+        "context_pct_end": 15,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one leader bracket for tasks 1.1-1.4 together"
+      }
+    },
+    {
+      "id": "2.1",
+      "title": "Create `src/app/core/formatting/` with `currency.ts`, `growth.ts`, `date.ts`, `relative-time.ts`, `display-name.ts`, `translation-key.ts`, …",
+      "module": "app",
+      "depends_on": [
+        "1.2"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T13:27:23Z",
+      "completed_at": "2026-10-11T13:29:30Z",
+      "duration_seconds": 127,
+      "notes": "8 files in core/formatting with the D15 functions; plain TS, no framework import; ESLint clean. Verified by the 2.2 specs (not run yet).",
+      "budget": {
+        "five_hour_pct_start": 64,
+        "five_hour_pct_end": 70,
+        "five_hour_pct_delta": 6,
+        "cost_usd_delta": 1.61,
+        "context_pct_end": 13,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker for tasks 2.1-2.5; wave delta copied onto each task"
+      }
+    },
+    {
+      "id": "2.2",
+      "title": "Write one `*.spec.ts` per file of 2.1 with the exact values of the \"Formatting core\" test contract.",
+      "module": "app",
+      "depends_on": [
+        "2.1"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T13:29:30Z",
+      "completed_at": "2026-10-11T13:30:30Z",
+      "duration_seconds": 60,
+      "notes": "7 specs, one per core file, with the exact contract values. Not run. parseDecimal now strips thousands separators and returns null for '-' (old directive did neither).",
+      "budget": {
+        "five_hour_pct_start": 64,
+        "five_hour_pct_end": 70,
+        "five_hour_pct_delta": 6,
+        "cost_usd_delta": 1.61,
+        "context_pct_end": 13,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker for tasks 2.1-2.5; wave delta copied onto each task"
+      }
+    },
+    {
+      "id": "2.3",
+      "title": "Create the layer skeleton: `src/app/design-system/components/index.ts`, `components/internal/next-id.ts` (+ spec: two calls give different …",
+      "module": "app",
+      "depends_on": [
+        "1.1"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T13:30:30Z",
+      "completed_at": "2026-10-11T13:30:50Z",
+      "duration_seconds": 20,
+      "notes": "Layer skeleton: components and platform barrels, internal/next-id.ts + spec. Not run.",
+      "budget": {
+        "five_hour_pct_start": 64,
+        "five_hour_pct_end": 70,
+        "five_hour_pct_delta": 6,
+        "cost_usd_delta": 1.61,
+        "context_pct_end": 13,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker for tasks 2.1-2.5; wave delta copied onto each task"
+      }
+    },
+    {
+      "id": "2.4",
+      "title": "Build `components/icon/`: `icon-registry.ts` with every icon name used today (template names, `getTypeIcon()`, `getMovementIcon()`, `getSta…",
+      "module": "app",
+      "depends_on": [
+        "2.3"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T13:30:50Z",
+      "completed_at": "2026-10-11T13:31:30Z",
+      "duration_seconds": 40,
+      "notes": "icon-registry.ts with 74 names (adds help-circle-outline, chevron-up/down-outline), idempotent registerJbhIcons(), jbh-icon, jbh-spinner, 3 specs. Static scan only: wave 6 must check runtime-built names. Not run.",
+      "budget": {
+        "five_hour_pct_start": 64,
+        "five_hour_pct_end": 70,
+        "five_hour_pct_delta": 6,
+        "cost_usd_delta": 1.61,
+        "context_pct_end": 13,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker for tasks 2.1-2.5; wave delta copied onto each task"
+      }
+    },
+    {
+      "id": "2.5",
+      "title": "Build the viewport helper in `src/app/design-system/platform/viewport/` (`wide` signal, ≥ 1024 px, 100 ms debounced resize, no Ionic)",
+      "module": "app",
+      "depends_on": [
+        "2.3"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T13:31:00Z",
+      "completed_at": "2026-10-11T13:31:41Z",
+      "duration_seconds": 41,
+      "notes": "JbhViewportService: wide signal (>= 1024 px, WIDE_VIEWPORT_MIN_WIDTH), 100 ms debounce, no Ionic; spec uses spyOnProperty on innerWidth. Exported from platform/index.ts. Not run.",
+      "budget": {
+        "five_hour_pct_start": 64,
+        "five_hour_pct_end": 70,
+        "five_hour_pct_delta": 6,
+        "cost_usd_delta": 1.61,
+        "context_pct_end": 13,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker for tasks 2.1-2.5; wave delta copied onto each task"
+      }
+    },
+    {
+      "id": "3.1",
+      "title": "`jbh-field` (label, requirement marker, hint, error, ids)",
+      "module": "app",
+      "depends_on": [
+        "2.3",
+        "2.4"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T16:29:12Z",
+      "completed_at": "2026-10-11T20:38:56Z",
+      "duration_seconds": 14984,
+      "notes": "jbh-field (label, requirement marker, hint, error, ids) + field-aria.ts; 6th input native (false = aria-labelledby, no label for). Spec written.",
+      "budget": {
+        "five_hour_pct_start": null,
+        "five_hour_pct_end": 63,
+        "five_hour_pct_delta": null,
+        "cost_usd_delta": 13.24,
+        "context_pct_end": 20,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "parallel Tracks A+C share one delta; window was new at start (pct null), so delta is about 63"
+      }
+    },
+    {
+      "id": "3.2",
+      "title": "`jbh-text-field` (CVA, native input, password reveal, `[jbhFieldSuffix]` slot)",
+      "module": "app",
+      "depends_on": [
+        "3.1"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T16:29:12Z",
+      "completed_at": "2026-10-11T20:38:56Z",
+      "duration_seconds": 14984,
+      "notes": "jbh-text-field: CVA, native input, password reveal (common.showPassword/hidePassword), [jbhFieldSuffix] slot, aria attributes. Shares _control.scss mixin. Spec written.",
+      "budget": {
+        "five_hour_pct_start": null,
+        "five_hour_pct_end": 63,
+        "five_hour_pct_delta": null,
+        "cost_usd_delta": 13.24,
+        "context_pct_end": 20,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "parallel Tracks A+C share one delta; window was new at start (pct null), so delta is about 63"
+      }
+    },
+    {
+      "id": "3.3",
+      "title": "`jbh-number-field` (CVA, core decimal helpers, `APP_CONFIG_TOKEN` separators)",
+      "module": "app",
+      "depends_on": [
+        "3.1",
+        "2.1"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T16:29:12Z",
+      "completed_at": "2026-10-11T20:38:56Z",
+      "duration_seconds": 14984,
+      "notes": "jbh-number-field: core decimal helpers, APP_CONFIG_TOKEN separators, number|null; rejects bad keys/pastes; strips grouping on focus, groups on blur; skips unchanged blur. Spec written.",
+      "budget": {
+        "five_hour_pct_start": null,
+        "five_hour_pct_end": 63,
+        "five_hour_pct_delta": null,
+        "cost_usd_delta": 13.24,
+        "context_pct_end": 20,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "parallel Tracks A+C share one delta; window was new at start (pct null), so delta is about 63"
+      }
+    },
+    {
+      "id": "3.4",
+      "title": "`jbh-textarea` (CVA, auto-grow, counter with `maxlength`)",
+      "module": "app",
+      "depends_on": [
+        "3.1"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T16:29:12Z",
+      "completed_at": "2026-10-11T20:38:56Z",
+      "duration_seconds": 14984,
+      "notes": "jbh-textarea on ion-textarea: auto-grow, counter with maxlength (string accepted), counter sits before the error. Spec written.",
+      "budget": {
+        "five_hour_pct_start": null,
+        "five_hour_pct_end": 63,
+        "five_hour_pct_delta": null,
+        "cost_usd_delta": 13.24,
+        "context_pct_end": 20,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "parallel Tracks A+C share one delta; window was new at start (pct null), so delta is about 63"
+      }
+    },
+    {
+      "id": "3.5",
+      "title": "`jbh-date-field` (CVA, unique picker id, `toDateValue`, translated picker buttons)",
+      "module": "app",
+      "depends_on": [
+        "3.1",
+        "2.1"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T16:29:12Z",
+      "completed_at": "2026-10-11T20:38:56Z",
+      "duration_seconds": 14984,
+      "notes": "jbh-date-field: unique picker id, toDateValue, translated buttons, touched on dismiss, calendar icon always on. Aria set on Ionic host: check it reaches the inner control (wave 5 gate). Spec written.",
+      "budget": {
+        "five_hour_pct_start": null,
+        "five_hour_pct_end": 63,
+        "five_hour_pct_delta": null,
+        "cost_usd_delta": 13.24,
+        "context_pct_end": 20,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "parallel Tracks A+C share one delta; window was new at start (pct null), so delta is about 63"
+      }
+    },
+    {
+      "id": "3.6",
+      "title": "`jbh-select` and `jbh-select-option` (CVA, projected options, overlay type from the viewport helper, label as overlay header, loading)",
+      "module": "app",
+      "depends_on": [
+        "3.1",
+        "2.5"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T16:29:12Z",
+      "completed_at": "2026-10-11T20:38:56Z",
+      "duration_seconds": 14984,
+      "notes": "jbh-select + jbh-select-option (no spec): overlay from viewport wide, label as header, loading spinner. Imports @design-system/platform/viewport directly to avoid a barrel cycle. Spec written.",
+      "budget": {
+        "five_hour_pct_start": null,
+        "five_hour_pct_end": 63,
+        "five_hour_pct_delta": null,
+        "cost_usd_delta": 13.24,
+        "context_pct_end": 20,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "parallel Tracks A+C share one delta; window was new at start (pct null), so delta is about 63"
+      }
+    },
+    {
+      "id": "3.7",
+      "title": "`jbh-toggle` (CVA, `checked` model, `disabled` input, required label)",
+      "module": "app",
+      "depends_on": [
+        "3.1"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T16:29:12Z",
+      "completed_at": "2026-10-11T20:38:56Z",
+      "duration_seconds": 14984,
+      "notes": "jbh-toggle: CVA, checked model, disabled input, required label; no jbh-field, no outer margin. Ignores same-value ionChange. Spec written.",
+      "budget": {
+        "five_hour_pct_start": null,
+        "five_hour_pct_end": 63,
+        "five_hour_pct_delta": null,
+        "cost_usd_delta": 13.24,
+        "context_pct_end": 20,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "parallel Tracks A+C share one delta; window was new at start (pct null), so delta is about 63"
+      }
+    },
+    {
+      "id": "3.8",
+      "title": "`button[jbhButton]` / `a[jbhButton]` / `label[jbhButton]` and `button[jbhIconButton]` + specs (D5).",
+      "module": "app",
+      "depends_on": [
+        "2.3",
+        "2.4"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T13:43:22Z",
+      "completed_at": "2026-10-11T13:51:43Z",
+      "duration_seconds": 501,
+      "notes": "button/a/label[jbhButton] and button[jbhIconButton] + specs (variants, block, loading spinner, aria-busy, native submit). Sizes left out: no template uses them. Adds :focus-visible outline.",
+      "budget": {
+        "five_hour_pct_start": 72,
+        "five_hour_pct_end": 81,
+        "five_hour_pct_delta": 9,
+        "cost_usd_delta": 2.48,
+        "context_pct_end": 15,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker for 3.8-3.12; wave delta copied onto each task"
+      }
+    },
+    {
+      "id": "3.9",
+      "title": "`jbh-card`, `jbh-alert`, `jbh-empty-state`, `jbh-skeleton`, `jbh-page-header` + specs.",
+      "module": "app",
+      "depends_on": [
+        "2.3",
+        "2.4"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T13:43:22Z",
+      "completed_at": "2026-10-11T13:51:43Z",
+      "duration_seconds": 501,
+      "notes": "jbh-card, jbh-alert, jbh-empty-state, jbh-skeleton, jbh-page-header + specs. title input sets [attr.title]=null to avoid a native tooltip. Skeleton table shape 400 px.",
+      "budget": {
+        "five_hour_pct_start": 72,
+        "five_hour_pct_end": 81,
+        "five_hour_pct_delta": 9,
+        "cost_usd_delta": 2.48,
+        "context_pct_end": 15,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker for 3.8-3.12; wave delta copied onto each task"
+      }
+    },
+    {
+      "id": "3.10",
+      "title": "`jbh-table`, `jbh-table-row`, `jbh-table-cell` and the `jbhTableHead` / `jbhTableRow` / `jbhTableCard` template directives + spec (D11).",
+      "module": "app",
+      "depends_on": [
+        "2.3",
+        "2.4"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T13:43:22Z",
+      "completed_at": "2026-10-11T13:51:43Z",
+      "duration_seconds": 501,
+      "notes": "jbh-table, jbh-table-row, jbh-table-cell, 3 template directives + spec (roles, card list below 768 px, empty rows, trackBy). Row context typed any. No outer margin.",
+      "budget": {
+        "five_hour_pct_start": 72,
+        "five_hour_pct_end": 81,
+        "five_hour_pct_delta": 9,
+        "cost_usd_delta": 2.48,
+        "context_pct_end": 15,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker for 3.8-3.12; wave delta copied onto each task"
+      }
+    },
+    {
+      "id": "3.11",
+      "title": "`jbh-segment` and `jbh-nav-item` + specs (D21).",
+      "module": "app",
+      "depends_on": [
+        "2.3",
+        "2.4"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T13:43:22Z",
+      "completed_at": "2026-10-11T13:51:43Z",
+      "duration_seconds": 501,
+      "notes": "jbh-segment (casts ionChange Event) and jbh-nav-item (activate is output<void>, aria-current when active) + specs. Wave 6.6 must check handleMenuItemClick event use.",
+      "budget": {
+        "five_hour_pct_start": 72,
+        "five_hour_pct_end": 81,
+        "five_hour_pct_delta": 9,
+        "cost_usd_delta": 2.48,
+        "context_pct_end": 15,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker for 3.8-3.12; wave delta copied onto each task"
+      }
+    },
+    {
+      "id": "3.12",
+      "title": "`jbh-line-chart` (ngx-charts, animations off)",
+      "module": "app",
+      "depends_on": [
+        "2.3",
+        "2.4"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T13:43:22Z",
+      "completed_at": "2026-10-11T13:51:43Z",
+      "duration_seconds": 501,
+      "notes": "jbh-line-chart: ngx-charts, animations off, hex palette, ::ng-deep kept inside the layer; spec with provideNoopAnimations().",
+      "budget": {
+        "five_hour_pct_start": 72,
+        "five_hour_pct_end": 81,
+        "five_hour_pct_delta": 9,
+        "cost_usd_delta": 2.48,
+        "context_pct_end": 15,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker for 3.8-3.12; wave delta copied onto each task"
+      }
+    },
+    {
+      "id": "3.13",
+      "title": "`jbh-page` (header slot, `pageEnter` / `pageLeave` from the parent element, `--jbh-page-*` properties)",
+      "module": "app",
+      "depends_on": [
+        "2.3",
+        "2.4"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T16:29:12Z",
+      "completed_at": "2026-10-11T17:17:52Z",
+      "duration_seconds": 2920,
+      "notes": "jbh-page: header slot, pageEnter/pageLeave from parentElement via Renderer2.listen, removed on destroy; --jbh-page-* properties. Spec 5 cases.",
+      "budget": {
+        "five_hour_pct_start": null,
+        "five_hour_pct_end": 63,
+        "five_hour_pct_delta": null,
+        "cost_usd_delta": 13.24,
+        "context_pct_end": 20,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "parallel Tracks A+C share one delta; window was new at start (pct null), so delta is about 63"
+      }
+    },
+    {
+      "id": "3.14",
+      "title": "`jbh-toolbar` (title, back / menu button, `backHref`, actions)",
+      "module": "app",
+      "depends_on": [
+        "2.3",
+        "2.4"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T16:29:12Z",
+      "completed_at": "2026-10-11T17:17:52Z",
+      "duration_seconds": 2920,
+      "notes": "jbh-toolbar: title (attr.title null), back or menu button, backHref, actions (JbhToolbarAction); action icon 24 px is a guess, check by eye. Spec 5 cases.",
+      "budget": {
+        "five_hour_pct_start": null,
+        "five_hour_pct_end": 63,
+        "five_hour_pct_delta": null,
+        "cost_usd_delta": 13.24,
+        "context_pct_end": 20,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "parallel Tracks A+C share one delta; window was new at start (pct null), so delta is about 63"
+      }
+    },
+    {
+      "id": "3.15",
+      "title": "`ToastService`, `DialogService`, `NavigationService` + specs (D13).",
+      "module": "app",
+      "depends_on": [
+        "2.3",
+        "2.4"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T16:29:12Z",
+      "completed_at": "2026-10-11T17:17:52Z",
+      "duration_seconds": 2920,
+      "notes": "ToastService, DialogService, NavigationService with controller-spy specs. DialogService.open adds optional cssClass (needed by 6.6 iOS modal), beyond the contract.",
+      "budget": {
+        "five_hour_pct_start": null,
+        "five_hour_pct_end": 63,
+        "five_hour_pct_delta": null,
+        "cost_usd_delta": 13.24,
+        "context_pct_end": 20,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "parallel Tracks A+C share one delta; window was new at start (pct null), so delta is about 63"
+      }
+    },
+    {
+      "id": "3.16",
+      "title": "`DevicePlatform` port in `core/infrastructure/platform/device-platform.ts`; `IonicDevicePlatform` + spec; binding in `src/main.ts`; rewire …",
+      "module": "app",
+      "depends_on": [
+        "2.3",
+        "2.4"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T16:29:12Z",
+      "completed_at": "2026-10-11T17:17:52Z",
+      "duration_seconds": 2920,
+      "notes": "DevicePlatform port in core/infrastructure/platform (no providedIn), IonicDevicePlatform + spec, bound in main.ts; token-refresh, push, pwa services use the port. 9 old prefer-inject errors remain.",
+      "budget": {
+        "five_hour_pct_start": null,
+        "five_hour_pct_end": 63,
+        "five_hour_pct_delta": null,
+        "cost_usd_delta": 13.24,
+        "context_pct_end": 20,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "parallel Tracks A+C share one delta; window was new at start (pct null), so delta is about 63"
+      }
+    },
+    {
+      "id": "3.17",
+      "title": "Add optional `defaultBackHref` to `PageHeaderConfig` in `header-actions.service.ts`.",
+      "module": "app",
+      "depends_on": [
+        "2.3",
+        "2.4"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-11T16:29:12Z",
+      "completed_at": "2026-10-11T17:17:52Z",
+      "duration_seconds": 2920,
+      "notes": "defaultBackHref added to PageHeaderConfig; common.showPassword and common.hidePassword added to en.json and es.json, sorted.",
+      "budget": {
+        "five_hour_pct_start": null,
+        "five_hour_pct_end": 63,
+        "five_hour_pct_delta": null,
+        "cost_usd_delta": 13.24,
+        "context_pct_end": 20,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "parallel Tracks A+C share one delta; window was new at start (pct null), so delta is about 63"
+      }
+    },
+    {
+      "id": "4.1",
+      "title": "Make the 7 pipes in `src/app/shared/pipes/` thin adapters over `@core/formatting` (same names, purity and output).",
+      "module": "app",
+      "depends_on": [
+        "2.1"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T13:27:05Z",
+      "completed_at": "2026-10-12T13:28:30Z",
+      "duration_seconds": 85,
+      "notes": "All 7 pipes delegate to @core/formatting; names, purity and output unchanged. jbhDisplayName and jbhTranslationKey stay impure, cache kept. JbhDatePipe statics delegate to core (removal: 7.2). Two pipes moved to inject(). ESLint clean.",
+      "budget": {
+        "five_hour_pct_start": 6,
+        "five_hour_pct_end": 9,
+        "five_hour_pct_delta": 3,
+        "cost_usd_delta": 0.78,
+        "context_pct_end": 12,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker ran 4.1 and 4.2; one shared delta"
+      }
+    },
+    {
+      "id": "4.2",
+      "title": "Rebuild `app-category-select` and `app-product-select` on `jbh-select`, `jbh-select-option` and `jbh-icon`.",
+      "module": "app",
+      "depends_on": [
+        "3.6"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T13:27:05Z",
+      "completed_at": "2026-10-12T13:28:30Z",
+      "duration_seconds": 85,
+      "notes": "category-select and product-select on jbh-select, jbh-select-option, jbh-icon via an inner FormControl. Hint and emptyOption kept; selectInterface unused. Added optional errorMessage to product-select (beyond the task). isLoading now disables category-select. ESLint clean.",
+      "budget": {
+        "five_hour_pct_start": 6,
+        "five_hour_pct_end": 9,
+        "five_hour_pct_delta": 3,
+        "cost_usd_delta": 0.78,
+        "context_pct_end": 12,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker ran 4.1 and 4.2; one shared delta"
+      }
+    },
+    {
+      "id": "5.1",
+      "title": "Migrate `src/app/ui/products/pages/add-movement/` (HTML, TS, SCSS): `jbh-page` root with `<app-header jbhPageHeader>`; `(pageEnter)` / `(pa…",
+      "module": "app",
+      "depends_on": [
+        "2.1",
+        "2.2",
+        "2.3",
+        "2.4",
+        "2.5",
+        "3.1",
+        "3.2",
+        "3.3",
+        "3.4",
+        "3.5",
+        "3.6",
+        "3.7",
+        "3.8",
+        "3.9",
+        "3.10",
+        "3.11",
+        "3.12",
+        "3.13",
+        "3.14",
+        "3.15",
+        "3.16",
+        "3.17",
+        "4.1",
+        "4.2"
+      ],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T13:32:42Z",
+      "completed_at": "2026-10-12T13:34:18Z",
+      "duration_seconds": 96,
+      "notes": "add-movement on jbh-page, jbh-card/page-header form, jbh-select, jbh-date-field (max today), two jbh-number-field, jbh-textarea (500), button[jbhButton], jbh-skeleton, ToastService. Ionic, ViewportService, DecimalFormatDirective removed. maxDate refreshed on pageEnter. jbh-form-animated stagger dropped. Awaits gate 5.3.",
+      "budget": {
+        "five_hour_pct_start": 11,
+        "five_hour_pct_end": 15,
+        "five_hour_pct_delta": 4,
+        "cost_usd_delta": 0.99,
+        "context_pct_end": 17,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker ran 5.1 and 5.2; one shared delta"
+      }
+    },
+    {
+      "id": "5.2",
+      "title": "Run `npx eslint src/app/ui/products/pages/add-movement`: zero boundary errors.",
+      "module": "app",
+      "depends_on": [
+        "5.1"
+      ],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T13:34:18Z",
+      "completed_at": "2026-10-12T13:34:18Z",
+      "duration_seconds": 0,
+      "notes": "npx eslint on add-movement: zero errors; guard confirmed active with a probe ion-button. SCSS boundary script clean. Leader re-ran ESLint: clean.",
+      "budget": {
+        "five_hour_pct_start": 11,
+        "five_hour_pct_end": 15,
+        "five_hour_pct_delta": 4,
+        "cost_usd_delta": 0.99,
+        "context_pct_end": 17,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker ran 5.1 and 5.2; one shared delta"
+      }
+    },
+    {
+      "id": "5.3",
+      "title": "Gate before wave 6.",
+      "module": "app",
+      "depends_on": [
+        "5.2"
+      ],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "leader",
+      "model": "claude-opus-5-5",
+      "started_at": "2026-10-12T15:20:00Z",
+      "completed_at": "2026-10-12T15:39:05Z",
+      "duration_seconds": 1145,
+      "notes": "User confirmed gate 5.3 after the leader ran checks a-h in Chrome. Light mode and 2 layout points left to the user. Old bugs on main noted, out of scope.",
+      "budget": null
+    },
+    {
+      "id": "6.1",
+      "title": "Auth: `src/app/ui/auth/pages/login`, `src/app/ui/auth/pages/signup` (password reveal from `jbh-text-field`, status icons and spinners in `[…",
+      "module": "app",
+      "depends_on": [
+        "5.3"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T15:45:05Z",
+      "completed_at": "2026-10-12T15:49:48Z",
+      "duration_seconds": 283,
+      "notes": "Login and signup on jbh-page, text fields with built-in password reveal, jbh-alert, status icons in jbhFieldSuffix. Google overlay kept; its hover rules copied into page SCSS (global selector uses the old class, fix in wave 7).",
+      "budget": {
+        "five_hour_pct_start": 38,
+        "five_hour_pct_end": 71,
+        "five_hour_pct_delta": 33,
+        "cost_usd_delta": 8,
+        "context_pct_end": 14,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "wave delta: 4 parallel workers (6.1-6.7) jointly"
+      }
+    },
+    {
+      "id": "6.2",
+      "title": "Dashboard, reports, settings and profile: `src/app/ui/dashboard/pages/dashboard` (`ion-card` → `jbh-card`), `src/app/ui/reports/pages/growt…",
+      "module": "app",
+      "depends_on": [
+        "5.3"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T15:49:16Z",
+      "completed_at": "2026-10-12T15:50:58Z",
+      "duration_seconds": 102,
+      "notes": "dashboard, growth-analysis, categories, team-preferences, profile moved: jbh-card, jbh-segment, jbh-empty-state, jbh-skeleton, jbh-toggle, jbh-select, jbh-number-field. Leader added profile.savingsGoal.required (D22).",
+      "budget": {
+        "five_hour_pct_start": 38,
+        "five_hour_pct_end": 71,
+        "five_hour_pct_delta": 33,
+        "cost_usd_delta": 8,
+        "context_pct_end": 14,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "wave delta: 4 parallel workers (6.1-6.7) jointly"
+      }
+    },
+    {
+      "id": "6.3",
+      "title": "Product forms: `src/app/ui/products/pages/create`, `edit`, `transfer`, `import-statement` (metadata fields by value type: `jbh-text-field`,…",
+      "module": "app",
+      "depends_on": [
+        "5.3"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T15:45:30Z",
+      "completed_at": "2026-10-12T15:49:16Z",
+      "duration_seconds": 226,
+      "notes": "create, edit, transfer, import-statement on jbh-page. Metadata fields by value type; jbh-table result; label[jbhButton] file picker; transfer passes errorMessage (D17). Edit: product type is a disabled text field.",
+      "budget": {
+        "five_hour_pct_start": 38,
+        "five_hour_pct_end": 71,
+        "five_hour_pct_delta": 33,
+        "cost_usd_delta": 8,
+        "context_pct_end": 14,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "wave delta: 4 parallel workers (6.1-6.7) jointly"
+      }
+    },
+    {
+      "id": "6.4",
+      "title": "Product lists and reports: `src/app/ui/products/pages/overview` with `components/product-card` and `components/balance-summary-cards`; `pag…",
+      "module": "app",
+      "depends_on": [
+        "5.3"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T15:45:05Z",
+      "completed_at": "2026-10-12T15:51:00Z",
+      "duration_seconds": 355,
+      "notes": "overview, product-movements, balance-history and 5 components moved: jbh-table with card template, DialogService.confirm, jbh-line-chart, core formatCurrency/formatPeriod. Layer notes for review: table head double padding, jbh-toggle colour and label.",
+      "budget": {
+        "five_hour_pct_start": 38,
+        "five_hour_pct_end": 71,
+        "five_hour_pct_delta": 33,
+        "cost_usd_delta": 8,
+        "context_pct_end": 14,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "wave delta: 4 parallel workers (6.1-6.7) jointly"
+      }
+    },
+    {
+      "id": "6.5",
+      "title": "Teams: `src/app/ui/teams/pages/create`, `edit` (standard header with `showBackButton: true` and `defaultBackHref: '/settings/teams/overview…",
+      "module": "app",
+      "depends_on": [
+        "5.3"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T15:45:05Z",
+      "completed_at": "2026-10-12T15:52:30Z",
+      "duration_seconds": 445,
+      "notes": "Five teams pages moved; three confirms via DialogService; members on jbh-table. Leader fixed 2 template type errors (D21). Undefined page background vars dropped. Times: one serial worker, completion approx.",
+      "budget": {
+        "five_hour_pct_start": 38,
+        "five_hour_pct_end": 71,
+        "five_hour_pct_delta": 33,
+        "cost_usd_delta": 8,
+        "context_pct_end": 14,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "wave delta: 4 parallel workers (6.1-6.7) jointly"
+      }
+    },
+    {
+      "id": "6.6",
+      "title": "Shared chrome: `src/app/shared/components/app-header` (`jbh-toolbar`, pass `defaultBackHref`), `app-menu` (`jbh-nav-item`, `NavigationServi…",
+      "module": "app",
+      "depends_on": [
+        "5.3"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T15:45:05Z",
+      "completed_at": "2026-10-12T15:49:48Z",
+      "duration_seconds": 283,
+      "notes": "Header, menu, install button, iOS modal, context switcher on jbh-toolbar, jbh-nav-item, jbh-select and platform services. Inputs unchanged; defaultBackHref new. Install pulse and custom toasts gone. Times: one serial worker, split unknown.",
+      "budget": {
+        "five_hour_pct_start": 38,
+        "five_hour_pct_end": 71,
+        "five_hour_pct_delta": 33,
+        "cost_usd_delta": 8,
+        "context_pct_end": 14,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "wave delta: 4 parallel workers (6.1-6.7) jointly"
+      }
+    },
+    {
+      "id": "6.7",
+      "title": "Delete dead code: `src/app/ui/home/` (page, template, SCSS, spec)",
+      "module": "app",
+      "depends_on": [
+        "5.3"
+      ],
+      "parallel_ok": true,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T15:45:05Z",
+      "completed_at": "2026-10-12T15:52:30Z",
+      "duration_seconds": 445,
+      "notes": "Deleted ui/home and portfolio-top-banner; removed home.* keys from en/es. /home redirect stays. Docs ux-design-system.md still mention the banner (wave 8). Times: one serial worker, split unknown.",
+      "budget": {
+        "five_hour_pct_start": 38,
+        "five_hour_pct_end": 71,
+        "five_hour_pct_delta": 33,
+        "cost_usd_delta": 8,
+        "context_pct_end": 14,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "wave delta: 4 parallel workers (6.1-6.7) jointly"
+      }
+    },
+    {
+      "id": "6.8",
+      "title": "After merging wave 6, run `npm run lint:boundary`: zero violations expected.",
+      "module": "app",
+      "depends_on": [
+        "6.1",
+        "6.2",
+        "6.3",
+        "6.4",
+        "6.5",
+        "6.6",
+        "6.7"
+      ],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "leader",
+      "model": "claude-opus-5-5",
+      "started_at": "2026-10-12T15:55:10Z",
+      "completed_at": "2026-10-12T16:09:02Z",
+      "duration_seconds": 832,
+      "notes": "Re-run after 7.1 (D23): npm run lint:boundary exit 0. ESLint boundary: no output; SCSS boundary: no violations.",
+      "budget": null
+    },
+    {
+      "id": "7.1",
+      "title": "Remove the unused `selectInterface` input from `app-category-select` and `app-product-select`.",
+      "module": "app",
+      "depends_on": [
+        "6.8"
+      ],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T16:01:02Z",
+      "completed_at": "2026-10-12T16:02:30Z",
+      "duration_seconds": 88,
+      "notes": "Removed the unused selectInterface input from both selects; deleted core/infrastructure/viewport/. No importers left.",
+      "budget": {
+        "five_hour_pct_start": 74,
+        "five_hour_pct_end": 82,
+        "five_hour_pct_delta": 8,
+        "cost_usd_delta": 2.24,
+        "context_pct_end": 13,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker ran 7.1-7.7; one shared wave delta"
+      }
+    },
+    {
+      "id": "7.2",
+      "title": "Remove the `JbhDatePipe` static helpers after checking no caller is left.",
+      "module": "app",
+      "depends_on": [
+        "7.1"
+      ],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T16:02:30Z",
+      "completed_at": "2026-10-12T16:03:30Z",
+      "duration_seconds": 60,
+      "notes": "Removed the 7 JbhDatePipe static helpers; no caller left. The pipe imports only DateFormat and formatDate from @core/formatting.",
+      "budget": {
+        "five_hour_pct_start": 74,
+        "five_hour_pct_end": 82,
+        "five_hour_pct_delta": 8,
+        "cost_usd_delta": 2.24,
+        "context_pct_end": 13,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker ran 7.1-7.7; one shared wave delta"
+      }
+    },
+    {
+      "id": "7.3",
+      "title": "Delete `DecimalFormatDirective` and its export in `src/app/shared/directives/index.ts` after checking no template uses `jbhDecimalFormat`; …",
+      "module": "app",
+      "depends_on": [
+        "7.2"
+      ],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T16:03:30Z",
+      "completed_at": "2026-10-12T16:04:00Z",
+      "duration_seconds": 30,
+      "notes": "Deleted src/app/shared/directives/ (directive and barrel). No jbhDecimalFormat or DecimalFormatDirective reference left.",
+      "budget": {
+        "five_hour_pct_start": 74,
+        "five_hour_pct_end": 82,
+        "five_hour_pct_delta": 8,
+        "cost_usd_delta": 2.24,
+        "context_pct_end": 13,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker ran 7.1-7.7; one shared wave delta"
+      }
+    },
+    {
+      "id": "7.4",
+      "title": "Remove `importProvidersFrom(IonicModule.forRoot())` and the `IonicModule` import from `src/main.ts`; check that no file imports `IonicModul…",
+      "module": "app",
+      "depends_on": [
+        "7.3"
+      ],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T16:04:00Z",
+      "completed_at": "2026-10-12T16:04:30Z",
+      "duration_seconds": 30,
+      "notes": "Removed IonicModule and importProvidersFrom(IonicModule.forRoot()) from main.ts. No file imports IonicModule or @ionic/angular.",
+      "budget": {
+        "five_hour_pct_start": 74,
+        "five_hour_pct_end": 82,
+        "five_hour_pct_delta": 8,
+        "cost_usd_delta": 2.24,
+        "context_pct_end": 13,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker ran 7.1-7.7; one shared wave delta"
+      }
+    },
+    {
+      "id": "7.5",
+      "title": "Clean `src/theme/custom-components.scss` with the D16 method: remove rules whose look moved into a component or whose classes have zero use…",
+      "module": "app",
+      "depends_on": [
+        "7.4"
+      ],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T16:04:30Z",
+      "completed_at": "2026-10-12T16:06:30Z",
+      "duration_seconds": 120,
+      "notes": "D16 method: 2,915 -> ~1,310 lines; 152 rules, 5 keyframes removed. Gone: old buttons, inputs, alerts, selects, menu items, empty state, icon buttons, tables, skeletons, balance history, context switcher, top banner. Kept: tokens, dark, ion-menu, used feature classes. Full list in the wave 7 commit.",
+      "budget": {
+        "five_hour_pct_start": 74,
+        "five_hour_pct_end": 82,
+        "five_hour_pct_delta": 8,
+        "cost_usd_delta": 2.24,
+        "context_pct_end": 13,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker ran 7.1-7.7; one shared wave delta"
+      }
+    },
+    {
+      "id": "7.6",
+      "title": "Update `src/app/AGENTS.md`: the layer folders, public entry points, allowed imports, the guard, the `jbh-page` root rule, where specs live.",
+      "module": "app",
+      "depends_on": [
+        "7.5"
+      ],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T16:06:30Z",
+      "completed_at": "2026-10-12T16:07:20Z",
+      "duration_seconds": 50,
+      "notes": "src/app/AGENTS.md: layer folders, two entry points, import rules, named exceptions, the guard, jbh-page root rule, spec locations.",
+      "budget": {
+        "five_hour_pct_start": 74,
+        "five_hour_pct_end": 82,
+        "five_hour_pct_delta": 8,
+        "cost_usd_delta": 2.24,
+        "context_pct_end": 13,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker ran 7.1-7.7; one shared wave delta"
+      }
+    },
+    {
+      "id": "7.7",
+      "title": "Run `npx eslint src/app src/main.ts`: zero boundary errors and zero selector-prefix errors.",
+      "module": "app",
+      "depends_on": [
+        "7.6"
+      ],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "app",
+      "model": "claude-sonnet-5-5",
+      "started_at": "2026-10-12T16:07:20Z",
+      "completed_at": "2026-10-12T16:07:44Z",
+      "duration_seconds": 24,
+      "notes": "npx eslint src/app src/main.ts: 298 files, 105 errors, all old prefer-inject (baseline 249). Zero boundary and zero selector-prefix errors.",
+      "budget": {
+        "five_hour_pct_start": 74,
+        "five_hour_pct_end": 82,
+        "five_hour_pct_delta": 8,
+        "cost_usd_delta": 2.24,
+        "context_pct_end": 13,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "one serial worker ran 7.1-7.7; one shared wave delta"
+      }
+    },
+    {
+      "id": "8.1",
+      "title": "Update `.claude/CLAUDE.md`: styles rule per D16; `jbh-select` instead of `ion-select`; `jbh-page` `(pageEnter)` / `(pageLeave)` and the roo…",
+      "module": "app",
+      "depends_on": [
+        "7.7"
+      ],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "leader",
+      "model": "claude-opus-5-5",
+      "started_at": "2026-10-12T17:44:42Z",
+      "completed_at": "2026-10-12T19:54:07Z",
+      "duration_seconds": 7765,
+      "notes": "CLAUDE.md: structure with design-system and core/formatting; UI Layer section (closed list, platform services, guard); theme rule per D16; forms on jbh-* controls; jbh-number-field; jbh-page pageEnter/pageLeave and root rule; header config; spec exception; category-select without selectInterface.",
+      "budget": {
+        "five_hour_pct_start": null,
+        "five_hour_pct_end": 13,
+        "five_hour_pct_delta": null,
+        "cost_usd_delta": 5.63,
+        "context_pct_end": 22,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "leader ran 8.1-8.4 itself; window was new at start (pct null), so delta is about 13"
+      }
+    },
+    {
+      "id": "8.2",
+      "title": "Update `.claude/docs/theming.md`, `forms.md`, `architecture.md` (structure with `design-system/` and `core/formatting/`)",
+      "module": "app",
+      "depends_on": [
+        "7.7"
+      ],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "leader",
+      "model": "claude-opus-5-5",
+      "started_at": "2026-10-12T17:44:42Z",
+      "completed_at": "2026-10-12T19:54:07Z",
+      "duration_seconds": 7765,
+      "notes": "architecture.md (structure, three adapter layers, import rules), forms.md (rewritten on layer controls), theming.md (style ownership, component reference). ux-design-system.md: sections 3, 6, 7, 8A, 8C, 9A, 9B, 16 rewritten; top note marks older examples elsewhere (D24).",
+      "budget": {
+        "five_hour_pct_start": null,
+        "five_hour_pct_end": 13,
+        "five_hour_pct_delta": null,
+        "cost_usd_delta": 5.63,
+        "context_pct_end": 22,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "leader ran 8.1-8.4 itself; window was new at start (pct null), so delta is about 13"
+      }
+    },
+    {
+      "id": "8.3",
+      "title": "Final guard: `npm run lint:boundary` exits 0; the 8 stdin checks still match.",
+      "module": "app",
+      "depends_on": [
+        "7.7"
+      ],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "leader",
+      "model": "claude-opus-5-5",
+      "started_at": "2026-10-12T17:44:42Z",
+      "completed_at": "2026-10-12T19:54:07Z",
+      "duration_seconds": 7765,
+      "notes": "npm run lint:boundary exit 0. All 8 design.md stdin checks match (error counts and rule ids as expected).",
+      "budget": {
+        "five_hour_pct_start": null,
+        "five_hour_pct_end": 13,
+        "five_hour_pct_delta": null,
+        "cost_usd_delta": 5.63,
+        "context_pct_end": 22,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "leader ran 8.1-8.4 itself; window was new at start (pct null), so delta is about 13"
+      }
+    },
+    {
+      "id": "8.4",
+      "title": "Add the boundary check to CI: in `.github/workflows/image.yml`, job `image`, add a step `name: Check UI boundary`, `run: npm run lint:bound…",
+      "module": "app",
+      "depends_on": [
+        "8.3"
+      ],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "leader",
+      "model": "claude-opus-5-5",
+      "started_at": "2026-10-12T17:44:42Z",
+      "completed_at": "2026-10-12T19:54:07Z",
+      "duration_seconds": 7765,
+      "notes": "image.yml job image: step Check UI boundary (npm run lint:boundary) after Install dependencies, before Build app. Parsed with js-yaml; step order confirmed.",
+      "budget": {
+        "five_hour_pct_start": null,
+        "five_hour_pct_end": 13,
+        "five_hour_pct_delta": null,
+        "cost_usd_delta": 5.63,
+        "context_pct_end": 22,
+        "source": "statusline-cache",
+        "approx": true,
+        "note": "leader ran 8.1-8.4 itself; window was new at start (pct null), so delta is about 13"
+      }
+    },
+    {
+      "id": "8.5",
+      "title": "Run `npx ng build --configuration production`; run `npx ng test --watch=false --browsers=ChromeHeadless --include='src/app/design-system/**…",
+      "module": "app",
+      "depends_on": [
+        "8.4"
+      ],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "user",
+      "model": null,
+      "started_at": "2026-10-12T19:54:07Z",
+      "completed_at": "2026-10-12T22:35:30Z",
+      "duration_seconds": 9683,
+      "notes": "Leader ran: ng build --configuration production exit 0; ng test (design-system + core/formatting) exit 0, 193 of 193 SUCCESS. Route smoke test (light/dark, narrow/wide) needs running services: the user runs it. User reported the route smoke test passed (2026-10-12).",
+      "budget": null
+    }
+  ],
+  "review": {
+    "status": "approved",
+    "agent": "app-reviewer",
+    "brief": "Review change app-add-component-adapter-layer (module app, branch ft/CH1-JBH-52-app-add-component-adapter-layer, base main). Diff: git diff main...HEAD.\n\nUser decisions to check against (decisions[] made_by user): D1 layer in src/app/design-system/ (components + platform), only it uses Ionic. D2 all pages move in this change; the guard is an error from day one. D3 specs only under design-system and core/formatting; none for pages or pipes. D5 acceptance = npm run lint:boundary exits 0, and CI runs it (.github/workflows/image.yml). D6 HomePage and portfolio-top-banner deleted; design D5 (button) confirmed; the 5 visible changes in design.md accepted; dates sent as YYYY-MM-DD / YYYY-MM. D12 npm script test:layer. D13 wave 3 split. D19 gate 5.3 confirmed. No database objects in this change.\n\nDispatch values: Performance-Profile none. Test-Execution-Policy: assistant MAY run eslint only (npx eslint <paths> or npx ng lint); never ng build, ng test, npm test, npm run build, ionic build or ionic serve. The leader runs the build and the suite (assistantRunsTests). Language: English (B2).\n\nSignals: assistant-run by the leader: npx ng build --configuration production exit 0; npm run test:layer exit 0, 193 of 193; npm run lint:boundary exit 0; 8 guard stdin checks from design.md match; openspec validate --strict valid. User-reported: route smoke test passed (all routes, light/dark, narrow/wide). Judge test quality by reading the specs; do not run them.\n\nLook at in particular: (1) initial bundle went 1.44 -> 1.59 (wave 5) -> 1.87 (wave 6) -> 1.65 MB raw (wave 7); is anything heavy still pulled into the initial chunk? (2) wave 6 layer notes: jbh-table head has double padding; jbh-toggle colour and label. (3) src/theme/custom-components.scss kept feature classes after the 7.5 cleanup; check for rules that duplicate page SCSS or have no use left. (4) D24: ux-design-system.md sections 2, 4, 5, 10-13 still show old ion-* examples under a top note; is that acceptable doc-wise? (5) leader-made decisions D9-D11, D14, D17, D18, D21-D23. (6) worker ran git rm --cached in wave 7 (events); the tree matches, but confirm.",
+    "rounds": [
+      {
+        "round": 1,
+        "at": "2026-10-12T23:30:00Z",
+        "reviewer": "app-reviewer",
+        "model": "claude-sonnet-5-5",
+        "verdict": "changes-requested",
+        "docs_read": [
+          ".claude/CLAUDE.md",
+          ".claude/docs/architecture.md",
+          ".claude/docs/theming.md",
+          ".claude/docs/forms.md",
+          "src/app/AGENTS.md",
+          "openspec/changes/app-add-component-adapter-layer/proposal.md",
+          "openspec/changes/app-add-component-adapter-layer/design.md",
+          "openspec/changes/app-add-component-adapter-layer/tasks.md",
+          "openspec/changes/app-add-component-adapter-layer/specs/*/spec.md (5 files)"
+        ],
+        "findings": [
+          {
+            "id": "R1-1",
+            "severity": "major",
+            "note": "Initial bundle: the whole layer, ngx-charts (20 ngx-charts-* component selectors) and ion-datetime sit in the one 1.3 MB chunk that main imports statically (www/chunk-IBECQ2J5.js from the last production build; ngx-charts part is about 250 KB raw / 68 KB gzip). Chain: app.component -> shared/components/app-menu/app-menu.component.ts:7 -> '@design-system/components' barrel (components/index.ts, display/index.ts) -> display/jbh-line-chart.component.ts:2 (LineChartModule). Before the change the chart lived in the lazy balance-history chunk. The design only accepted ~40 KB of icons in the shared chunk. Find why the barrel is not tree-shaken (for example sideEffects in package.json, or a non-pure top-level statement), or make the chart lazy, then rebuild and compare the initial size.",
+            "status": "fixed",
+            "triage": "accepted"
+          },
+          {
+            "id": "R1-2",
+            "severity": "minor",
+            "note": "Layer SCSS hard-codes colors, against the design-system-components requirement 'use only --jbh-* tokens for colors' and theming.md 'NEVER hardcode colors': display/jbh-button.component.scss:85,94 (#e53e3e), :104 (#38a169); jbh-icon-button.component.scss:30,49; jbh-nav-item.component.scss:31,115-155; jbh-line-chart.component.scss:25. Values were copied from the old global file (D16), so this is carried over, but the spec says SHALL. Add tokens (for example --jbh-error-solid, --jbh-primary-tint) in custom-components.scss or record the exception in the spec.",
+            "status": "fixed",
+            "triage": "accepted"
+          },
+          {
+            "id": "R1-3",
+            "severity": "minor",
+            "note": "jbh-table head has double padding: .jbh-table__head (display/table/jbh-table.component.scss:14) and jbh-table-row (jbh-table-row.component.scss:4) both pad. Two pages patch it locally (ui/products/components/balance-history-table/balance-history-table.component.scss:9-12, ui/products/pages/product-movements/product-movements.page.scss:14-17), but import-statement.page.html:84 and overview-team.page.html:106 have the same head row and no patch, so their head is taller than before. Fix once in the layer (zero padding for jbh-table-row inside .jbh-table__head) and delete the two page rules.",
+            "status": "fixed",
+            "triage": "accepted"
+          },
+          {
+            "id": "R1-4",
+            "severity": "minor",
+            "note": "Google button hover/focus rules are copied into two page SCSS files (ui/auth/pages/login/login.page.scss:119-126, ui/auth/pages/signup/signup.page.scss:115-122). They target the layer-internal host class .jbh-button--secondary and hard-code rgba(102,126,234,0.25). The comment says 'the global rules name the old button class', but those global rules no longer exist (removed in 7.5), so the comment is stale. Put the rule once in the global .jbh-google-button block (src/theme/custom-components.scss:117) using tokens, and fix or drop the comment.",
+            "status": "fixed",
+            "triage": "accepted"
+          },
+          {
+            "id": "R1-5",
+            "severity": "minor",
+            "note": "Missing i18n key now visible: ui/teams/pages/overview/overview-team.page.html:67 uses [label]=\"'menu.teams.invite' | translate\" for a jbhIconButton. The key is not in en.json/es.json (the existing key is menu.settings.teamManagement.invite), so aria-label and title show the raw key. The gap existed on main (as title/aria-label) but the layer makes label required and D18 says page workers report missing keys. Same class of gap as D22.",
+            "status": "fixed",
+            "triage": "accepted"
+          },
+          {
+            "id": "R1-6",
+            "severity": "minor",
+            "note": "Docs and CSS disagree: .claude/CLAUDE.md tells pages to use <p class=\"jbh-field-hint\"> under app-category-select, but the class has no rule in src/theme/custom-components.scss. It is defined twice in page SCSS (ui/products/pages/add-movement/add-movement.page.scss:9, ui/products/pages/import-statement/import-statement.page.scss:5). A new page that follows the doc gets no style. Move it to the global file (it is used by 2 pages) or change the doc.",
+            "status": "fixed",
+            "triage": "accepted"
+          },
+          {
+            "id": "R1-7",
+            "severity": "minor",
+            "note": ".claude/docs/ux-design-system.md still has 55 lines with <ion-*>, ionViewWillEnter or @ionic, mainly Section 2 'Page Templates' (lines 54-604), Sections 4, 5, 10-13. CLAUDE.md names this doc 'Page templates ... complete reference', so a worker reads Section 2 first. The top note and the guard limit the damage, so it is acceptable for this change, but track a follow-up to rewrite Section 2 on jbh-page / jbh-* components. | Triage: accepted as a follow-up (user choice D25); not fixed in this change.",
+            "status": "open",
+            "triage": "accepted"
+          }
+        ],
+        "checked_ok": [
+          "npx eslint boundary config over src/**/*.{ts,html}: no output; scripts/check-scss-boundary.mjs: no violations (re-run by the reviewer, static checks only)",
+          "all 19 routed *.page.html have jbh-page as first and last element; no ionView* method outside the layer",
+          "added comment lines scanned: no design.md, decision ID, ticket ID, tier or HTML-comment references",
+          "tasks.md and specs: only checkbox changes since the artifacts commit; design.md unchanged; progress.json statuses match the evidence",
+          "formatting core and pipes match the spec values; JbhDatePipe statics gone; all layer components OnPush with at most 8 inputs",
+          "custom-components.scss: all 102 remaining classes have at least one use in src/app html/ts/scss (comments stripped); no leftover dead rules",
+          "i18n: en/es key parity holds; only common.hidePassword/showPassword, profile.savingsGoal.required added and home.* removed",
+          "git status is clean; the staged deletion of viewport.service.ts from wave 7 matches the tree (file removed in HEAD)",
+          "4 pages call their API in ngOnInit (product-movements, products-overview, invite-member, overview-team); this is the same as on main, so it is not a regression"
+        ],
+        "duration_seconds": 385,
+        "budget": {
+          "five_hour_pct_start": 17,
+          "five_hour_pct_end": null,
+          "five_hour_pct_delta": null,
+          "cost_usd_delta": null,
+          "context_pct_end": 13,
+          "source": "statusline-cache",
+          "approx": true,
+          "note": "5-hour window reset before the end read; subagent cost is not in the leader's cost_usd"
+        }
+      },
+      {
+        "round": 2,
+        "at": "2026-10-13T11:40:00Z",
+        "reviewer": "app-reviewer",
+        "model": "claude-sonnet-5-5",
+        "verdict": "approved",
+        "docs_read": [
+          "re-checked against the doc pack read in round 1; theming.md diff in d6839d1 read"
+        ],
+        "round1_status": {
+          "R1-1": "fixed: only jbh-line-chart-plot.component.ts imports ngx-charts, not in the barrel, loaded with @defer (on immediate); spec keeps the same assertions and renders the defer block to Complete; leader build shows a lazy chart chunk and initial 1.65 -> 1.47 MB",
+          "R1-2": "fixed: no hex or rgba(number) left in src/app/design-system/**/*.scss (grep); tokens defined in custom-components.scss and listed in theming.md; chart hex domain kept with a why-comment",
+          "R1-3": "fixed: .jbh-table__head has no padding; both page patches and their classes removed",
+          "R1-4": "fixed: one global rule in .jbh-google-button; the static jbhButton attribute is rendered in login and signup, so the selector matches; page copies removed",
+          "R1-5": "fixed: teams.invite.title exists in en.json and es.json",
+          "R1-6": "fixed: .jbh-field-hint is global; both page copies removed",
+          "R1-7": "open: user decision D25, follow-up outside this change"
+        },
+        "findings": [
+          {
+            "id": "R2-1",
+            "severity": "minor",
+            "note": "src/app/design-system/components/display/jbh-line-chart-plot.component.scss:8 uses a bare ::ng-deep block, so the .ngx-charts rules are global once the chart chunk loads (before, they sat under .jbh-line-chart in the scoped file). Only the plot renders .ngx-charts, so there is no visible effect today. Prefix it with :host to keep the scope.",
+            "status": "fixed",
+            "triage": "accepted"
+          }
+        ],
+        "checked_ok": [
+          "npx eslint boundary config over src/**/*.{ts,html}: no output; scripts/check-scss-boundary.mjs: no violations (re-run by the reviewer)",
+          "git status clean at d6839d1",
+          "leader signals recorded: lint:boundary exit 0, ng build production exit 0, test:layer 193/193"
+        ]
+      },
+      {
+        "round": 3,
+        "at": "2026-10-13T12:10:00Z",
+        "reviewer": "app-reviewer",
+        "model": "claude-sonnet-5-5",
+        "verdict": "approved",
+        "docs_read": [
+          "re-check of commit 8dd4e14 only; doc pack read in rounds 1 and 2"
+        ],
+        "round2_status": {
+          "R2-1": "fixed: jbh-line-chart-plot.component.scss:9 now uses ':host ::ng-deep', so the .ngx-charts rules stay inside the component"
+        },
+        "findings": [],
+        "checked_ok": [
+          "8dd4e14 changes only that SCSS line, a why-comment, and progress.json",
+          "git status clean",
+          "leader signals recorded: lint:boundary exit 0, ng build production exit 0 (initial 1.47 MB, chart still lazy), test:layer exit 0",
+          "R1-7 stays open as a user-accepted follow-up (D25), a minor doc item that does not block approval"
+        ]
+      }
+    ]
+  },
+  "decisions": [
+    {
+      "id": "D1",
+      "at": "2026-10-11T11:55:00Z",
+      "scope": "change",
+      "made_by": "user",
+      "decision": "The layer lives in src/app/design-system/ (components/ + platform/). Only it may use Ionic.",
+      "why": "Step 2 interview. One folder holds the whole vocabulary, the guard rule is one line, and it can become a library later.",
+      "covered_by": null
+    },
+    {
+      "id": "D2",
+      "at": "2026-10-11T11:57:00Z",
+      "scope": "change",
+      "made_by": "user",
+      "decision": "Migrate all pages in this change; the guard is an error from day one. One reference page moves first.",
+      "why": "Step 2 interview. The user chose full migration over layer plus one reference page. The reference-page-first order is the leader's safety rule.",
+      "covered_by": null
+    },
+    {
+      "id": "D3",
+      "at": "2026-10-11T11:59:00Z",
+      "scope": "change",
+      "made_by": "user",
+      "decision": "Unit tests for src/app/design-system/ and src/app/core/formatting/ only. None for pages or pipes.",
+      "why": "Step 2 interview. Overrides the project rule 'no spec.ts files' for those two folders only.",
+      "covered_by": null
+    },
+    {
+      "id": "D4",
+      "at": "2026-10-11T12:15:00Z",
+      "scope": "change",
+      "made_by": "leader",
+      "decision": "Artifact worker dispatched on opus (models.escalation) instead of sonnet.",
+      "why": "Cross-cutting design over about 70 files; the Ionic page lifecycle and the lint guard were open problems. Cost: the 5-hour bucket went from 4% to 54%.",
+      "covered_by": null
+    },
+    {
+      "id": "D5",
+      "at": "2026-10-11T13:00:00Z",
+      "scope": "change",
+      "made_by": "user",
+      "decision": "Acceptance = npm run lint:boundary exits 0. Add it to CI in wave 8 (task 8.4).",
+      "why": "design.md open questions 1 and 2. The 249 old prefer-inject errors stay out of scope.",
+      "covered_by": null
+    },
+    {
+      "id": "D6",
+      "at": "2026-10-11T13:00:00Z",
+      "scope": "change",
+      "made_by": "user",
+      "decision": "Delete HomePage and portfolio-top-banner; confirm design D5 (button); accept the 5 visible changes; dates sent as YYYY-MM-DD / YYYY-MM.",
+      "why": "design.md open questions 3 to 6, all answered as recommended.",
+      "covered_by": null
+    },
+    {
+      "id": "D7",
+      "at": "2026-10-11T11:43:00Z",
+      "scope": "change",
+      "made_by": "leader",
+      "decision": "Setup (openspec/config.yaml, AGENTS.md) committed on its own. OpenSpec files in .claude/ stay out of git.",
+      "why": "Setup is not part of the change. jbh-iam also keeps its OpenSpec .claude/ files out of git.",
+      "covered_by": null
+    },
+    {
+      "id": "D8",
+      "at": "2026-10-11T13:07:40Z",
+      "scope": "change",
+      "made_by": "leader",
+      "decision": "progress.json goes into the artifacts commit, not the wave-1 commit.",
+      "why": "The run pauses before wave 1 for the user's review. An untracked state file could be lost on a branch switch.",
+      "covered_by": null
+    },
+    {
+      "id": "D9",
+      "at": "2026-10-11T13:23:44Z",
+      "scope": "task:1.2",
+      "made_by": "leader",
+      "decision": "Added 2 parser-only overrides (html, ts) before the 4 D2 overrides.",
+      "why": "Without them, exempt files (design-system, main.ts, app.component.*) fall back to espree and fail with parse errors; guard check 2 failed that way. Rejected: --ignore-pattern, which still misses design-system files.",
+      "covered_by": null
+    },
+    {
+      "id": "D10",
+      "at": "2026-10-11T13:23:44Z",
+      "scope": "change",
+      "made_by": "leader",
+      "decision": "Wave 1 tasks set to done without a user test run.",
+      "why": "No app code changed. Their acceptance is the guard checks, which the policy lets the leader run. The build check of the new alias comes at the 5.3 gate.",
+      "covered_by": "design.md test contract, Guard section"
+    },
+    {
+      "id": "D11",
+      "at": "2026-10-11T13:32:43Z",
+      "scope": "task:2.1",
+      "made_by": "leader",
+      "decision": "Task 2.1 set to awaiting-user-verification, not done as the worker reported.",
+      "why": "2.1 is the code the 2.2 specs test; the suite has not run. Done needs the user's pass.",
+      "covered_by": null
+    },
+    {
+      "id": "D12",
+      "at": "2026-10-11T13:42:17Z",
+      "scope": "change",
+      "made_by": "user",
+      "decision": "Add npm script test:layer (ng test, no watch, ChromeHeadless, only design-system and core/formatting specs). Use it at every test ask point; document it in wave 8.1.",
+      "why": "The command runs after many waves and in 8.5. npm script chosen over a new Makefile: jbh-app keeps tooling in package.json.",
+      "covered_by": null
+    },
+    {
+      "id": "D13",
+      "at": "2026-10-11T13:43:22Z",
+      "scope": "change",
+      "made_by": "user",
+      "decision": "Split wave 3: run Track B (3.8-3.12) now, then stop and arm a wake-up for 11:02 local; Tracks A and C after the 5-hour reset.",
+      "why": "5h bucket 72%; full wave 3 projected at 20-30%, over the 90% checkpoint. Track B alone is about 8%.",
+      "covered_by": null
+    },
+    {
+      "id": "D14",
+      "at": "2026-10-11T14:04:16Z",
+      "scope": "task:3.11",
+      "made_by": "leader",
+      "decision": "Leader fixed the jbh-segment spec itself instead of re-dispatching a worker.",
+      "why": "A 3-line test-only fix with a clear cause; a worker dispatch would re-read the whole doc pack. The component code was right.",
+      "covered_by": null
+    },
+    {
+      "id": "D15",
+      "at": "2026-10-11T16:29:12Z",
+      "scope": "change",
+      "made_by": "leader",
+      "decision": "Tracks A (3.1-3.7) and C (3.13-3.17) dispatched as two parallel sonnet workers.",
+      "why": "tasks.md plans them parallel, files are disjoint, bucket just reset. Cost: doc pack read twice. Only Track A may append to icon-registry.ts.",
+      "covered_by": null
+    },
+    {
+      "id": "D16",
+      "at": "2026-10-12T13:26:43Z",
+      "scope": "change",
+      "made_by": "leader",
+      "decision": "Wave 4 (4.1, 4.2) runs as ONE serial sonnet worker, not two parallel workers.",
+      "why": "Two small tasks; one worker reads the doc pack once. Parallel saves little time and costs a second doc pack read.",
+      "covered_by": null
+    },
+    {
+      "id": "D17",
+      "at": "2026-10-12T13:29:13Z",
+      "scope": "task:4.2",
+      "made_by": "leader",
+      "decision": "Accepted the worker's extra optional errorMessage input on app-product-select. Until a page passes it, hasError shows no red frame there; pages pass it as they move (5.1, 6.3, 6.4).",
+      "why": "jbh-select shows its error frame only with a message; a default message would duplicate the pages' own message.",
+      "covered_by": null
+    },
+    {
+      "id": "D18",
+      "at": "2026-10-12T13:31:20Z",
+      "scope": "change",
+      "made_by": "leader",
+      "decision": "Leader fixed 3 spec type errors itself and moved 3.4 and 3.15 from done back to awaiting-user-verification.",
+      "why": "Test-only fixes with clear causes, like D14. The earlier pass report could not cover specs that do not compile, so done was not true.",
+      "covered_by": null
+    },
+    {
+      "id": "D19",
+      "at": "2026-10-12T15:39:05Z",
+      "scope": "task:5.3",
+      "made_by": "user",
+      "decision": "gate 5.3 confirmed; wave 6 may start",
+      "why": "Leader Chrome run passed a-h; user accepted the result and the out-of-scope list of old bugs.",
+      "covered_by": null
+    },
+    {
+      "id": "D20",
+      "at": "2026-10-12T15:45:05Z",
+      "scope": "change",
+      "made_by": "leader",
+      "decision": "Wave 6 runs as 4 parallel sonnet workers: W1 6.4; W2 6.5+6.7; W3 6.3+6.2; W4 6.1+6.6.",
+      "why": "About 11.5k lines: one worker would overflow its context; 7 workers read the doc pack 7 times. Folders are disjoint; icon registry and barrels stay leader-only.",
+      "covered_by": "design.md wave 6 plan (parallel by feature folder)"
+    },
+    {
+      "id": "D21",
+      "at": "2026-10-12T15:55:10Z",
+      "scope": "task:6.5",
+      "made_by": "leader",
+      "decision": "Leader fixed 2 build errors in overview-team.page.html: `nickName | slice:0:1 | uppercase` became `nickName | uppercase | slice:0:1`.",
+      "why": "jbh-table row context is any, so slice picked the array overload. Same output, clear cause, like D14 and D18; a re-dispatch costs a doc pack read.",
+      "covered_by": null
+    },
+    {
+      "id": "D22",
+      "at": "2026-10-12T15:55:10Z",
+      "scope": "task:6.2",
+      "made_by": "leader",
+      "decision": "Leader added profile.savingsGoal.required to en.json and es.json. Not defaultLang / defaultCurrency.",
+      "why": "Old gap made visible: the new number field can be cleared and shows the raw key. The two selects always hold a value, so their keys never show.",
+      "covered_by": "design.md: page tasks report i18n needs to the leader"
+    },
+    {
+      "id": "D23",
+      "at": "2026-10-12T15:55:10Z",
+      "scope": "task:6.8",
+      "made_by": "leader",
+      "decision": "6.8 stays in-progress; it re-runs after 7.1 instead of deleting viewport.service.ts now.",
+      "why": "The only violation is a file 7.1 already deletes. Keeping the plan order avoids doing 7.1 work out of turn.",
+      "covered_by": null
+    },
+    {
+      "id": "D24",
+      "at": "2026-10-12T19:54:07Z",
+      "scope": "task:8.2",
+      "made_by": "leader",
+      "decision": "ux-design-system.md: rewrote sections 3, 6, 7, 8A, 8C, 9A, 9B, 16; left old examples in sections 2, 4, 5, 10-13 with a top note that the layer wins.",
+      "why": "Task names component library, form patterns, class reference. A full rewrite of 2,400 lines is new scope; about 110 old references remain, marked as not to copy.",
+      "covered_by": null
+    },
+    {
+      "id": "D25",
+      "at": "2026-10-13T11:15:00Z",
+      "scope": "review:R1-7",
+      "made_by": "user",
+      "decision": "Fix R1-1 to R1-6 in this change; R1-7 (rewrite ux-design-system.md section 2) becomes a follow-up.",
+      "why": "Doc rewrite is large and docs-only; the top note and the guard already stop copying the old examples.",
+      "covered_by": null
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-10-11T11:42:25Z",
+      "agent": "leader",
+      "event": "branch created from main 49de35f; setup commit dc4ee92 (openspec init, AGENTS.md pipeline config)"
+    },
+    {
+      "at": "2026-10-11T12:15:00Z",
+      "agent": "leader",
+      "event": "dispatched artifact worker 'app' (opus), artifact mode"
+    },
+    {
+      "at": "2026-10-11T12:48:00Z",
+      "agent": "app",
+      "event": "artifacts written: 5 specs, design D1-D21, 50 tasks in 8 waves; openspec validate --strict passes"
+    },
+    {
+      "at": "2026-10-11T12:55:00Z",
+      "agent": "leader",
+      "event": "design briefing posted; user answered the 6 open questions (see decisions D5, D6)"
+    },
+    {
+      "at": "2026-10-11T13:06:27Z",
+      "agent": "app",
+      "event": "revision done: resolved questions in design.md, new leader task 8.4 (CI), user task now 8.5; 51 tasks; validate passes"
+    },
+    {
+      "at": "2026-10-11T13:07:40Z",
+      "agent": "leader",
+      "event": "design gate: no gated area touched (no database change), skipped"
+    },
+    {
+      "at": "2026-10-11T13:07:40Z",
+      "agent": "leader",
+      "event": "budget after artifacts: 5-hour bucket 54% (start 4%), session cost_usd 19.21 (start 1.41), context 23%"
+    },
+    {
+      "at": "2026-10-11T13:07:40Z",
+      "agent": "leader",
+      "event": "artifacts committed (Pipeline-Step: artifacts); paused before wave 1 at the user's request"
+    },
+    {
+      "at": "2026-10-11T13:20:59Z",
+      "agent": "leader",
+      "event": "resume: new session, wave 1 started by the leader itself (tasks 1.1-1.4, all [leader]); budget start 5h 58%, cost_usd 0.68, context 10%"
+    },
+    {
+      "at": "2026-10-11T13:23:44Z",
+      "agent": "leader",
+      "event": "wave 1 reconciled: 1.1-1.4 done; baseline lint:boundary = 478 ESLint + 33 SCSS violations; budget end 5h 61%, cost_usd 1.93, context 15%; commit 67a237a"
+    },
+    {
+      "at": "2026-10-11T13:24:22Z",
+      "agent": "leader",
+      "event": "Linear JBH-52: Todo -> In Progress, comment posted (implementation started)"
+    },
+    {
+      "at": "2026-10-11T13:24:22Z",
+      "agent": "leader",
+      "event": "checkpoint gate after wave 1: 5h 61%, context 16%, both under limits; recommended /clear + resume (8-wave change)"
+    },
+    {
+      "at": "2026-10-11T13:27:23Z",
+      "agent": "leader",
+      "event": "resume: new session; budget 5h 64%, context 10%, cost_usd 0.64. Dispatched one serial app worker (sonnet) for wave 2 (tasks 2.1-2.5)"
+    },
+    {
+      "at": "2026-10-11T13:32:43Z",
+      "agent": "leader",
+      "event": "wave 2 reconciled: 2.1-2.5 awaiting-user-verification; leader re-ran ESLint on design-system + core/formatting: clean (npx eslint needs ESLINT_USE_FLAT_CONFIG=false); budget end 5h 70%, context 13%, cost_usd 2.25"
+    },
+    {
+      "at": "2026-10-11T13:32:55Z",
+      "agent": "leader",
+      "event": "wave 2 commit 33a984a; checkpoint gate: 5h 70%, context 13%, both under limits; asked the user to run the specs; recommended /clear + resume before wave 3"
+    },
+    {
+      "at": "2026-10-11T13:42:17Z",
+      "agent": "leader",
+      "event": "leader added package.json script test:layer (D12); task 8.5 text unchanged, test:layer runs the same command"
+    },
+    {
+      "at": "2026-10-11T13:42:47Z",
+      "agent": "leader",
+      "event": "user verified wave 2: ran npm run test:layer, 68 of 68 specs SUCCESS (ChromeHeadless); 2.1-2.5 done. The run also compiled the @design-system alias."
+    },
+    {
+      "at": "2026-10-11T13:43:22Z",
+      "agent": "leader",
+      "event": "checkpoint gate before wave 3: 5h 72% (resets_at 1791734400), context 14%; full wave projected over 90%. Dispatched one serial app worker (sonnet) for wave 3 Track B (3.8-3.12)"
+    },
+    {
+      "at": "2026-10-11T13:52:01Z",
+      "agent": "leader",
+      "event": "Track B reconciled: 3.8-3.12 awaiting-user-verification. Worker timestamps were wrong (before dispatch); leader used dispatch and return times. Leader ESLint on design-system: clean. Budget end 5h 81%, context 15%, cost_usd 5.38"
+    },
+    {
+      "at": "2026-10-11T13:52:09Z",
+      "agent": "leader",
+      "event": "resume-armed — Track B commit 60ff16b; 5h 81%, context 15%; Tracks A+C projected over 90%. five_hour_resets_at 1791734400, wake epoch 1791734520 (11:02 local); then wave 3 Tracks A (3.1-3.7) and C (3.13-3.17)"
+    },
+    {
+      "at": "2026-10-11T14:04:16Z",
+      "agent": "leader",
+      "event": "user ran npm run test:layer: 108 of 110 SUCCESS, 2 FAILED (jbh-segment spec: triggerEventHandler also calls IonSegment's own listener, which reads $event.target). Leader fixed the spec: dispatch a real CustomEvent. Component unchanged. 3.8-3.12 stay awaiting-user-verification."
+    },
+    {
+      "at": "2026-10-11T14:24:42Z",
+      "agent": "leader",
+      "event": "user verified Track B: ran npm run test:layer, 110 of 110 SUCCESS (ChromeHeadless); 3.8-3.12 done. Wake-up for Tracks A and C still armed (11:02 local)."
+    },
+    {
+      "at": "2026-10-11T16:29:12Z",
+      "agent": "leader",
+      "event": "resume-auto — wake fired 16:28Z, past five_hour_resets_at; budget.sh: five_hour_pct null (new window, no use yet), context 19%, available. Continue wave 3."
+    },
+    {
+      "at": "2026-10-11T16:29:12Z",
+      "agent": "leader",
+      "event": "dispatched 2 parallel app workers (sonnet): Track A forms 3.1-3.7, Track C platform 3.13-3.17"
+    },
+    {
+      "at": "2026-10-12T12:40:41Z",
+      "agent": "leader",
+      "event": "wave 3 Tracks A+C reconciled: 3.1-3.7, 3.13-3.17 awaiting-user-verification. Worker timestamps were guesses; leader used dispatch time + agent duration (C 49 min, A 4 h 10 min). Leader ESLint on design-system + main.ts: clean; i18n keys present. Budget: new window, 5h 63%, context 20%, cost_usd 19.57"
+    },
+    {
+      "at": "2026-10-12T12:40:56Z",
+      "agent": "leader",
+      "event": "wave 3 commit a02f151 (Tracks A+C); asked the user to run npm run test:layer and npx ng build (main.ts and 3 core services changed)"
+    },
+    {
+      "at": "2026-10-12T13:26:17Z",
+      "agent": "leader",
+      "event": "user verified wave 3 Tracks A+C: ran npm run test:layer and npx ng build, both passed; 3.1-3.7, 3.13-3.17 done."
+    },
+    {
+      "at": "2026-10-12T13:26:43Z",
+      "agent": "leader",
+      "event": "wave 4 dispatched: 1 serial app worker (sonnet), tasks 4.1, 4.2. Budget start 5h 6%, context 12%, cost_usd 0.92"
+    },
+    {
+      "at": "2026-10-12T13:29:13Z",
+      "agent": "leader",
+      "event": "wave 4 reconciled: 4.1, 4.2 awaiting-user-verification. Report complete (D15, D4, D9 compliance; doc pack read). Leader ESLint on pipes + both selects: clean. Budget end 5h 9%, context 12%, cost_usd 1.71"
+    },
+    {
+      "at": "2026-10-12T13:29:23Z",
+      "agent": "leader",
+      "event": "wave 4 commit 4d80ad9; asked the user to run npm run test:layer and npx ng build (pipes and shared selects changed; pages bind the selects)"
+    },
+    {
+      "at": "2026-10-12T13:31:20Z",
+      "agent": "leader",
+      "event": "user ran npm run test:layer: compile failed, 3 TS errors in wave 3 specs (jbh-textarea spec label id may be undefined; dialog and toast specs args[0] possibly undefined). Leader fixed the 3 specs; components unchanged. 3.4 and 3.15 back to awaiting-user-verification: the earlier wave 3 pass cannot have compiled these specs."
+    },
+    {
+      "at": "2026-10-12T13:31:55Z",
+      "agent": "leader",
+      "event": "user ran npm run test:layer: 193 of 193 SUCCESS (ChromeHeadless); 3.4, 3.15 done. Ionic logs 'No ion-datetime instance found' in jbh-date-field specs: test teardown before the modal mounts, not a failure. 4.1, 4.2 wait for npx ng build (pipes and selects are outside test:layer)."
+    },
+    {
+      "at": "2026-10-12T13:32:23Z",
+      "agent": "leader",
+      "event": "user ran npx ng build: success; 4.1, 4.2 done. Warnings only: anyComponentStyle budget 4 kB exceeded by jbh-nav-item.scss (new, 5.70 kB) and 4 older page/component SCSS files."
+    },
+    {
+      "at": "2026-10-12T13:32:23Z",
+      "agent": "leader",
+      "event": "wave 5 dispatched: 1 app worker (sonnet), tasks 5.1, 5.2. 5.3 is the user gate. Budget start 5h 11%, context 16%, cost_usd 2.67"
+    },
+    {
+      "at": "2026-10-12T13:34:54Z",
+      "agent": "leader",
+      "event": "wave 5 reconciled: 5.1 awaiting-user-verification (gate 5.3), 5.2 done (ESLint is an allowed assistant signal; leader re-ran it: clean). Report complete (D4-D9, D12, D13, D16-D18). Budget end 5h 15%, context 17%, cost_usd 3.66"
+    },
+    {
+      "at": "2026-10-12T14:06:05Z",
+      "agent": "leader",
+      "event": "wave 5 commit eef1bc7. User ran npx ng build after wave 5: success. Initial bundle 1.44 MB -> 1.59 MB raw (322.87 -> 347.00 kB transfer); check in review. Gate 5.3 app checks (ionic serve) still pending."
+    },
+    {
+      "at": "2026-10-12T15:38:32Z",
+      "agent": "leader",
+      "event": "gate 5.3 env blocker: finance left Consul 1 min after start (health check on 127.0.0.1 inside Docker). Fixed in jbh-personal-finance e91dd4c (local main, user's choice). Not a JBH-52 defect."
+    },
+    {
+      "at": "2026-10-12T15:38:32Z",
+      "agent": "leader",
+      "event": "gate 5.3 run by the leader in Chrome (user asked): a, b, c, d (popover wide, action sheet 371px), e (entryDate 2026-10-08), f (1,234.56 on blur, number in body), g, h (success toast bottom + close) pass. i: dark OK, light not checked. One 1.00 test deposit saved. Pre-existing bugs found, not regressions. Awaiting the user's OK."
+    },
+    {
+      "at": "2026-10-12T15:39:05Z",
+      "agent": "leader",
+      "event": "gate 5.3 confirmed by the user; 5.1 and 5.3 done. Budget 5h 35%, context 22%, cost_usd 6.36"
+    },
+    {
+      "at": "2026-10-12T15:45:05Z",
+      "agent": "leader",
+      "event": "resume in a fresh session. wave 6 dispatched: 4 parallel app workers (sonnet): W1 6.4, W2 6.5+6.7, W3 6.3+6.2, W4 6.1+6.6. Budget start 5h 38%, context 11%, cost_usd 0.72"
+    },
+    {
+      "at": "2026-10-12T15:52:41Z",
+      "agent": "leader",
+      "event": "wave 6 workers back: reports complete (doc pack, D-ids, notes). Worker timestamps were guesses; leader used bracket start and notification times. Budget end 5h 71%, context 14%, cost_usd 8.72"
+    },
+    {
+      "at": "2026-10-12T15:55:10Z",
+      "agent": "leader",
+      "event": "leader (assistantRunsTests): npx ng build exit 1 (2 TS2769 in overview-team.page.html), fixed (D21), npx ng build exit 0; npm run test:layer exit 0, 193 of 193 SUCCESS. 6.1-6.7 done. Initial bundle 1.59 MB -> 1.87 MB raw (347 -> 397.5 kB transfer): check in review. npm run lint:boundary: 1 violation (D23)."
+    },
+    {
+      "at": "2026-10-12T15:55:27Z",
+      "agent": "leader",
+      "event": "wave 6 commit 8497291."
+    },
+    {
+      "at": "2026-10-12T16:00:43Z",
+      "agent": "leader",
+      "event": "resume in a fresh session. wave 7 dispatched: 1 serial app worker (sonnet), tasks 7.1-7.7. 6.8 re-runs after the wave (D23). Budget start 5h 74%, context 12%, cost_usd 0.37"
+    },
+    {
+      "at": "2026-10-12T16:09:02Z",
+      "agent": "leader",
+      "event": "wave 7 worker back: report complete (doc pack, D-ids, notes). Worker ran git rm --cached on viewport.service.ts (a git write it must not do); harmless, staged deletion matches the tree. Budget end 5h 82%, context 13%, cost_usd 2.61"
+    },
+    {
+      "at": "2026-10-12T16:09:02Z",
+      "agent": "leader",
+      "event": "leader (assistantRunsTests): npx ng build exit 0; npm run test:layer exit 0, 193 of 193 SUCCESS; npm run lint:boundary exit 0 (6.8 done). Initial bundle 1.87 MB -> 1.65 MB raw (397.5 -> 346.3 kB transfer). 7.1-7.7 done. 7.5 visuals not yet checked in the app (8.5)."
+    },
+    {
+      "at": "2026-10-12T16:09:25Z",
+      "agent": "leader",
+      "event": "wave 7 commit de23625 (amended once: the first git add failed on a path the worker had already staged)."
+    },
+    {
+      "at": "2026-10-12T16:09:25Z",
+      "agent": "leader",
+      "event": "resume-armed — budget checkpoint before wave 8: 5h 82% (projected to cross 90 in wave 8 + review), context 13%. five_hour_resets_at 1791826800, wake epoch 1791826920."
+    },
+    {
+      "at": "2026-10-12T17:44:42Z",
+      "agent": "leader",
+      "event": "resume-auto — wake-up fired; budget.sh: five_hour_pct null (new window not started, so the bucket reset), context 14%, available true. Continue at Step 5, wave 8."
+    },
+    {
+      "at": "2026-10-12T17:44:42Z",
+      "agent": "leader",
+      "event": "wave 8 started: leader runs 8.1-8.4 itself (docs, final guard, CI step). 8.5 is the user's. Budget start 5h null (new window), context 14%, cost_usd 3.08"
+    },
+    {
+      "at": "2026-10-12T19:54:07Z",
+      "agent": "leader",
+      "event": "wave 8: leader did 8.1-8.4. 8.3: lint:boundary exit 0, 8 stdin checks match. leader (assistantRunsTests): ng build --configuration production exit 0 (initial 1.65 MB / 346.3 kB); ng test design-system + core/formatting exit 0, 193 of 193 SUCCESS. 8.5 route smoke test waits for the user. Budget end 5h 13%, context 22%, cost_usd 8.70"
+    },
+    {
+      "at": "2026-10-12T19:54:19Z",
+      "agent": "leader",
+      "event": "wave 8 commit 6aa1aab. Waiting for the user's 8.5 route smoke test before Step 6 and the reviewer."
+    },
+    {
+      "at": "2026-10-12T22:35:30Z",
+      "agent": "user",
+      "event": "8.5 route smoke test: the user reported 'everything looks good! smoke tests passed!' (all routes, light/dark, narrow/wide). Task 8.5 done."
+    },
+    {
+      "at": "2026-10-12T22:35:30Z",
+      "agent": "leader",
+      "event": "jbh-deploy commit 4edd4ad (separate repo, user approved): CI.md lists npm run lint:boundary in the jbh-app Image steps. Not pushed."
+    },
+    {
+      "at": "2026-10-12T22:35:30Z",
+      "agent": "leader",
+      "event": "Step 6: status applied -> verified. Recorded pass: leader ng build --configuration production exit 0, test:layer 193/193, lint:boundary exit 0; user smoke test pass; openspec validate --strict valid. origin/main (auto-deploy job in image.yml) merges clean into the branch (git merge-tree)."
+    },
+    {
+      "at": "2026-10-12T22:41:00Z",
+      "agent": "leader",
+      "event": "Step 7: review brief written; dispatching kkpa-module-reviewer as app-reviewer on claude-sonnet-5-5 (models.reviewer), round 1. Budget start 5h 17%, context 11%, cost_usd 10.25"
+    },
+    {
+      "at": "2026-10-13T11:15:00Z",
+      "agent": "leader",
+      "event": "review round 1: changes-requested (1 major, 6 minor). Leader re-checked all 7: real (initial chunk-IBECQ2J5 1.3 MB with 20 ngx-charts selectors and ion-datetime, imported by main). User triage D25: fix R1-1..R1-6, R1-7 follow-up. Leader fixes them (review fixes)."
+    },
+    {
+      "at": "2026-10-13T11:40:00Z",
+      "agent": "leader",
+      "event": "review round 1 fixes by leader: R1-1 ngx-charts moved to internal jbh-line-chart-plot loaded with @defer (on immediate), spec uses DeferBlockBehavior.Manual; R1-2 layer colours -> tokens (--jbh-*-rgb, --jbh-error-strong, --jbh-success-strong, --jbh-chart-grid-odd); R1-3 head padding removed in jbh-table, 2 page patches gone; R1-4 one global .jbh-google-button rule; R1-5 key teams.invite.title; R1-6 .jbh-field-hint global. theming.md lists the new tokens."
+    },
+    {
+      "at": "2026-10-13T11:40:00Z",
+      "agent": "leader",
+      "event": "leader (assistantRunsTests): npm run lint:boundary exit 0; npx ng build --configuration production exit 0, initial 1.65 MB -> 1.47 MB raw (346.3 -> 307.4 kB transfer), ngx-charts in lazy chunk jbh-line-chart-plot-component 182 kB; ion-datetime still initial (layer barrel); npm run test:layer exit 0, 193 of 193 SUCCESS; eslint on chart files exit 0."
+    },
+    {
+      "at": "2026-10-13T11:55:00Z",
+      "agent": "leader",
+      "event": "review round 2: approved with 1 minor (R2-1). Leader fixed R2-1 (:host ::ng-deep in jbh-line-chart-plot.component.scss). lint:boundary exit 0; prod build exit 0, initial 1.47 MB; test:layer exit 0. check-progress: R1-7 status 'deferred' is not in the schema (open|fixed|rejected); asked the reviewer to correct it in round 3."
+    },
+    {
+      "at": "2026-10-13T11:20:32Z",
+      "agent": "leader",
+      "event": "correction: the events stamped 2026-10-13T11:40:00Z and 11:55:00Z were written ahead of the real clock; they happened between 11:15Z and 11:20Z."
+    },
+    {
+      "at": "2026-10-13T11:20:32Z",
+      "agent": "leader",
+      "event": "review rounds 2 and 3 approved; reviewer set reviewer-approved. Step 8: openspec archive -> openspec/changes/archive/2026-10-13-app-add-component-adapter-layer; 5 specs created in openspec/specs (+45 requirements). KB sync skipped: no kkpa/context/. Budget 5h 13% (new window), context 18%, cost_usd 17.23."
+    }
+  ]
+}

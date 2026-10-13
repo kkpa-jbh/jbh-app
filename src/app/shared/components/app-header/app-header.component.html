@@ -1,35 +1,19 @@
 @if (shouldShowHeader$ | async) {
+  @let config = pageConfig$ | async;
+
   <!-- Portfolio Context Banner -->
   @if (currentContext$ | async; as context) {
     <div class="jbh-context-banner">
-      <ion-icon [name]="context.isPersonal ? 'person-outline' : 'people-outline'"></ion-icon>
+      <jbh-icon [name]="context.isPersonal ? 'person-outline' : 'people-outline'" />
       <span>{{ context.isPersonal ? ('context.personalPortfolio' | translate) : context.teamName }}</span>
     </div>
   }
 
   <!-- Page Header Toolbar -->
-  <ion-header [translucent]="true">
-    <ion-toolbar>
-      <!-- Menu or Back Button -->
-      <ion-buttons slot="start">
-        @if (showBackButton$ | async) {
-          <ion-back-button></ion-back-button>
-        } @else {
-          <ion-menu-button></ion-menu-button>
-        }
-      </ion-buttons>
-
-      <!-- Page Title -->
-      <ion-title>{{ (pageConfig$ | async)?.title | translate }}</ion-title>
-
-      <!-- Action Buttons -->
-      <ion-buttons slot="end">
-        @for (action of (pageConfig$ | async)?.actions; track action.id) {
-          <ion-button (click)="action.handler()">
-            <ion-icon slot="icon-only" [name]="action.icon"></ion-icon>
-          </ion-button>
-        }
-      </ion-buttons>
-    </ion-toolbar>
-  </ion-header>
+  <jbh-toolbar
+    [title]="config?.title | translate"
+    [back]="config?.showBackButton ?? false"
+    [backHref]="config?.defaultBackHref"
+    [actions]="config?.actions ?? []"
+  />
 }

@@ -1,0 +1,20 @@
+@if (label()) {
+  <label class="jbh-field__label" [id]="controlId() + '-label'" [attr.for]="native() ? controlId() : null">
+    {{ label() }}
+    @if (requirement() === 'required') {
+      <span class="jbh-field__required" aria-hidden="true">*</span>
+    } @else if (requirement() === 'optional') {
+      <span class="jbh-field__optional">{{ 'common.optional' | translate }}</span>
+    }
+  </label>
+}
+<ng-content />
+@if (error()) {
+  <div class="jbh-field__error" role="alert" [id]="controlId() + '-error'">
+    <jbh-icon name="alert-circle-outline" />
+    <span>{{ error() }}</span>
+  </div>
+}
+@if (hint()) {
+  <p class="jbh-field__hint" [id]="controlId() + '-hint'">{{ hint() }}</p>
+}

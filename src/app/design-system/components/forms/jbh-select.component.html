@@ -1,0 +1,35 @@
+<jbh-field
+  [label]="label()"
+  [controlId]="selectId"
+  [hint]="hint()"
+  [error]="error()"
+  [requirement]="requirement()"
+  [native]="false"
+>
+  <div class="jbh-select__wrapper" [class.jbh-select__wrapper--error]="hasError()">
+    @if (icon()) {
+      <jbh-icon class="jbh-select__icon" [name]="icon()!" />
+    }
+    <ion-select
+      class="jbh-select__control"
+      [class.jbh-select__control--icon]="!!icon()"
+      [id]="selectId"
+      [value]="value()"
+      [interface]="overlay()"
+      [interfaceOptions]="overlayOptions()"
+      [placeholder]="placeholder() || undefined"
+      [disabled]="isDisabled()"
+      [attr.aria-labelledby]="labelId"
+      [attr.aria-invalid]="hasError() ? 'true' : null"
+      [attr.aria-describedby]="describedBy()"
+      [attr.aria-required]="requirement() === 'required' ? 'true' : null"
+      (ionChange)="onSelectChange($event)"
+      (ionDismiss)="onDismiss()"
+    >
+      <ng-content select="jbh-select-option" />
+    </ion-select>
+    @if (loading()) {
+      <jbh-spinner class="jbh-select__spinner" />
+    }
+  </div>
+</jbh-field>

@@ -2,7 +2,7 @@
   display: block;
 }
 
-.jbh-chart-container {
+.balance-chart-container {
   background: var(--jbh-background-white);
   border-radius: var(--jbh-radius-lg);
   padding: var(--jbh-spacing-md);
@@ -16,43 +16,9 @@
   }
 }
 
-.jbh-chart-title {
+.balance-chart-title {
   font-size: var(--jbh-font-size-lg);
   font-weight: var(--jbh-font-weight-semibold);
   color: var(--jbh-text-primary);
   margin: 0 0 var(--jbh-spacing-md) 0;
-}
-
-.jbh-chart-wrapper {
-  width: 100%;
-  height: 250px;
-
-  @media (min-width: 768px) {
-    height: 350px;
-  }
-
-  ::ng-deep {
-    .ngx-charts {
-      text {
-        fill: var(--jbh-text-secondary);
-      }
-
-      .line-series {
-        .line {
-          stroke-width: 3px;
-        }
-      }
-
-      .grid-panel {
-        &.odd {
-          fill: rgba(0, 0, 0, 0.02);
-        }
-      }
-
-      .gridline-path {
-        stroke: var(--jbh-border-color);
-        stroke-dasharray: 4, 4;
-      }
-    }
-  }
 }

@@ -1,0 +1,38 @@
+:host {
+  display: block;
+}
+
+.jbh-date-field__wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.jbh-date-field__icon {
+  position: absolute;
+  left: 16px;
+  z-index: 1;
+  font-size: 20px;
+  color: var(--jbh-text-secondary);
+  pointer-events: none;
+}
+
+.jbh-date-field__trigger {
+  width: 100%;
+
+  &::part(native) {
+    width: 100%;
+    padding: 14px 16px 14px 48px;
+    box-sizing: border-box;
+    background: var(--jbh-background-light);
+    border: 1px solid var(--jbh-border-color);
+    border-radius: var(--jbh-radius-md);
+    font-size: var(--jbh-font-size-base);
+    color: var(--jbh-text-primary);
+    justify-content: flex-start;
+  }
+}
+
+.jbh-date-field__wrapper--error .jbh-date-field__trigger::part(native) {
+  border: 2px solid var(--jbh-error-color);
+}

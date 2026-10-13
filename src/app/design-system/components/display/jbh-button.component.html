@@ -1,0 +1,6 @@
+@if (loading()) {
+  <jbh-spinner />
+} @else if (icon()) {
+  <jbh-icon [name]="icon()!" />
+}
+<ng-content />

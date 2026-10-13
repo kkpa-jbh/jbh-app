@@ -1,27 +1,23 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { IonicModule, ToastController, ViewWillEnter, ViewWillLeave } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil, forkJoin } from 'rxjs';
-import { addIcons } from 'ionicons';
-import {
-  personOutline,
-  languageOutline,
-  cashOutline,
-  walletOutline,
-  saveOutline,
-  close,
-  informationCircle
-} from 'ionicons/icons';
 import { PreferencesUseCase } from '@core/domain/use-cases/preferences.use-case';
 import { Language, Currency, UpdatePreferencesRequest } from '@core/domain/features/preferences';
 import { ProductListItem } from '@core/domain/features/products';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
-import { ViewportService, SelectInterface } from '@core/infrastructure/viewport/viewport.service';
 import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
-import { DecimalFormatDirective } from '@shared/directives/decimal-format.directive';
+import {
+  JbhButtonComponent,
+  JbhCardComponent,
+  JbhNumberFieldComponent,
+  JbhPageHeaderComponent,
+  JbhSelectComponent,
+  JbhSelectOptionComponent,
+  JbhSpinnerComponent
+} from '@design-system/components';
+import { JbhPageComponent, ToastService } from '@design-system/platform';
 import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 import { ProductSelectComponent } from '@shared/components/product-select/product-select.component';
 
@@ -31,16 +27,21 @@ import { ProductSelectComponent } from '@shared/components/product-select/produc
   styleUrls: ['./profile.page.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
-    IonicModule,
     TranslateModule,
-    DecimalFormatDirective,
+    JbhButtonComponent,
+    JbhCardComponent,
+    JbhNumberFieldComponent,
+    JbhPageComponent,
+    JbhPageHeaderComponent,
+    JbhSelectComponent,
+    JbhSelectOptionComponent,
+    JbhSpinnerComponent,
     AppHeaderComponent,
     ProductSelectComponent
   ]
 })
-export class ProfilePage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLeave {
+export class ProfilePage implements OnInit, OnDestroy {
 
   preferencesForm!: FormGroup;
   isLoading = true;
@@ -50,30 +51,14 @@ export class ProfilePage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLe
   readonly Language = Language;
   readonly Currency = Currency;
 
-  selectInterface: SelectInterface = 'action-sheet';
-
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private preferencesUseCase: PreferencesUseCase,
-    private translationService: TranslationService,
-    private toastController: ToastController,
-    private logger: LoggerService,
-    private viewportService: ViewportService,
-    private headerActions: HeaderActionsService
-  ) {
-    this.selectInterface = this.viewportService.selectInterface;
-    addIcons({
-      personOutline,
-      languageOutline,
-      cashOutline,
-      walletOutline,
-      saveOutline,
-      close,
-      informationCircle
-    });
-  }
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly preferencesUseCase = inject(PreferencesUseCase);
+  private readonly translationService = inject(TranslationService);
+  private readonly toast = inject(ToastService);
+  private readonly logger = inject(LoggerService);
+  private readonly headerActions = inject(HeaderActionsService);
 
   ngOnInit(): void {
     this.initForm();
@@ -84,14 +69,14 @@ export class ProfilePage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLe
     this.destroy$.complete();
   }
 
-  ionViewWillEnter(): void {
+  onPageEnter(): void {
     this.headerActions.setPageConfig({
       title: 'menu.settings.myPreferences',
     });
     this.loadData();
   }
 
-  ionViewWillLeave(): void {
+  onPageLeave(): void {
     this.headerActions.clearPageConfig();
   }
 
@@ -126,7 +111,7 @@ export class ProfilePage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLe
         error: async (error) => {
           this.logger.error('Error loading preferences:', 'ProfilePage', error);
           this.isLoading = false;
-          await this.showToast(this.translationService.instant('profile.errors.load'), 'danger');
+          await this.toast.show(this.translationService.instant('profile.errors.load'), 'error');
         }
       });
   }
@@ -152,13 +137,13 @@ export class ProfilePage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLe
         next: async () => {
           this.isSubmitting = false;
           this.translationService.setLanguage(request.defaultLang.toLowerCase());
-          await this.showToast(this.translationService.instant('profile.success'), 'success');
+          await this.toast.show(this.translationService.instant('profile.success'), 'success');
         },
         error: async (error) => {
           this.logger.error('Error updating preferences:', 'ProfilePage', error);
           this.isSubmitting = false;
           const errorMessage = error?.error?.message || this.translationService.instant('profile.errors.update');
-          await this.showToast(errorMessage, 'danger');
+          await this.toast.show(errorMessage, 'error');
         }
       });
   }
@@ -191,21 +176,5 @@ export class ProfilePage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLe
       return this.translationService.instant(`profile.${fieldName}.min`);
     }
     return '';
-  }
-
-  private async showToast(message: string, color: 'success' | 'danger' | 'warning'): Promise<void> {
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-      color,
-      position: 'bottom',
-      buttons: [
-        {
-          icon: 'close',
-          role: 'cancel'
-        }
-      ]
-    });
-    await toast.present();
   }
 }

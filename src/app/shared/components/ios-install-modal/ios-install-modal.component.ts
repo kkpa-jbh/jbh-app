@@ -1,19 +1,19 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { IonicModule, ModalController } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { JbhButtonComponent, JbhIconButtonComponent, JbhIconComponent } from '@design-system/components';
+import { DialogService } from '@design-system/platform';
 
 @Component({
   selector: 'app-ios-install-modal',
   templateUrl: './ios-install-modal.component.html',
   styleUrls: ['./ios-install-modal.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, TranslateModule]
+  imports: [TranslateModule, JbhButtonComponent, JbhIconButtonComponent, JbhIconComponent]
 })
 export class IosInstallModalComponent {
-  constructor(private modalController: ModalController) {}
+  constructor(private dialog: DialogService) {}
 
   closeModal(): void {
-    this.modalController.dismiss();
+    this.dialog.close();
   }
 }

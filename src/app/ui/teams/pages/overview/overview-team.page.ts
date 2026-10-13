@@ -1,27 +1,9 @@
-import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
+import { SlicePipe, UpperCasePipe } from '@angular/common';
 import { Router } from '@angular/router';
-import { IonicModule, ToastController, AlertController, ViewWillEnter, ViewWillLeave } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
-import { APP_CONFIG_TOKEN, AppConfig } from '@core/infrastructure/config/app.config';
-import { addIcons } from 'ionicons';
-import {
-  peopleOutline,
-  createOutline,
-  trashOutline,
-  refreshOutline,
-  mailOutline,
-  personOutline,
-  checkmarkCircleOutline,
-  closeCircleOutline,
-  timeOutline,
-  shieldOutline,
-  addOutline,
-  chevronDownOutline,
-  chevronUpOutline,
-  personAddOutline
-} from 'ionicons/icons';
+import { APP_CONFIG_TOKEN } from '@core/infrastructure/config/app.config';
 import { TeamUseCase } from '@core/domain/use-cases/team.use-case';
 import { TeamWithMembers, TeamMember, MemberStatus } from '@core/domain/features/teams';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
@@ -29,6 +11,21 @@ import { LoggerService } from '@core/infrastructure/logging/logger.service';
 import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
 import { InviteMemberRequest } from '../../../../core/domain/repositories/team.repository';
 import { AuthUseCase } from '@core/domain/use-cases/auth.use-case';
+import {
+  JbhButtonComponent,
+  JbhEmptyStateComponent,
+  JbhIconButtonComponent,
+  JbhIconComponent,
+  JbhPageHeaderComponent,
+  JbhSkeletonComponent,
+  JbhTableCardDirective,
+  JbhTableCellComponent,
+  JbhTableComponent,
+  JbhTableHeadDirective,
+  JbhTableRowComponent,
+  JbhTableRowDirective
+} from '@design-system/components';
+import { DialogService, JbhPageComponent, ToastService } from '@design-system/platform';
 import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 
 @Component({
@@ -37,13 +34,27 @@ import { AppHeaderComponent } from '@shared/components/app-header/app-header.com
   styleUrls: ['./overview-team.page.scss'],
   standalone: true,
   imports: [
-    CommonModule,
-    IonicModule,
+    SlicePipe,
+    UpperCasePipe,
     TranslateModule,
+    JbhButtonComponent,
+    JbhEmptyStateComponent,
+    JbhIconButtonComponent,
+    JbhIconComponent,
+    JbhPageComponent,
+    JbhPageHeaderComponent,
+    JbhSkeletonComponent,
+    JbhTableCardDirective,
+    JbhTableCellComponent,
+    JbhTableComponent,
+    JbhTableHeadDirective,
+    JbhTableRowComponent,
+    JbhTableRowDirective,
     AppHeaderComponent
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class OverviewTeamPage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLeave {
+export class OverviewTeamPage implements OnInit, OnDestroy {
 
   teams: TeamWithMembers[] = [];
   isLoading = true;
@@ -53,34 +64,16 @@ export class OverviewTeamPage implements OnInit, OnDestroy, ViewWillEnter, ViewW
 
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private router: Router,
-    private teamUseCase: TeamUseCase,
-    private authUseCase: AuthUseCase,
-    private translationService: TranslationService,
-    private toastController: ToastController,
-    private alertController: AlertController,
-    private logger: LoggerService,
-    private headerActions: HeaderActionsService,
-    @Inject(APP_CONFIG_TOKEN) private appConfig: AppConfig
-  ) {
-    addIcons({
-      peopleOutline,
-      createOutline,
-      trashOutline,
-      refreshOutline,
-      mailOutline,
-      personOutline,
-      checkmarkCircleOutline,
-      closeCircleOutline,
-      timeOutline,
-      shieldOutline,
-      addOutline,
-      chevronDownOutline,
-      chevronUpOutline,
-      personAddOutline
-    });
-  }
+  private readonly router = inject(Router);
+  private readonly teamUseCase = inject(TeamUseCase);
+  private readonly authUseCase = inject(AuthUseCase);
+  private readonly translationService = inject(TranslationService);
+  private readonly toast = inject(ToastService);
+  private readonly dialog = inject(DialogService);
+  private readonly logger = inject(LoggerService);
+  private readonly headerActions = inject(HeaderActionsService);
+  private readonly appConfig = inject(APP_CONFIG_TOKEN);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     this.loadTeams();
@@ -91,7 +84,7 @@ export class OverviewTeamPage implements OnInit, OnDestroy, ViewWillEnter, ViewW
     this.destroy$.complete();
   }
 
-  ionViewWillEnter(): void {
+  onPageEnter(): void {
     this.headerActions.setPageConfig({
       title: 'teams.overview.title',
       actions: [
@@ -105,9 +98,11 @@ export class OverviewTeamPage implements OnInit, OnDestroy, ViewWillEnter, ViewW
     this.refreshTeams();
   }
 
-  ionViewWillLeave(): void {
+  onPageLeave(): void {
     this.headerActions.clearPageConfig();
   }
+
+  trackByMember = (_index: number, member: TeamMember): string => member.email;
 
   private loadTeams(): void {
     this.isLoading = true;
@@ -120,11 +115,13 @@ export class OverviewTeamPage implements OnInit, OnDestroy, ViewWillEnter, ViewW
           if (teams.length > 0) {
             this.expandedTeams.add(teams[0].id);
           }
+          this.cdr.markForCheck();
         },
         error: (error) => {
           this.logger.error('Error loading teams:', 'OverviewTeamPage', error);
           this.isLoading = false;
-          this.showToast(this.translationService.instant('teams.overview.errors.load'), 'danger');
+          this.cdr.markForCheck();
+          this.toast.show(this.translationService.instant('teams.overview.errors.load'), 'error');
         }
       });
   }
@@ -136,10 +133,12 @@ export class OverviewTeamPage implements OnInit, OnDestroy, ViewWillEnter, ViewW
         next: (teams) => {
           this.teams = teams;
           this.isLoading = false;
+          this.cdr.markForCheck();
         },
         error: (error) => {
           this.logger.error('Error refreshing teams:', 'OverviewTeamPage', error);
           this.isLoading = false;
+          this.cdr.markForCheck();
         }
       });
   }
@@ -173,22 +172,15 @@ export class OverviewTeamPage implements OnInit, OnDestroy, ViewWillEnter, ViewW
   }
 
   async confirmDeleteTeam(team: TeamWithMembers): Promise<void> {
-    const alert = await this.alertController.create({
-      header: this.translationService.instant('teams.overview.deleteTeam.title'),
+    const confirmed = await this.dialog.confirm({
+      title: this.translationService.instant('teams.overview.deleteTeam.title'),
       message: this.translationService.instant('teams.overview.deleteTeam.message', { name: team.name }),
-      buttons: [
-        {
-          text: this.translationService.instant('common.cancel'),
-          role: 'cancel'
-        },
-        {
-          text: this.translationService.instant('common.delete'),
-          role: 'destructive',
-          handler: () => this.deleteTeam(team)
-        }
-      ]
+      confirmText: this.translationService.instant('common.delete'),
+      destructive: true
     });
-    await alert.present();
+    if (confirmed) {
+      this.deleteTeam(team);
+    }
   }
 
   private deleteTeam(team: TeamWithMembers): void {
@@ -197,11 +189,12 @@ export class OverviewTeamPage implements OnInit, OnDestroy, ViewWillEnter, ViewW
       .subscribe({
         next: () => {
           this.teams = this.teams.filter(t => t.id !== team.id);
-          this.showToast(this.translationService.instant('teams.overview.deleteTeam.success'), 'success');
+          this.cdr.markForCheck();
+          this.toast.show(this.translationService.instant('teams.overview.deleteTeam.success'), 'success');
         },
         error: (error) => {
           this.logger.error('Error deleting team:', 'OverviewTeamPage', error);
-          this.showToast(this.translationService.instant('teams.overview.deleteTeam.error'), 'danger');
+          this.toast.show(this.translationService.instant('teams.overview.deleteTeam.error'), 'error');
         }
       });
   }
@@ -211,22 +204,15 @@ export class OverviewTeamPage implements OnInit, OnDestroy, ViewWillEnter, ViewW
   }
 
   async confirmDeleteMember(team: TeamWithMembers, member: TeamMember): Promise<void> {
-    const alert = await this.alertController.create({
-      header: this.translationService.instant('teams.overview.deleteMember.title'),
+    const confirmed = await this.dialog.confirm({
+      title: this.translationService.instant('teams.overview.deleteMember.title'),
       message: this.translationService.instant('teams.overview.deleteMember.message', { name: member.nickName }),
-      buttons: [
-        {
-          text: this.translationService.instant('common.cancel'),
-          role: 'cancel'
-        },
-        {
-          text: this.translationService.instant('common.delete'),
-          role: 'destructive',
-          handler: () => this.deleteMember(team, member)
-        }
-      ]
+      confirmText: this.translationService.instant('common.delete'),
+      destructive: true
     });
-    await alert.present();
+    if (confirmed) {
+      this.deleteMember(team, member);
+    }
   }
 
   private deleteMember(team: TeamWithMembers, member: TeamMember): void {
@@ -235,31 +221,24 @@ export class OverviewTeamPage implements OnInit, OnDestroy, ViewWillEnter, ViewW
       .subscribe({
         next: () => {
           this.refreshTeams();
-          this.showToast(this.translationService.instant('teams.overview.deleteMember.success'), 'success');
+          this.toast.show(this.translationService.instant('teams.overview.deleteMember.success'), 'success');
         },
         error: (error) => {
           this.logger.error('Error deleting member:', 'OverviewTeamPage', error);
-          this.showToast(this.translationService.instant('teams.overview.deleteMember.error'), 'danger');
+          this.toast.show(this.translationService.instant('teams.overview.deleteMember.error'), 'error');
         }
       });
   }
 
   async confirmReinviteMember(team: TeamWithMembers, member: TeamMember): Promise<void> {
-    const alert = await this.alertController.create({
-      header: this.translationService.instant('teams.overview.reinviteMember.title'),
+    const confirmed = await this.dialog.confirm({
+      title: this.translationService.instant('teams.overview.reinviteMember.title'),
       message: this.translationService.instant('teams.overview.reinviteMember.message', { name: member.nickName }),
-      buttons: [
-        {
-          text: this.translationService.instant('common.cancel'),
-          role: 'cancel'
-        },
-        {
-          text: this.translationService.instant('teams.overview.reinviteMember.confirm'),
-          handler: () => this.reinviteMember(team, member)
-        }
-      ]
+      confirmText: this.translationService.instant('teams.overview.reinviteMember.confirm')
     });
-    await alert.present();
+    if (confirmed) {
+      this.reinviteMember(team, member);
+    }
   }
 
   private reinviteMember(team: TeamWithMembers, member: TeamMember): void {
@@ -269,11 +248,11 @@ export class OverviewTeamPage implements OnInit, OnDestroy, ViewWillEnter, ViewW
       .subscribe({
         next: () => {
           this.refreshTeams();
-          this.showToast(this.translationService.instant('teams.overview.reinviteMember.success'), 'success');
+          this.toast.show(this.translationService.instant('teams.overview.reinviteMember.success'), 'success');
         },
         error: (error) => {
           this.logger.error('Error reinviting member:', 'OverviewTeamPage', error);
-          this.showToast(this.translationService.instant('teams.overview.reinviteMember.error'), 'danger');
+          this.toast.show(this.translationService.instant('teams.overview.reinviteMember.error'), 'error');
         }
       });
   }
@@ -316,15 +295,5 @@ export class OverviewTeamPage implements OnInit, OnDestroy, ViewWillEnter, ViewW
     const currentUser = this.authUseCase.getCurrentUser();
     if (!currentUser) return false;
     return team.owner?.email === currentUser.email;
-  }
-
-  private async showToast(message: string, color: 'success' | 'danger' | 'warning'): Promise<void> {
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-      color,
-      position: 'bottom'
-    });
-    await toast.present();
   }
 }

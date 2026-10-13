@@ -1,12 +1,9 @@
-.import-statement-content {
-  --background: var(--jbh-background-light);
+jbh-page {
+  --jbh-page-background: var(--jbh-background-light);
 }
 
-.jbh-field-hint {
-  font-size: var(--jbh-font-size-xs);
-  color: var(--jbh-text-secondary);
-  margin-top: var(--jbh-spacing-xs);
-  margin-bottom: 0;
+.import-statement-file-field {
+  margin-bottom: var(--jbh-spacing-md);
 }
 
 .import-statement-file-input {
@@ -15,14 +12,6 @@
   height: 1px;
   opacity: 0;
   overflow: hidden;
-}
-
-.import-statement-file-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--jbh-spacing-xs);
-  cursor: pointer;
 }
 
 .import-statement-file-name {
@@ -46,6 +35,10 @@
 
 .import-statement-row-review {
   background: var(--jbh-warning-background);
+}
+
+.import-statement-badge jbh-icon {
+  font-size: 14px;
 }
 
 .import-statement-cell-date {

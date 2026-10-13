@@ -1,33 +1,27 @@
-import { Component, Input, Output, EventEmitter, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { Component, Input, Output, EventEmitter, ChangeDetectorRef, ChangeDetectionStrategy, inject } from '@angular/core';
+import { NgClass } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { addIcons } from 'ionicons';
 import { JbhCurrencyPipe, JbhProfitPipe, JbhGrowthPipe, JbhRelativeTimePipe } from '@shared/pipes';
-import {
-  createOutline,
-  trashOutline,
-  walletOutline,
-  homeOutline,
-  cashOutline,
-  cardOutline,
-  trendingUpOutline,
-  trendingDownOutline,
-  timeOutline,
-  cubeOutline,
-  checkmarkCircleOutline,
-  removeOutline,
-  analyticsOutline,
-  addCircleOutline
-} from 'ionicons/icons';
 import { ProductListItem } from '@core/domain/features/products';
+import { JbhIconButtonComponent, JbhIconComponent, JbhSpinnerComponent, JbhToggleComponent } from '@design-system/components';
 
 @Component({
   selector: 'app-product-card',
   templateUrl: './product-card.component.html',
   styleUrls: ['./product-card.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, TranslateModule, JbhCurrencyPipe, JbhProfitPipe, JbhGrowthPipe, JbhRelativeTimePipe],
+  imports: [
+    NgClass,
+    TranslateModule,
+    JbhCurrencyPipe,
+    JbhProfitPipe,
+    JbhGrowthPipe,
+    JbhRelativeTimePipe,
+    JbhIconComponent,
+    JbhIconButtonComponent,
+    JbhSpinnerComponent,
+    JbhToggleComponent
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductCardComponent {
@@ -42,24 +36,7 @@ export class ProductCardComponent {
 
   isTogglingStatus = false;
 
-  constructor(private cdr: ChangeDetectorRef) {
-    addIcons({
-      createOutline,
-      trashOutline,
-      walletOutline,
-      homeOutline,
-      cashOutline,
-      cardOutline,
-      trendingUpOutline,
-      trendingDownOutline,
-      timeOutline,
-      cubeOutline,
-      checkmarkCircleOutline,
-      removeOutline,
-      analyticsOutline,
-      addCircleOutline
-    });
-  }
+  private readonly cdr = inject(ChangeDetectorRef);
 
   onEdit(event: Event): void {
     event.stopPropagation();
@@ -71,11 +48,8 @@ export class ProductCardComponent {
     this.delete.emit();
   }
 
-  onStatusToggle(event: Event): void {
-    event.stopPropagation();
-    const customEvent = event as CustomEvent;
-    const newStatus = customEvent.detail.checked;
-    this.statusChange.emit(newStatus);
+  onStatusToggle(checked: boolean): void {
+    this.statusChange.emit(checked);
   }
 
   onViewHistory(event: Event): void {

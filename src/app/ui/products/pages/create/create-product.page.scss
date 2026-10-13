@@ -1,35 +1,15 @@
-.create-product-content {
-  --background: var(--jbh-background-light);
-}
-
-.button-icon {
-  margin-right: var(--jbh-spacing-xs);
-}
-
-.required-indicator {
-  color: var(--jbh-error-color);
-  margin-left: 4px;
+jbh-page {
+  --jbh-page-background: var(--jbh-background-light);
 }
 
 .dynamic-fields-section {
   margin-top: var(--jbh-spacing-md);
 }
 
-.jbh-toggle-wrapper {
-  display: flex;
-  align-items: center;
-  min-height: 48px;
-  padding: var(--jbh-spacing-xs) 0;
+.dynamic-field-skeleton {
+  margin-bottom: var(--jbh-spacing-md);
 }
 
-.jbh-datetime-button {
-  flex: 1;
-  --background: transparent;
-  --color: var(--jbh-text-color);
-}
-
-.jbh-field-hint {
-  font-size: var(--jbh-font-size-sm);
-  color: var(--jbh-text-muted);
-  margin-top: 4px;
+.dynamic-field-toggle {
+  margin-bottom: var(--jbh-spacing-md);
 }

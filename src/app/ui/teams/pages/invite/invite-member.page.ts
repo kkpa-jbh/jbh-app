@@ -1,28 +1,26 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { IonicModule, ToastController, ViewWillEnter, ViewWillLeave } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil, debounceTime, distinctUntilChanged, switchMap, of } from 'rxjs';
-import { addIcons } from 'ionicons';
-import {
-  mailOutline,
-  personOutline,
-  peopleOutline,
-  sendOutline,
-  informationCircle,
-  checkmarkCircleOutline,
-  closeCircleOutline
-} from 'ionicons/icons';
 import { TeamUseCase } from '@core/domain/use-cases/team.use-case';
 import { AuthUseCase } from '@core/domain/use-cases/auth.use-case';
 import { TeamWithMembers } from '@core/domain/features/teams';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
-import { ViewportService, SelectInterface } from '@core/infrastructure/viewport/viewport.service';
 import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
 import { InviteMemberRequest } from '../../../../core/domain/repositories/team.repository';
+import {
+  JbhButtonComponent,
+  JbhCardComponent,
+  JbhIconComponent,
+  JbhPageHeaderComponent,
+  JbhSelectComponent,
+  JbhSelectOptionComponent,
+  JbhSpinnerComponent,
+  JbhTextFieldComponent
+} from '@design-system/components';
+import { JbhPageComponent, ToastService } from '@design-system/platform';
 import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 
 @Component({
@@ -31,14 +29,22 @@ import { AppHeaderComponent } from '@shared/components/app-header/app-header.com
   styleUrls: ['./invite-member.page.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
-    IonicModule,
     TranslateModule,
+    JbhButtonComponent,
+    JbhCardComponent,
+    JbhIconComponent,
+    JbhPageComponent,
+    JbhPageHeaderComponent,
+    JbhSelectComponent,
+    JbhSelectOptionComponent,
+    JbhSpinnerComponent,
+    JbhTextFieldComponent,
     AppHeaderComponent
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class InviteMemberPage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLeave {
+export class InviteMemberPage implements OnInit, OnDestroy {
 
   inviteForm!: FormGroup;
   teams: TeamWithMembers[] = [];
@@ -49,34 +55,20 @@ export class InviteMemberPage implements OnInit, OnDestroy, ViewWillEnter, ViewW
   checkingUser = false;
   userExists: boolean | null = null;
   userCheckMessage = '';
-  selectInterface: SelectInterface = 'action-sheet';
 
   private destroy$ = new Subject<void>();
   private userCheck$ = new Subject<string>();
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private router: Router,
-    private route: ActivatedRoute,
-    private teamUseCase: TeamUseCase,
-    private authUseCase: AuthUseCase,
-    private translationService: TranslationService,
-    private toastController: ToastController,
-    private logger: LoggerService,
-    private viewportService: ViewportService,
-    private headerActions: HeaderActionsService
-  ) {
-    this.selectInterface = this.viewportService.selectInterface;
-    addIcons({
-      mailOutline,
-      personOutline,
-      peopleOutline,
-      sendOutline,
-      informationCircle,
-      checkmarkCircleOutline,
-      closeCircleOutline
-    });
-  }
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
+  private readonly teamUseCase = inject(TeamUseCase);
+  private readonly authUseCase = inject(AuthUseCase);
+  private readonly translationService = inject(TranslationService);
+  private readonly toast = inject(ToastService);
+  private readonly logger = inject(LoggerService);
+  private readonly headerActions = inject(HeaderActionsService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     this.initForm();
@@ -90,7 +82,7 @@ export class InviteMemberPage implements OnInit, OnDestroy, ViewWillEnter, ViewW
     this.destroy$.complete();
   }
 
-  ionViewWillEnter(): void {
+  onPageEnter(): void {
     this.headerActions.setPageConfig({
       title: 'teams.invite.formTitle'
     });
@@ -99,7 +91,7 @@ export class InviteMemberPage implements OnInit, OnDestroy, ViewWillEnter, ViewW
     this.checkPreselectedTeam();
   }
 
-  ionViewWillLeave(): void {
+  onPageLeave(): void {
     this.headerActions.clearPageConfig();
   }
 
@@ -109,7 +101,10 @@ export class InviteMemberPage implements OnInit, OnDestroy, ViewWillEnter, ViewW
         this.preselectedTeamId = params['teamId'];
         if (this.inviteForm) {
           this.inviteForm.patchValue({ teamId: this.preselectedTeamId });
+          // A disabled control keeps the team fixed; the select has no disabled input of its own.
+          this.inviteForm.get('teamId')?.disable();
         }
+        this.cdr.markForCheck();
       }
     });
   }
@@ -135,6 +130,7 @@ export class InviteMemberPage implements OnInit, OnDestroy, ViewWillEnter, ViewW
 
   private loadTeams(): void {
     this.isLoadingTeams = true;
+    this.cdr.markForCheck();
     this.teamUseCase.getMyTeams()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -144,11 +140,13 @@ export class InviteMemberPage implements OnInit, OnDestroy, ViewWillEnter, ViewW
           if (this.preselectedTeamId) {
             this.inviteForm.patchValue({ teamId: this.preselectedTeamId });
           }
+          this.cdr.markForCheck();
         },
         error: (error) => {
           this.logger.error('Error loading teams:', 'InviteMemberPage', error);
           this.isLoadingTeams = false;
-          this.showToast(this.translationService.instant('teams.invite.errors.loadTeams'), 'danger');
+          this.cdr.markForCheck();
+          this.toast.show(this.translationService.instant('teams.invite.errors.loadTeams'), 'error');
         }
       });
   }
@@ -167,6 +165,7 @@ export class InviteMemberPage implements OnInit, OnDestroy, ViewWillEnter, ViewW
           this.userExists = null;
           this.userCheckMessage = '';
         }
+        this.cdr.markForCheck();
       });
 
     this.userCheck$
@@ -176,6 +175,7 @@ export class InviteMemberPage implements OnInit, OnDestroy, ViewWillEnter, ViewW
           this.checkingUser = true;
           this.userExists = null;
           this.userCheckMessage = '';
+          this.cdr.markForCheck();
 
           const isEmail = this.isEmail(value);
           if (isEmail) {
@@ -202,11 +202,13 @@ export class InviteMemberPage implements OnInit, OnDestroy, ViewWillEnter, ViewW
               ? this.translationService.instant('teams.invite.userNotFound.email')
               : this.translationService.instant('teams.invite.userNotFound.username');
           }
+          this.cdr.markForCheck();
         },
         error: (error) => {
           this.logger.error('Error checking user:', 'InviteMemberPage', error);
           this.checkingUser = false;
           this.userExists = null;
+          this.cdr.markForCheck();
         }
       });
   }
@@ -224,7 +226,8 @@ export class InviteMemberPage implements OnInit, OnDestroy, ViewWillEnter, ViewW
 
     this.isSubmitting = true;
 
-    const { emailOrUsername, teamId } = this.inviteForm.value;
+    // getRawValue keeps the team id when the control is disabled for a preselected team.
+    const { emailOrUsername, teamId } = this.inviteForm.getRawValue();
     const teamName = this.teams.find(t => t.id === teamId)?.name || '';
     const request: InviteMemberRequest = { emailOrUsername, teamName , teamID: teamId };
     this.teamUseCase.inviteMember(
@@ -234,14 +237,16 @@ export class InviteMemberPage implements OnInit, OnDestroy, ViewWillEnter, ViewW
       .subscribe({
         next: async () => {
           this.isSubmitting = false;
-          await this.showToast(this.translationService.instant('teams.invite.success'), 'success');
+          this.cdr.markForCheck();
+          await this.toast.show(this.translationService.instant('teams.invite.success'), 'success');
           this.router.navigate(['/teams/overview']);
         },
         error: async (error) => {
           this.logger.error('Error inviting member:', 'InviteMemberPage', error);
           this.isSubmitting = false;
+          this.cdr.markForCheck();
           const errorMessage = error?.error || this.translationService.instant('teams.invite.errors.invite');
-          await this.showToast(errorMessage, 'danger');
+          await this.toast.show(errorMessage, 'error');
         }
       });
   }
@@ -279,19 +284,5 @@ export class InviteMemberPage implements OnInit, OnDestroy, ViewWillEnter, ViewW
 
   get canSubmit(): boolean {
     return this.inviteForm.valid && this.userExists === true && !this.isSubmitting && !this.checkingUser;
-  }
-
-  get isTeamDisabled(): boolean {
-    return !!this.preselectedTeamId;
-  }
-
-  private async showToast(message: string, color: 'success' | 'danger' | 'warning'): Promise<void> {
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-      color,
-      position: 'bottom'
-    });
-    await toast.present();
   }
 }

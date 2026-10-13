@@ -1,27 +1,24 @@
-import { Component, OnInit, OnDestroy, Inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { IonicModule, ToastController, ViewWillEnter, ViewWillLeave } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
-import { addIcons } from 'ionicons';
-import {
-  peopleOutline,
-  textOutline,
-  informationCircle,
-  saveOutline,
-  close,
-  alertCircleOutline,
-  arrowBackOutline
-} from 'ionicons/icons';
 import { TeamUseCase } from '@core/domain/use-cases/team.use-case';
 import { CreateTeamRequest } from '@core/domain/features/teams';
 import { JBHError } from '@core/domain/models/jbh-error.model';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
 import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
-import { APP_CONFIG_TOKEN, AppConfig } from '@core/infrastructure/config/app.config';
+import { APP_CONFIG_TOKEN } from '@core/infrastructure/config/app.config';
+import {
+  JbhButtonComponent,
+  JbhCardComponent,
+  JbhIconComponent,
+  JbhPageHeaderComponent,
+  JbhSpinnerComponent,
+  JbhTextFieldComponent
+} from '@design-system/components';
+import { JbhPageComponent, ToastService } from '@design-system/platform';
 import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 
 @Component({
@@ -30,14 +27,20 @@ import { AppHeaderComponent } from '@shared/components/app-header/app-header.com
   styleUrls: ['./create-team.page.scss'],
   standalone: true,
   imports: [
-    CommonModule,
     ReactiveFormsModule,
-    IonicModule,
     TranslateModule,
+    JbhButtonComponent,
+    JbhCardComponent,
+    JbhIconComponent,
+    JbhPageComponent,
+    JbhPageHeaderComponent,
+    JbhSpinnerComponent,
+    JbhTextFieldComponent,
     AppHeaderComponent
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreateTeamPage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLeave {
+export class CreateTeamPage implements OnInit, OnDestroy {
 
   teamForm!: FormGroup;
   isSubmitting = false;
@@ -46,26 +49,15 @@ export class CreateTeamPage implements OnInit, OnDestroy, ViewWillEnter, ViewWil
 
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private router: Router,
-    private teamUseCase: TeamUseCase,
-    private translationService: TranslationService,
-    private toastController: ToastController,
-    private logger: LoggerService,
-    private headerActions: HeaderActionsService,
-    @Inject(APP_CONFIG_TOKEN) private appConfig: AppConfig
-  ) {
-    addIcons({
-      peopleOutline,
-      textOutline,
-      informationCircle,
-      saveOutline,
-      close,
-      alertCircleOutline,
-      arrowBackOutline
-    });
-  }
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly router = inject(Router);
+  private readonly teamUseCase = inject(TeamUseCase);
+  private readonly translationService = inject(TranslationService);
+  private readonly toast = inject(ToastService);
+  private readonly logger = inject(LoggerService);
+  private readonly headerActions = inject(HeaderActionsService);
+  private readonly appConfig = inject(APP_CONFIG_TOKEN);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     this.initForm();
@@ -77,7 +69,7 @@ export class CreateTeamPage implements OnInit, OnDestroy, ViewWillEnter, ViewWil
     this.destroy$.complete();
   }
 
-  ionViewWillEnter(): void {
+  onPageEnter(): void {
     this.headerActions.setPageConfig({
       title: 'teams.create.formTitle'
     });
@@ -85,22 +77,25 @@ export class CreateTeamPage implements OnInit, OnDestroy, ViewWillEnter, ViewWil
     this.checkTeamLimit();
   }
 
-  ionViewWillLeave(): void {
+  onPageLeave(): void {
     this.headerActions.clearPageConfig();
   }
 
   private checkTeamLimit(): void {
     this.isCheckingLimit = true;
+    this.cdr.markForCheck();
     this.teamUseCase.getMyTeams()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (teams) => {
           this.currentTeamCount = teams.length;
           this.isCheckingLimit = false;
+          this.cdr.markForCheck();
         },
         error: (error) => {
           this.logger.error('Error checking team limit:', 'CreateTeamPage', error);
           this.isCheckingLimit = false;
+          this.cdr.markForCheck();
         }
       });
   }
@@ -155,16 +150,18 @@ export class CreateTeamPage implements OnInit, OnDestroy, ViewWillEnter, ViewWil
       .subscribe({
         next: async () => {
           this.isSubmitting = false;
-          await this.showToast(this.translationService.instant('teams.create.success'), 'success');
+          this.cdr.markForCheck();
+          await this.toast.show(this.translationService.instant('teams.create.success'), 'success');
           this.router.navigate(['/teams/overview']);
         },
         error: async (error) => {
           this.logger.error('Error creating team:', 'CreateTeamPage', error);
           this.isSubmitting = false;
+          this.cdr.markForCheck();
           const errorMessage = (error instanceof JBHError && error.isValidationError)
             ? error.message
             : this.translationService.instant('teams.create.errors.create');
-          await this.showToast(errorMessage, 'danger');
+          await this.toast.show(errorMessage, 'error');
         }
       });
   }
@@ -205,21 +202,5 @@ export class CreateTeamPage implements OnInit, OnDestroy, ViewWillEnter, ViewWil
       return this.translationService.instant(`teams.create.${fieldName}.pattern`);
     }
     return this.translationService.instant('validation.pattern');
-  }
-
-  private async showToast(message: string, color: 'success' | 'danger' | 'warning'): Promise<void> {
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-      color,
-      position: 'bottom',
-      buttons: [
-        {
-          icon: 'close',
-          role: 'cancel'
-        }
-      ]
-    });
-    await toast.present();
   }
 }

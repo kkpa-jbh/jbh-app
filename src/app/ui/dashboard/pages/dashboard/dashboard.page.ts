@@ -1,14 +1,15 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { IonicModule, ViewWillEnter, ViewWillLeave } from '@ionic/angular';
+import { Component, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { RouterModule } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { Subject, takeUntil, combineLatest } from 'rxjs';
 import { PortfolioContextService } from '@core/infrastructure/context/portfolio-context.service';
 import { ProductUseCase } from '@core/domain/use-cases/product.use-case';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
 import { JbhCurrencyPipe } from '@shared/pipes/jbh-currency.pipe';
 import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
+import { JbhButtonComponent, JbhCardComponent } from '@design-system/components';
+import { JbhPageComponent } from '@design-system/platform';
 import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 
 @Component({
@@ -16,34 +17,39 @@ import { AppHeaderComponent } from '@shared/components/app-header/app-header.com
   templateUrl: './dashboard.page.html',
   styleUrls: ['./dashboard.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, TranslateModule, RouterModule, JbhCurrencyPipe, AppHeaderComponent],
+  imports: [
+    AsyncPipe,
+    TranslateModule,
+    RouterLink,
+    JbhButtonComponent,
+    JbhCardComponent,
+    JbhPageComponent,
+    JbhCurrencyPipe,
+    AppHeaderComponent
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DashboardPage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLeave {
+export class DashboardPage implements OnDestroy {
+  private readonly portfolioContext = inject(PortfolioContextService);
+  private readonly productUseCase = inject(ProductUseCase);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly logger = inject(LoggerService);
+  private readonly headerActions = inject(HeaderActionsService);
+
   currentContext$ = this.portfolioContext.context$;
   totalBalance = 0;
   activeProductsCount = 0;
   isLoading = false;
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private portfolioContext: PortfolioContextService,
-    private productUseCase: ProductUseCase,
-    private cdr: ChangeDetectorRef,
-    private logger: LoggerService,
-    private headerActions: HeaderActionsService
-  ) {}
-
-  ngOnInit(): void {}
-
-  ionViewWillEnter(): void {
+  onPageEnter(): void {
     this.headerActions.setPageConfig({
       title: 'menu.dashboard'
     });
     this.loadDashboardData();
   }
 
-  ionViewWillLeave(): void {
+  onPageLeave(): void {
     this.headerActions.clearPageConfig();
   }
 

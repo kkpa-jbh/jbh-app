@@ -1,3 +1,8 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
 .ios-install-modal {
   display: flex;
   flex-direction: column;
@@ -15,18 +20,13 @@
     margin: 0;
     font-size: 1.25rem;
   }
-
-  ion-button {
-    --padding-start: 0;
-    --padding-end: 0;
-  }
 }
 
 .modal-content {
-  --padding-start: var(--jbh-spacing-md);
-  --padding-end: var(--jbh-spacing-md);
-  --padding-top: var(--jbh-spacing-md);
-  --padding-bottom: var(--jbh-spacing-md);
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--jbh-spacing-md);
 
   .jbh-subtitle {
     margin-top: 0;
@@ -135,7 +135,7 @@
   }
 
   .arrow-down {
-    ion-icon {
+    jbh-icon {
       font-size: 2rem;
       color: var(--jbh-primary-color, #667eea);
     }
@@ -156,7 +156,7 @@
       background: var(--jbh-background-light, #f7f8fa);
       border-radius: var(--jbh-radius-sm);
 
-      ion-icon {
+      jbh-icon {
         font-size: 1.25rem;
         color: var(--jbh-success-color, #48bb78);
       }

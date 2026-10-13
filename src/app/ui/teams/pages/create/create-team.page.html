@@ -1,119 +1,78 @@
-<app-header></app-header>
-<ion-content class="create-team-content">
+<jbh-page (pageEnter)="onPageEnter()" (pageLeave)="onPageLeave()">
+  <app-header jbhPageHeader></app-header>
+
   <div class="jbh-container">
-    <!-- Loading State -->
     @if (isCheckingLimit) {
-      <div class="jbh-form-card">
+      <jbh-card variant="form">
         <div class="jbh-loading-container">
-          <ion-spinner name="crescent"></ion-spinner>
+          <jbh-spinner />
         </div>
-      </div>
+      </jbh-card>
     }
 
-    <!-- Limit Reached State -->
     @if (!isCheckingLimit && !canCreateTeam) {
-      <div class="jbh-form-card">
+      <jbh-card variant="form">
         <div class="jbh-limit-error">
           <div class="jbh-limit-error-icon">
-            <ion-icon name="alert-circle-outline"></ion-icon>
+            <jbh-icon name="alert-circle-outline" />
           </div>
           <h2 class="jbh-limit-error-title">{{ 'teams.create.limitReached.title' | translate }}</h2>
           <p class="jbh-limit-error-message">{{ 'teams.create.limitReached.message' | translate:{ max: maxTeams } }}</p>
           <button
             type="button"
-            class="jbh-button-primary jbh-button-block"
+            jbhButton
+            block
+            icon="arrow-back-outline"
             (click)="navigateToOverview()"
           >
-            <ion-icon name="arrow-back-outline" class="button-icon"></ion-icon>
-            <span>{{ 'teams.create.limitReached.backButton' | translate }}</span>
+            {{ 'teams.create.limitReached.backButton' | translate }}
           </button>
         </div>
-      </div>
+      </jbh-card>
     }
 
-    <!-- Form Card -->
     @if (!isCheckingLimit && canCreateTeam) {
-      <div class="jbh-form-card">
+      <jbh-card variant="form">
+        <jbh-page-header
+          variant="form"
+          icon="people-outline"
+          [title]="'teams.create.formTitle' | translate"
+          [subtitle]="'teams.create.formSubtitle' | translate"
+        />
 
-        <!-- Form Header -->
-        <div class="jbh-form-header">
-          <div class="jbh-form-icon">
-            <ion-icon name="people-outline"></ion-icon>
-          </div>
-          <h1 class="jbh-form-title">{{ 'teams.create.formTitle' | translate }}</h1>
-          <p class="jbh-form-subtitle">{{ 'teams.create.formSubtitle' | translate }}</p>
-        </div>
+        <form [formGroup]="teamForm" (ngSubmit)="onSubmit()">
 
-        <!-- Form -->
-        <form [formGroup]="teamForm" (ngSubmit)="onSubmit()" class="jbh-form-animated">
+          <jbh-text-field
+            formControlName="shortName"
+            icon="text-outline"
+            requirement="required"
+            [label]="'teams.create.shortName.label' | translate"
+            [placeholder]="'teams.create.shortName.placeholder' | translate"
+            [error]="hasError('shortName') ? getErrorMessage('shortName') : ''"
+          />
 
-        <!-- Short Name Field -->
-        <div class="jbh-form-field">
-          <label class="jbh-label">
-            {{ 'teams.create.shortName.label' | translate }}
-            <span class="required-indicator">*</span>
-          </label>
-          <div class="jbh-input-wrapper">
-            <ion-icon name="text-outline" class="jbh-input-icon left"></ion-icon>
-            <input
-              type="text"
-              class="jbh-input jbh-input-icon-left"
-              formControlName="shortName"
-              [placeholder]="'teams.create.shortName.placeholder' | translate"
-              [class.error]="hasError('shortName')"
-            />
-          </div>
-          @if (hasError('shortName')) {
-            <div class="jbh-field-error">
-              <ion-icon name="information-circle"></ion-icon>
-              <span>{{ getErrorMessage('shortName') }}</span>
-            </div>
-          }
-        </div>
+          <jbh-text-field
+            formControlName="name"
+            icon="people-outline"
+            requirement="required"
+            [label]="'teams.create.name.label' | translate"
+            [placeholder]="'teams.create.name.placeholder' | translate"
+            [error]="hasError('name') ? getErrorMessage('name') : ''"
+          />
 
-        <!-- Team Name Field -->
-        <div class="jbh-form-field">
-          <label class="jbh-label">
-            {{ 'teams.create.name.label' | translate }}
-            <span class="required-indicator">*</span>
-          </label>
-          <div class="jbh-input-wrapper">
-            <ion-icon name="people-outline" class="jbh-input-icon left"></ion-icon>
-            <input
-              type="text"
-              class="jbh-input jbh-input-icon-left"
-              formControlName="name"
-              [placeholder]="'teams.create.name.placeholder' | translate"
-              [class.error]="hasError('name')"
-            />
-          </div>
-          @if (hasError('name')) {
-            <div class="jbh-field-error">
-              <ion-icon name="information-circle"></ion-icon>
-              <span>{{ getErrorMessage('name') }}</span>
-            </div>
-          }
-        </div>
-
-        <!-- Submit Button -->
-        <button
-          type="submit"
-          class="jbh-button-primary jbh-button-block"
-          [disabled]="isSubmitting || teamForm.invalid"
-          [class.jbh-button-loading]="isSubmitting"
-        >
-          @if (isSubmitting) {
-            <ion-spinner name="crescent"></ion-spinner>
-            <span>{{ 'teams.create.saving' | translate }}</span>
-          } @else {
-            <ion-icon name="save-outline" class="button-icon"></ion-icon>
-            <span>{{ 'teams.create.saveButton' | translate }}</span>
-          }
-        </button>
+          <button
+            type="submit"
+            jbhButton
+            block
+            icon="save-outline"
+            [loading]="isSubmitting"
+            [disabled]="isSubmitting || teamForm.invalid"
+          >
+            {{ (isSubmitting ? 'teams.create.saving' : 'teams.create.saveButton') | translate }}
+          </button>
 
         </form>
-
-      </div>
+      </jbh-card>
     }
   </div>
-</ion-content>
+</jbh-page>

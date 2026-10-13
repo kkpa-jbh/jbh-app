@@ -1,14 +1,18 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { IonicModule, ViewWillEnter, ViewWillLeave } from '@ionic/angular';
+import { Component, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, forkJoin, takeUntil } from 'rxjs';
-import { addIcons } from 'ionicons';
-import { listOutline, trendingUpOutline, trendingDownOutline } from 'ionicons/icons';
 import { CategoryUseCase } from '@core/domain/use-cases/category.use-case';
 import { Category } from '@core/domain/features/categories';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
 import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
+import {
+  JbhCardComponent,
+  JbhEmptyStateComponent,
+  JbhIconComponent,
+  JbhSegmentComponent,
+  JbhSkeletonComponent
+} from '@design-system/components';
+import { JbhPageComponent } from '@design-system/platform';
 import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 import { JbhDisplayNamePipe } from '@shared/pipes';
 
@@ -17,10 +21,20 @@ import { JbhDisplayNamePipe } from '@shared/pipes';
   templateUrl: './categories.page.html',
   styleUrls: ['./categories.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, TranslateModule, AppHeaderComponent, JbhDisplayNamePipe],
+  imports: [
+    TranslateModule,
+    JbhCardComponent,
+    JbhEmptyStateComponent,
+    JbhIconComponent,
+    JbhPageComponent,
+    JbhSegmentComponent,
+    JbhSkeletonComponent,
+    AppHeaderComponent,
+    JbhDisplayNamePipe
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CategoriesPage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLeave {
+export class CategoriesPage implements OnDestroy {
 
   incomeCategories: Category[] = [];
   expenseCategories: Category[] = [];
@@ -29,25 +43,19 @@ export class CategoriesPage implements OnInit, OnDestroy, ViewWillEnter, ViewWil
 
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private categoryUseCase: CategoryUseCase,
-    private logger: LoggerService,
-    private cdr: ChangeDetectorRef,
-    private headerActions: HeaderActionsService
-  ) {
-    addIcons({ listOutline, trendingUpOutline, trendingDownOutline });
-  }
+  private readonly categoryUseCase = inject(CategoryUseCase);
+  private readonly logger = inject(LoggerService);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly headerActions = inject(HeaderActionsService);
 
-  ngOnInit(): void {}
-
-  ionViewWillEnter(): void {
+  onPageEnter(): void {
     this.headerActions.setPageConfig({
       title: 'categories.title'
     });
     this.loadCategories();
   }
 
-  ionViewWillLeave(): void {
+  onPageLeave(): void {
     this.headerActions.clearPageConfig();
   }
 
@@ -56,8 +64,8 @@ export class CategoriesPage implements OnInit, OnDestroy, ViewWillEnter, ViewWil
     this.destroy$.complete();
   }
 
-  onSegmentChange(event: CustomEvent): void {
-    this.selectedSegment = event.detail.value;
+  onSegmentChange(value: string): void {
+    this.selectedSegment = value === 'EXPENSE' ? 'EXPENSE' : 'INCOME';
     this.cdr.markForCheck();
   }
 

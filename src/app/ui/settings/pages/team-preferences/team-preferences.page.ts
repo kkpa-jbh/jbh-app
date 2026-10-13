@@ -1,11 +1,12 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { IonicModule, ViewWillEnter, ViewWillLeave } from '@ionic/angular';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, inject } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { PortfolioContextService } from '@core/infrastructure/context/portfolio-context.service';
 import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
+import { JbhButtonComponent, JbhCardComponent, JbhToggleComponent } from '@design-system/components';
+import { JbhPageComponent } from '@design-system/platform';
 import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 
 @Component({
@@ -13,31 +14,38 @@ import { AppHeaderComponent } from '@shared/components/app-header/app-header.com
   templateUrl: './team-preferences.page.html',
   styleUrls: ['./team-preferences.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, TranslateModule, ReactiveFormsModule, AppHeaderComponent],
+  imports: [
+    AsyncPipe,
+    TranslateModule,
+    ReactiveFormsModule,
+    JbhButtonComponent,
+    JbhCardComponent,
+    JbhPageComponent,
+    JbhToggleComponent,
+    AppHeaderComponent
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class TeamPreferencesPage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLeave {
+export class TeamPreferencesPage implements OnInit, OnDestroy {
+  private readonly fb = inject(FormBuilder);
+  private readonly portfolioContext = inject(PortfolioContextService);
+  private readonly headerActions = inject(HeaderActionsService);
+
   form!: FormGroup;
   currentContext$ = this.portfolioContext.context$;
   private destroy$ = new Subject<void>();
-
-  constructor(
-    private fb: FormBuilder,
-    private portfolioContext: PortfolioContextService,
-    private headerActions: HeaderActionsService
-  ) {}
 
   ngOnInit(): void {
     this.initializeForm();
   }
 
-  ionViewWillEnter(): void {
+  onPageEnter(): void {
     this.headerActions.setPageConfig({
       title: 'settings.teamPreferences.title'
     });
   }
 
-  ionViewWillLeave(): void {
+  onPageLeave(): void {
     this.headerActions.clearPageConfig();
   }
 

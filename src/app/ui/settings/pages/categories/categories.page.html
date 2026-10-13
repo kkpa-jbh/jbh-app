@@ -1,88 +1,78 @@
-<app-header></app-header>
-<ion-content>
+<jbh-page (pageEnter)="onPageEnter()" (pageLeave)="onPageLeave()">
+  <app-header jbhPageHeader></app-header>
+
   <div class="jbh-container">
 
-    <!-- Segment Tabs -->
-    <ion-segment
-      [value]="selectedSegment"
-      (ionChange)="onSegmentChange($event)"
-      class="categories-segment"
-    >
-      <ion-segment-button value="INCOME">
-        <ion-icon name="trending-up-outline"></ion-icon>
-        <ion-label>{{ 'categories.income' | translate }}</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="EXPENSE">
-        <ion-icon name="trending-down-outline"></ion-icon>
-        <ion-label>{{ 'categories.expense' | translate }}</ion-label>
-      </ion-segment-button>
-    </ion-segment>
+    @let segmentOptions = [
+      { value: 'INCOME', label: ('categories.income' | translate), icon: 'trending-up-outline' },
+      { value: 'EXPENSE', label: ('categories.expense' | translate), icon: 'trending-down-outline' }
+    ];
 
-    <!-- Loading State -->
+    <jbh-segment
+      class="categories-segment"
+      [options]="segmentOptions"
+      [value]="selectedSegment"
+      (valueChange)="onSegmentChange($event)"
+    />
+
     @if (isLoading) {
       <div class="categories-list" role="status" aria-live="polite">
         @for (i of [1, 2, 3, 4, 5]; track i) {
-          <div class="jbh-card categories-card-skeleton">
-            <div class="jbh-skeleton" style="height: 20px; width: 60%; border-radius: 4px; margin-bottom: 8px;"></div>
-            <div class="jbh-skeleton" style="height: 14px; width: 90%; border-radius: 4px;"></div>
-          </div>
+          <jbh-card class="categories-card-skeleton">
+            <jbh-skeleton width="60%" height="20px" />
+            <jbh-skeleton width="90%" height="14px" />
+          </jbh-card>
         }
       </div>
     }
 
-    <!-- Income Categories -->
     @if (!isLoading && selectedSegment === 'INCOME') {
       @if (incomeCategories.length === 0) {
-        <div class="jbh-empty-state" role="status">
-          <div class="jbh-empty-state-icon">
-            <ion-icon name="list-outline"></ion-icon>
-          </div>
-          <h3 class="jbh-empty-state-title">{{ 'categories.empty.title' | translate }}</h3>
-          <p class="jbh-empty-state-message">{{ 'categories.empty.incomeMessage' | translate }}</p>
-        </div>
+        <jbh-empty-state
+          icon="list-outline"
+          [title]="'categories.empty.title' | translate"
+          [message]="'categories.empty.incomeMessage' | translate"
+        />
       } @else {
         <div class="categories-list" role="list" [attr.aria-label]="'categories.income' | translate">
           @for (category of incomeCategories; track trackByCategoryId($index, category)) {
-            <div class="jbh-card categories-card" role="listitem">
+            <jbh-card class="categories-card" role="listitem">
               <div class="categories-card-header">
-                <ion-icon name="trending-up-outline" class="categories-icon categories-icon--income"></ion-icon>
+                <jbh-icon name="trending-up-outline" class="categories-icon categories-icon--income" />
                 <span class="categories-name">{{ category.displayName | jbhDisplayName }}</span>
               </div>
               @if (category.description | jbhDisplayName) {
                 <p class="categories-description jbh-text-muted">{{ category.description | jbhDisplayName }}</p>
               }
-            </div>
+            </jbh-card>
           }
         </div>
       }
     }
 
-    <!-- Expense Categories -->
     @if (!isLoading && selectedSegment === 'EXPENSE') {
       @if (expenseCategories.length === 0) {
-        <div class="jbh-empty-state" role="status">
-          <div class="jbh-empty-state-icon">
-            <ion-icon name="list-outline"></ion-icon>
-          </div>
-          <h3 class="jbh-empty-state-title">{{ 'categories.empty.title' | translate }}</h3>
-          <p class="jbh-empty-state-message">{{ 'categories.empty.expenseMessage' | translate }}</p>
-        </div>
+        <jbh-empty-state
+          icon="list-outline"
+          [title]="'categories.empty.title' | translate"
+          [message]="'categories.empty.expenseMessage' | translate"
+        />
       } @else {
         <div class="categories-list" role="list" [attr.aria-label]="'categories.expense' | translate">
           @for (category of expenseCategories; track trackByCategoryId($index, category)) {
-            <div class="jbh-card categories-card" role="listitem">
+            <jbh-card class="categories-card" role="listitem">
               <div class="categories-card-header">
-                <ion-icon name="trending-down-outline" class="categories-icon categories-icon--expense"></ion-icon>
+                <jbh-icon name="trending-down-outline" class="categories-icon categories-icon--expense" />
                 <span class="categories-name">{{ category.displayName | jbhDisplayName }}</span>
               </div>
               @if (category.description | jbhDisplayName) {
                 <p class="categories-description jbh-text-muted">{{ category.description | jbhDisplayName }}</p>
               }
-            </div>
+            </jbh-card>
           }
         </div>
       }
     }
 
   </div>
-</ion-content>
+</jbh-page>

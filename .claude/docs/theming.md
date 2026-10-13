@@ -1,94 +1,74 @@
-# Theming: Centralized Design System
+# Theming: Design System and Styles
 
-> **See Also:** [UX & Design System Guide](ux-design-system.md) for comprehensive patterns, page templates, and component usage examples.
+> **See Also:** [UX & Design System Guide](ux-design-system.md) for page patterns and component examples.
 
-What Should Stay in custom-components.scss (Truly Global)
-These are reusable across all features:
+## Who owns which style
 
-✅ Buttons (jbh-button-, jbh-icon-button-)
-✅ Forms (jbh-input, jbh-select, jbh-label, jbh-field-error, etc.)
-✅ Cards (jbh-card, jbh-card-elevated, jbh-card-flat)
-✅ Alerts (jbh-alert-error, jbh-alert-success, etc.)
-✅ Typography (jbh-title, jbh-heading-*, jbh-text-muted, etc.)
-✅ Layout Utilities (jbh-container, jbh-divider, jbh-spacer)
-✅ Links (jbh-link, jbh-link-muted)
-✅ Animations (jbh-animate-fade-in, jbh-animate-slide-up, etc.)
-✅ Generic Empty State (jbh-empty-state, jbh-empty-state-icon, etc.)
-✅ Generic Page Header (jbh-page-header, jbh-page-title, etc.)
-✅ Base Skeleton (jbh-skeleton, jbh-skeleton-loading animation)
-✅ Generic Table (jbh-table-header, jbh-table-row, jbh-table-cell)
-✅ Generic Badges (jbh-status-badge, jbh-role-badge
-
-## Critical Rule: Single Source of Truth
-**ALL reusable styles MUST be defined in `src/theme/custom-components.scss`**
+| Where | What |
+|---|---|
+| `src/app/design-system/**/*.scss` | The look of each `jbh-*` component (buttons, fields, cards, alerts, tables, skeletons, empty state, page header, …). Each component owns its SCSS. |
+| `src/theme/custom-components.scss` | Global only: tokens and dark overrides, typography, layout utilities, links, animations, badges, feature classes that templates still use, Ionic overlay rules (`ion-menu`, `::part`). |
+| Page / feature component SCSS | Page layout only. It may style `jbh-*` hosts (`jbh-icon { font-size: 24px }`). Never Ionic elements, `::part(` or `--ion-` variables. |
 
 ### ❌ NEVER
 - Create feature-specific theme files (NO `auth-theme.scss`, `dashboard-theme.scss`)
-- Define component-specific styles in the component SCSS files itself.
-- Defined component-specific styles will not be placed on the custom-components.scss file.
+- Copy a component's look into a page or into `custom-components.scss`
+- Style Ionic elements or internals outside `src/app/design-system/`
 - Hardcode colors, spacing, or typography values
 
 ### ✅ ALWAYS
-- Use reusable theme classes from `custom-components.scss`
-- Component SCSS files should ONLY contain page-specific layout
+- Use `jbh-*` components for controls, cards, alerts, tables and states
+- Use global utility classes for layout and text
 - Reference CSS variables with `--jbh-*` prefix
 
-## CSS Classes Reference
+### Cleaning `custom-components.scss`
+Remove a rule when its class has zero uses. Search the class as a whole word in `src/app/**/*.{html,ts,scss}`, TS strings included.
+For classes built by string joins (`'movement-' + type`), search the prefix and the returned values.
+
+## Component Reference (styles live in the component)
 
 ### Buttons
-| Class | Description |
+| Use | Description |
 |-------|-------------|
-| `jbh-button-primary` | Primary action (gradient) |
-| `jbh-button-secondary` | Secondary action (tonal: soft indigo tint) |
-| `jbh-button-outline` | Outlined button |
-| `jbh-button-text` | Text-only button |
-| `jbh-button-danger` | Destructive action |
-| `jbh-button-success` | Success action |
-| `jbh-button-block` | Full-width |
-| `jbh-button-loading` | Loading state |
+| `button[jbhButton]` / `[jbhButton]="'primary'"` | Primary action (gradient). `''` means `primary` |
+| `jbhButton="secondary"` | Secondary action (tonal: soft indigo tint) |
+| `jbhButton="outline"` | Outlined button |
+| `jbhButton="text"` | Text-only button |
+| `jbhButton="danger"` | Destructive action |
+| `jbhButton="success"` | Success action |
+| `block` | Full-width |
+| `[loading]="true"` | Spinner, `aria-busy` |
+| `icon="save-outline"` | Leading icon |
+| `button[jbhIconButton]` | Icon-only button: `icon`, `label` (required), tone `default` \| `primary` \| `danger`, `size` `md` \| `sm` |
 
-### Form Elements
-| Class | Description |
-|-------|-------------|
-| `jbh-form-field` | Field container |
-| `jbh-label` | Form label |
-| `jbh-input` | Text input |
-| `jbh-input-wrapper` | Input with icons |
-| `jbh-input-icon` | Icon inside input (use with `.left`/`.right`) |
-| `jbh-input-icon-left` | Input with left icon padding |
-| `jbh-field-error` | Error message |
+Also on `a[jbhButton]` (links) and `label[jbhButton]` (file picker).
 
-### Select (Mobile)
-| Class | Description |
-|-------|-------------|
-| `jbh-ion-select-wrapper` | Wrapper with icon support |
-| `jbh-ion-select-icon` | Icon for select |
-| `jbh-ion-select` | Styled ion-select |
+### Form controls
+See [forms.md](forms.md): `jbh-text-field`, `jbh-number-field`, `jbh-textarea`, `jbh-date-field`, `jbh-select`, `jbh-toggle`, `jbh-field`.
+`jbh-label` stays global for the plain label above `app-category-select` / `app-product-select`.
 
-### Cards & Containers
+### Cards, alerts and states
+| Use | Description |
+|-------|-------------|
+| `<jbh-card>` | Standard card. `variant`: `default` \| `elevated` \| `flat` \| `form` |
+| `<jbh-alert tone="error">` | Message box. `tone`: `error` \| `warning` \| `info` \| `success` |
+| `<jbh-empty-state>` | `icon`, `title`, `message`, projected actions |
+| `<jbh-skeleton>` | `shape`: `line` \| `label` \| `input` \| `select` \| `header` \| `table` \| `block`; `width`, `height` |
+| `<jbh-page-header>` | `icon`, `title`, `subtitle`, `variant` `page` \| `form` |
+
+### Global utility classes (`custom-components.scss`)
 | Class | Description |
 |-------|-------------|
-| `jbh-card` | Standard card |
-| `jbh-card-elevated` | Card with shadow |
 | `jbh-container` | Centered content |
-| `jbh-form-card` | Form card with animation |
-
-### Typography
-| Class | Description |
-|-------|-------------|
+| `jbh-divider` | Divider line |
+| `jbh-hide-mobile` | Hidden below the desktop breakpoint |
 | `jbh-title` | Page title |
 | `jbh-subtitle` | Page subtitle |
 | `jbh-text-muted` | Muted text |
 | `jbh-link` | Standard link |
-
-### Alerts
-| Class | Description |
-|-------|-------------|
-| `jbh-alert-error` | Error message |
-| `jbh-alert-success` | Success message |
-| `jbh-alert-warning` | Warning message |
-| `jbh-alert-info` | Info message |
-
+| `jbh-label` | Plain form label |
+| `jbh-status-badge`, `jbh-role-badge` | Badges |
+| `jbh-animate-fade-in` | Fade-in animation |
 ## CSS Variables
 
 ```scss
@@ -105,6 +85,11 @@ These are reusable across all features:
 // Tonal fill (secondary button). Dark mode has its own values.
 --jbh-tonal-background: rgba(102, 126, 234, 0.12);
 --jbh-tonal-text: #4c51bf;
+
+// Soft tints: use the RGB channels, never a raw rgba() value.
+background: rgba(var(--jbh-primary-rgb), 0.1);   // also --jbh-secondary-rgb, --jbh-error-rgb
+--jbh-error-strong: #e53e3e;    // solid danger fill
+--jbh-success-strong: #38a169;  // solid success fill
 
 // Spacing
 --jbh-spacing-xs: 0.5rem;   // 8px
@@ -130,25 +115,26 @@ These are reusable across all features:
 
 ## Usage Example
 
-### ✅ Correct - Using Theme Classes
+### ✅ Correct - Layer components and global utilities
 ```html
-<div class="jbh-container">
-  <div class="jbh-card-elevated">
-    <h1 class="jbh-title">{{ 'page.title' | translate }}</h1>
+<jbh-page (pageEnter)="onPageEnter()">
+  <app-header jbhPageHeader></app-header>
+  <div class="jbh-container">
+    <jbh-card variant="elevated">
+      <h1 class="jbh-title">{{ 'page.title' | translate }}</h1>
 
-    <div class="jbh-form-field">
-      <label class="jbh-label">{{ 'field.label' | translate }}</label>
-      <div class="jbh-input-wrapper">
-        <ion-icon name="person-outline" class="jbh-input-icon left"></ion-icon>
-        <input class="jbh-input jbh-input-icon-left" formControlName="name" />
-      </div>
-    </div>
+      <jbh-text-field
+        formControlName="name"
+        icon="person-outline"
+        [label]="'field.label' | translate"
+      />
 
-    <button class="jbh-button-primary jbh-button-block">
-      {{ 'common.save' | translate }}
-    </button>
+      <button type="submit" jbhButton block>
+        {{ 'common.save' | translate }}
+      </button>
+    </jbh-card>
   </div>
-</div>
+</jbh-page>
 ```
 
 ```scss
@@ -157,62 +143,54 @@ These are reusable across all features:
   display: flex;
   gap: var(--jbh-spacing-md);  // Use variables!
 }
-// That's it! No button/input/card styles here
+
+// Allowed: size a layer host
+jbh-icon {
+  font-size: 24px;
+}
+// No button/input/card styles here
 ```
 
-### ❌ Wrong - Component-Specific Styles
+### ❌ Wrong
 ```scss
 // DON'T DO THIS
 .my-button {
-  background: #667eea;  // Hardcoded color
-  padding: 14px 24px;   // Custom styling
+  background: #667eea;  // Hardcoded color, copies the button look
+  padding: 14px 24px;
 }
+
+ion-select::part(text) { ... }  // Ionic internals outside the layer
 ```
 
 ## Modifying Theme Globally
-To change styles app-wide, edit `src/theme/custom-components.scss`:
+Change a token in `src/theme/custom-components.scss`. Components read the tokens:
 ```scss
 :root {
   --jbh-primary-color: #4299e1;  // All buttons update!
 }
 ```
+To change how one control looks, edit its SCSS in `src/app/design-system/components/`.
 
 ---
 
 ## Common Mistakes
 
-### ❌ Mistake 1: Duplicating Theme Styles in Component Files
+### ❌ Mistake 1: Copying a component's look into a page
 **Problem:**
 ```scss
-// my-component.component.scss
-.jbh-button-primary {  // Redefining global class
+// my-page.page.scss
+.save-button {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  // ... duplicated code
 }
 ```
 
-**Why Bad:**
-- Violates single source of truth
-- Creates maintenance burden
-- Can cause style conflicts
-- Increases bundle size
-
-**Solution:**
-```scss
-// my-component.component.scss
-// Component-specific layout ONLY
-.custom-layout {
-  display: flex;
-  gap: var(--jbh-spacing-md);  // Use theme variables
-}
-```
+**Solution:** use `button[jbhButton]` with a variant. If no variant fits, add one to the layer.
 
 ---
 
 ### ❌ Mistake 2: Hardcoding Colors and Spacing
 **Problem:**
 ```scss
-// my-component.component.scss
 .custom-element {
   color: #667eea;        // Hardcoded color
   padding: 24px;         // Hardcoded spacing
@@ -220,14 +198,8 @@ To change styles app-wide, edit `src/theme/custom-components.scss`:
 }
 ```
 
-**Why Bad:**
-- Can't be changed globally
-- Breaks design consistency
-- Won't update if theme changes
-
 **Solution:**
 ```scss
-// my-component.component.scss
 .custom-element {
   color: var(--jbh-primary-color);
   padding: var(--jbh-spacing-md);
@@ -238,77 +210,25 @@ To change styles app-wide, edit `src/theme/custom-components.scss`:
 ---
 
 ### ❌ Mistake 3: Creating Feature-Specific Theme Files
-**Problem:**
-```
-src/app/ui/products/
-  └── styles/
-      └── product-theme.scss  // DON'T DO THIS
-```
-
-**Why Bad:**
-- Violates single source of truth
-- Styles not reusable across features
-- Hard to find and maintain
-
-**Solution:**
-- ALL reusable styles go in `src/theme/custom-components.scss`
-- Component SCSS only for page-specific layout
+Do not create `src/app/ui/<feature>/styles/<feature>-theme.scss`.
+Global things go in `custom-components.scss`, component looks in the layer, page layout in the page SCSS.
 
 ---
 
-### ❌ Mistake 4: Not Using Existing Classes
+### ❌ Mistake 4: Styling Ionic elements outside the layer
 **Problem:**
-```html
-<!-- Reinventing the wheel -->
-<button class="my-custom-button">
-  Save
-</button>
-```
-
 ```scss
-.my-custom-button {
-  // Duplicate of jbh-button-primary
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  // ...
-}
+// my-page.page.scss
+ion-icon { font-size: 20px; }        // stops matching: the icon is inside jbh-icon
+ion-content { --background: #fff; }  // Ionic variable outside the layer
 ```
 
-**Solution:**
-```html
-<!-- Use existing class -->
-<button class="jbh-button-primary">
-  Save
-</button>
-```
-
----
-
+**Solution:** style the `jbh-*` host (`jbh-icon { font-size: 20px; }`). `npm run lint:boundary` reports these rules.
 ## Accessibility Requirements
 
 ### Minimum Touch Target Size
-**WCAG AA:** 48px × 48px minimum for interactive elements
-
-**Current Issue:**
-```scss
-// src/theme/custom-components.scss
-.jbh-icon-button {
-  width: 36px;   // TOO SMALL - needs to be 48px
-  height: 36px;  // TOO SMALL - needs to be 48px
-}
-```
-
-**Planned Fix:**
-```scss
-.jbh-icon-button {
-  width: 48px;
-  height: 48px;
-
-  ion-icon {
-    font-size: 24px;  // Increase from 20px
-  }
-}
-```
+**WCAG AA:** 48px × 48px minimum for interactive elements.
+`button[jbhIconButton]` is 48px (`size="md"`, the default). `size="sm"` is 32px: use it only inside dense rows.
 
 ---
 
@@ -329,23 +249,7 @@ src/app/ui/products/
 ---
 
 ### Semantic Roles
-**Add to theme classes:**
-```scss
-// Document in comments
-.jbh-table-header {
-  // Use with role="rowgroup"
-}
-
-.jbh-table-row {
-  // Use with role="row"
-}
-
-.jbh-table-cell {
-  // Use with role="cell" or role="columnheader"
-}
-```
-
----
+`jbh-table` sets `role="table"`, the row groups, `role="row"` (`jbh-table-row`) and `role="cell"` / `role="columnheader"` (`jbh-table-cell`, `header` input). Pass `[label]` for the table's `aria-label`.
 
 ## Performance Implications
 
@@ -404,7 +308,7 @@ src/app/ui/products/
   --jbh-primary-color: #667eea;
 }
 
-.jbh-button-primary {
+:host(.jbh-button--primary) {  // jbh-button.component.scss
   background: var(--jbh-gradient-primary);  // Uses variable
 }
 
@@ -418,18 +322,18 @@ src/app/ui/products/
 ### Minimize CSS Selector Specificity
 ```scss
 // ❌ BAD: Overly specific, hard to override
-div.container ion-content .jbh-card .jbh-button-primary {
-  background: red;
+div.container .jbh-card .product-row .product-name {
+  font-weight: 600;
 }
 
 // ✅ GOOD: Simple, reusable
-.jbh-button-primary {
-  background: var(--jbh-gradient-primary);
+.product-name {
+  font-weight: 600;
 }
 
 // ✅ GOOD: Use modifier classes for variants
-.jbh-button-primary.custom-variant {
-  background: red;
+.product-name--muted {
+  color: var(--jbh-text-secondary);
 }
 ```
 
@@ -461,15 +365,12 @@ div.container ion-content .jbh-card .jbh-button-primary {
 
 ---
 
-## Checklist: Adding a New Reusable Style
+## Checklist: Adding a New Style
 
-- [ ] Is this style reusable across multiple features? (If not, use component SCSS)
-- [ ] Does a similar class already exist? (Check complete list first)
-- [ ] Add to `src/theme/custom-components.scss`
-- [ ] Use `jbh-*` naming convention
-- [ ] Use CSS variables for colors, spacing, typography
-- [ ] Add to appropriate section (buttons, forms, cards, etc.)
-- [ ] Document in this file (add to class reference table)
-- [ ] Add to UX Design System guide if it's a pattern
-- [ ] Test in light and dark modes
-- [ ] Test on mobile and desktop
+- [ ] Is it the look of one layer component? Put it in that component's SCSS under `src/app/design-system/`.
+- [ ] Is it a new control, wrapper or repeated markup? Add a layer component, not a global class. Tell the team first.
+- [ ] Is it a token, utility, typography rule or feature class used by several features? Add it to `src/theme/custom-components.scss`.
+- [ ] Is it page layout only? Put it in the page SCSS.
+- [ ] Use `jbh-*` naming and `--jbh-*` variables.
+- [ ] No `ion-*` selectors, `::part(` or `--ion-` variables outside the layer (`npm run lint:boundary`).
+- [ ] Test in light and dark modes, on mobile and desktop.

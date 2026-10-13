@@ -1,44 +1,25 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges, inject } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { NgxChartsModule, Color, ScaleType, LegendPosition } from '@swimlane/ngx-charts';
 import { BalanceHistoryEntryModel } from '@core/domain/features/balance-history';
-import { JbhDatePipe } from '@shared/pipes';
-
-interface ChartDataPoint {
-  name: string;
-  value: number;
-}
-
-interface ChartSeries {
-  name: string;
-  series: ChartDataPoint[];
-}
+import { formatCurrency, formatPeriod } from '@core/formatting';
+import { JbhChartSeries, JbhEmptyStateComponent, JbhLineChartComponent } from '@design-system/components';
 
 @Component({
   selector: 'app-balance-chart',
   templateUrl: './balance-chart.component.html',
   styleUrls: ['./balance-chart.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, TranslateModule, NgxChartsModule]
+  imports: [TranslateModule, JbhLineChartComponent, JbhEmptyStateComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BalanceChartComponent implements OnChanges {
   @Input({ required: true }) balances: BalanceHistoryEntryModel[] = [];
   @Input() currency = 'USD';
 
-  chartData: ChartSeries[] = [];
+  chartData: JbhChartSeries[] = [];
   showLegend = false;
-  legendPosition = LegendPosition.Below;
 
-  colorScheme: Color = {
-    name: 'jbh',
-    selectable: true,
-    group: ScaleType.Ordinal,
-    domain: ['#667eea', '#764ba2', '#48bb78', '#4299e1']
-  };
-
-  constructor(private translateService: TranslateService) {}
+  private readonly translateService = inject(TranslateService);
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['balances'] && this.balances) {
@@ -60,15 +41,14 @@ export class BalanceChartComponent implements OnChanges {
     if (productGroups.size === 1) {
       this.showLegend = false;
       const sortedBalances = [...this.balances].sort((a, b) => a.period.localeCompare(b.period));
-      const balanceSeries: ChartDataPoint[] = sortedBalances.map(balance => ({
-        name: JbhDatePipe.formatPeriod(balance.period),
-        value: balance.closingBalance
-      }));
 
       this.chartData = [
         {
           name: this.translateService.instant('products.balanceHistory.chart.balance'),
-          series: balanceSeries
+          points: sortedBalances.map(balance => ({
+            label: formatPeriod(balance.period),
+            value: balance.closingBalance
+          }))
         }
       ];
     } else {
@@ -79,8 +59,8 @@ export class BalanceChartComponent implements OnChanges {
 
         return {
           name: productName,
-          series: sortedBalances.map(b => ({
-            name: JbhDatePipe.formatPeriod(b.period),
+          points: sortedBalances.map(b => ({
+            label: formatPeriod(b.period),
             value: b.closingBalance
           }))
         };
@@ -88,16 +68,5 @@ export class BalanceChartComponent implements OnChanges {
     }
   }
 
-  formatCurrency(value: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: this.currency,
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0
-    }).format(value);
-  }
-
-  yAxisTickFormat = (value: number): string => {
-    return this.formatCurrency(value);
-  };
+  yAxisTickFormat = (value: number): string => formatCurrency(value, this.currency, 0);
 }

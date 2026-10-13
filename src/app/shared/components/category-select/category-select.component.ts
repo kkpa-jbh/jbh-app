@@ -1,18 +1,16 @@
+import { ChangeDetectionStrategy, Component, computed, forwardRef, input, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
-  Component,
-  Input,
-  forwardRef,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
+  ControlValueAccessor,
+  FormControl,
+  NG_VALUE_ACCESSOR,
+  ReactiveFormsModule,
+  TouchedChangeEvent
+} from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { addIcons } from 'ionicons';
-import { pricetagOutline, alertCircleOutline, informationCircleOutline } from 'ionicons/icons';
+import { filter } from 'rxjs';
 import { Category } from '@core/domain/features/categories';
-import { SelectInterface } from '@core/infrastructure/viewport/viewport.service';
+import { JbhIconComponent, JbhSelectComponent, JbhSelectOptionComponent } from '@design-system/components';
 import { JbhDisplayNamePipe } from '@shared/pipes';
 
 @Component({
@@ -21,10 +19,12 @@ import { JbhDisplayNamePipe } from '@shared/pipes';
   styleUrls: ['./category-select.component.scss'],
   standalone: true,
   imports: [
-    CommonModule,
-    IonicModule,
+    ReactiveFormsModule,
     TranslateModule,
-    JbhDisplayNamePipe
+    JbhDisplayNamePipe,
+    JbhIconComponent,
+    JbhSelectComponent,
+    JbhSelectOptionComponent
   ],
   providers: [
     {
@@ -36,30 +36,46 @@ import { JbhDisplayNamePipe } from '@shared/pipes';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CategorySelectComponent implements ControlValueAccessor {
+  readonly categories = input<Category[]>([]);
+  readonly isLoading = input(false);
+  readonly placeholder = input('');
+  readonly hasError = input(false);
 
-  @Input() categories: Category[] = [];
-  @Input() isLoading = false;
-  @Input() selectInterface: SelectInterface = 'action-sheet';
-  @Input() placeholder = '';
-  @Input() hasError = false;
+  /** Inner form control that feeds `jbh-select`; this component forwards its changes to the outer form. */
+  protected readonly control = new FormControl<number | null>(null);
+  private readonly selectedId = signal<number | null>(null);
 
-  selectedCategoryId: number | null = null;
-  selectedCategory: Category | null = null;
-  isDisabled = false;
+  protected readonly selectedCategory = computed(() => {
+    const id = this.selectedId();
+    return id != null ? (this.categories().find(c => c.id === id) ?? null) : null;
+  });
 
-  private onChange: (value: number | null) => void = () => {};
-  private onTouched: () => void = () => {};
+  protected readonly hasDescription = computed(() => {
+    const description = this.selectedCategory()?.description;
+    if (!description) return false;
+    return Object.keys(description).length > 0 && Object.values(description).some(v => v.trim().length > 0);
+  });
 
-  constructor(private cdr: ChangeDetectorRef) {
-    addIcons({ pricetagOutline, alertCircleOutline, informationCircleOutline });
+  private onChange: (value: number | null) => void = () => undefined;
+  private onTouched: () => void = () => undefined;
+
+  constructor() {
+    this.control.valueChanges.pipe(takeUntilDestroyed()).subscribe(value => {
+      this.selectedId.set(value);
+      this.onChange(value);
+    });
+
+    this.control.events
+      .pipe(
+        filter((event): event is TouchedChangeEvent => event instanceof TouchedChangeEvent && event.touched),
+        takeUntilDestroyed()
+      )
+      .subscribe(() => this.onTouched());
   }
 
   writeValue(id: number | null): void {
-    this.selectedCategoryId = id;
-    this.selectedCategory = id != null
-      ? (this.categories.find(c => c.id === id) ?? null)
-      : null;
-    this.cdr.markForCheck();
+    this.selectedId.set(id);
+    this.control.setValue(id, { emitEvent: false });
   }
 
   registerOnChange(fn: (value: number | null) => void): void {
@@ -71,24 +87,10 @@ export class CategorySelectComponent implements ControlValueAccessor {
   }
 
   setDisabledState(isDisabled: boolean): void {
-    this.isDisabled = isDisabled;
-    this.cdr.markForCheck();
-  }
-
-  onSelectionChange(event: CustomEvent): void {
-    const value = event.detail.value as number | null;
-    this.selectedCategoryId = value;
-    this.selectedCategory = value != null
-      ? (this.categories.find(c => c.id === value) ?? null)
-      : null;
-    this.onChange(value);
-    this.onTouched();
-    this.cdr.markForCheck();
-  }
-
-  hasDescription(): boolean {
-    if (!this.selectedCategory?.description) return false;
-    const desc = this.selectedCategory.description;
-    return Object.keys(desc).length > 0 && Object.values(desc).some(v => v.trim().length > 0);
+    if (isDisabled) {
+      this.control.disable({ emitEvent: false });
+    } else {
+      this.control.enable({ emitEvent: false });
+    }
   }
 }

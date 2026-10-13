@@ -1,8 +1,8 @@
-import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { IonicModule, ViewWillEnter, ViewWillLeave } from '@ionic/angular';
+import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
+import { JbhCardComponent, JbhIconComponent } from '@design-system/components';
+import { JbhPageComponent } from '@design-system/platform';
 import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 
 @Component({
@@ -10,20 +10,19 @@ import { AppHeaderComponent } from '@shared/components/app-header/app-header.com
   templateUrl: './growth-analysis.page.html',
   styleUrls: ['./growth-analysis.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, TranslateModule, AppHeaderComponent],
+  imports: [TranslateModule, JbhCardComponent, JbhIconComponent, JbhPageComponent, AppHeaderComponent],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class GrowthAnalysisPage implements ViewWillEnter, ViewWillLeave {
+export class GrowthAnalysisPage {
+  private readonly headerActions = inject(HeaderActionsService);
 
-  constructor(private headerActions: HeaderActionsService) {}
-
-  ionViewWillEnter(): void {
+  onPageEnter(): void {
     this.headerActions.setPageConfig({
       title: 'menu.reports.growthAnalysis'
     });
   }
 
-  ionViewWillLeave(): void {
+  onPageLeave(): void {
     this.headerActions.clearPageConfig();
   }
 }

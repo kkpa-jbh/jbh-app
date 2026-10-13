@@ -1,0 +1,64 @@
+@use './control';
+
+:host {
+  display: block;
+}
+
+.jbh-text-field__wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.jbh-text-field__input {
+  @include control.control-surface;
+
+  &--icon {
+    padding-left: 48px;
+  }
+
+  &--end {
+    padding-right: 48px;
+  }
+
+  &:has(~ .jbh-text-field__end > *) {
+    padding-right: 48px;
+  }
+}
+
+.jbh-text-field__icon {
+  position: absolute;
+  left: 16px;
+  font-size: 20px;
+  color: var(--jbh-text-secondary);
+  pointer-events: none;
+}
+
+.jbh-text-field__end {
+  position: absolute;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 20px;
+  color: var(--jbh-text-secondary);
+  pointer-events: none;
+}
+
+.jbh-text-field__reveal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  background: transparent;
+  border: none;
+  color: var(--jbh-text-secondary);
+  font-size: inherit;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: color var(--jbh-transition-base);
+
+  &:hover {
+    color: var(--jbh-primary-color);
+  }
+}
