@@ -5,7 +5,8 @@
 }
 
 // The chart draws its SVG in its own components, so the theme needs ::ng-deep to reach it.
-::ng-deep {
+// :host keeps these rules inside this component.
+:host ::ng-deep {
   .ngx-charts {
     text {
       fill: var(--jbh-text-secondary);
