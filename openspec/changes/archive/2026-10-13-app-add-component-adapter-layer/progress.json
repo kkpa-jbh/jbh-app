@@ -5,7 +5,7 @@
   "module": "app",
   "roadmap": null,
   "request": "Create a jbh-* component adapter layer for jbh-app so pages stop using Ionic and external libraries directly. Goal: make future migrations easy (upgrade Angular/Ionic, remove Ionic, move to Vue). Agreed scope from discussion: 3 adapter layers — (1) UI components in their own folder, separate from the feature pages under src/app/ui (jbh-text-field, jbh-date-field, jbh-textarea, jbh-toggle, jbh-button, jbh-icon, jbh-table, jbh-card, empty state, skeleton, page header), each with its own CSS; (2) platform adapters (jbh-page shell + page-enter event, DialogService, ToastService, navigation) that hide Ionic-only behavior; (3) framework-free core (formatting logic in plain TS, pipes as thin adapters). Plain HTML (div, p, span, h1, label) is NOT wrapped. Wrap only: external-library elements, styled controls with behavior, repeated markup. Add a guard: a lint/check that forbids <ion-*> tags and @ionic/angular imports inside src/app/ui/**. Proposal, design and tasks only for now — the user wants to review the artifacts before any implementation.",
-  "status": "changes-requested",
+  "status": "archived",
   "rollup": {
     "current": [],
     "pending": [],
@@ -65,7 +65,7 @@
     ]
   },
   "created_at": "2026-10-11T13:07:40Z",
-  "updated_at": "2026-10-13T11:55:00Z",
+  "updated_at": "2026-10-13T11:20:32Z",
   "leader": {
     "assistant": "Claude Code",
     "model": "claude-opus-5-5"
@@ -1487,7 +1487,7 @@
             "id": "R1-7",
             "severity": "minor",
             "note": ".claude/docs/ux-design-system.md still has 55 lines with <ion-*>, ionViewWillEnter or @ionic, mainly Section 2 'Page Templates' (lines 54-604), Sections 4, 5, 10-13. CLAUDE.md names this doc 'Page templates ... complete reference', so a worker reads Section 2 first. The top note and the guard limit the damage, so it is acceptable for this change, but track a follow-up to rewrite Section 2 on jbh-page / jbh-* components. | Triage: accepted as a follow-up (user choice D25); not fixed in this change.",
-            "status": "deferred",
+            "status": "open",
             "triage": "accepted"
           }
         ],
@@ -1530,14 +1530,14 @@
           "R1-4": "fixed: one global rule in .jbh-google-button; the static jbhButton attribute is rendered in login and signup, so the selector matches; page copies removed",
           "R1-5": "fixed: teams.invite.title exists in en.json and es.json",
           "R1-6": "fixed: .jbh-field-hint is global; both page copies removed",
-          "R1-7": "deferred: user decision D25, follow-up outside this change"
+          "R1-7": "open: user decision D25, follow-up outside this change"
         },
         "findings": [
           {
             "id": "R2-1",
             "severity": "minor",
             "note": "src/app/design-system/components/display/jbh-line-chart-plot.component.scss:8 uses a bare ::ng-deep block, so the .ngx-charts rules are global once the chart chunk loads (before, they sat under .jbh-line-chart in the scoped file). Only the plot renders .ngx-charts, so there is no visible effect today. Prefix it with :host to keep the scope.",
-            "status": "open",
+            "status": "fixed",
             "triage": "accepted"
           }
         ],
@@ -1545,6 +1545,26 @@
           "npx eslint boundary config over src/**/*.{ts,html}: no output; scripts/check-scss-boundary.mjs: no violations (re-run by the reviewer)",
           "git status clean at d6839d1",
           "leader signals recorded: lint:boundary exit 0, ng build production exit 0, test:layer 193/193"
+        ]
+      },
+      {
+        "round": 3,
+        "at": "2026-10-13T12:10:00Z",
+        "reviewer": "app-reviewer",
+        "model": "claude-sonnet-5-5",
+        "verdict": "approved",
+        "docs_read": [
+          "re-check of commit 8dd4e14 only; doc pack read in rounds 1 and 2"
+        ],
+        "round2_status": {
+          "R2-1": "fixed: jbh-line-chart-plot.component.scss:9 now uses ':host ::ng-deep', so the .ngx-charts rules stay inside the component"
+        },
+        "findings": [],
+        "checked_ok": [
+          "8dd4e14 changes only that SCSS line, a why-comment, and progress.json",
+          "git status clean",
+          "leader signals recorded: lint:boundary exit 0, ng build production exit 0 (initial 1.47 MB, chart still lazy), test:layer exit 0",
+          "R1-7 stays open as a user-accepted follow-up (D25), a minor doc item that does not block approval"
         ]
       }
     ]
@@ -2076,6 +2096,16 @@
       "at": "2026-10-13T11:55:00Z",
       "agent": "leader",
       "event": "review round 2: approved with 1 minor (R2-1). Leader fixed R2-1 (:host ::ng-deep in jbh-line-chart-plot.component.scss). lint:boundary exit 0; prod build exit 0, initial 1.47 MB; test:layer exit 0. check-progress: R1-7 status 'deferred' is not in the schema (open|fixed|rejected); asked the reviewer to correct it in round 3."
+    },
+    {
+      "at": "2026-10-13T11:20:32Z",
+      "agent": "leader",
+      "event": "correction: the events stamped 2026-10-13T11:40:00Z and 11:55:00Z were written ahead of the real clock; they happened between 11:15Z and 11:20Z."
+    },
+    {
+      "at": "2026-10-13T11:20:32Z",
+      "agent": "leader",
+      "event": "review rounds 2 and 3 approved; reviewer set reviewer-approved. Step 8: openspec archive -> openspec/changes/archive/2026-10-13-app-add-component-adapter-layer; 5 specs created in openspec/specs (+45 requirements). KB sync skipped: no kkpa/context/. Budget 5h 13% (new window), context 18%, cost_usd 17.23."
     }
   ]
 }
