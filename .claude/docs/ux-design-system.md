@@ -2,7 +2,7 @@
 
 > **Purpose:** Comprehensive reference for designing and implementing consistent UI across the JBH App. Use this guide to avoid repetitive codebase exploration and ensure all pages follow established patterns.
 
-> **The `jbh-*` layer wins.** Sections 3, 6, 7, 8, 9 and 16 match the current layer. Some examples in other sections still show old markup (`ion-*` tags, `jbh-button-*` classes, `ionViewWillEnter`). Do not copy them: use the layer components from Section 3 and the rules in `src/app/AGENTS.md`. `npm run lint:boundary` rejects the old markup.
+> **The `jbh-*` layer wins.** All examples use only `@design-system/components` and `@design-system/platform`. If an example and the layer disagree, the layer is right: fix the example. Full rules: `src/app/AGENTS.md`.
 
 ---
 
@@ -53,17 +53,26 @@
 
 ## 2. Page Templates
 
+Every routed page follows the same frame:
+
+- `<jbh-page>` is the root element of the template. Load data in `(pageEnter)`, clear the header in `(pageLeave)`.
+- `<app-header jbhPageHeader>` is the first child. Auth pages have no header.
+- Content sits in `<div class="jbh-container">` (add `jbh-container-wide` for tables and charts).
+- Imports come only from `@design-system/components` and `@design-system/platform`.
+
 ### A. Overview/List Pages
 
 **Purpose:** Display collections of entities (products, teams, etc.)
 
 **Structure:**
 ```
-Header (app-header or ion-header)
+Header (app-header)
 ↓
-Loading State (skeleton cards)
+Page header (jbh-page-header, with the create button)
 ↓
-Empty State (if no data)
+Loading State (jbh-skeleton)
+↓
+Empty State (jbh-empty-state, if no data)
 ↓
 List/Grid of Cards
 ```
@@ -72,51 +81,79 @@ List/Grid of Cards
 
 **TypeScript Pattern:**
 ```typescript
-import { ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { ViewWillEnter, ViewWillLeave } from '@ionic/angular';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
+import { Subject, takeUntil } from 'rxjs';
+import {
+  JbhButtonComponent,
+  JbhEmptyStateComponent,
+  JbhPageHeaderComponent,
+  JbhSkeletonComponent
+} from '@design-system/components';
+import { JbhPageComponent } from '@design-system/platform';
+import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
+import { JBHError } from '@core/domain/models/jbh-error.model';
+import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 
 @Component({
   selector: 'app-feature-overview',
   templateUrl: './feature-overview.page.html',
   styleUrls: ['./feature-overview.page.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, TranslateModule, AppHeaderComponent],
+  imports: [
+    TranslateModule,
+    AppHeaderComponent,
+    ItemCardComponent,
+    JbhButtonComponent,
+    JbhEmptyStateComponent,
+    JbhPageComponent,
+    JbhPageHeaderComponent,
+    JbhSkeletonComponent
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush // CRITICAL
 })
-export class FeatureOverviewPage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLeave {
+export class FeatureOverviewPage implements OnInit, OnDestroy {
+  private readonly useCase = inject(ItemUseCase);
+  private readonly router = inject(Router);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly headerActions = inject(HeaderActionsService);
+
   items: Item[] = [];
   isLoading = true;
   private destroy$ = new Subject<void>();
 
-  constructor(
-    private useCase: ItemUseCase,
-    private cdr: ChangeDetectorRef,
-    private headerActions: HeaderActionsService
-  ) {}
-
   ngOnInit(): void {
-    // Subscribe to observables, setup static state
+    // Subscribe to observables, set up static state. No API calls here.
   }
 
-  ionViewWillEnter(): void {
-    // CRITICAL: Configure header and load data here (runs every time)
+  onPageEnter(): void {
+    // CRITICAL: configure the header and load data here (runs every time the page shows)
     this.headerActions.setPageConfig({
       title: 'feature.overview.title',
       actions: [
         { id: 'refresh', icon: 'refresh-outline', handler: () => this.refreshData() }
       ]
-      // No showBackButton - shows hamburger menu (top-level page)
+      // No showBackButton - shows the menu button (top-level page)
     });
     this.refreshData();
   }
 
-  ionViewWillLeave(): void {
+  onPageLeave(): void {
     this.headerActions.clearPageConfig();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  navigateToCreate(): void {
+    this.router.navigate(['/feature/create']);
+  }
+
+  canCreate(): boolean {
+    return this.items.length < MAX_LIMIT;
   }
 
   private refreshData(): void {
@@ -137,57 +174,54 @@ export class FeatureOverviewPage implements OnInit, OnDestroy, ViewWillEnter, Vi
         }
       });
   }
-
-  canCreate(): boolean {
-    return this.items.length < MAX_LIMIT;
-  }
 }
 ```
 
 **HTML Pattern:**
 ```html
-<app-header></app-header>
+<jbh-page (pageEnter)="onPageEnter()" (pageLeave)="onPageLeave()">
+  <app-header jbhPageHeader></app-header>
 
-<ion-content>
   <div class="jbh-container">
+    <jbh-page-header
+      icon="folder-open-outline"
+      [title]="'feature.overview.title' | translate"
+      [subtitle]="'feature.overview.subtitle' | translate"
+    >
+      @if (canCreate()) {
+        <button type="button" jbhButton icon="add-outline" (click)="navigateToCreate()">
+          {{ 'feature.overview.create' | translate }}
+        </button>
+      }
+    </jbh-page-header>
 
-    <!-- Loading State -->
     @if (isLoading) {
       <div class="jbh-loading-container">
-        @for (i of [1,2,3]; track i) {
-          <div class="jbh-card jbh-skeleton" style="height: 200px;"></div>
+        @for (i of [1, 2, 3]; track i) {
+          <jbh-skeleton shape="block" height="200px" />
         }
       </div>
-    }
-
-    <!-- Empty State -->
-    @else if (items.length === 0) {
-      <div class="jbh-empty-state">
-        <div class="jbh-empty-state-icon">
-          <ion-icon name="folder-open-outline"></ion-icon>
-        </div>
-        <h2 class="jbh-empty-state-title">{{ 'feature.empty.title' | translate }}</h2>
-        <p class="jbh-empty-state-message">{{ 'feature.empty.message' | translate }}</p>
+    } @else if (items.length === 0) {
+      <jbh-empty-state
+        icon="folder-open-outline"
+        [title]="'feature.empty.title' | translate"
+        [message]="'feature.empty.message' | translate"
+      >
         @if (canCreate()) {
-          <button class="jbh-button-primary" (click)="navigateToCreate()">
-            <ion-icon name="add-outline"></ion-icon>
-            <span>{{ 'feature.empty.cta' | translate }}</span>
+          <button type="button" jbhButton icon="add-outline" (click)="navigateToCreate()">
+            {{ 'feature.empty.cta' | translate }}
           </button>
         }
-      </div>
-    }
-
-    <!-- List/Grid -->
-    @else {
-      <div class="jbh-items-list">
+      </jbh-empty-state>
+    } @else {
+      <div class="feature-items-list">
         @for (item of items; track item.id) {
           <app-item-card [item]="item"></app-item-card>
         }
       </div>
     }
-
   </div>
-</ion-content>
+</jbh-page>
 ```
 
 **When to Use:**
@@ -206,77 +240,99 @@ export class FeatureOverviewPage implements OnInit, OnDestroy, ViewWillEnter, Vi
 ```
 Header (with back button)
 ↓
-Form Card
-  ├─ Icon + Title + Subtitle
-  ├─ Form Fields
-  └─ Submit Button
+Form Card (jbh-card variant="form")
+  ├─ jbh-page-header variant="form" (icon + title + subtitle)
+  ├─ Form controls (jbh-text-field, jbh-select, jbh-textarea, ...)
+  └─ Submit Button (button[jbhButton] block)
 ```
 
-**Example:** Forms in products, teams, auth features
+**Example:** `src/app/ui/products/pages/add-movement/` (the reference page). More rules: [Forms](forms.md).
 
 **TypeScript Pattern:**
 ```typescript
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
+import {
+  JbhButtonComponent,
+  JbhCardComponent,
+  JbhPageHeaderComponent,
+  JbhSelectComponent,
+  JbhSelectOptionComponent,
+  JbhTextFieldComponent,
+  JbhTextareaComponent
+} from '@design-system/components';
+import { JbhPageComponent, ToastService } from '@design-system/platform';
+import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
+import { TranslationService } from '@core/infrastructure/i18n/translation.service';
+import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
+
 @Component({
   selector: 'app-create-item',
   templateUrl: './create-item.page.html',
   styleUrls: ['./create-item.page.scss'],
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, IonicModule, TranslateModule],
+  imports: [
+    ReactiveFormsModule,
+    TranslateModule,
+    AppHeaderComponent,
+    JbhButtonComponent,
+    JbhCardComponent,
+    JbhPageComponent,
+    JbhPageHeaderComponent,
+    JbhSelectComponent,
+    JbhSelectOptionComponent,
+    JbhTextFieldComponent,
+    JbhTextareaComponent
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CreateItemPage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLeave {
+export class CreateItemPage implements OnInit, OnDestroy {
+  private readonly formBuilder = inject(FormBuilder);
+  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly headerActions = inject(HeaderActionsService);
+  private readonly translationService = inject(TranslationService);
+  private readonly toast = inject(ToastService);
+
   itemForm!: FormGroup;
   isSubmitting = false;
-  selectInterface = 'action-sheet'; // Mobile native select
+  typeOptions = ITEM_TYPE_OPTIONS;
   private destroy$ = new Subject<void>();
-
-  constructor(
-    private formBuilder: FormBuilder,
-    private cdr: ChangeDetectorRef,
-    private headerActions: HeaderActionsService,
-    private viewportService: ViewportService
-  ) {}
 
   ngOnInit(): void {
     this.initForm();
-    this.selectInterface = this.viewportService.selectInterface;
   }
 
-  ionViewWillEnter(): void {
+  onPageEnter(): void {
     this.headerActions.setPageConfig({
       title: 'feature.create.title',
-      showBackButton: true // CRITICAL: Shows back button (detail page)
+      showBackButton: true, // CRITICAL: shows the back button (child page)
+      defaultBackHref: '/feature/overview'
     });
   }
 
-  ionViewWillLeave(): void {
+  onPageLeave(): void {
     this.headerActions.clearPageConfig();
   }
 
-  private initForm(): void {
-    this.itemForm = this.formBuilder.group({
-      name: ['', [Validators.required, Validators.minLength(3)]],
-      type: ['', Validators.required],
-      description: ['', Validators.maxLength(200)]
-    });
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
-  async onSubmit(): Promise<void> {
+  onSubmit(): void {
     if (this.itemForm.invalid) {
-      this.markFormGroupTouched(this.itemForm);
+      this.itemForm.markAllAsTouched();
       return;
     }
 
     this.isSubmitting = true;
     this.cdr.markForCheck();
 
-    // Handle submission...
-  }
-
-  private markFormGroupTouched(formGroup: FormGroup): void {
-    Object.keys(formGroup.controls).forEach(key => {
-      formGroup.get(key)?.markAsTouched();
-    });
+    // Call the use case. On success:
+    // this.toast.show(this.translationService.instant('feature.create.success'), 'success');
+    // On error: set isSubmitting = false and call this.cdr.markForCheck().
   }
 
   hasError(fieldName: string, errorType?: string): boolean {
@@ -302,113 +358,81 @@ export class CreateItemPage implements OnInit, OnDestroy, ViewWillEnter, ViewWil
     return this.translationService.instant('validation.generic');
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+  private initForm(): void {
+    this.itemForm = this.formBuilder.group({
+      name: ['', [Validators.required, Validators.minLength(3)]],
+      type: [null, Validators.required],
+      description: ['', Validators.maxLength(200)]
+    });
   }
 }
 ```
 
 **HTML Pattern:**
 ```html
-<app-header></app-header>
+<jbh-page (pageEnter)="onPageEnter()" (pageLeave)="onPageLeave()">
+  <app-header jbhPageHeader></app-header>
 
-<ion-content>
   <div class="jbh-container">
-    <div class="jbh-form-card">
+    <jbh-card variant="form">
+      <jbh-page-header
+        variant="form"
+        icon="document-text-outline"
+        [title]="'feature.create.title' | translate"
+        [subtitle]="'feature.create.subtitle' | translate"
+      />
 
-      <!-- Header -->
-      <div class="jbh-form-header">
-        <div class="jbh-form-icon">
-          <ion-icon name="document-text-outline"></ion-icon>
-        </div>
-        <h1 class="jbh-form-title">{{ 'feature.create.title' | translate }}</h1>
-        <p class="jbh-form-subtitle">{{ 'feature.create.subtitle' | translate }}</p>
-      </div>
+      <form [formGroup]="itemForm" (ngSubmit)="onSubmit()">
+        <jbh-text-field
+          formControlName="name"
+          icon="pencil-outline"
+          [label]="'feature.name.label' | translate"
+          [placeholder]="'feature.name.placeholder' | translate"
+          [error]="hasError('name') ? getErrorMessage('name') : ''"
+        />
 
-      <!-- Form -->
-      <form [formGroup]="itemForm" (ngSubmit)="onSubmit()" class="jbh-form-animated">
-
-        <!-- Text Input -->
-        <div class="jbh-form-field">
-          <label class="jbh-label">{{ 'feature.name.label' | translate }}</label>
-          <div class="jbh-input-wrapper">
-            <ion-icon name="pencil-outline" class="jbh-input-icon left"></ion-icon>
-            <input
-              type="text"
-              class="jbh-input jbh-input-icon-left"
-              formControlName="name"
-              [placeholder]="'feature.name.placeholder' | translate"
-              [class.error]="hasError('name')"
-            />
-          </div>
-          @if (hasError('name')) {
-            <div class="jbh-field-error">
-              <ion-icon name="information-circle"></ion-icon>
-              <span>{{ getErrorMessage('name') }}</span>
-            </div>
+        <jbh-select
+          formControlName="type"
+          icon="list-outline"
+          [label]="'feature.type.label' | translate"
+          [placeholder]="'feature.type.placeholder' | translate"
+          [error]="hasError('type') ? getErrorMessage('type') : ''"
+        >
+          @for (option of typeOptions; track option.value) {
+            <jbh-select-option [value]="option.value">{{ option.labelKey | translate }}</jbh-select-option>
           }
-        </div>
+        </jbh-select>
 
-        <!-- ion-select (Mobile Native) -->
-        <div class="jbh-form-field">
-          <label class="jbh-label">{{ 'feature.type.label' | translate }}</label>
-          <div class="jbh-ion-select-wrapper" [class.error]="hasError('type')">
-            <ion-icon name="list-outline" class="jbh-ion-select-icon"></ion-icon>
-            <ion-select
-              formControlName="type"
-              [placeholder]="'feature.type.placeholder' | translate"
-              [interface]="selectInterface"
-              class="jbh-ion-select"
-            >
-              @for (option of typeOptions; track option.value) {
-                <ion-select-option [value]="option.value">
-                  {{ option.label | translate }}
-                </ion-select-option>
-              }
-            </ion-select>
-          </div>
-          @if (hasError('type')) {
-            <div class="jbh-field-error">
-              <ion-icon name="information-circle"></ion-icon>
-              <span>{{ getErrorMessage('type') }}</span>
-            </div>
-          }
-        </div>
+        <jbh-textarea
+          formControlName="description"
+          icon="document-text-outline"
+          requirement="optional"
+          [rows]="4"
+          [maxlength]="200"
+          [label]="'feature.description.label' | translate"
+          [placeholder]="'feature.description.placeholder' | translate"
+          [error]="hasError('description') ? getErrorMessage('description') : ''"
+        />
 
-        <!-- Textarea -->
-        <div class="jbh-form-field">
-          <label class="jbh-label">{{ 'feature.description.label' | translate }}</label>
-          <textarea
-            class="jbh-textarea"
-            formControlName="description"
-            rows="4"
-            [placeholder]="'feature.description.placeholder' | translate"
-            [class.error]="hasError('description')"
-          ></textarea>
-        </div>
-
-        <!-- Submit Button -->
         <button
           type="submit"
-          class="jbh-button-primary jbh-button-block"
-          [disabled]="isSubmitting || itemForm.invalid"
-          [class.jbh-button-loading]="isSubmitting"
+          jbhButton
+          block
+          icon="save-outline"
+          [loading]="isSubmitting"
+          [disabled]="isSubmitting"
         >
-          @if (isSubmitting) {
-            <ion-spinner name="crescent"></ion-spinner>
-            <span>{{ 'feature.saving' | translate }}</span>
-          } @else {
-            <ion-icon name="save-outline"></ion-icon>
-            <span>{{ 'feature.save' | translate }}</span>
-          }
+          {{ (isSubmitting ? 'feature.saving' : 'feature.save') | translate }}
         </button>
-
       </form>
-    </div>
+    </jbh-card>
   </div>
-</ion-content>
+</jbh-page>
 ```
+
+- `jbh-select` picks the overlay type by itself (popover on desktop, action sheet on mobile). Do not pass an interface.
+- `[loading]` on the button shows the spinner. Do not add a `jbh-spinner` inside the button.
+- Numbers use `jbh-number-field` with `[decimals]`. Dates use `jbh-date-field`.
 
 **When to Use:**
 - Creating new entities
@@ -426,45 +450,51 @@ export class CreateItemPage implements OnInit, OnDestroy, ViewWillEnter, ViewWil
 ```
 Header (with back button)
 ↓
-Content Cards
-  ├─ Summary Card
-  ├─ Related Data (tables, charts)
-  └─ Action Buttons
+jbh-page-header
+↓
+Content
+  ├─ Summary cards
+  ├─ Related data (jbh-line-chart, jbh-table)
+  └─ Action buttons
 ```
 
-**Example:** Balance History page
+**Example:** `src/app/ui/products/pages/balance-history/balance-history.page.html`
 
 **Pattern:**
 ```html
-<app-header></app-header>
+<jbh-page (pageEnter)="onPageEnter()" (pageLeave)="onPageLeave()">
+  <app-header jbhPageHeader></app-header>
 
-<ion-content>
-  <div class="jbh-container">
+  <div class="jbh-container jbh-container-wide">
+    <jbh-page-header
+      icon="analytics-outline"
+      [title]="'feature.detail.title' | translate"
+      [subtitle]="'feature.detail.subtitle' | translate"
+    />
 
-    <!-- Summary Cards -->
-    <div class="jbh-balance-summary">
-      @for (card of summaryCards; track card.id) {
-        <div class="jbh-summary-card">
-          <div class="jbh-summary-card-icon">
-            <ion-icon [name]="card.icon"></ion-icon>
-          </div>
-          <div class="jbh-summary-card-label">{{ card.label | translate }}</div>
-          <div class="jbh-summary-card-value" [class]="card.valueClass">
-            {{ card.value | jbhCurrency }}
-          </div>
-        </div>
-      }
-    </div>
+    @if (isLoading) {
+      <jbh-skeleton shape="block" height="250px" />
+      <jbh-skeleton shape="table" />
+    } @else {
+      <div class="feature-summary">
+        @for (card of summaryCards; track card.id) {
+          <jbh-card>
+            <jbh-icon [name]="card.icon" />
+            <p class="feature-summary-label">{{ card.labelKey | translate }}</p>
+            <p class="feature-summary-value">{{ card.value | jbhCurrency }}</p>
+          </jbh-card>
+        }
+      </div>
 
-    <!-- Chart Component -->
-    <app-balance-chart [data]="chartData"></app-balance-chart>
+      <app-balance-chart [balances]="balances"></app-balance-chart>
 
-    <!-- Data Table Component -->
-    <app-balance-history-table [records]="records"></app-balance-history-table>
-
+      <app-balance-history-table [balances]="balances"></app-balance-history-table>
+    }
   </div>
-</ion-content>
+</jbh-page>
 ```
+
+- Charts go through `jbh-line-chart` (see Section 8C). Tables go through `jbh-table` (see Section 8A).
 
 **When to Use:**
 - Viewing entity details
@@ -484,12 +514,13 @@ Fullscreen Background
 ↓
 Elevated Card (centered)
   ├─ Logo/Icon
+  ├─ Error alert (jbh-alert)
   ├─ Form
   ├─ Submit Button
   └─ Social Login (optional)
 ```
 
-**Example:** `src/app/ui/auth/pages/login/login.page.ts`
+**Example:** `src/app/ui/auth/pages/login/login.page.html`
 
 **Unique Styling:**
 - Fullscreen background with gradient or pattern
@@ -499,37 +530,58 @@ Elevated Card (centered)
 
 **HTML Pattern:**
 ```html
-<ion-content [fullscreen]="true">
+<jbh-page>
   <div class="auth-background">
+    <jbh-card variant="elevated" class="auth-card">
+      <jbh-page-header
+        variant="form"
+        icon="shield-checkmark"
+        [title]="'auth.login.title' | translate"
+        [subtitle]="'auth.login.subtitle' | translate"
+      />
 
-    <div class="jbh-form-card auth-card">
-      <div class="jbh-form-header">
-        <div class="jbh-form-icon">
-          <ion-icon name="shield-checkmark"></ion-icon>
-        </div>
-        <h1 class="jbh-form-title">{{ 'auth.login.title' | translate }}</h1>
-        <p class="jbh-form-subtitle">{{ 'auth.login.subtitle' | translate }}</p>
-      </div>
+      @if (errorMessage) {
+        <jbh-alert tone="error">{{ errorMessage }}</jbh-alert>
+      }
 
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-        <!-- Form fields... -->
+        <jbh-text-field
+          formControlName="username"
+          icon="person-outline"
+          autocomplete="username"
+          [label]="'auth.login.username' | translate"
+          [error]="hasError('username') ? getErrorMessage('username') : ''"
+        />
+
+        <jbh-text-field
+          formControlName="password"
+          type="password"
+          icon="lock-closed-outline"
+          autocomplete="current-password"
+          [label]="'auth.login.password' | translate"
+          [error]="hasError('password') ? getErrorMessage('password') : ''"
+        />
+
+        <button type="submit" jbhButton block [loading]="isLoading" [disabled]="isLoading">
+          {{ 'auth.login.submit' | translate }}
+        </button>
       </form>
 
-      <!-- Divider -->
       <div class="jbh-divider">
-        <span>{{ 'auth.or' | translate }}</span>
+        <span>{{ 'common.or' | translate }}</span>
       </div>
 
-      <!-- Social Login -->
-      <button class="jbh-button-outline jbh-button-block">
-        <ion-icon name="logo-google"></ion-icon>
-        <span>{{ 'auth.login.google' | translate }}</span>
+      <button type="button" jbhButton="secondary" block icon="logo-google" (click)="loginWithGoogle()">
+        {{ 'auth.login.google' | translate }}
       </button>
-    </div>
-
+    </jbh-card>
   </div>
-</ion-content>
+</jbh-page>
 ```
+
+- Auth pages have no `app-header`, and often no `(pageEnter)`.
+- `jbh-text-field type="password"` has the show/hide button built in.
+- The real login page puts the Google button inside `.jbh-google-button`, because Google draws its own button on top. See `src/theme/custom-components.scss`.
 
 **When to Use:**
 - Login
@@ -556,43 +608,37 @@ Context-Based Actions
 Recent Activity (optional)
 ```
 
-**Example:** `src/app/ui/dashboard/pages/dashboard/dashboard.page.ts`
+**Example:** `src/app/ui/dashboard/pages/dashboard/dashboard.page.html`
 
 **Pattern:**
 ```html
-<app-header></app-header>
+<jbh-page (pageEnter)="onPageEnter()" (pageLeave)="onPageLeave()">
+  <app-header jbhPageHeader></app-header>
 
-<ion-content>
   <div class="jbh-container">
+    <jbh-page-header
+      icon="home-outline"
+      [title]="greeting"
+      [subtitle]="subtitleKey | translate"
+    />
 
-    <!-- Greeting -->
-    <div class="jbh-page-header">
-      <div class="jbh-page-header-content">
-        <div class="jbh-page-header-icon">
-          <ion-icon name="home-outline"></ion-icon>
-        </div>
-        <div>
-          <h1 class="jbh-page-title">{{ greeting }}</h1>
-          <p class="jbh-page-subtitle">{{ subtitle | translate }}</p>
-        </div>
-      </div>
+    <div class="jbh-dashboard-summary">
+      <jbh-card>
+        <p class="jbh-dashboard-stat-label">{{ 'dashboard.totalBalance' | translate }}</p>
+        <p class="jbh-dashboard-stat-value">{{ totalBalance | jbhCurrency }}</p>
+      </jbh-card>
     </div>
 
-    <!-- Summary Cards -->
-    <div class="jbh-balance-summary">
-      <!-- Cards... -->
-    </div>
-
-    <!-- Quick Actions -->
-    <div class="jbh-page-header-actions">
-      <button class="jbh-button-primary" (click)="navigateToCreate()">
-        <ion-icon name="add-outline"></ion-icon>
-        <span>{{ 'dashboard.quick.create' | translate }}</span>
+    <div class="jbh-dashboard-actions">
+      <button type="button" jbhButton block icon="add-circle-outline" routerLink="/portfolio/create">
+        {{ 'dashboard.addProduct' | translate }}
+      </button>
+      <button type="button" jbhButton="secondary" block icon="cash-outline" routerLink="/transactions/record-movement">
+        {{ 'dashboard.recordMovement' | translate }}
       </button>
     </div>
-
   </div>
-</ion-content>
+</jbh-page>
 ```
 
 **When to Use:**
@@ -829,20 +875,16 @@ this.headerActions.setPageConfig({
 ```html
 @if (isLoading) {
   <div class="jbh-loading-container">
-    @for (i of [1,2,3]; track i) {
-      <div class="jbh-card jbh-skeleton" style="height: 200px;"></div>
+    @for (i of [1, 2, 3]; track i) {
+      <jbh-skeleton shape="block" height="200px" />
     }
   </div>
 }
 ```
 
-**Available Skeleton Classes:**
-- `jbh-skeleton` - Base skeleton with shimmer animation
-- `jbh-skeleton-input` - Input field (52px height)
-- `jbh-skeleton-select` - Select field (52px height)
-- `jbh-skeleton-label` - Label (16px height, 100px width)
-- `jbh-skeleton-chart` - Chart container (300-400px height)
-- `jbh-skeleton-table` - Table container (400px height)
+**`jbh-skeleton` inputs:**
+- `shape` - `line` (default, 16px), `label` (100px wide), `input` and `select` (52px), `header` (48px), `table` (400px), `block` (120px)
+- `width`, `height` - any CSS size, when the shape does not fit
 
 **When to Use:**
 - Page-level loading
@@ -857,14 +899,14 @@ this.headerActions.setPageConfig({
 **Usage:**
 ```html
 @if (isLoading) {
-  <ion-spinner name="crescent"></ion-spinner>
+  <jbh-spinner />
 }
 ```
 
 **When to Use:**
-- Button loading state
 - Small component loading
 - Inline loading indicator
+- Not for buttons: use `[loading]` on `button[jbhButton]`
 
 ---
 
@@ -879,26 +921,22 @@ isSubmitting = false;      // Form submission
 
 **Example:**
 ```html
-<!-- Page Loading -->
 @if (isLoadingPage) {
-  <div class="jbh-skeleton" style="height: 300px;"></div>
+  <jbh-skeleton shape="block" height="300px" />
 }
 
-<!-- Dropdown Loading -->
-<ion-select [disabled]="isLoadingDropdown">
-  @if (isLoadingDropdown) {
-    <ion-select-option>{{ 'common.loading' | translate }}</ion-select-option>
-  }
-</ion-select>
-
-<!-- Button Loading -->
-<button
-  [disabled]="isSubmitting"
-  [class.jbh-button-loading]="isSubmitting"
+<jbh-select
+  formControlName="categoryId"
+  [label]="'feature.category.label' | translate"
+  [loading]="isLoadingDropdown"
 >
-  @if (isSubmitting) {
-    <ion-spinner name="crescent"></ion-spinner>
+  @for (category of categories; track category.id) {
+    <jbh-select-option [value]="category.id">{{ category.name }}</jbh-select-option>
   }
+</jbh-select>
+
+<button type="submit" jbhButton [loading]="isSubmitting" [disabled]="isSubmitting">
+  {{ 'feature.save' | translate }}
 </button>
 ```
 
@@ -908,20 +946,21 @@ isSubmitting = false;      // Form submission
 
 #### Structure
 ```html
-<div class="jbh-empty-state">
-  <div class="jbh-empty-state-icon">
-    <ion-icon name="folder-open-outline"></ion-icon>
-  </div>
-  <h2 class="jbh-empty-state-title">{{ 'feature.empty.title' | translate }}</h2>
-  <p class="jbh-empty-state-message">{{ 'feature.empty.message' | translate }}</p>
+<jbh-empty-state
+  icon="folder-open-outline"
+  [title]="'feature.empty.title' | translate"
+  [message]="'feature.empty.message' | translate"
+>
   @if (canCreate()) {
-    <button class="jbh-button-primary" (click)="create()">
-      <ion-icon name="add-outline"></ion-icon>
-      <span>{{ 'feature.empty.cta' | translate }}</span>
+    <button type="button" jbhButton icon="add-outline" (click)="create()">
+      {{ 'feature.empty.cta' | translate }}
     </button>
   }
-</div>
+</jbh-empty-state>
 ```
+
+- `title` is required. `icon` and `message` are optional.
+- Content between the tags (a button) shows below the message.
 
 **Conditional Empty States:**
 ```typescript
@@ -938,20 +977,33 @@ get hasNoResults(): boolean {
 
 ```html
 @if (hasNoData) {
-  <div class="jbh-empty-state">
-    <!-- "Get started" message with create button -->
-  </div>
+  <jbh-empty-state
+    icon="folder-open-outline"
+    [title]="'feature.empty.title' | translate"
+    [message]="'feature.empty.message' | translate"
+  >
+    <button type="button" jbhButton icon="add-outline" (click)="create()">
+      {{ 'feature.empty.cta' | translate }}
+    </button>
+  </jbh-empty-state>
 } @else if (hasNoResults) {
-  <div class="jbh-empty-state">
-    <!-- "No results found" message with clear filter button -->
-  </div>
+  <jbh-empty-state
+    icon="search-outline"
+    [title]="'feature.noResults.title' | translate"
+  >
+    <button type="button" jbhButton="secondary" (click)="clearFilter()">
+      {{ 'feature.noResults.clear' | translate }}
+    </button>
+  </jbh-empty-state>
 }
 ```
 
 **Permission-Based CTA:**
 ```html
 @if (canCreate()) {
-  <button class="jbh-button-primary" (click)="create()">...</button>
+  <button type="button" jbhButton icon="add-outline" (click)="create()">
+    {{ 'feature.empty.cta' | translate }}
+  </button>
 } @else {
   <p class="jbh-text-muted">{{ 'feature.empty.limit' | translate }}</p>
 }
@@ -964,18 +1016,9 @@ get hasNoResults(): boolean {
 #### Toast Notifications
 **Purpose:** User-facing error messages
 
-**Pattern:**
+**Pattern:** use `ToastService` from `@design-system/platform`. No local `showToast` copies.
 ```typescript
-private async showErrorToast(message: string): Promise<void> {
-  const toast = await this.toastController.create({
-    message,
-    duration: 3000,
-    position: 'top',
-    color: 'danger',
-    buttons: [{ text: 'OK', role: 'cancel' }]
-  });
-  await toast.present();
-}
+private readonly toast = inject(ToastService);
 ```
 
 **Usage:**
@@ -984,23 +1027,38 @@ error: (error: JBHError) => {
   const message = error.isValidationError
     ? error.message // 422: Show server message
     : this.translationService.instant('feature.error.generic');
-  this.showErrorToast(message);
+  this.toast.show(message, 'error');
 }
 ```
+
+Tones: `success`, `error`, `warning`, `info` (default).
+
+---
+
+#### Inline Messages
+**Purpose:** An error or a note inside the page, not a toast
+
+**Pattern:**
+```html
+@if (errorMessage) {
+  <jbh-alert tone="error">{{ errorMessage }}</jbh-alert>
+}
+```
+
+Tones: `error`, `warning`, `info` (default), `success`. `error` sets `role="alert"`; the others set `role="status"`.
 
 ---
 
 #### Inline Validation Errors
 **Purpose:** Form field errors
 
-**Pattern:**
+**Pattern:** pass the message to the control. A non-empty string shows it, with `role="alert"`.
 ```html
-@if (hasError('fieldName')) {
-  <div class="jbh-field-error">
-    <ion-icon name="information-circle"></ion-icon>
-    <span>{{ getErrorMessage('fieldName') }}</span>
-  </div>
-}
+<jbh-text-field
+  formControlName="fieldName"
+  [label]="'feature.fieldName.label' | translate"
+  [error]="hasError('fieldName') ? getErrorMessage('fieldName') : ''"
+/>
 ```
 
 ---
@@ -1008,20 +1066,17 @@ error: (error: JBHError) => {
 #### Confirmation Dialogs
 **Purpose:** Confirm destructive actions
 
-**Pattern:**
+**Pattern:** use `DialogService.confirm`. It resolves `true` only when the user taps the confirm button.
 ```typescript
+private readonly dialog = inject(DialogService);
+
 private async confirmDelete(item: Item): Promise<boolean> {
-  const alert = await this.alertController.create({
-    header: this.translationService.instant('feature.delete.title'),
+  return this.dialog.confirm({
+    title: this.translationService.instant('feature.delete.title'),
     message: this.translationService.instant('feature.delete.message', { name: item.name }),
-    buttons: [
-      { text: this.translationService.instant('common.cancel'), role: 'cancel' },
-      { text: this.translationService.instant('common.delete'), role: 'destructive' }
-    ]
+    confirmText: this.translationService.instant('common.delete'),
+    destructive: true
   });
-  await alert.present();
-  const { role } = await alert.onDidDismiss();
-  return role === 'destructive';
 }
 ```
 
@@ -1031,23 +1086,12 @@ private async confirmDelete(item: Item): Promise<boolean> {
 
 #### Toast Notifications
 ```typescript
-private async showSuccessToast(message: string): Promise<void> {
-  const toast = await this.toastController.create({
-    message,
-    duration: 2000,
-    position: 'top',
-    color: 'success',
-    icon: 'checkmark-circle'
-  });
-  await toast.present();
-}
+this.toast.show(this.translationService.instant('feature.create.success'), 'success');
 ```
 
 #### Success Icons
 ```html
-<div class="jbh-input-status-icon success">
-  <ion-icon name="checkmark-circle"></ion-icon>
-</div>
+<jbh-icon name="checkmark-circle" class="feature-success-icon" />
 ```
 
 ---
@@ -1066,11 +1110,10 @@ private async showSuccessToast(message: string): Promise<void> {
 
 **Usage:**
 ```html
-<ion-content>
-  <div class="jbh-container">
-    <!-- Page content -->
-  </div>
-</ion-content>
+<jbh-page (pageEnter)="onPageEnter()" (pageLeave)="onPageLeave()">
+  <app-header jbhPageHeader></app-header>
+  <div class="jbh-container">...</div>
+</jbh-page>
 ```
 
 **When to Use:**
@@ -1090,7 +1133,8 @@ private async showSuccessToast(message: string): Promise<void> {
 **Usage:**
 ```html
 <div class="jbh-container jbh-container-wide">
-  <!-- Wide content like charts, tables -->
+  <jbh-line-chart [series]="series" />
+  <jbh-table [rows]="rows" [label]="'feature.table.label' | translate">...</jbh-table>
 </div>
 ```
 
@@ -1104,33 +1148,47 @@ private async showSuccessToast(message: string): Promise<void> {
 
 ### B. Grid System
 
-#### Ionic Grid
+#### CSS Grid in the page SCSS
 **Purpose:** Responsive column layouts
 
-**Breakpoints:**
-- xs: 0-575px
-- sm: 576-767px
-- md: 768-991px
-- lg: 992-1199px
-- xl: 1200px+
+The layer has no grid component, and `ion-grid` is not allowed in pages. Use CSS Grid in the page SCSS, mobile first.
+
+**Breakpoints** (see [Responsive](responsive.md)):
+- Mobile: below 768px
+- Tablet: 768px and up
+- Desktop: 1024px and up
 
 **Usage:**
 ```html
-<ion-grid>
-  <ion-row>
-    <ion-col size="12" sizeMd="6" sizeLg="4">
-      <!-- Full width mobile, half tablet, third desktop -->
-    </ion-col>
-  </ion-row>
-</ion-grid>
+<div class="feature-grid">
+  @for (item of items; track item.id) {
+    <app-item-card [item]="item"></app-item-card>
+  }
+</div>
 ```
 
-**Common Patterns:**
+```scss
+.feature-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--jbh-spacing-sm);
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+```
+
+**Common Pattern:** `.jbh-balance-summary` is a global grid: 2 columns on mobile, 4 from 768px.
 ```html
-<!-- 2 columns on mobile, 4 on desktop -->
 <div class="jbh-balance-summary">
-  <!-- Uses CSS Grid: grid-template-columns: repeat(2, 1fr) on mobile -->
-  <!-- Responsive: repeat(4, 1fr) on desktop -->
+  @for (card of summaryCards; track card.id) {
+    <jbh-card>...</jbh-card>
+  }
 </div>
 ```
 
@@ -1140,32 +1198,17 @@ private async showSuccessToast(message: string): Promise<void> {
 
 #### Cards
 ```html
-<!-- Standard card -->
-<div class="jbh-card">
-  <!-- Content -->
-</div>
-
-<!-- Elevated card (larger shadow) -->
-<div class="jbh-card-elevated">
-  <!-- Content -->
-</div>
-
-<!-- Flat card (border, no shadow) -->
-<div class="jbh-card-flat">
-  <!-- Content -->
-</div>
-
-<!-- Form card (elevated + slide-up animation) -->
-<div class="jbh-form-card">
-  <!-- Form content -->
-</div>
+<jbh-card>...</jbh-card>
+<jbh-card variant="elevated">...</jbh-card>
+<jbh-card variant="flat">...</jbh-card>
+<jbh-card variant="form">...</jbh-card>
 ```
 
 **When to Use Each:**
-- `jbh-card`: Default for most content cards
-- `jbh-card-elevated`: Important cards, forms, modals
-- `jbh-card-flat`: Subtle separation, nested cards
-- `jbh-form-card`: All form containers
+- `default`: most content cards
+- `elevated`: important cards, auth cards, modals (larger shadow)
+- `flat`: subtle separation, nested cards (border, no shadow)
+- `form`: all form containers (elevated, with a slide-up animation)
 
 ---
 
@@ -1318,17 +1361,17 @@ The row context is typed `any`. Put the pipe that keeps the type first (`name | 
 #### Status Badges
 ```html
 <span class="jbh-status-badge status-accepted">
-  <ion-icon name="checkmark-circle"></ion-icon>
+  <jbh-icon name="checkmark-circle" />
   {{ 'status.accepted' | translate }}
 </span>
 
 <span class="jbh-status-badge status-pending">
-  <ion-icon name="time-outline"></ion-icon>
+  <jbh-icon name="time-outline" />
   {{ 'status.pending' | translate }}
 </span>
 
 <span class="jbh-status-badge status-declined">
-  <ion-icon name="close-circle"></ion-icon>
+  <jbh-icon name="close-circle" />
   {{ 'status.declined' | translate }}
 </span>
 ```
@@ -1343,12 +1386,12 @@ The row context is typed `any`. Put the pipe that keeps the type first (`name | 
 #### Role Badges
 ```html
 <span class="jbh-role-badge jbh-role-owner">
-  <ion-icon name="shield-checkmark"></ion-icon>
+  <jbh-icon name="shield-checkmark" />
   {{ 'role.owner' | translate }}
 </span>
 
 <span class="jbh-role-badge jbh-role-member">
-  <ion-icon name="person"></ion-icon>
+  <jbh-icon name="person" />
   {{ 'role.member' | translate }}
 </span>
 ```
@@ -1444,18 +1487,23 @@ Tone: `default` | `primary` | `danger`. Size: `md` (48px, default) | `sm` (32px,
 ### C. Action Patterns
 
 #### Top-Right Page Actions
-**Pattern:**
+**Pattern:** put the actions inside `jbh-page-header`. They show on the right on desktop.
 ```html
-<div class="jbh-page-header-actions">
-  <button class="jbh-button-primary" (click)="create()">
-    <ion-icon name="add-outline"></ion-icon>
-    <span>{{ 'button.create' | translate }}</span>
+<jbh-page-header
+  icon="folder-open-outline"
+  [title]="'feature.overview.title' | translate"
+>
+  <button type="button" jbhButton icon="add-outline" (click)="create()">
+    {{ 'button.create' | translate }}
   </button>
-
-  <button class="jbh-icon-button" (click)="filter()">
-    <ion-icon name="filter-outline"></ion-icon>
-  </button>
-</div>
+  <button
+    type="button"
+    jbhIconButton
+    icon="filter-outline"
+    [label]="'button.filter' | translate"
+    (click)="filter()"
+  ></button>
+</jbh-page-header>
 ```
 
 ---
@@ -1464,15 +1512,24 @@ Tone: `default` | `primary` | `danger`. Size: `md` (48px, default) | `sm` (32px,
 **Pattern:**
 ```html
 <div class="jbh-action-buttons">
-  <button class="jbh-icon-button" (click)="edit(row)">
-    <ion-icon name="create-outline"></ion-icon>
-  </button>
-
-  <button class="jbh-icon-button jbh-icon-button-danger" (click)="delete(row)">
-    <ion-icon name="trash-outline"></ion-icon>
-  </button>
+  <button
+    type="button"
+    jbhIconButton
+    icon="create-outline"
+    [label]="'button.edit' | translate"
+    (click)="edit(row)"
+  ></button>
+  <button
+    type="button"
+    jbhIconButton="danger"
+    icon="trash-outline"
+    [label]="'button.delete' | translate"
+    (click)="delete(row)"
+  ></button>
 </div>
 ```
+
+In dense table rows, add `size="sm"`.
 
 ---
 
@@ -1488,27 +1545,16 @@ async handleDelete(item: Item): Promise<void> {
 }
 
 private async confirmDelete(item: Item): Promise<boolean> {
-  const alert = await this.alertController.create({
-    header: this.translationService.instant('item.delete.title'),
+  return this.dialog.confirm({
+    title: this.translationService.instant('item.delete.title'),
     message: this.translationService.instant('item.delete.message', { name: item.name }),
-    buttons: [
-      {
-        text: this.translationService.instant('common.cancel'),
-        role: 'cancel'
-      },
-      {
-        text: this.translationService.instant('common.delete'),
-        role: 'destructive',
-        cssClass: 'alert-button-danger'
-      }
-    ]
+    confirmText: this.translationService.instant('common.delete'),
+    destructive: true
   });
-
-  await alert.present();
-  const { role } = await alert.onDidDismiss();
-  return role === 'destructive';
 }
 ```
+
+`this.dialog` is `DialogService` from `@design-system/platform`.
 
 ---
 
@@ -1530,16 +1576,19 @@ canEditTeam(team: Team): boolean {
 
 ```html
 @if (canModifyProducts()) {
-  <button class="jbh-button-primary" (click)="create()">
-    <ion-icon name="add-outline"></ion-icon>
-    <span>{{ 'button.create' | translate }}</span>
+  <button type="button" jbhButton icon="add-outline" (click)="create()">
+    {{ 'button.create' | translate }}
   </button>
 }
 
 @if (canEditTeam(team)) {
-  <button class="jbh-icon-button" (click)="edit(team)">
-    <ion-icon name="create-outline"></ion-icon>
-  </button>
+  <button
+    type="button"
+    jbhIconButton
+    icon="create-outline"
+    [label]="'button.edit' | translate"
+    (click)="edit(team)"
+  ></button>
 }
 ```
 
@@ -1550,8 +1599,10 @@ canEditTeam(team: Team): boolean {
 #### Limit-Based Disabling
 ```html
 <button
-  class="jbh-button-primary"
+  type="button"
+  jbhButton
   [disabled]="products.length >= MAX_LIMIT"
+  (click)="create()"
 >
   {{ 'button.create' | translate }}
 </button>
@@ -1568,12 +1619,13 @@ canEditTeam(team: Team): boolean {
 #### Permission-Based Disabling
 ```html
 <button
-  class="jbh-icon-button"
+  type="button"
+  jbhIconButton="danger"
+  icon="trash-outline"
   [disabled]="!canDelete(item)"
-  [title]="canDelete(item) ? ('button.delete' | translate) : ('button.delete.disabled' | translate)"
->
-  <ion-icon name="trash-outline"></ion-icon>
-</button>
+  [label]="(canDelete(item) ? 'button.delete' : 'button.delete.disabled') | translate"
+  (click)="delete(item)"
+></button>
 ```
 
 ---
@@ -1585,14 +1637,14 @@ canEditTeam(team: Team): boolean {
 @if (hasReachedLimit) {
   <div class="jbh-limit-error">
     <div class="jbh-limit-error-icon">
-      <ion-icon name="alert-circle-outline"></ion-icon>
+      <jbh-icon name="alert-circle-outline" />
     </div>
     <h2 class="jbh-limit-error-title">{{ 'limit.title' | translate }}</h2>
     <p class="jbh-limit-error-message">
       {{ 'limit.message' | translate: { max: MAX_TEAMS } }}
     </p>
-    <button class="jbh-button-secondary" routerLink="/teams">
-      <span>{{ 'button.backToTeams' | translate }}</span>
+    <button type="button" jbhButton="secondary" block icon="arrow-back-outline" routerLink="/teams">
+      {{ 'button.backToTeams' | translate }}
     </button>
   </div>
 }
@@ -1642,29 +1694,22 @@ canEditTeam(team: Team): boolean {
 
 ### C. Viewport Detection
 
-**ViewportService:**
-```typescript
-// Usage in component
-selectInterface = 'action-sheet';
+Prefer CSS media queries. Use code only when the logic must change, not only the look.
 
-ngOnInit(): void {
-  this.selectInterface = this.viewportService.selectInterface;
-  // Returns 'action-sheet' (mobile) or 'popover' (desktop)
+**`JbhViewportService`** (`@design-system/platform`): `wide` is a signal, `true` from 1024px. It updates 100ms after the last resize.
+```typescript
+private readonly viewport = inject(JbhViewportService);
+readonly isWide = this.viewport.wide;
+```
+
+```html
+@if (isWide()) {
+  <app-feature-sidebar></app-feature-sidebar>
 }
 ```
 
-**Window Resize Listener:**
-```typescript
-@HostListener('window:resize', ['$event'])
-onResize(event: any): void {
-  this.checkViewport();
-}
-
-private checkViewport(): void {
-  this.isMobile = window.innerWidth < 768;
-  this.cdr.markForCheck();
-}
-```
+- Never add your own `window:resize` listener.
+- `jbh-select` and `jbh-table` already adapt to the width by themselves.
 
 ---
 
@@ -1672,23 +1717,16 @@ private checkViewport(): void {
 
 #### Hide on Mobile
 ```html
-<div class="jbh-table jbh-hide-mobile">
-  <!-- Desktop table -->
-</div>
+<p class="feature-hint jbh-hide-mobile">{{ 'feature.hint' | translate }}</p>
 ```
 
 **CSS:** `@media (max-width: 767px) { display: none !important; }`
 
 ---
 
-#### Hide on Desktop
-```html
-<div class="jbh-cards jbh-hide-desktop">
-  <!-- Mobile cards -->
-</div>
-```
+#### Tables and Cards
 
-**CSS:** `@media (min-width: 768px) { display: none !important; }`
+There is no `jbh-hide-desktop` class. `jbh-table` shows a table from 768px and cards below 768px (Section 8A). For other content, use a media query in the page SCSS.
 
 ---
 
@@ -1923,46 +1961,45 @@ export class MyComponent implements OnInit, OnDestroy {
 ### A. ARIA Labels
 
 #### Icon Buttons (CRITICAL)
-```html
-<!-- ❌ BAD: No context for screen readers -->
-<button class="jbh-icon-button" (click)="refresh()">
-  <ion-icon name="refresh-outline"></ion-icon>
-</button>
 
-<!-- ✅ GOOD: Clear label for screen readers -->
+`button[jbhIconButton]` requires `label`. The layer sets `aria-label` and `title` from it, so an icon button without a label does not compile.
+
+```html
 <button
-  class="jbh-icon-button"
+  type="button"
+  jbhIconButton
+  icon="refresh-outline"
+  [label]="'button.refresh' | translate"
   (click)="refresh()"
-  aria-label="{{ 'button.refresh' | translate }}"
-  title="{{ 'button.refresh' | translate }}"
->
-  <ion-icon name="refresh-outline"></ion-icon>
-</button>
+></button>
 ```
 
-**Rule:** EVERY icon button must have `aria-label` and `title`
+**Rule:** EVERY icon button gets a translated `label`. Never write `aria-label` or `title` on it by hand.
+
+A standalone `jbh-icon` that carries meaning takes `label` too. Without `label` it is hidden from screen readers.
 
 ---
 
 #### Tables
-```html
-<div class="jbh-table" role="table" aria-label="{{ 'table.members' | translate }}">
-  <div class="jbh-table-header" role="rowgroup">
-    <div class="jbh-table-row" role="row">
-      <div class="jbh-table-cell" role="columnheader">Name</div>
-      <div class="jbh-table-cell" role="columnheader">Email</div>
-    </div>
-  </div>
 
-  <div class="jbh-table-body" role="rowgroup">
-    @for (row of data; track row.id) {
-      <div class="jbh-table-row" role="row">
-        <div class="jbh-table-cell" role="cell">{{ row.name }}</div>
-        <div class="jbh-table-cell" role="cell">{{ row.email }}</div>
-      </div>
-    }
-  </div>
-</div>
+Use `jbh-table` (Section 8A). It sets `role="table"`, the row groups and the cell roles. Pass `[label]` for its `aria-label`.
+
+```html
+<jbh-table [rows]="members" [label]="'table.members' | translate">
+  <ng-template jbhTableHead>
+    <jbh-table-row>
+      <jbh-table-cell header>{{ 'table.name' | translate }}</jbh-table-cell>
+      <jbh-table-cell header>{{ 'table.email' | translate }}</jbh-table-cell>
+    </jbh-table-row>
+  </ng-template>
+
+  <ng-template jbhTableRow let-row>
+    <jbh-table-row>
+      <jbh-table-cell>{{ row.name }}</jbh-table-cell>
+      <jbh-table-cell>{{ row.email }}</jbh-table-cell>
+    </jbh-table-row>
+  </ng-template>
+</jbh-table>
 ```
 
 ---
@@ -1970,41 +2007,42 @@ export class MyComponent implements OnInit, OnDestroy {
 #### Expandable Elements
 ```html
 <button
+  type="button"
   (click)="toggleExpanded()"
   [attr.aria-expanded]="isExpanded"
   aria-controls="team-members"
 >
-  <span>Team Name</span>
-  <ion-icon [name]="isExpanded ? 'chevron-up' : 'chevron-down'"></ion-icon>
+  <span>{{ team.name }}</span>
+  <jbh-icon [name]="isExpanded ? 'chevron-up' : 'chevron-down'" />
 </button>
 
-<div id="team-members" [hidden]="!isExpanded">
-  <!-- Content -->
-</div>
+<div id="team-members" [hidden]="!isExpanded">...</div>
 ```
 
 ---
 
 #### Loading States
 ```html
-<div role="status" aria-live="polite" aria-busy="true">
-  <div class="jbh-skeleton" style="height: 200px;"></div>
-  <span class="sr-only">{{ 'common.loading' | translate }}</span>
+<div role="status" aria-live="polite" aria-busy="true" [attr.aria-label]="'common.loading' | translate">
+  <jbh-skeleton shape="block" height="200px" />
 </div>
 ```
+
+`button[jbhButton]` with `[loading]` sets `aria-busy` by itself.
 
 ---
 
 #### Error Messages
+
+The layer already sets the roles:
+
+- Form controls: a non-empty `[error]` shows the message with `role="alert"`.
+- `jbh-alert tone="error"` has `role="alert"`. The other tones have `role="status"`.
+
 ```html
-<div
-  role="alert"
-  aria-live="assertive"
-  class="jbh-field-error"
->
-  <ion-icon name="information-circle"></ion-icon>
-  <span>{{ errorMessage }}</span>
-</div>
+@if (errorMessage) {
+  <jbh-alert tone="error">{{ errorMessage }}</jbh-alert>
+}
 ```
 
 ---
@@ -2013,26 +2051,13 @@ export class MyComponent implements OnInit, OnDestroy {
 
 **Minimum Size:** 48px × 48px (WCAG AA)
 
-**Current Issues:**
-- Icon buttons: 36px × 36px → needs increase to 48px
-- Small icon buttons: 32px × 32px → avoid using
+**In the layer:**
+- `button[jbhIconButton]`: 48px × 48px (size `md`, the default).
+- `size="sm"`: 32px × 32px. Use it only in dense table rows.
 
 **Spacing:**
 - Minimum 8px between interactive elements
 - Prevents accidental taps
-
-**Fix (Planned):**
-```scss
-// src/theme/custom-components.scss
-.jbh-icon-button {
-  width: 48px;  // Increase from 36px
-  height: 48px;
-
-  ion-icon {
-    font-size: 24px; // Increase from 20px
-  }
-}
-```
 
 ---
 
