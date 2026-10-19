@@ -2,7 +2,7 @@
 
 > **Purpose:** Comprehensive reference for designing and implementing consistent UI across the JBH App. Use this guide to avoid repetitive codebase exploration and ensure all pages follow established patterns.
 
-> **The `jbh-*` layer wins.** All examples use only `@design-system/components` and `@design-system/platform`. If an example and the layer disagree, the layer is right: fix the example. Full rules: `src/app/AGENTS.md`.
+> **The `jbh-*` layer wins.** All examples take design-system symbols only from `@design-system/components` and `@design-system/platform`, never a deeper path. Angular, RxJS, `@ngx-translate`, `@core/*` and `@shared/*` imports are still allowed. If an example and the layer disagree, the layer is right: fix the example. Full rules: `src/app/AGENTS.md`.
 
 ---
 
@@ -58,7 +58,7 @@ Every routed page follows the same frame:
 - `<jbh-page>` is the root element of the template. Load data in `(pageEnter)`, clear the header in `(pageLeave)`.
 - `<app-header jbhPageHeader>` is the first child. Auth pages have no header.
 - Content sits in `<div class="jbh-container">` (add `jbh-container-wide` for tables and charts).
-- Imports come only from `@design-system/components` and `@design-system/platform`.
+- Design-system symbols come only from `@design-system/components` and `@design-system/platform`. Angular, RxJS, `@ngx-translate`, `@core/*` and `@shared/*` imports are fine.
 
 ### A. Overview/List Pages
 
@@ -95,6 +95,7 @@ import { JbhPageComponent } from '@design-system/platform';
 import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
 import { JBHError } from '@core/domain/models/jbh-error.model';
 import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
+// Placeholders: import Item, ItemUseCase, ItemCardComponent and MAX_LIMIT from your feature.
 
 @Component({
   selector: 'app-feature-overview',
@@ -267,6 +268,7 @@ import { JbhPageComponent, ToastService } from '@design-system/platform';
 import { HeaderActionsService } from '@core/infrastructure/header/header-actions.service';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
 import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
+// Placeholder: import ITEM_TYPE_OPTIONS from your feature.
 
 @Component({
   selector: 'app-create-item',
@@ -1321,7 +1323,7 @@ Product metadata fields pick the control by value type: text → `jbh-text-field
 
 ### A. Tables (Responsive)
 
-Use `jbh-table`. It renders a table from 768px and a card list below 768px, with all ARIA roles.
+Use `jbh-table`. With a `jbhTableCard` template, it renders a table from 768px and a card list below 768px, with all ARIA roles. Without that template, it renders the table at every width.
 
 - Inputs: `rows` (required), `trackBy` (default: the row), `label` (`aria-label`).
 - Templates: `ng-template jbhTableHead` (required), `ng-template jbhTableRow` (required), `ng-template jbhTableCard` (optional, mobile cards).
@@ -1709,7 +1711,7 @@ readonly isWide = this.viewport.wide;
 ```
 
 - Never add your own `window:resize` listener.
-- `jbh-select` and `jbh-table` already adapt to the width by themselves.
+- `jbh-select` and `jbh-table` (when it has a card template) already adapt to the width by themselves.
 
 ---
 
@@ -1726,7 +1728,7 @@ readonly isWide = this.viewport.wide;
 
 #### Tables and Cards
 
-There is no `jbh-hide-desktop` class. `jbh-table` shows a table from 768px and cards below 768px (Section 8A). For other content, use a media query in the page SCSS.
+There is no `jbh-hide-desktop` class. With a `jbhTableCard` template, `jbh-table` shows a table from 768px and cards below 768px (Section 8A). For other content, use a media query in the page SCSS.
 
 ---
 
@@ -2053,7 +2055,7 @@ The layer already sets the roles:
 
 **In the layer:**
 - `button[jbhIconButton]`: 48px × 48px (size `md`, the default).
-- `size="sm"`: 32px × 32px. Use it only in dense table rows.
+- `size="sm"`: 32px × 32px. This is a known exception to the 48px minimum. Use it only in dense table rows. Do not add new uses without asking the team.
 
 **Spacing:**
 - Minimum 8px between interactive elements

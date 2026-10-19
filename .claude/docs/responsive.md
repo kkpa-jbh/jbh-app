@@ -60,7 +60,7 @@ export class MyPage {
 ```
 
 - Never add your own `window:resize` listener.
-- `jbh-select` (popover or action sheet) and `jbh-table` (table or cards) already adapt by themselves.
+- `jbh-select` (popover or action sheet) and `jbh-table` (table or cards, when it has a card template) already adapt by themselves.
 
 ## Conditional Layouts
 
@@ -80,7 +80,8 @@ export class MyPage {
 }
 ```
 
-For tables, do not switch by hand: `jbh-table` shows a table from 768px and cards below 768px.
+For tables, do not switch by hand. With a `jbhTableCard` template, `jbh-table` shows a table from 768px and cards below 768px.
+Without a card template, it stays a table at every width.
 
 ## Testing Devices
 1. iPhone SE (375px) - Smallest mobile
