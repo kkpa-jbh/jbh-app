@@ -608,6 +608,12 @@ ionic cap run android -l # Android live reload
 ionic build --prod       # Production
 ```
 
+### Deploy
+
+A merge into `main` builds the `jbh-web` image (`.github/workflows/image.yml`).
+When the repo variable `AUTO_DEPLOY` is `true`, that image then goes live by itself on jbh.usemagus.cloud.
+So merge only what works in the production build. Details: `../jbh-deploy/CI.md`, "Auto-deploy".
+
 ## Documentation
 
 Project docs: `notes/` folder

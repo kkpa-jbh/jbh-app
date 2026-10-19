@@ -1,5 +1,6 @@
 # Builds the jbh-web image (production build of the app + Caddy) and pushes it to GHCR,
-# tagged with the git SHA.
+# tagged with the git SHA. Then, when the repo variable AUTO_DEPLOY is "true", deploys that exact image
+# (jbh-deploy CI.md, "Auto-deploy").
 name: Image
 
 on:
@@ -10,6 +11,12 @@ on:
 permissions:
   contents: read
   packages: write
+
+# One run at a time, in push order, so an older image never deploys after a newer one.
+# A newer waiting run replaces an older waiting one. That is fine: the newer commit has the older changes too.
+concurrency:
+  group: image
+  cancel-in-progress: false
 
 jobs:
   image:
@@ -56,3 +63,20 @@ jobs:
           package-name: jbh-web
           package-type: container
           min-versions-to-keep: 2
+
+  # Starts the Deploy workflow in jbh-deploy for the image of this commit. It does not wait for the result:
+  # see jbh-deploy → Actions → Deploy. A deploy that is not healthy goes back to the image from before by itself.
+  # Off until the repo variable AUTO_DEPLOY is "true". DEPLOY_DISPATCH_TOKEN can only start workflows in jbh-deploy.
+  deploy:
+    needs: image
+    if: vars.AUTO_DEPLOY == 'true' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Start Deploy jbh-web
+        env:
+          GH_TOKEN: ${{ secrets.DEPLOY_DISPATCH_TOKEN }}
+        run: |
+          gh api --method POST repos/kkpa-jbh/jbh-deploy/actions/workflows/deploy.yml/dispatches \
+            -f ref=main -f 'inputs[action]=deploy' -f 'inputs[service]=jbh-web' -f "inputs[tag]=$GITHUB_SHA"
+          echo "Deploy started for $GITHUB_SHA: https://github.com/kkpa-jbh/jbh-deploy/actions/workflows/deploy.yml" >> "$GITHUB_STEP_SUMMARY"
