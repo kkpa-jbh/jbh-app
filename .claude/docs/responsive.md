@@ -5,99 +5,83 @@
 - **Tablet**: 768px - 1024px (iPad, Android tablets)
 - **Desktop**: 1024px+ (PWA)
 
-## Ionic Grid System
+## Grid Layouts (CSS Grid)
+
+The layer has no grid component, and `ion-grid` is not allowed in pages (`npm run lint:boundary`).
+Use CSS Grid in the page SCSS.
+
 ```html
-<ion-grid>
-  <ion-row>
-    <!-- Mobile: full, Tablet: half, Desktop: third -->
-    <ion-col size="12" size-md="6" size-lg="4">
-      <app-card></app-card>
-    </ion-col>
-  </ion-row>
-</ion-grid>
+<div class="feature-grid">
+  @for (item of items; track item.id) {
+    <app-card [item]="item"></app-card>
+  }
+</div>
 ```
+
+`.jbh-balance-summary` is a global grid: 2 columns on mobile, 4 from 768px.
 
 ## SCSS Pattern (Mobile-First)
 
 ```scss
-.container {
-  padding: 16px;
-
-  .grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
+.feature-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--jbh-spacing-sm);
 
   // Tablet
   @media (min-width: 768px) {
-    padding: 24px;
-    .grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
+    grid-template-columns: repeat(2, 1fr);
   }
 
   // Desktop
   @media (min-width: 1024px) {
-    max-width: 1200px;
-    margin: 0 auto;
-    .grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 ```
+
+Page width and padding come from `jbh-container` (and `jbh-container-wide`). Do not set them again in the page.
 
 ## Viewport Detection
 
+Prefer CSS media queries. Use code only when the logic must change, not only the look.
+
+`JbhViewportService` (`@design-system/platform`): `wide` is a signal, `true` from 1024px.
+It updates 100ms after the last resize.
+
 ```typescript
-import { Platform } from '@ionic/angular';
+import { JbhViewportService } from '@design-system/platform';
 
 @Component({...})
 export class MyPage {
-  isMobile = true;
-  isTablet = false;
-  isDesktop = false;
-
-  constructor(private platform: Platform) {
-    this.checkViewport();
-  }
-
-  @HostListener('window:resize')
-  onResize() {
-    this.checkViewport();
-  }
-
-  private checkViewport(): void {
-    const width = this.platform.width();
-    this.isMobile = width < 768;
-    this.isTablet = width >= 768 && width < 1024;
-    this.isDesktop = width >= 1024;
-  }
+  private readonly viewport = inject(JbhViewportService);
+  readonly isWide = this.viewport.wide;
 }
 ```
+
+- Never add your own `window:resize` listener.
+- `jbh-select` (popover or action sheet) and `jbh-table` (table or cards, when it has a card template) already adapt by themselves.
 
 ## Conditional Layouts
 
 ```html
-<!-- Mobile: List -->
-@if (isMobile) {
-  <ion-list>
-    @for (item of items; track item.id) {
-      <ion-item>{{ item.name }}</ion-item>
-    }
-  </ion-list>
-}
-
-<!-- Tablet/Desktop: Grid -->
-@if (!isMobile) {
-  <div class="grid-layout">
+@if (isWide()) {
+  <div class="feature-grid">
     @for (item of items; track item.id) {
       <app-card [item]="item"></app-card>
     }
   </div>
+} @else {
+  <div class="feature-list">
+    @for (item of items; track item.id) {
+      <app-item-row [item]="item"></app-item-row>
+    }
+  </div>
 }
 ```
+
+For tables, do not switch by hand. With a `jbhTableCard` template, `jbh-table` shows a table from 768px and cards below 768px.
+Without a card template, it stays a table at every width.
 
 ## Testing Devices
 1. iPhone SE (375px) - Smallest mobile
@@ -109,7 +93,7 @@ export class MyPage {
 Use Chrome DevTools device emulation.
 
 ## Rules
-- **ALWAYS** use Ionic Grid for responsive layouts
+- **ALWAYS** use CSS Grid in the page SCSS for responsive layouts. Never `ion-grid`.
 - **NEVER** use fixed pixel widths (except max-width)
 - **ALWAYS** implement mobile-first CSS
 - **ALWAYS** test on 3+ viewport sizes
