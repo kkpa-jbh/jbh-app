@@ -1,0 +1,187 @@
+// Level 1 is a top-level menu row. Levels 2 and 3 are indented sub rows with smaller text.
+@mixin level(
+  $level,
+  $min-height,
+  $min-height-wide,
+  $padding-start,
+  $padding-end,
+  $margin,
+  $icon-size,
+  $icon-size-wide,
+  $label-size,
+  $label-size-wide,
+  $label-weight,
+  $label-color,
+  $hover,
+  $active-background,
+  $active-shadow,
+  $keep-active-on-hover
+) {
+  $host: ':host(.jbh-nav-item--level-#{$level})';
+  $host-active: ':host(.jbh-nav-item--level-#{$level}.jbh-nav-item--active)';
+  $important: '';
+
+  @if $keep-active-on-hover {
+    $important: ' !important';
+  }
+
+  #{$host} .jbh-nav-item__row {
+    --background: transparent;
+    --background-hover: #{$hover};
+    --background-activated: rgba(var(--jbh-primary-rgb), 0.08);
+    --padding-start: #{$padding-start};
+    --padding-end: #{$padding-end};
+    --min-height: #{$min-height};
+    margin: $margin;
+    cursor: pointer;
+    transition: all var(--jbh-transition-base);
+    border-radius: var(--jbh-radius-sm);
+
+    @media (min-width: 768px) {
+      --min-height: #{$min-height-wide};
+    }
+
+    &:hover {
+      --background: #{$hover};
+    }
+  }
+
+  #{$host} .jbh-nav-item__icon {
+    margin-right: var(--jbh-spacing-sm);
+    font-size: $icon-size;
+    color: var(--jbh-text-secondary);
+    transition: color var(--jbh-transition-base);
+
+    @media (min-width: 768px) {
+      font-size: $icon-size-wide;
+    }
+  }
+
+  #{$host} .jbh-nav-item__label {
+    font-size: $label-size;
+    font-weight: $label-weight;
+    color: $label-color;
+    transition: all var(--jbh-transition-base);
+
+    @media (min-width: 768px) {
+      font-size: $label-size-wide;
+    }
+  }
+
+  #{$host-active} .jbh-nav-item__row {
+    --background: #{$active-background}#{$important};
+    box-shadow: $active-shadow;
+  }
+
+  #{$host-active} .jbh-nav-item__icon,
+  #{$host-active} .jbh-nav-item__label {
+    color: var(--jbh-primary-color);
+  }
+
+  #{$host-active} .jbh-nav-item__label {
+    font-weight: var(--jbh-font-weight-semibold);
+  }
+}
+
+:host {
+  display: block;
+}
+
+.jbh-nav-item__end {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--jbh-spacing-xs);
+}
+
+.jbh-nav-item__chevron {
+  font-size: 20px;
+  color: var(--jbh-text-secondary);
+  transition: transform var(--jbh-transition-base);
+}
+
+@include level(
+  1,
+  48px,
+  50px,
+  var(--jbh-spacing-md),
+  var(--jbh-spacing-md),
+  2px var(--jbh-spacing-xs),
+  24px,
+  26px,
+  var(--jbh-font-size-base),
+  var(--jbh-font-size-lg),
+  var(--jbh-font-weight-medium),
+  var(--jbh-text-primary),
+  rgba(var(--jbh-primary-rgb), 0.06),
+  linear-gradient(90deg, rgba(var(--jbh-primary-rgb), 0.12) 0%, rgba(var(--jbh-secondary-rgb), 0.06) 100%),
+  inset 0 1px 3px rgba(var(--jbh-primary-rgb), 0.1),
+  false
+);
+
+@include level(
+  2,
+  40px,
+  42px,
+  var(--jbh-spacing-lg),
+  var(--jbh-spacing-sm),
+  2px 4px,
+  20px,
+  22px,
+  var(--jbh-font-size-sm),
+  var(--jbh-font-size-base),
+  var(--jbh-font-weight-normal),
+  var(--jbh-text-secondary),
+  rgba(var(--jbh-primary-rgb), 0.08),
+  rgba(var(--jbh-primary-rgb), 0.12),
+  0 1px 4px rgba(var(--jbh-primary-rgb), 0.15),
+  true
+);
+
+@include level(
+  3,
+  36px,
+  38px,
+  calc(var(--jbh-spacing-lg) + var(--jbh-spacing-sm)),
+  var(--jbh-spacing-sm),
+  2px 4px,
+  18px,
+  20px,
+  var(--jbh-font-size-xs),
+  var(--jbh-font-size-sm),
+  var(--jbh-font-weight-normal),
+  var(--jbh-text-secondary),
+  rgba(var(--jbh-primary-rgb), 0.06),
+  rgba(var(--jbh-primary-rgb), 0.1),
+  0 1px 3px rgba(var(--jbh-primary-rgb), 0.12),
+  true
+);
+
+:host(.jbh-nav-item--level-1) .jbh-nav-item__row {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 0;
+    background: var(--jbh-gradient-primary);
+    border-radius: 0 3px 3px 0;
+    transition: height var(--jbh-transition-base);
+  }
+
+  &:hover::before {
+    height: 60%;
+  }
+}
+
+:host(.jbh-nav-item--level-1.jbh-nav-item--active) .jbh-nav-item__row::before {
+  height: 80% !important;
+}
+
+:host(.jbh-nav-item--level-2) .jbh-nav-item__row:hover,
+:host(.jbh-nav-item--level-3) .jbh-nav-item__row:hover {
+  transform: translateX(2px);
+}

@@ -1,0 +1,25 @@
+<div class="jbh-table__table" role="table" [attr.aria-label]="label() ?? null">
+  <div class="jbh-table__head" role="rowgroup">
+    <ng-container [ngTemplateOutlet]="head().templateRef" />
+  </div>
+  <div class="jbh-table__body" role="rowgroup">
+    @for (row of rows(); track trackBy()($index, row)) {
+      <ng-container
+        [ngTemplateOutlet]="rowTemplate().templateRef"
+        [ngTemplateOutletContext]="{ $implicit: row, index: $index }"
+      />
+    }
+  </div>
+</div>
+@if (cardTemplate(); as card) {
+  <div class="jbh-table__cards" role="list" [attr.aria-label]="label() ?? null">
+    @for (row of rows(); track trackBy()($index, row)) {
+      <div class="jbh-table__card" role="listitem">
+        <ng-container
+          [ngTemplateOutlet]="card.templateRef"
+          [ngTemplateOutletContext]="{ $implicit: row, index: $index }"
+        />
+      </div>
+    }
+  </div>
+}

@@ -11,6 +11,8 @@ export interface HeaderAction {
 export interface PageHeaderConfig {
   title: string;
   showBackButton?: boolean;
+  /** Where the back button goes when there is no history to go back to. */
+  defaultBackHref?: string;
   actions?: HeaderAction[];
 }
 

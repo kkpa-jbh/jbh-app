@@ -1,35 +1,20 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-    </ion-buttons>
-    <ion-title>{{ 'teams.acceptInvitation.title' | translate }}</ion-title>
-  </ion-toolbar>
-</ion-header>
-
-<ion-content [fullscreen]="true" class="accept-invitation-content">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">{{ 'teams.acceptInvitation.titleLarge' | translate }}</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<jbh-page (pageEnter)="onPageEnter()" (pageLeave)="onPageLeave()">
+  <app-header jbhPageHeader></app-header>
 
   <div class="jbh-container">
-    <div class="jbh-form-card">
+    <jbh-card variant="form">
 
-      <!-- Loading State -->
       @if (pageState === 'loading') {
         <div class="jbh-loading-container">
-          <ion-spinner name="crescent" color="primary"></ion-spinner>
+          <jbh-spinner class="accept-spinner" />
           <p>{{ 'common.loading' | translate }}</p>
         </div>
       }
 
-      <!-- Ready State - Show invitation details -->
       @if (pageState === 'ready') {
         <div class="jbh-form-header">
           <div class="jbh-form-icon invitation-icon">
-            <ion-icon name="mail-outline"></ion-icon>
+            <jbh-icon name="mail-outline" />
           </div>
           <h1 class="jbh-form-title">{{ 'teams.acceptInvitation.formTitle' | translate }}</h1>
           @if (teamName) {
@@ -43,7 +28,7 @@
 
         <div class="invitation-info">
           <div class="info-card">
-            <ion-icon name="people-outline" class="info-icon"></ion-icon>
+            <jbh-icon name="people-outline" class="info-icon" />
             <div class="info-content">
               @if (teamName) {
                 <span class="info-label">{{ 'teams.acceptInvitation.teamLabel' | translate }}</span>
@@ -57,36 +42,35 @@
         </div>
 
         <div class="invitation-notice">
-          <ion-icon name="alert-circle-outline"></ion-icon>
+          <jbh-icon name="alert-circle-outline" />
           <p>{{ 'teams.acceptInvitation.notice' | translate }}</p>
         </div>
 
         <button
           type="button"
-          class="jbh-button-primary jbh-button-block"
+          jbhButton
+          block
+          icon="checkmark-circle-outline"
           (click)="acceptInvitation()"
         >
-          <ion-icon name="checkmark-circle-outline" class="button-icon"></ion-icon>
-          <span>{{ 'teams.acceptInvitation.acceptButton' | translate }}</span>
+          {{ 'teams.acceptInvitation.acceptButton' | translate }}
         </button>
       }
 
-      <!-- Accepting State -->
       @if (pageState === 'accepting') {
         <div class="jbh-form-header">
           <div class="jbh-form-icon accepting-icon">
-            <ion-spinner name="crescent" color="primary"></ion-spinner>
+            <jbh-spinner />
           </div>
           <h1 class="jbh-form-title">{{ 'teams.acceptInvitation.accepting' | translate }}</h1>
           <p class="jbh-form-subtitle">{{ 'teams.acceptInvitation.pleaseWait' | translate }}</p>
         </div>
       }
 
-      <!-- Success State -->
       @if (pageState === 'success') {
         <div class="jbh-form-header">
           <div class="jbh-form-icon success-icon">
-            <ion-icon name="checkmark-circle-outline"></ion-icon>
+            <jbh-icon name="checkmark-circle-outline" />
           </div>
           <h1 class="jbh-form-title">{{ 'teams.acceptInvitation.successTitle' | translate }}</h1>
           @if (successTeamName) {
@@ -101,29 +85,30 @@
         <div class="success-actions">
           <button
             type="button"
-            class="jbh-button-primary jbh-button-block"
+            jbhButton
+            block
+            icon="people-outline"
             (click)="navigateToTeams()"
           >
-            <ion-icon name="people-outline" class="button-icon"></ion-icon>
-            <span>{{ 'teams.acceptInvitation.viewTeams' | translate }}</span>
+            {{ 'teams.acceptInvitation.viewTeams' | translate }}
           </button>
 
           <button
             type="button"
-            class="jbh-button-secondary jbh-button-block"
+            jbhButton="secondary"
+            block
+            icon="home-outline"
             (click)="navigateToHome()"
           >
-            <ion-icon name="home-outline" class="button-icon"></ion-icon>
-            <span>{{ 'teams.acceptInvitation.goHome' | translate }}</span>
+            {{ 'teams.acceptInvitation.goHome' | translate }}
           </button>
         </div>
       }
 
-      <!-- Error State -->
       @if (pageState === 'error') {
         <div class="jbh-form-header">
           <div class="jbh-form-icon error-icon">
-            <ion-icon name="close-circle-outline"></ion-icon>
+            <jbh-icon name="close-circle-outline" />
           </div>
           <h1 class="jbh-form-title">{{ 'teams.acceptInvitation.errorTitle' | translate }}</h1>
           <p class="jbh-form-subtitle error-message">{{ errorMessage }}</p>
@@ -141,24 +126,26 @@
         <div class="error-actions">
           <button
             type="button"
-            class="jbh-button-primary jbh-button-block"
+            jbhButton
+            block
+            icon="people-outline"
             (click)="navigateToTeams()"
           >
-            <ion-icon name="people-outline" class="button-icon"></ion-icon>
-            <span>{{ 'teams.acceptInvitation.viewTeams' | translate }}</span>
+            {{ 'teams.acceptInvitation.viewTeams' | translate }}
           </button>
 
           <button
             type="button"
-            class="jbh-button-secondary jbh-button-block"
+            jbhButton="secondary"
+            block
+            icon="home-outline"
             (click)="navigateToHome()"
           >
-            <ion-icon name="home-outline" class="button-icon"></ion-icon>
-            <span>{{ 'teams.acceptInvitation.goHome' | translate }}</span>
+            {{ 'teams.acceptInvitation.goHome' | translate }}
           </button>
         </div>
       }
 
-    </div>
+    </jbh-card>
   </div>
-</ion-content>
+</jbh-page>

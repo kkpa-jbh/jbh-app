@@ -1,0 +1,21 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      @if (back()) {
+        <ion-back-button [defaultHref]="backHref()" />
+      } @else {
+        <ion-menu-button />
+      }
+    </ion-buttons>
+
+    <ion-title>{{ title() }}</ion-title>
+
+    <ion-buttons slot="end">
+      @for (action of actions(); track action.id) {
+        <ion-button [attr.aria-label]="action.label || action.id" (click)="action.handler()">
+          <jbh-icon class="jbh-toolbar__action-icon" slot="icon-only" [name]="action.icon" />
+        </ion-button>
+      }
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>

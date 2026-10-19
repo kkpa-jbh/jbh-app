@@ -1,0 +1,15 @@
+:host {
+  display: flex;
+  align-items: center;
+  padding: var(--jbh-spacing-sm) var(--jbh-spacing-md);
+  border-bottom: 1px solid var(--jbh-border-color);
+  transition: background var(--jbh-transition-base);
+}
+
+:host(:last-child) {
+  border-bottom: none;
+}
+
+:host(:hover) {
+  background: var(--jbh-background-light);
+}

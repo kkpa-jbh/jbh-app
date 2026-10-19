@@ -1,0 +1,34 @@
+// Shared look of the text-like controls (input, textarea). Copied from the global
+// `.jbh-input` / `.jbh-textarea` rules, so the layer looks the same as the pages.
+@mixin control-surface {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--jbh-background-light);
+  border: 1px solid var(--jbh-border-color);
+  border-radius: var(--jbh-radius-md);
+  font-size: var(--jbh-font-size-base);
+  font-family: inherit;
+  color: var(--jbh-text-primary);
+  transition: all var(--jbh-transition-base);
+  outline: none;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: var(--jbh-text-tertiary);
+  }
+
+  &:focus {
+    background: var(--jbh-background-white);
+    border: 2px solid var(--jbh-primary-color);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--jbh-primary-color) 10%, transparent);
+  }
+
+  &[aria-invalid='true'] {
+    border: 2px solid var(--jbh-error-color);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}

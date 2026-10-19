@@ -1,40 +1,49 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule, SelectCustomEvent } from '@ionic/angular';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
 import { PortfolioContextService } from '@core/infrastructure/context/portfolio-context.service';
 import { TeamUseCase } from '@core/domain/use-cases/team.use-case';
 import { ProductUseCase } from '@core/domain/use-cases/product.use-case';
-import { ViewportService, SelectInterface } from '@core/infrastructure/viewport/viewport.service';
 import { TeamWithMembers } from '@core/domain/features/teams';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
+import { JbhSelectComponent, JbhSelectOptionComponent } from '@design-system/components';
 
 @Component({
   selector: 'app-portfolio-context-switcher',
   templateUrl: './portfolio-context-switcher.component.html',
   styleUrls: ['./portfolio-context-switcher.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, TranslateModule],
+  imports: [CommonModule, ReactiveFormsModule, TranslateModule, JbhSelectComponent, JbhSelectOptionComponent],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PortfolioContextSwitcherComponent implements OnInit, OnDestroy {
   currentContext$ = this.portfolioContext.context$;
   teams: TeamWithMembers[] = [];
-  selectInterface: SelectInterface = 'action-sheet';
+  readonly contextControl = new FormControl<string>('personal', { nonNullable: true });
   private destroy$ = new Subject<void>();
 
   constructor(
     private portfolioContext: PortfolioContextService,
     private teamUseCase: TeamUseCase,
     private productUseCase: ProductUseCase,
-    private viewportService: ViewportService,
     private cdr: ChangeDetectorRef,
     private logger: LoggerService
   ) {}
 
   ngOnInit(): void {
-    this.selectInterface = this.viewportService.selectInterface;
+    this.contextControl.setValue(this.getContextValue(), { emitEvent: false });
+
+    // The context can change outside this select (restored from storage), so keep the select in step.
+    this.currentContext$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => this.contextControl.setValue(this.getContextValue(), { emitEvent: false }));
+
+    this.contextControl.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(value => void this.onContextChange(value));
+
     this.loadTeams();
   }
 
@@ -57,9 +66,7 @@ export class PortfolioContextSwitcherComponent implements OnInit, OnDestroy {
       });
   }
 
-  async onContextChange(event: SelectCustomEvent<string>): Promise<void> {
-    const value = event.detail.value;
-
+  async onContextChange(value: string): Promise<void> {
     if (value === 'personal') {
       await this.portfolioContext.switchToPersonal();
     } else {

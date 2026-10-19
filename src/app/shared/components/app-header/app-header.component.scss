@@ -6,7 +6,7 @@
   gap: var(--jbh-spacing-xs);
   box-shadow: var(--jbh-shadow-sm);
 
-  ion-icon {
+  jbh-icon {
     font-size: 20px;
     color: var(--jbh-text-on-color);
   }
@@ -20,7 +20,7 @@
   @media (min-width: 768px) {
     padding: var(--jbh-spacing-md) var(--jbh-spacing-lg);
 
-    ion-icon {
+    jbh-icon {
       font-size: 24px;
     }
 

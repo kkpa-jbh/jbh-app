@@ -2,6 +2,8 @@
 
 > **Purpose:** Comprehensive reference for designing and implementing consistent UI across the JBH App. Use this guide to avoid repetitive codebase exploration and ensure all pages follow established patterns.
 
+> **The `jbh-*` layer wins.** Sections 3, 6, 7, 8, 9 and 16 match the current layer. Some examples in other sections still show old markup (`ion-*` tags, `jbh-button-*` classes, `ionViewWillEnter`). Do not copy them: use the layer components from Section 3 and the rules in `src/app/AGENTS.md`. `npm run lint:boundary` rejects the old markup.
+
 ---
 
 ## Table of Contents
@@ -602,7 +604,26 @@ Recent Activity (optional)
 
 ## 3. Component Library
 
-### Reusable Components
+### Layer components (`src/app/design-system/`)
+
+A closed list. Import only from `@design-system/components` and `@design-system/platform`. Need a new one? Add it to the layer and tell the team first.
+
+| Group | Components |
+|---|---|
+| Icons | `jbh-icon` (`name`: an Ionicons name from `components/icon/icon-registry.ts`), `jbh-spinner` |
+| Forms | `jbh-field`, `jbh-text-field`, `jbh-number-field`, `jbh-textarea`, `jbh-date-field`, `jbh-select` + `jbh-select-option`, `jbh-toggle` — see [Section 7](#7-form-patterns) |
+| Buttons | `button[jbhButton]`, `button[jbhIconButton]` — see [Section 9](#9-interactive-elements) |
+| Display | `jbh-card` (`variant`: `default` \| `elevated` \| `flat` \| `form`), `jbh-alert` (`tone`), `jbh-empty-state`, `jbh-skeleton` (`shape`), `jbh-page-header` (`variant`: `page` \| `form`), `jbh-table` — see [Section 8](#8-data-display), `jbh-segment`, `jbh-nav-item`, `jbh-line-chart` |
+| Platform | `jbh-page` (`pageEnter`, `pageLeave`), `jbh-toolbar`, `ToastService.show(message, tone)`, `DialogService.confirm({...})` / `open(component, { sheet })` / `close()`, `NavigationService.closeMenu()`, `JbhViewportService`, `IonicDevicePlatform` |
+
+```typescript
+if (await this.dialog.confirm({ title, message, confirmText, destructive: true })) {
+  this.deleteItem();
+}
+await this.toast.show(this.translate.instant('feature.saved'), 'success');
+```
+
+### App components (built on the layer)
 
 #### app-header
 **Location:** `src/app/shared/components/app-header/`
@@ -614,7 +635,7 @@ Recent Activity (optional)
 <app-header></app-header>
 ```
 
-**Configuration (in page's ionViewWillEnter):**
+**Configuration (in the page's `(pageEnter)` handler):**
 ```typescript
 this.headerActions.setPageConfig({
   title: 'page.title', // Translation key
@@ -722,21 +743,13 @@ this.headerActions.setPageConfig({
 #### balance-chart
 **Location:** `src/app/ui/products/components/balance-chart/`
 
-**Purpose:** ngx-charts line chart wrapper for balance trends
+**Purpose:** Balance trend chart. It prepares the series and draws it with `jbh-line-chart`.
 
 **Inputs:**
 ```typescript
 @Input() data: ChartDataPoint[] = [];
 ```
 
-**Critical Configuration:**
-```html
-<ngx-charts-line-chart
-  [animations]="false"  <!-- CRITICAL: Always disable -->
-  ...
->
-</ngx-charts-line-chart>
-```
 
 **When to Use:**
 - Balance history visualization
@@ -744,7 +757,7 @@ this.headerActions.setPageConfig({
 - Performance charts
 
 **Never:**
-- Enable animations (Angular 20 incompatibility)
+- Use `ngx-charts-*` directly. Use `jbh-line-chart`.
 
 ---
 
@@ -802,22 +815,6 @@ this.headerActions.setPageConfig({
 **When to Use:**
 - Pages that support team context
 - Embedded in app-menu
-
----
-
-#### portfolio-top-banner
-**Location:** `src/app/shared/components/portfolio-top-banner/`
-
-**Purpose:** Display current context (personal/team) at top of page
-
-**Usage:**
-```html
-<app-portfolio-top-banner></app-portfolio-top-banner>
-```
-
-**When to Use:**
-- Pages where context is critical
-- After context switcher interaction
 
 ---
 
@@ -1185,455 +1182,95 @@ private async showSuccessToast(message: string): Promise<void> {
 
 ### A. Header Configuration
 
-#### App Header vs. Custom Header
-**Use app-header for:**
-- All standard pages
-- Consistent navigation experience
+Every page uses `<app-header jbhPageHeader>` inside `jbh-page`. Never write a custom `ion-header`.
+`app-header` reads `HeaderActionsService` and renders `jbh-toolbar`.
 
-**Use custom ion-header for:**
-- None (deprecated pattern)
-- Legacy pages only
-
-**Pattern:**
-```html
-<!-- ✅ CORRECT -->
-<app-header></app-header>
-
-<!-- ❌ AVOID -->
-<ion-header>
-  <ion-toolbar>...</ion-toolbar>
-</ion-header>
-```
-
----
-
-#### Back Button vs. Hamburger Menu
-
-**Top-Level Pages (Hamburger Menu):**
 ```typescript
-ionViewWillEnter(): void {
+// Top-level page → menu button
+onPageEnter(): void {
   this.headerActions.setPageConfig({
-    title: 'products.overview.title',
-    actions: [
-      { id: 'refresh', icon: 'refresh-outline', handler: () => this.refresh() }
-    ]
-    // No showBackButton or showBackButton: false
+    title: 'feature.page.title',
+    actions: [{ id: 'refresh', icon: 'refresh-outline', label: 'common.refresh', handler: () => this.refresh() }]
   });
 }
-```
 
-**Detail Pages (Back Button):**
-```typescript
-ionViewWillEnter(): void {
+// Detail page → back button
+onPageEnter(): void {
   this.headerActions.setPageConfig({
-    title: 'products.edit.title',
-    showBackButton: true // CRITICAL
+    title: 'feature.detail.title',
+    showBackButton: true,
+    defaultBackHref: '/portfolio/overview'
   });
 }
+
+onPageLeave(): void {
+  this.headerActions.clearPageConfig();
+}
 ```
-
-**Examples:**
-- Top-level: /products/overview, /teams/overview, /dashboard
-- Detail: /products/edit/:id, /balance-history/:productId
-
----
 
 ### B. In-Page Navigation
 
-#### Links
-```html
-<a class="jbh-link" routerLink="/path">{{ 'link.text' | translate }}</a>
-
-<!-- Muted link -->
-<a class="jbh-link-muted" routerLink="/path">{{ 'link.text' | translate }}</a>
-```
-
-#### Expandable Sections
-**Example:** Team cards with member list
-
-```typescript
-isExpanded = false;
-
-toggleExpanded(): void {
-  this.isExpanded = !this.isExpanded;
-  this.cdr.markForCheck();
-}
-```
+- Use the Angular `Router` and `routerLink`. The app uses no Ionic navigation feature.
+- Close the side menu with `NavigationService.closeMenu()`.
+- Expandable sections: a plain `<button>` with `[attr.aria-expanded]` and a `jbh-icon` chevron.
 
 ```html
-<div class="team-card">
-  <div class="team-header" (click)="toggleExpanded()">
-    <span>Team Name</span>
-    <ion-icon [name]="isExpanded ? 'chevron-up' : 'chevron-down'"></ion-icon>
-  </div>
-
-  @if (isExpanded) {
-    <div class="team-members">
-      <!-- Member list -->
-    </div>
-  }
-</div>
+<button type="button" [attr.aria-expanded]="isExpanded" aria-controls="section-id" (click)="toggle()">
+  <jbh-icon [name]="isExpanded ? 'chevron-up' : 'chevron-down'" />
+  {{ 'feature.section' | translate }}
+</button>
+<div id="section-id" [hidden]="!isExpanded">...</div>
 ```
 
----
+### C. Page Lifecycle (CRITICAL)
 
-### C. Ionic Lifecycle (CRITICAL)
+- `jbh-page` must be the root element of every routed template. Its parent is the routed page, where the page events fire. Anywhere else they never come.
+- `(pageEnter)` runs every time the page is shown: API calls, data refresh, header setup.
+- `(pageLeave)` runs when the page hides: `clearPageConfig()`.
+- `ngOnInit()` runs once, because the router reuses page instances: form setup and subscriptions only. Never call APIs there.
+- Never write `ionViewWillEnter` / `ionViewWillLeave`. `npm run lint:boundary` reports them.
 
-**Why This Matters:**
-- Ionic reuses component instances when navigating
-- `ngOnInit()` only runs ONCE per component instance
-- `ionViewWillEnter()` runs EVERY TIME the page is displayed
-
-**Lifecycle Methods:**
-
-```typescript
-ngOnInit(): void {
-  // Run ONCE per component instance
-  // ✅ Form initialization
-  // ✅ Static setup
-  // ✅ Event subscriptions (with takeUntil)
-  // ❌ API calls (will only run first time)
-
-  this.initForm();
-  this.subscribeToEvents();
-}
-
-ionViewWillEnter(): void {
-  // Run EVERY TIME the page is displayed
-  // ✅ API calls
-  // ✅ Data refresh
-  // ✅ Header configuration
-  // ✅ Dynamic state reset
-
-  this.headerActions.setPageConfig({ ... });
-  this.refreshData();
-}
-
-ionViewWillLeave(): void {
-  // Run EVERY TIME the page is left
-  // ✅ Clear header config
-  // ✅ Blur active element (prevents iOS keyboard issues)
-
-  this.headerActions.clearPageConfig();
-  const activeElement = document.activeElement as HTMLElement;
-  if (activeElement && activeElement.blur) {
-    activeElement.blur();
-  }
-}
-
-ngOnDestroy(): void {
-  // Run when component is destroyed
-  // ✅ Cleanup subscriptions
-
-  this.destroy$.next();
-  this.destroy$.complete();
-}
+```html
+<jbh-page (pageEnter)="onPageEnter()" (pageLeave)="onPageLeave()">
+  <app-header jbhPageHeader></app-header>
+  <div class="jbh-container">...</div>
+</jbh-page>
 ```
 
-**Common Mistakes:**
-```typescript
-// ❌ BAD: API call in ngOnInit (only runs once!)
-ngOnInit(): void {
-  this.loadData(); // Will not refresh when navigating back!
-}
-
-// ✅ GOOD: API call in ionViewWillEnter (runs every time)
-ionViewWillEnter(): void {
-  this.loadData(); // Refreshes every time page is displayed
-}
-```
+**Reference:** `src/app/ui/products/pages/add-movement/`
 
 ---
 
 ## 7. Form Patterns
 
+The full rules, a TypeScript pattern and an HTML pattern are in [forms.md](forms.md). This section is a quick reference.
+
 ### A. Field Types
 
-#### Text Input with Icon
-```html
-<div class="jbh-form-field">
-  <label class="jbh-label">{{ 'field.label' | translate }}</label>
-  <div class="jbh-input-wrapper">
-    <ion-icon name="person-outline" class="jbh-input-icon left"></ion-icon>
-    <input
-      type="text"
-      class="jbh-input jbh-input-icon-left"
-      formControlName="fieldName"
-      [placeholder]="'field.placeholder' | translate"
-      [class.error]="hasError('fieldName')"
-    />
-  </div>
-  @if (hasError('fieldName')) {
-    <div class="jbh-field-error">
-      <ion-icon name="information-circle"></ion-icon>
-      <span>{{ getErrorMessage('fieldName') }}</span>
-    </div>
-  }
-</div>
-```
+| Need | Control | Notes |
+|---|---|---|
+| Text, email, password | `jbh-text-field` | `type`; password reveal built in; `[jbhFieldSuffix]` slot for status icons |
+| Amount / number | `jbh-number-field` | `[decimals]`; value `number \| null`; formats while typing |
+| Long text | `jbh-textarea` | `rows`, `maxlength`, counter |
+| Date | `jbh-date-field` | value `YYYY-MM-DD`; `mode="month"` → `YYYY-MM`; `min`, `max` |
+| Dropdown | `jbh-select` + `jbh-select-option` | labels stay in the template with pipes; overlay type chosen by the layer |
+| Category / product | `app-category-select` / `app-product-select` | domain selects on `jbh-select`; `<label class="jbh-label">` above |
+| On / off | `jbh-toggle` | `checked` is a `model()` |
+| Custom control | `jbh-field` | label, hint and error frame only |
 
----
-
-#### Select/Dropdown (ion-select)
-**CRITICAL:** Always use `ion-select`, never native `<select>`
-
-```html
-<div class="jbh-form-field">
-  <label class="jbh-label">{{ 'field.label' | translate }}</label>
-  <div class="jbh-ion-select-wrapper" [class.error]="hasError('fieldName')">
-    <ion-icon name="list-outline" class="jbh-ion-select-icon"></ion-icon>
-    <ion-select
-      formControlName="fieldName"
-      [placeholder]="'field.placeholder' | translate"
-      [interface]="selectInterface"
-      class="jbh-ion-select"
-    >
-      @for (option of options; track option.value) {
-        <ion-select-option [value]="option.value">
-          {{ option.label | translate }}
-        </ion-select-option>
-      }
-    </ion-select>
-  </div>
-</div>
-```
-
-**Interface Options:**
-- `action-sheet` - Bottom sheet (recommended for mobile)
-- `alert` - Modal dialog
-- `popover` - Dropdown (better for tablets)
-
-**TypeScript Setup:**
-```typescript
-selectInterface = 'action-sheet';
-
-ngOnInit(): void {
-  this.selectInterface = this.viewportService.selectInterface;
-}
-```
-
----
-
-#### Date Picker (ion-datetime)
-```html
-<div class="jbh-form-field">
-  <label class="jbh-label">{{ 'field.date.label' | translate }}</label>
-  <ion-button
-    expand="block"
-    fill="outline"
-    id="open-date-picker"
-    class="jbh-datetime-button"
-    [class.error]="hasError('date')"
-  >
-    {{ selectedDate || ('field.date.placeholder' | translate) }}
-  </ion-button>
-
-  <ion-modal trigger="open-date-picker">
-    <ng-template>
-      <ion-datetime
-        presentation="date"
-        [(ngModel)]="selectedDate"
-        [max]="maxDate"
-        (ionChange)="onDateChange($event)"
-      ></ion-datetime>
-    </ng-template>
-  </ion-modal>
-</div>
-```
-
----
-
-#### Toggle/Boolean
-```html
-<div class="jbh-form-field">
-  <div class="jbh-status-toggle">
-    <span class="jbh-status-label">{{ 'field.active.label' | translate }}</span>
-    <ion-toggle formControlName="isActive"></ion-toggle>
-  </div>
-</div>
-```
-
----
-
-#### Textarea with Counter
-```html
-<div class="jbh-form-field">
-  <label class="jbh-label">{{ 'field.description.label' | translate }}</label>
-  <textarea
-    class="jbh-textarea"
-    formControlName="description"
-    rows="4"
-    maxlength="200"
-    [placeholder]="'field.description.placeholder' | translate"
-    [class.error]="hasError('description')"
-  ></textarea>
-  <div class="jbh-field-counter">
-    {{ form.get('description')?.value?.length || 0 }} / 200
-  </div>
-</div>
-```
-
----
-
-#### Async Validation with Status Icons
-```html
-<div class="jbh-input-wrapper">
-  <input
-    class="jbh-input jbh-input-icon-right"
-    formControlName="username"
-    [class.success]="isUsernameAvailable"
-    [class.error]="hasError('username')"
-  />
-
-  @if (isCheckingUsername) {
-    <ion-spinner class="jbh-input-status-icon"></ion-spinner>
-  } @else if (isUsernameAvailable) {
-    <ion-icon name="checkmark-circle" class="jbh-input-status-icon success"></ion-icon>
-  } @else if (hasError('username')) {
-    <ion-icon name="close-circle" class="jbh-input-status-icon error"></ion-icon>
-  }
-</div>
-```
-
----
+All controls accept `label`, `hint`, `error` and `requirement` (`optional` shows a marker). They are `ControlValueAccessor`s: use `formControlName`.
 
 ### B. Validation
 
-#### hasError() Method
-```typescript
-hasError(fieldName: string, errorType?: string): boolean {
-  const field = this.myForm.get(fieldName);
-  if (!field) return false;
-
-  if (errorType) {
-    return field.hasError(errorType) && (field.dirty || field.touched);
-  }
-  return field.invalid && (field.dirty || field.touched);
-}
-```
-
-**Usage:**
-```html
-[class.error]="hasError('email')"
-[class.error]="hasError('email', 'email')" <!-- Specific error type -->
-
-@if (hasError('email')) { ... }
-```
-
----
-
-#### getErrorMessage() Method
-```typescript
-getErrorMessage(fieldName: string): string {
-  const field = this.myForm.get(fieldName);
-  if (!field || !field.errors) return '';
-
-  if (field.hasError('required')) {
-    return this.translationService.instant(`feature.${fieldName}.required`);
-  }
-  if (field.hasError('minlength')) {
-    const minLength = field.errors['minlength'].requiredLength;
-    return this.translationService.instant(`feature.${fieldName}.minlength`, { minLength });
-  }
-  if (field.hasError('email')) {
-    return this.translationService.instant('validation.email');
-  }
-  if (field.hasError('pattern')) {
-    return this.translationService.instant('validation.pattern');
-  }
-
-  return this.translationService.instant('validation.generic');
-}
-```
-
----
-
-#### Form-Level Validation
-```typescript
-onSubmit(): void {
-  if (this.myForm.invalid) {
-    this.markFormGroupTouched(this.myForm);
-    return;
-  }
-  // Proceed with submission
-}
-
-private markFormGroupTouched(formGroup: FormGroup): void {
-  Object.keys(formGroup.controls).forEach(key => {
-    formGroup.get(key)?.markAsTouched();
-  });
-}
-```
-
----
+- Keep `hasError(field)` and `getErrorMessage(field)` in the page.
+- Pass `[error]="hasError('x') ? getErrorMessage('x') : ''"`. A non-empty string shows the message with `role="alert"`.
+- On submit with an invalid form: `this.form.markAllAsTouched()` and return.
+- 422 from the backend: show `error.message` (`JBHError.isValidationError`) in a `<jbh-alert tone="error">`.
 
 ### C. Dynamic Forms
 
-#### Metadata-Driven Form Fields
-**Pattern:**
-```typescript
-interface FieldMetadata {
-  key: string;
-  label: string;
-  type: 'text' | 'number' | 'select' | 'date';
-  required: boolean;
-  options?: { value: string; label: string }[];
-}
-
-fieldMetadata: FieldMetadata[] = [];
-
-ngOnInit(): void {
-  this.loadFieldMetadata();
-}
-
-private loadFieldMetadata(): void {
-  this.metadataUseCase.getFields()
-    .subscribe(metadata => {
-      this.fieldMetadata = metadata;
-      this.buildDynamicForm();
-      this.cdr.markForCheck();
-    });
-}
-
-private buildDynamicForm(): void {
-  const group: any = {};
-  this.fieldMetadata.forEach(field => {
-    const validators = field.required ? [Validators.required] : [];
-    group[field.key] = ['', validators];
-  });
-  this.dynamicForm = this.formBuilder.group(group);
-}
-```
-
-**Template:**
-```html
-@for (field of fieldMetadata; track field.key) {
-  <div class="jbh-form-field">
-    <label class="jbh-label">{{ field.label }}</label>
-
-    @if (field.type === 'text') {
-      <input class="jbh-input" [formControlName]="field.key" />
-    } @else if (field.type === 'select') {
-      <div class="jbh-ion-select-wrapper">
-        <ion-select [formControlName]="field.key" class="jbh-ion-select">
-          @for (option of field.options; track option.value) {
-            <ion-select-option [value]="option.value">
-              {{ option.label }}
-            </ion-select-option>
-          }
-        </ion-select>
-      </div>
-    }
-
-    @if (hasError(field.key)) {
-      <div class="jbh-field-error">
-        <ion-icon name="information-circle"></ion-icon>
-        <span>{{ getErrorMessage(field.key) }}</span>
-      </div>
-    }
-  </div>
-}
-```
+Product metadata fields pick the control by value type: text → `jbh-text-field`, number → `jbh-number-field`, boolean → `jbh-toggle`, date → `jbh-date-field`.
+**Reference:** `src/app/ui/products/pages/create/` and `edit/`.
 
 ---
 
@@ -1641,73 +1278,38 @@ private buildDynamicForm(): void {
 
 ### A. Tables (Responsive)
 
-**Desktop Pattern:**
+Use `jbh-table`. It renders a table from 768px and a card list below 768px, with all ARIA roles.
+
+- Inputs: `rows` (required), `trackBy` (default: the row), `label` (`aria-label`).
+- Templates: `ng-template jbhTableHead` (required), `ng-template jbhTableRow` (required), `ng-template jbhTableCard` (optional, mobile cards).
+- Parts: `jbh-table-row`, `jbh-table-cell` (`header` → `columnheader`).
+- The page owns the row element, so per-row classes and column widths stay in the page HTML and SCSS.
+
 ```html
-<!-- Desktop: Table with headers -->
-<div class="jbh-table jbh-hide-mobile">
-  <div class="jbh-table-header">
-    <div class="jbh-table-cell jbh-cell-name">{{ 'table.name' | translate }}</div>
-    <div class="jbh-table-cell jbh-cell-email">{{ 'table.email' | translate }}</div>
-    <div class="jbh-table-cell jbh-cell-status">{{ 'table.status' | translate }}</div>
-    <div class="jbh-table-cell jbh-cell-actions">{{ 'table.actions' | translate }}</div>
-  </div>
+<jbh-table [rows]="records" [trackBy]="trackById" [label]="'feature.table.label' | translate">
+  <ng-template jbhTableHead>
+    <jbh-table-row>
+      <jbh-table-cell header class="col-date">{{ 'feature.date' | translate }}</jbh-table-cell>
+      <jbh-table-cell header class="col-amount">{{ 'feature.amount' | translate }}</jbh-table-cell>
+    </jbh-table-row>
+  </ng-template>
 
-  @for (row of data; track row.id) {
-    <div class="jbh-table-row">
-      <div class="jbh-table-cell jbh-cell-name">{{ row.name }}</div>
-      <div class="jbh-table-cell jbh-cell-email">{{ row.email }}</div>
-      <div class="jbh-table-cell jbh-cell-status">
-        <span class="jbh-status-badge" [class]="'status-' + row.status">
-          {{ 'status.' + row.status | translate }}
-        </span>
-      </div>
-      <div class="jbh-table-cell jbh-cell-actions">
-        <button class="jbh-icon-button" (click)="edit(row)">
-          <ion-icon name="create-outline"></ion-icon>
-        </button>
-      </div>
-    </div>
-  }
-</div>
+  <ng-template jbhTableRow let-row>
+    <jbh-table-row>
+      <jbh-table-cell class="col-date">{{ row.date | jbhDate }}</jbh-table-cell>
+      <jbh-table-cell class="col-amount">{{ row.amount | jbhCurrency }}</jbh-table-cell>
+    </jbh-table-row>
+  </ng-template>
+
+  <ng-template jbhTableCard let-row>
+    <div class="record-card">{{ row.amount | jbhCurrency }}</div>
+  </ng-template>
+</jbh-table>
 ```
 
-**Mobile Pattern:**
-```html
-<!-- Mobile: Cards -->
-<div class="jbh-cards jbh-hide-desktop">
-  @for (row of data; track row.id) {
-    <div class="jbh-member-card">
-      <div class="jbh-member-card-header">
-        <div class="jbh-member-card-info">
-          <div class="jbh-member-name">{{ row.name }}</div>
-          <div class="jbh-member-email">{{ row.email }}</div>
-        </div>
-        <span class="jbh-status-badge" [class]="'status-' + row.status">
-          {{ 'status.' + row.status | translate }}
-        </span>
-      </div>
-      <div class="jbh-member-card-footer">
-        <span class="jbh-role-badge jbh-role-{{ row.role }}">
-          {{ 'role.' + row.role | translate }}
-        </span>
-        <button class="jbh-icon-button" (click)="edit(row)">
-          <ion-icon name="create-outline"></ion-icon>
-        </button>
-      </div>
-    </div>
-  }
-</div>
-```
+The row context is typed `any`. Put the pipe that keeps the type first (`name | uppercase | slice:0:1`, not `name | slice:0:1 | uppercase`).
 
-**Column Sizing (CSS):**
-```scss
-// Component SCSS (layout only)
-.jbh-cell-name { flex: 2; }
-.jbh-cell-email { flex: 2; }
-.jbh-cell-status { flex: 1.5; }
-.jbh-cell-role { flex: 1; }
-.jbh-cell-actions { flex: 1; justify-content: flex-end; }
-```
+**Reference:** `src/app/ui/products/components/balance-history-table/`
 
 ---
 
@@ -1785,56 +1387,15 @@ get statusClass(): string {
 
 ### C. Charts
 
-#### ngx-charts Integration
-```html
-<div class="jbh-chart-container">
-  <h3 class="jbh-chart-title">{{ 'chart.title' | translate }}</h3>
+Use `jbh-line-chart`, never `ngx-charts-*` directly. Animations are always off inside it (ngx-charts animations break with Angular 20).
 
-  <div class="jbh-chart-wrapper">
-    <ngx-charts-line-chart
-      [animations]="false"
-      [results]="chartData"
-      [xAxis]="true"
-      [yAxis]="true"
-      [legend]="false"
-      [showXAxisLabel]="true"
-      [showYAxisLabel]="true"
-      [xAxisLabel]="'chart.xAxis' | translate"
-      [yAxisLabel]="'chart.yAxis' | translate"
-      [scheme]="colorScheme"
-      [curve]="curve"
-      [yAxisTickFormatting]="formatCurrency"
-    >
-    </ngx-charts-line-chart>
-  </div>
-</div>
-```
+| Input | Meaning |
+|---|---|
+| `series` | ngx-charts series data |
+| `showLegend` | show the legend |
+| `valueFormatter` | axis value formatter, e.g. core `formatCurrency(value, currency, 0)` |
 
-**TypeScript:**
-```typescript
-import { curveMonotoneX } from 'd3-shape';
-
-chartData: ChartDataPoint[] = [];
-curve = curveMonotoneX;
-colorScheme = {
-  domain: ['#667eea', '#764ba2', '#48bb78']
-};
-
-// CRITICAL: Use callback, not getter
-formatCurrency = (value: number): string => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
-  }).format(value);
-};
-```
-
-**CRITICAL Rules:**
-1. **ALWAYS** set `[animations]="false"` (Angular 20 compatibility)
-2. **NEVER** use getter methods for formatting callbacks
-3. **USE** arrow functions or cached formatters
+**Reference:** `src/app/ui/products/components/balance-chart/`. It prepares the data; the layer draws it.
 
 ---
 
@@ -1842,137 +1403,43 @@ formatCurrency = (value: number): string => {
 
 ### A. Buttons
 
-#### Primary Button
+Use `button[jbhButton]` (also `a[jbhButton]` for links, `label[jbhButton]` for a file picker). Keep `type`, `disabled`, `(click)` and `routerLink` on the native element.
+
+| Input | Values |
+|---|---|
+| `jbhButton` | `''` (= `primary`), `secondary`, `outline`, `text`, `danger`, `success` |
+| `block` | full width |
+| `loading` | shows a spinner instead of the icon, sets `aria-busy` |
+| `icon` | leading icon name |
+
 ```html
-<button class="jbh-button-primary">
-  <ion-icon name="add-outline"></ion-icon>
-  <span>{{ 'button.create' | translate }}</span>
+<button type="submit" jbhButton block icon="save-outline" [loading]="isSubmitting" [disabled]="isSubmitting">
+  {{ 'common.save' | translate }}
 </button>
-```
 
-#### Secondary Button
-```html
-<button class="jbh-button-secondary">
-  <span>{{ 'button.cancel' | translate }}</span>
+<button type="button" jbhButton="secondary" (click)="cancel()">
+  {{ 'common.cancel' | translate }}
 </button>
+
+<a jbhButton="outline" icon="add-outline" routerLink="/portfolio/create">
+  {{ 'products.create' | translate }}
+</a>
 ```
-
-#### Outline Button
-```html
-<button class="jbh-button-outline">
-  <ion-icon name="logo-google"></ion-icon>
-  <span>{{ 'button.google' | translate }}</span>
-</button>
-```
-
-#### Text Button
-```html
-<button class="jbh-button-text">
-  <span>{{ 'button.learnMore' | translate }}</span>
-</button>
-```
-
-#### Danger Button
-```html
-<button class="jbh-button-danger">
-  <ion-icon name="trash-outline"></ion-icon>
-  <span>{{ 'button.delete' | translate }}</span>
-</button>
-```
-
-#### Success Button
-```html
-<button class="jbh-button-success">
-  <ion-icon name="checkmark-circle-outline"></ion-icon>
-  <span>{{ 'button.approve' | translate }}</span>
-</button>
-```
-
----
-
-#### Button Sizes
-```html
-<!-- Small -->
-<button class="jbh-button-primary jbh-button-small">Small</button>
-
-<!-- Default (no class needed) -->
-<button class="jbh-button-primary">Default</button>
-
-<!-- Large -->
-<button class="jbh-button-primary jbh-button-large">Large</button>
-
-<!-- Block (full-width) -->
-<button class="jbh-button-primary jbh-button-block">Full Width</button>
-```
-
----
-
-#### Loading State
-```html
-<button
-  class="jbh-button-primary jbh-button-block"
-  [disabled]="isSubmitting"
-  [class.jbh-button-loading]="isSubmitting"
->
-  @if (isSubmitting) {
-    <ion-spinner name="crescent"></ion-spinner>
-    <span>{{ 'button.saving' | translate }}</span>
-  } @else {
-    <ion-icon name="save-outline"></ion-icon>
-    <span>{{ 'button.save' | translate }}</span>
-  }
-</button>
-```
-
----
 
 ### B. Icon Buttons
 
-#### Standard Icon Button (48px recommended)
+`button[jbhIconButton]`: `icon` and `label` are required. `label` becomes `aria-label` and `title`.
+Tone: `default` | `primary` | `danger`. Size: `md` (48px, default) | `sm` (32px, dense rows only).
+
 ```html
 <button
-  class="jbh-icon-button"
-  (click)="refresh()"
-  title="{{ 'button.refresh' | translate }}"
-  aria-label="{{ 'button.refresh' | translate }}"
->
-  <ion-icon name="refresh-outline"></ion-icon>
-</button>
+  type="button"
+  jbhIconButton="danger"
+  icon="trash-outline"
+  [label]="'common.delete' | translate"
+  (click)="onDelete(item)"
+></button>
 ```
-
-**CRITICAL:**
-- Current size: 36px × 36px
-- Recommended: 48px × 48px for accessibility
-- Always include `title` and `aria-label`
-
----
-
-#### Small Icon Button (use sparingly)
-```html
-<button class="jbh-icon-button jbh-icon-button-small">
-  <ion-icon name="close-outline"></ion-icon>
-</button>
-```
-
-**Size:** 32px × 32px
-**When to Use:** Inline actions, close buttons (avoid if possible)
-
----
-
-#### Icon Button Variants
-```html
-<!-- Primary variant -->
-<button class="jbh-icon-button jbh-icon-button-primary">
-  <ion-icon name="heart-outline"></ion-icon>
-</button>
-
-<!-- Danger variant -->
-<button class="jbh-icon-button jbh-icon-button-danger">
-  <ion-icon name="trash-outline"></ion-icon>
-</button>
-```
-
----
 
 ### C. Action Patterns
 
@@ -2891,316 +2358,22 @@ get categoryName(): string {
 
 ## 16. CSS Class Reference
 
-### Complete Categorized List
+Most component looks now live inside the `jbh-*` components (see [Section 3](#3-component-library)).
+`src/theme/custom-components.scss` keeps only global classes. Before you use a class, check it still exists there.
 
-#### Buttons
+| Group | Classes |
+|---|---|
+| Layout | `jbh-container`, `jbh-divider`, `jbh-hide-mobile` |
+| Typography | `jbh-title`, `jbh-subtitle`, `jbh-text-muted` |
+| Links | `jbh-link` |
+| Forms | `jbh-label` (plain label above `app-category-select` / `app-product-select`) |
+| Badges | `jbh-status-badge`, `jbh-role-badge` |
+| Animations | `jbh-animate-fade-in` |
+| Feature classes | product card, member, status, summary card, movement product, context banner, menu layout — kept while templates use them |
 
-| Class | Description | Usage |
-|-------|-------------|-------|
-| `jbh-button-primary` | Primary action button (gradient, white text) | Main CTAs, submit buttons |
-| `jbh-button-secondary` | Secondary button (white bg, border) | Cancel, alternative actions |
-| `jbh-button-outline` | Outlined button (transparent bg, border) | Tertiary actions |
-| `jbh-button-text` | Text-only button | Links, subtle actions |
-| `jbh-button-danger` | Destructive action (red) | Delete, remove actions |
-| `jbh-button-success` | Success action (green) | Approve, confirm actions |
-| `jbh-button-small` | Small size variant | Compact layouts |
-| `jbh-button-large` | Large size variant | Prominent CTAs |
-| `jbh-button-block` | Full-width button | Mobile forms, bottom actions |
-| `jbh-button-loading` | Loading state | During async operations |
+**Removed** (use the layer instead): `jbh-button-*` → `button[jbhButton]`; `jbh-icon-button*` → `button[jbhIconButton]`; `jbh-input*`, `jbh-field-error`, `jbh-textarea`, `jbh-select*`, `jbh-ion-select*` → form controls; `jbh-alert-*` → `jbh-alert`; `jbh-empty-state*` → `jbh-empty-state`; `jbh-skeleton*` → `jbh-skeleton`; `jbh-page-header*`, `jbh-page-title` → `jbh-page-header`; `jbh-table-*` → `jbh-table`; `jbh-form-card` → `<jbh-card variant="form">`; `jbh-menu-item*` → `jbh-nav-item`; `jbh-top-banner*` (component deleted).
 
----
-
-#### Icon Buttons
-
-| Class | Description | Size |
-|-------|-------------|------|
-| `jbh-icon-button` | Standard icon button | 36×36px (should be 48×48px) |
-| `jbh-icon-button-small` | Small icon button | 32×32px |
-| `jbh-icon-button-primary` | Primary colored | - |
-| `jbh-icon-button-danger` | Danger/destructive | - |
-
----
-
-#### Forms
-
-| Class | Description |
-|-------|-------------|
-| `jbh-form-card` | Elevated card for forms |
-| `jbh-form-header` | Form header section |
-| `jbh-form-icon` | Icon container in header |
-| `jbh-form-title` | Form title |
-| `jbh-form-subtitle` | Form subtitle |
-| `jbh-form-field` | Individual field container |
-| `jbh-label` | Field label |
-| `jbh-input` | Text input |
-| `jbh-input-wrapper` | Input with icon wrapper |
-| `jbh-input-icon` | Icon inside input (`.left` or `.right`) |
-| `jbh-input-icon-left` | Input with left padding for icon |
-| `jbh-input-icon-right` | Input with right padding for icon |
-| `jbh-input-readonly` | Read-only input |
-| `jbh-input-action` | Action button inside input |
-| `jbh-input-status-icon` | Success/error icon (`.success`, `.error`) |
-| `jbh-textarea` | Textarea field |
-| `jbh-field-error` | Error message container |
-| `jbh-field-success` | Success message container |
-| `jbh-field-counter` | Character counter |
-| `jbh-checkbox` | Checkbox input |
-| `jbh-checkbox-label` | Checkbox label wrapper |
-
----
-
-#### Select/Dropdown
-
-| Class | Description |
-|-------|-------------|
-| `jbh-select-wrapper` | Native select wrapper |
-| `jbh-select` | Native select element |
-| `jbh-select-icon` | Icon for select |
-| `jbh-select-arrow` | Dropdown arrow |
-| `jbh-select-icon-left` | Select with left padding |
-| `jbh-ion-select-wrapper` | ion-select wrapper |
-| `jbh-ion-select` | ion-select element |
-| `jbh-ion-select-icon` | Icon for ion-select |
-| `jbh-datetime-button` | Date picker button |
-
----
-
-#### Cards & Containers
-
-| Class | Description |
-|-------|-------------|
-| `jbh-container` | Standard centered container (max-width: 440px) |
-| `jbh-container-wide` | Wide container (max-width: 1200px) |
-| `jbh-card` | Standard card |
-| `jbh-card-elevated` | Card with large shadow |
-| `jbh-card-flat` | Card with border, no shadow |
-
----
-
-#### Typography
-
-| Class | Description | Size |
-|-------|-------------|------|
-| `jbh-title` | Page title | 32px (2rem) |
-| `jbh-subtitle` | Page subtitle | 16px |
-| `jbh-heading-1` | Large heading | 24px (1.5rem) |
-| `jbh-heading-2` | Medium heading | 20px (1.25rem) |
-| `jbh-text-muted` | Secondary text color | - |
-| `jbh-text-small` | Small text | 14px |
-
----
-
-#### Links
-
-| Class | Description |
-|-------|-------------|
-| `jbh-link` | Standard link (primary color) |
-| `jbh-link-muted` | Muted link (secondary color) |
-
----
-
-#### Alerts
-
-| Class | Description |
-|-------|-------------|
-| `jbh-alert-error` | Error alert (red) |
-| `jbh-alert-success` | Success alert (green) |
-| `jbh-alert-warning` | Warning alert (yellow) |
-| `jbh-alert-info` | Info alert (blue) |
-
----
-
-#### Empty States
-
-| Class | Description |
-|-------|-------------|
-| `jbh-empty-state` | Empty state container |
-| `jbh-empty-state-icon` | Icon circle |
-| `jbh-empty-state-title` | Title |
-| `jbh-empty-state-message` | Message text |
-
----
-
-#### Limit Error States
-
-| Class | Description |
-|-------|-------------|
-| `jbh-limit-error` | Limit error container |
-| `jbh-limit-error-icon` | Warning icon circle |
-| `jbh-limit-error-title` | Title |
-| `jbh-limit-error-message` | Message |
-| `jbh-limit-badge` | Current/max badge |
-
----
-
-#### Loading States
-
-| Class | Description |
-|-------|-------------|
-| `jbh-loading-container` | Loading wrapper |
-| `jbh-skeleton` | Base skeleton shimmer |
-| `jbh-skeleton-input` | Input skeleton (52px) |
-| `jbh-skeleton-select` | Select skeleton (52px) |
-| `jbh-skeleton-label` | Label skeleton (16px) |
-| `jbh-skeleton-chart` | Chart skeleton (300-400px) |
-| `jbh-skeleton-table` | Table skeleton (400px) |
-
----
-
-#### Tables
-
-| Class | Description |
-|-------|-------------|
-| `jbh-table-header` | Table header row |
-| `jbh-table-row` | Table data row |
-| `jbh-table-cell` | Table cell |
-| `jbh-cell-name` | Name column (flex: 2) |
-| `jbh-cell-email` | Email column (flex: 2) |
-| `jbh-cell-status` | Status column (flex: 1.5) |
-| `jbh-cell-role` | Role column (flex: 1) |
-| `jbh-cell-actions` | Actions column (flex: 1) |
-| `jbh-member-name` | Member name text |
-| `jbh-member-email` | Member email text |
-
----
-
-#### Badges
-
-| Class | Description |
-|-------|-------------|
-| `jbh-status-badge` | Base status badge |
-| `status-accepted` | Accepted status (green) |
-| `status-pending` | Pending status (yellow) |
-| `status-declined` | Declined status (red) |
-| `jbh-role-badge` | Base role badge |
-| `jbh-role-owner` | Owner role (blue) |
-| `jbh-role-member` | Member role (gray) |
-| `jbh-withdrawn-badge` | Withdrawn badge (yellow) |
-| `jbh-badge-gap` | Gap period badge |
-| `jbh-badge-official` | Official record badge |
-
----
-
-#### Page Headers
-
-| Class | Description |
-|-------|-------------|
-| `jbh-page-header` | Page header container |
-| `jbh-page-header-content` | Header content wrapper |
-| `jbh-page-header-icon` | Header icon circle |
-| `jbh-page-title` | Page title |
-| `jbh-page-subtitle` | Page subtitle |
-| `jbh-page-header-actions` | Header action buttons |
-
----
-
-#### Products
-
-| Class | Description |
-|-------|-------------|
-| `jbh-products-list` | Products list container |
-| `jbh-product-card` | Product card |
-| `jbh-product-card-header` | Card header |
-| `jbh-product-info` | Product info section |
-| `jbh-product-type-icon` | Product type icon |
-| `jbh-product-details` | Product details |
-| `jbh-product-name` | Product name |
-| `jbh-product-type` | Product type label |
-| `jbh-product-badges` | Badges container |
-| `jbh-product-actions` | Action buttons |
-| `jbh-product-card-body` | Card body |
-| `jbh-product-balances` | Balances grid |
-| `jbh-balance-item` | Balance item |
-| `jbh-balance-label` | Balance label |
-| `jbh-balance-value` | Balance value (`.positive`, `.negative`) |
-| `jbh-product-card-footer` | Card footer |
-| `jbh-product-growth` | Growth indicator (`.positive`, `.negative`, `.neutral`) |
-| `jbh-product-updated` | Last updated text |
-| `jbh-status-toggle` | Active/inactive toggle |
-
----
-
-#### Balance History
-
-| Class | Description |
-|-------|-------------|
-| `jbh-balance-filter` | Filter container |
-| `jbh-balance-filter-field` | Filter field |
-| `jbh-balance-filter-actions` | Filter actions |
-| `jbh-balance-summary` | Summary cards grid |
-| `jbh-summary-card` | Summary card |
-| `jbh-summary-card-icon` | Card icon |
-| `jbh-summary-card-label` | Card label |
-| `jbh-summary-card-value` | Card value (`.positive`, `.negative`) |
-| `jbh-chart-container` | Chart container |
-| `jbh-chart-title` | Chart title |
-| `jbh-chart-wrapper` | Chart wrapper |
-| `jbh-balance-table` | Balance table |
-| `jbh-balance-table-header` | Table header |
-| `jbh-balance-table-row` | Table row (`.gap-period`) |
-| `jbh-balance-cell` | Table cell |
-| `jbh-cell-period` | Period column |
-| `jbh-cell-balance` | Balance column |
-| `jbh-cell-profit` | Profit column (`.positive`, `.negative`) |
-| `jbh-cell-growth` | Growth column (`.positive`, `.negative`) |
-| `jbh-cell-movements` | Movements column |
-| `jbh-cell-badges` | Badges column |
-| `jbh-cell-product` | Product column |
-| `jbh-balance-cards` | Mobile cards container |
-| `jbh-balance-card` | Mobile balance card |
-
----
-
-#### Context Switcher
-
-| Class | Description |
-|-------|-------------|
-| `jbh-context-switcher` | Context switcher container |
-| `jbh-context-switcher-highlighted` | Highlighted state |
-| `jbh-context-switcher-item` | Switcher item |
-| `jbh-context-switcher-icon` | Switcher icon |
-| `jbh-context-select` | Select element |
-| `jbh-context-label` | Label text |
-
----
-
-#### Top Banner
-
-| Class | Description |
-|-------|-------------|
-| `jbh-top-banner` | Top banner container |
-| `jbh-top-banner-content` | Banner content |
-| `jbh-top-banner-icon` | Banner icon |
-| `jbh-top-banner-details` | Banner details |
-| `jbh-top-banner-label` | Banner label |
-| `jbh-top-banner-title` | Banner title |
-| `jbh-context-banner` | Context banner |
-
----
-
-#### Layout Utilities
-
-| Class | Description |
-|-------|-------------|
-| `jbh-divider` | Divider with text |
-| `jbh-spacer-sm` | Small spacer (16px) |
-| `jbh-spacer-md` | Medium spacer (24px) |
-| `jbh-spacer-lg` | Large spacer (32px) |
-| `jbh-spacer-xl` | Extra-large spacer (48px) |
-| `jbh-hide-mobile` | Hide on mobile (<768px) |
-| `jbh-hide-desktop` | Hide on desktop (≥768px) |
-
----
-
-#### Animations
-
-| Class | Description |
-|-------|-------------|
-| `jbh-animate-fade-in` | Fade in animation |
-| `jbh-animate-slide-up` | Slide up animation |
-| `jbh-animate-shake` | Shake animation (error) |
-| `jbh-animate-success` | Success pulse animation |
-| `jbh-form-animated` | Staggered field animations |
+Rules for adding or removing a global class: [theming.md](theming.md).
 
 ---
 
@@ -3220,15 +2393,15 @@ This guide provides comprehensive patterns for:
 1. Always use `ChangeDetectionStrategy.OnPush`
 2. Never use getter methods for formatting
 3. Always use `track` with `@for` loops
-4. Always disable ngx-charts animations
-5. Use `ionViewWillEnter()` for API calls
+4. Use `jbh-line-chart` for charts (animations are off inside it)
+5. Use `(pageEnter)` on `jbh-page` for API calls
 6. Never hardcode text (use translate pipe)
-7. Use `jbh-*` CSS classes from theme
+7. Use `jbh-*` layer components; global classes only for layout and text
 8. Test on multiple viewport sizes
 
 **For New Pages:**
 1. Choose appropriate page template
-2. Configure header in `ionViewWillEnter()`
+2. Configure header in `(pageEnter)`, clear it in `(pageLeave)`
 3. Implement loading/empty/error states
 4. Use OnPush and markForCheck()
 5. Add all text to both language files

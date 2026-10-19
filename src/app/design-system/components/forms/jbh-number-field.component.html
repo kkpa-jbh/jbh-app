@@ -1,0 +1,31 @@
+<jbh-field
+  [label]="label()"
+  [controlId]="inputId"
+  [hint]="hint()"
+  [error]="error()"
+  [requirement]="requirement()"
+>
+  <div class="jbh-number-field__wrapper">
+    @if (icon()) {
+      <jbh-icon class="jbh-number-field__icon" [name]="icon()!" />
+    }
+    <input
+      class="jbh-number-field__input"
+      [class.jbh-number-field__input--icon]="!!icon()"
+      type="text"
+      autocomplete="off"
+      [id]="inputId"
+      [attr.inputmode]="inputMode()"
+      [value]="text()"
+      [placeholder]="placeholder()"
+      [disabled]="disabledByForm()"
+      [attr.aria-invalid]="hasError() ? 'true' : null"
+      [attr.aria-describedby]="describedBy()"
+      [attr.aria-required]="requirement() === 'required' ? 'true' : null"
+      (focus)="onFocus($event)"
+      (input)="onInput($event)"
+      (paste)="onPaste($event)"
+      (blur)="onBlur($event)"
+    />
+  </div>
+</jbh-field>

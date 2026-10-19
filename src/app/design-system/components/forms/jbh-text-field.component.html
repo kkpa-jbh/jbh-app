@@ -1,0 +1,45 @@
+<jbh-field
+  [label]="label()"
+  [controlId]="inputId"
+  [hint]="hint()"
+  [error]="error()"
+  [requirement]="requirement()"
+>
+  <div class="jbh-text-field__wrapper">
+    @if (icon()) {
+      <jbh-icon class="jbh-text-field__icon" [name]="icon()!" />
+    }
+    <input
+      class="jbh-text-field__input"
+      [class.jbh-text-field__input--icon]="!!icon()"
+      [class.jbh-text-field__input--end]="isPassword()"
+      [id]="inputId"
+      [type]="inputType()"
+      [value]="value()"
+      [placeholder]="placeholder()"
+      [disabled]="disabledByForm()"
+      [attr.autocomplete]="autocomplete() ?? null"
+      [attr.aria-invalid]="hasError() ? 'true' : null"
+      [attr.aria-describedby]="describedBy()"
+      [attr.aria-required]="requirement() === 'required' ? 'true' : null"
+      (input)="onInput($event)"
+      (blur)="onBlur()"
+    />
+    <div class="jbh-text-field__end">
+      <ng-content select="[jbhFieldSuffix]" />
+      @if (isPassword()) {
+        <button
+          type="button"
+          class="jbh-text-field__reveal"
+          tabindex="-1"
+          [attr.aria-label]="(revealed() ? 'common.hidePassword' : 'common.showPassword') | translate"
+          [attr.aria-pressed]="revealed() ? 'true' : 'false'"
+          [attr.aria-controls]="inputId"
+          (click)="toggleReveal()"
+        >
+          <jbh-icon [name]="revealed() ? 'eye-off-outline' : 'eye-outline'" />
+        </button>
+      }
+    </div>
+  </div>
+</jbh-field>

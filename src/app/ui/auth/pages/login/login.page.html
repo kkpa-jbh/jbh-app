@@ -1,4 +1,4 @@
-<ion-content [fullscreen]="true" class="login-content">
+<jbh-page>
   <div class="login-container">
 
     <!-- Background Decoration -->
@@ -14,7 +14,7 @@
       <!-- Logo/Icon Section -->
       <div class="login-header">
         <div class="logo-container jbh-icon-container">
-          <ion-icon name="shield-checkmark"></ion-icon>
+          <jbh-icon name="shield-checkmark" />
         </div>
         <h1 class="jbh-title">{{ 'login.title' | translate }}</h1>
         <p class="jbh-subtitle">{{ 'login.subtitle' | translate }}</p>
@@ -22,66 +22,32 @@
 
       <!-- Error Alert -->
       @if (errorMessage) {
-        <div class="jbh-alert-error" role="alert" aria-live="assertive">
-          <ion-icon name="alert-circle"></ion-icon>
-          <div class="jbh-alert-content">{{ errorMessage }}</div>
-        </div>
+        <jbh-alert tone="error">{{ errorMessage }}</jbh-alert>
       }
 
       <!-- Login Form -->
       <form [formGroup]="loginForm" (ngSubmit)="onLogin()" class="login-form">
 
         <!-- Username Field -->
-        <div class="jbh-form-field">
-          <label class="jbh-label">{{ 'login.username.label' | translate }}</label>
-          <div class="jbh-input-wrapper">
-            <ion-icon name="person-outline" class="jbh-input-icon left"></ion-icon>
-            <input
-              type="text"
-              class="jbh-input jbh-input-icon-left"
-              formControlName="username"
-              [placeholder]="'login.username.placeholder' | translate"
-              [class.error]="hasError('username')"
-              autocomplete="username"
-            />
-          </div>
-          @if (hasError('username')) {
-            <div class="jbh-field-error">
-              <ion-icon name="information-circle"></ion-icon>
-              <span>{{ getErrorMessage('username') }}</span>
-            </div>
-          }
-        </div>
+        <jbh-text-field
+          formControlName="username"
+          icon="person-outline"
+          autocomplete="username"
+          [label]="'login.username.label' | translate"
+          [placeholder]="'login.username.placeholder' | translate"
+          [error]="hasError('username') ? getErrorMessage('username') : ''"
+        />
 
         <!-- Password Field -->
-        <div class="jbh-form-field">
-          <label class="jbh-label">{{ 'login.password.label' | translate }}</label>
-          <div class="jbh-input-wrapper">
-            <ion-icon name="lock-closed-outline" class="jbh-input-icon left"></ion-icon>
-            <input
-              [type]="showPassword ? 'text' : 'password'"
-              class="jbh-input jbh-input-icon-left jbh-input-icon-right"
-              formControlName="password"
-              [placeholder]="'login.password.placeholder' | translate"
-              [class.error]="hasError('password')"
-              autocomplete="current-password"
-            />
-            <button
-              type="button"
-              class="jbh-input-action"
-              (click)="togglePasswordVisibility()"
-              tabindex="-1"
-            >
-              <ion-icon [name]="showPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
-            </button>
-          </div>
-          @if (hasError('password')) {
-            <div class="jbh-field-error">
-              <ion-icon name="information-circle"></ion-icon>
-              <span>{{ getErrorMessage('password') }}</span>
-            </div>
-          }
-        </div>
+        <jbh-text-field
+          formControlName="password"
+          type="password"
+          icon="lock-closed-outline"
+          autocomplete="current-password"
+          [label]="'login.password.label' | translate"
+          [placeholder]="'login.password.placeholder' | translate"
+          [error]="hasError('password') ? getErrorMessage('password') : ''"
+        />
 
         <!-- Remember Me & Forgot Password -->
         <div class="form-options">
@@ -97,19 +63,12 @@
         <!-- Login Button -->
         <button
           type="submit"
-          class="jbh-button-primary jbh-button-block"
+          jbhButton
+          block
+          [loading]="isLoading"
           [disabled]="isLoading || loginForm.invalid"
-          [class.jbh-button-loading]="isLoading"
         >
-          @if (isLoading) {
-            <ion-spinner name="crescent"></ion-spinner>
-          }
-          @if (!isLoading) {
-            <span>{{ 'login.signInButton' | translate }}</span>
-          }
-          @if (isLoading) {
-            <span>{{ 'login.signingIn' | translate }}</span>
-          }
+          {{ (isLoading ? 'login.signingIn' : 'login.signInButton') | translate }}
         </button>
 
         @if (googleEnabled) {
@@ -121,9 +80,8 @@
           <!-- Social Login Buttons (Optional) -->
           <div class="social-login">
             <div class="jbh-google-button">
-              <button type="button" class="jbh-button-secondary jbh-button-block" tabindex="-1" aria-hidden="true">
-                <ion-icon name="logo-google"></ion-icon>
-                <span>{{ 'login.continueWithGoogle' | translate }}</span>
+              <button type="button" jbhButton="secondary" block icon="logo-google" tabindex="-1" aria-hidden="true">
+                {{ 'login.continueWithGoogle' | translate }}
               </button>
               <div #googleButton class="jbh-google-button-overlay"></div>
             </div>
@@ -145,4 +103,4 @@
     </div>
 
   </div>
-</ion-content>
+</jbh-page>

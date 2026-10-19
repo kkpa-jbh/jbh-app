@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Platform } from '@ionic/angular';
 import { PushNotifications, Token, PushNotificationSchema, ActionPerformed, RegistrationError } from '@capacitor/push-notifications';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { LoggerService } from '../logging/logger.service';
+import { DevicePlatform } from '../platform/device-platform';
 
 export interface NotificationPayload {
   title: string;
@@ -21,7 +21,7 @@ export class PushNotificationService {
   public lastNotification$: Observable<PushNotificationSchema | null> = this.lastNotification.asObservable();
 
   constructor(
-    private platform: Platform,
+    private devicePlatform: DevicePlatform,
     private logger: LoggerService
   ) {}
 
@@ -31,7 +31,7 @@ export class PushNotificationService {
    */
   async initialize(): Promise<void> {
     // Only initialize on native platforms
-    if (!this.platform.is('hybrid')) {
+    if (!this.devicePlatform.isNativeApp()) {
       this.logger.info('Push Notifications: Skipping initialization (not a native app)');
       return;
     }
@@ -140,7 +140,7 @@ export class PushNotificationService {
       // Example:
       // await this.http.post('/api/devices/register', {
       //   token: token,
-      //   platform: this.platform.is('ios') ? 'ios' : 'android'
+      //   platform: this.devicePlatform.isIos() ? 'ios' : 'android'
       // }).toPromise();
 
       this.logger.debug('TODO: Send token to backend:', 'PushNotification', token);

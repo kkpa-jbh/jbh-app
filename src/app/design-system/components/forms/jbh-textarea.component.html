@@ -1,0 +1,35 @@
+<jbh-field
+  [label]="label()"
+  [controlId]="controlId"
+  [hint]="hint()"
+  [error]="error()"
+  [requirement]="requirement()"
+  [native]="false"
+>
+  <div class="jbh-textarea__wrapper">
+    @if (icon()) {
+      <jbh-icon class="jbh-textarea__icon" [name]="icon()!" />
+    }
+    <ion-textarea
+      class="jbh-textarea__control"
+      [class.jbh-textarea__control--icon]="!!icon()"
+      [class.jbh-textarea__control--error]="hasError()"
+      [id]="controlId"
+      [value]="value()"
+      [rows]="rows()"
+      [maxlength]="maxlength()"
+      [placeholder]="placeholder()"
+      [disabled]="disabledByForm()"
+      [autoGrow]="true"
+      [attr.aria-labelledby]="labelId"
+      [attr.aria-invalid]="hasError() ? 'true' : null"
+      [attr.aria-describedby]="describedBy()"
+      [attr.aria-required]="requirement() === 'required' ? 'true' : null"
+      (ionInput)="onInput($event)"
+      (ionBlur)="onBlur()"
+    ></ion-textarea>
+  </div>
+  @if (maxlength() !== undefined) {
+    <p class="jbh-textarea__counter">{{ length() }}/{{ maxlength() }} {{ 'common.characters' | translate }}</p>
+  }
+</jbh-field>

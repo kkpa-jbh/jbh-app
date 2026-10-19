@@ -1,132 +1,73 @@
-<app-header></app-header>
-<ion-content>
+<jbh-page (pageEnter)="onPageEnter()" (pageLeave)="onPageLeave()">
+  <app-header jbhPageHeader></app-header>
+
   <div class="jbh-container">
-    <div class="jbh-form-card">
-      <div class="jbh-form-header">
-        <div class="jbh-form-icon">
-          <ion-icon name="swap-horizontal-outline"></ion-icon>
-        </div>
-        <h1 class="jbh-form-title">{{ 'products.transfer.formTitle' | translate }}</h1>
-        <p class="jbh-form-subtitle">{{ 'products.transfer.formSubtitle' | translate }}</p>
-      </div>
+    <jbh-card variant="form">
+      <jbh-page-header
+        variant="form"
+        icon="swap-horizontal-outline"
+        [title]="'products.transfer.formTitle' | translate"
+        [subtitle]="'products.transfer.formSubtitle' | translate"
+      />
 
-      <form [formGroup]="transferForm" (ngSubmit)="onSubmit()" class="jbh-form-animated">
+      <form [formGroup]="transferForm" (ngSubmit)="onSubmit()">
 
-        <!-- From Account -->
-        <div class="jbh-form-field">
+        <div>
           <label class="jbh-label">{{ 'products.transfer.fromAccount.label' | translate }}</label>
           <app-product-select
             formControlName="fromAccountId"
             [products]="products"
             [isLoading]="isLoadingProducts"
-            [selectInterface]="selectInterface"
             [placeholder]="'products.transfer.fromAccount.placeholder' | translate"
             [hasError]="hasError('fromAccountId')"
+            [errorMessage]="getErrorMessage('fromAccountId')"
           ></app-product-select>
-          @if (hasError('fromAccountId')) {
-            <div class="jbh-field-error">
-              <ion-icon name="alert-circle-outline"></ion-icon>
-              <span>{{ getErrorMessage('fromAccountId') }}</span>
-            </div>
-          }
         </div>
 
-        <!-- Arrow separator -->
         <div class="jbh-transfer-arrow">
-          <ion-icon name="arrow-forward-outline"></ion-icon>
+          <jbh-icon name="arrow-forward-outline" />
         </div>
 
-        <!-- To Account -->
-        <div class="jbh-form-field">
+        <div>
           <label class="jbh-label">{{ 'products.transfer.toAccount.label' | translate }}</label>
           <app-product-select
             formControlName="toAccountId"
             [products]="toAccountProducts"
             [isLoading]="isLoadingProducts"
-            [selectInterface]="selectInterface"
             [placeholder]="'products.transfer.toAccount.placeholder' | translate"
             [hasError]="hasError('toAccountId')"
+            [errorMessage]="getErrorMessage('toAccountId')"
           ></app-product-select>
-          @if (hasError('toAccountId')) {
-            <div class="jbh-field-error">
-              <ion-icon name="alert-circle-outline"></ion-icon>
-              <span>{{ getErrorMessage('toAccountId') }}</span>
-            </div>
-          }
         </div>
 
-        <!-- Amount -->
-        <div class="jbh-form-field">
-          <label class="jbh-label">{{ 'products.transfer.totalAmount.label' | translate }}</label>
-          <div class="jbh-input-wrapper">
-            <ion-icon name="cash-outline" class="jbh-input-icon left"></ion-icon>
-            <input
-              type="text"
-              inputmode="decimal"
-              formControlName="totalAmount"
-              class="jbh-input jbh-input-icon-left"
-              [class.error]="hasError('totalAmount')"
-              [placeholder]="'products.transfer.totalAmount.placeholder' | translate"
-              [jbhDecimalFormat]="2"
-            />
-          </div>
-          @if (hasError('totalAmount')) {
-            <div class="jbh-field-error">
-              <ion-icon name="alert-circle-outline"></ion-icon>
-              <span>{{ getErrorMessage('totalAmount') }}</span>
-            </div>
-          }
-        </div>
+        <jbh-number-field
+          formControlName="totalAmount"
+          icon="cash-outline"
+          [decimals]="2"
+          [label]="'products.transfer.totalAmount.label' | translate"
+          [placeholder]="'products.transfer.totalAmount.placeholder' | translate"
+          [error]="hasError('totalAmount') ? getErrorMessage('totalAmount') : ''"
+        />
 
-        <!-- Transfer Date -->
-        <div class="jbh-form-field">
-          <label class="jbh-label">{{ 'products.transfer.transferDate.label' | translate }}</label>
-          <div class="jbh-input-wrapper">
-            <ion-icon name="calendar-outline" class="jbh-input-icon left"></ion-icon>
-            <ion-datetime-button
-              datetime="transferDatePicker"
-              class="jbh-datetime-button"
-              [class.error]="hasError('transferDate')"
-            ></ion-datetime-button>
-            <ion-modal [keepContentsMounted]="true">
-              <ng-template>
-                <ion-datetime
-                  id="transferDatePicker"
-                  formControlName="transferDate"
-                  presentation="date"
-                  [max]="todayIso"
-                  [showDefaultButtons]="true"
-                  [cancelText]="'common.cancel' | translate"
-                  [doneText]="'common.save' | translate"
-                ></ion-datetime>
-              </ng-template>
-            </ion-modal>
-          </div>
-          @if (hasError('transferDate')) {
-            <div class="jbh-field-error">
-              <ion-icon name="alert-circle-outline"></ion-icon>
-              <span>{{ getErrorMessage('transferDate') }}</span>
-            </div>
-          }
-        </div>
+        <jbh-date-field
+          formControlName="transferDate"
+          [label]="'products.transfer.transferDate.label' | translate"
+          [max]="todayIso"
+          [error]="hasError('transferDate') ? getErrorMessage('transferDate') : ''"
+        />
 
-        <!-- Submit Button -->
         <button
           type="submit"
-          class="jbh-button-primary jbh-button-block"
-          [class.jbh-button-loading]="isSubmitting"
+          jbhButton
+          block
+          icon="swap-horizontal-outline"
+          [loading]="isSubmitting"
           [disabled]="isSubmitting"
         >
-          @if (isSubmitting) {
-            <ion-spinner name="crescent"></ion-spinner>
-            <span>{{ 'products.transfer.saving' | translate }}</span>
-          } @else {
-            <ion-icon name="swap-horizontal-outline"></ion-icon>
-            <span>{{ 'products.transfer.saveButton' | translate }}</span>
-          }
+          {{ (isSubmitting ? 'products.transfer.saving' : 'products.transfer.saveButton') | translate }}
         </button>
 
       </form>
-    </div>
+    </jbh-card>
   </div>
-</ion-content>
+</jbh-page>

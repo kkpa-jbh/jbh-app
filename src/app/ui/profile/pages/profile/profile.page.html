@@ -1,140 +1,83 @@
-<app-header></app-header>
-<ion-content class="profile-content">
+<jbh-page (pageEnter)="onPageEnter()" (pageLeave)="onPageLeave()">
+  <app-header jbhPageHeader></app-header>
+
   <div class="jbh-container">
-    <!-- Loading State -->
     @if (isLoading) {
-      <div class="jbh-form-card">
-        <div class="jbh-loading-container">
-          <ion-spinner name="crescent"></ion-spinner>
+      <jbh-card variant="form">
+        <div class="profile-loading">
+          <jbh-spinner />
         </div>
-      </div>
+      </jbh-card>
     }
 
-    <!-- Form Card -->
     @if (!isLoading) {
-      <div class="jbh-form-card">
+      <jbh-card variant="form">
+        <jbh-page-header
+          variant="form"
+          icon="person-outline"
+          [title]="'profile.formTitle' | translate"
+          [subtitle]="'profile.formSubtitle' | translate"
+        />
 
-        <!-- Form Header -->
-        <div class="jbh-form-header">
-          <div class="jbh-form-icon">
-            <ion-icon name="person-outline"></ion-icon>
-          </div>
-          <h1 class="jbh-form-title">{{ 'profile.formTitle' | translate }}</h1>
-          <p class="jbh-form-subtitle">{{ 'profile.formSubtitle' | translate }}</p>
-        </div>
+        <form [formGroup]="preferencesForm" (ngSubmit)="onSubmit()">
 
-        <!-- Form -->
-        <form [formGroup]="preferencesForm" (ngSubmit)="onSubmit()" class="jbh-form-animated">
+          <jbh-select
+            formControlName="defaultLang"
+            icon="language-outline"
+            requirement="required"
+            [label]="'profile.language.label' | translate"
+            [placeholder]="'profile.language.placeholder' | translate"
+            [error]="hasError('defaultLang') ? getErrorMessage('defaultLang') : ''"
+          >
+            <jbh-select-option [value]="Language.EN">{{ 'profile.language.EN' | translate }}</jbh-select-option>
+            <jbh-select-option [value]="Language.ES">{{ 'profile.language.ES' | translate }}</jbh-select-option>
+          </jbh-select>
 
-          <!-- Language Field -->
-          <div class="jbh-form-field">
-            <label class="jbh-label">
-              {{ 'profile.language.label' | translate }}
-              <span class="required-indicator">*</span>
-            </label>
-            <div class="jbh-ion-select-wrapper" [class.error]="hasError('defaultLang')">
-              <ion-icon name="language-outline" class="jbh-ion-select-icon"></ion-icon>
-              <ion-select
-                formControlName="defaultLang"
-                [placeholder]="'profile.language.placeholder' | translate"
-                [interface]="selectInterface"
-                [interfaceOptions]="{ header: ('profile.language.label' | translate) }"
-                class="jbh-ion-select"
-              >
-                <ion-select-option [value]="Language.EN">
-                  {{ 'profile.language.EN' | translate }}
-                </ion-select-option>
-                <ion-select-option [value]="Language.ES">
-                  {{ 'profile.language.ES' | translate }}
-                </ion-select-option>
-              </ion-select>
-            </div>
-          </div>
+          <jbh-select
+            formControlName="defaultCurrency"
+            icon="cash-outline"
+            requirement="required"
+            [label]="'profile.currency.label' | translate"
+            [placeholder]="'profile.currency.placeholder' | translate"
+            [error]="hasError('defaultCurrency') ? getErrorMessage('defaultCurrency') : ''"
+          >
+            <jbh-select-option [value]="Currency.COP">{{ 'profile.currency.COP' | translate }}</jbh-select-option>
+            <jbh-select-option [value]="Currency.USD">{{ 'profile.currency.USD' | translate }}</jbh-select-option>
+          </jbh-select>
 
-          <!-- Currency Field -->
-          <div class="jbh-form-field">
-            <label class="jbh-label">
-              {{ 'profile.currency.label' | translate }}
-              <span class="required-indicator">*</span>
-            </label>
-            <div class="jbh-ion-select-wrapper" [class.error]="hasError('defaultCurrency')">
-              <ion-icon name="cash-outline" class="jbh-ion-select-icon"></ion-icon>
-              <ion-select
-                formControlName="defaultCurrency"
-                [placeholder]="'profile.currency.placeholder' | translate"
-                [interface]="selectInterface"
-                [interfaceOptions]="{ header: ('profile.currency.label' | translate) }"
-                class="jbh-ion-select"
-              >
-                <ion-select-option [value]="Currency.COP">
-                  {{ 'profile.currency.COP' | translate }}
-                </ion-select-option>
-                <ion-select-option [value]="Currency.USD">
-                  {{ 'profile.currency.USD' | translate }}
-                </ion-select-option>
-              </ion-select>
-            </div>
-          </div>
+          <jbh-number-field
+            formControlName="savingsGoal"
+            icon="wallet-outline"
+            requirement="required"
+            [decimals]="2"
+            [label]="'profile.savingsGoal.label' | translate"
+            [placeholder]="'profile.savingsGoal.placeholder' | translate"
+            [error]="hasError('savingsGoal') ? getErrorMessage('savingsGoal') : ''"
+          />
 
-          <!-- Savings Goal Field -->
-          <div class="jbh-form-field">
-            <label class="jbh-label">
-              {{ 'profile.savingsGoal.label' | translate }}
-              <span class="required-indicator">*</span>
-            </label>
-            <div class="jbh-input-wrapper">
-              <ion-icon name="wallet-outline" class="jbh-input-icon left"></ion-icon>
-              <input
-                type="text"
-                inputmode="decimal"
-                class="jbh-input jbh-input-icon-left"
-                formControlName="savingsGoal"
-                [placeholder]="'profile.savingsGoal.placeholder' | translate"
-                [jbhDecimalFormat]="2"
-                [class.error]="hasError('savingsGoal')"
-              />
-            </div>
-            @if (hasError('savingsGoal')) {
-              <div class="jbh-field-error">
-                <ion-icon name="information-circle"></ion-icon>
-                <span>{{ getErrorMessage('savingsGoal') }}</span>
-              </div>
-            }
-          </div>
-
-          <!-- Default Product Field -->
-          <div class="jbh-form-field">
-            <label class="jbh-label">
-              {{ 'profile.defaultProduct.label' | translate }}
-            </label>
+          <div>
+            <label class="jbh-label">{{ 'profile.defaultProduct.label' | translate }}</label>
             <app-product-select
               formControlName="defaultProductId"
               [products]="products"
-              [selectInterface]="selectInterface"
               [placeholder]="'profile.defaultProduct.placeholder' | translate"
               [emptyOption]="{ label: ('profile.defaultProduct.none' | translate), value: null }"
             ></app-product-select>
           </div>
 
-          <!-- Submit Button -->
           <button
             type="submit"
-            class="jbh-button-primary jbh-button-block"
+            jbhButton
+            block
+            icon="save-outline"
+            [loading]="isSubmitting"
             [disabled]="isSubmitting || preferencesForm.invalid"
-            [class.jbh-button-loading]="isSubmitting"
           >
-            @if (isSubmitting) {
-              <ion-spinner name="crescent"></ion-spinner>
-              <span>{{ 'profile.saving' | translate }}</span>
-            } @else {
-              <ion-icon name="save-outline" class="button-icon"></ion-icon>
-              <span>{{ 'profile.saveButton' | translate }}</span>
-            }
+            {{ (isSubmitting ? 'profile.saving' : 'profile.saveButton') | translate }}
           </button>
 
         </form>
-
-      </div>
+      </jbh-card>
     }
   </div>
-</ion-content>
+</jbh-page>

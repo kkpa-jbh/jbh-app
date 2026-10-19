@@ -1,0 +1,10 @@
+:host {
+  display: block;
+}
+
+.jbh-toggle__control {
+  --track-background-checked: var(--jbh-primary-color);
+  width: 100%;
+  font-size: var(--jbh-font-size-base);
+  color: var(--jbh-text-primary);
+}

@@ -1,27 +1,21 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { NgClass } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { addIcons } from 'ionicons';
-import { walletOutline, trendingUpOutline, statsChartOutline, swapVerticalOutline } from 'ionicons/icons';
 import { BalanceHistorySummaryModel } from '@core/domain/features/balance-history';
 import { JbhCurrencyPipe, JbhProfitPipe, JbhGrowthPipe } from '@shared/pipes';
+import { JbhIconComponent } from '@design-system/components';
 
 @Component({
   selector: 'app-balance-summary-cards',
   templateUrl: './balance-summary-cards.component.html',
   styleUrls: ['./balance-summary-cards.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, TranslateModule, JbhCurrencyPipe, JbhProfitPipe, JbhGrowthPipe],
+  imports: [NgClass, TranslateModule, JbhCurrencyPipe, JbhProfitPipe, JbhGrowthPipe, JbhIconComponent],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BalanceSummaryCardsComponent {
   @Input({ required: true }) summary!: BalanceHistorySummaryModel;
   @Input() currency = 'USD';
-
-  constructor() {
-    addIcons({ walletOutline, trendingUpOutline, statsChartOutline, swapVerticalOutline });
-  }
 
   getPeriodChangeClass(): string {
     if (this.summary.periodChange > 0) return 'positive';

@@ -1,14 +1,10 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { IonicModule, ViewWillEnter, ViewWillLeave, ToastController } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { Subject, takeUntil } from 'rxjs';
-import { addIcons } from 'ionicons';
-import { analyticsOutline, refreshOutline, walletOutline } from 'ionicons/icons';
 import { BalanceHistoryUseCase } from '@core/domain/use-cases/balance-history.use-case';
 import { ProductUseCase } from '@core/domain/use-cases/product.use-case';
-import { BalanceHistoryEntryModel, MonthlyBalanceRequest, BalanceHistorySummaryModel } from '@core/domain/features/balance-history';
+import { BalanceHistoryEntryModel, BalanceHistorySummaryModel } from '@core/domain/features/balance-history';
 import { ProductListItem } from '@core/domain/features/products';
 import { JBHError } from '@core/domain/models/jbh-error.model';
 import { LoggerService } from '@core/infrastructure/logging/logger.service';
@@ -18,6 +14,8 @@ import { BalanceHistoryFilterComponent, BalanceFilterEvent } from '../../compone
 import { BalanceSummaryCardsComponent } from '../../components/balance-summary-cards/balance-summary-cards.component';
 import { BalanceChartComponent } from '../../components/balance-chart/balance-chart.component';
 import { BalanceHistoryTableComponent } from '../../components/balance-history-table/balance-history-table.component';
+import { JbhEmptyStateComponent, JbhPageHeaderComponent, JbhSkeletonComponent } from '@design-system/components';
+import { JbhPageComponent, ToastService } from '@design-system/platform';
 import { AppHeaderComponent } from '@shared/components/app-header/app-header.component';
 
 @Component({
@@ -27,17 +25,19 @@ import { AppHeaderComponent } from '@shared/components/app-header/app-header.com
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
-    IonicModule,
     TranslateModule,
     BalanceHistoryFilterComponent,
     BalanceSummaryCardsComponent,
     BalanceChartComponent,
     BalanceHistoryTableComponent,
+    JbhEmptyStateComponent,
+    JbhPageComponent,
+    JbhPageHeaderComponent,
+    JbhSkeletonComponent,
     AppHeaderComponent
   ]
 })
-export class BalanceHistoryPage implements OnInit, OnDestroy, ViewWillEnter, ViewWillLeave {
+export class BalanceHistoryPage implements OnInit, OnDestroy {
   products: ProductListItem[] = [];
   balances: BalanceHistoryEntryModel[] = [];
   summary: BalanceHistorySummaryModel | null = null;
@@ -50,28 +50,25 @@ export class BalanceHistoryPage implements OnInit, OnDestroy, ViewWillEnter, Vie
   private destroy$ = new Subject<void>();
   currentFilter: BalanceFilterEvent | null = null;
 
-  constructor(
-    private balanceHistoryUseCase: BalanceHistoryUseCase,
-    private productUseCase: ProductUseCase,
-    private route: ActivatedRoute,
-    private toastController: ToastController,
-    private logger: LoggerService,
-    private translationService: TranslationService,
-    private headerActions: HeaderActionsService,
-    private cdr: ChangeDetectorRef
-  ) {
-    addIcons({ analyticsOutline, refreshOutline, walletOutline });
-  }
+  private readonly balanceHistoryUseCase = inject(BalanceHistoryUseCase);
+  private readonly productUseCase = inject(ProductUseCase);
+  private readonly route = inject(ActivatedRoute);
+  private readonly toast = inject(ToastService);
+  private readonly logger = inject(LoggerService);
+  private readonly translationService = inject(TranslationService);
+  private readonly headerActions = inject(HeaderActionsService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     this.route.queryParams
       .pipe(takeUntil(this.destroy$))
       .subscribe(params => {
         this.initialProductId = params['productId'] || null;
+        this.cdr.markForCheck();
       });
   }
 
-  ionViewWillEnter(): void {
+  onPageEnter(): void {
     this.headerActions.setPageConfig({
       title: 'products.balanceHistory.formTitle'
     });
@@ -81,7 +78,7 @@ export class BalanceHistoryPage implements OnInit, OnDestroy, ViewWillEnter, Vie
     }
   }
 
-  ionViewWillLeave(): void {
+  onPageLeave(): void {
     this.headerActions.clearPageConfig();
   }
 
@@ -92,6 +89,7 @@ export class BalanceHistoryPage implements OnInit, OnDestroy, ViewWillEnter, Vie
 
   private loadProducts(): void {
     this.isProductsLoading = true;
+    this.cdr.markForCheck();
     this.productUseCase.getProducts()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -117,6 +115,7 @@ export class BalanceHistoryPage implements OnInit, OnDestroy, ViewWillEnter, Vie
     this.isLoading = true;
     this.hasData = false;
     this.showProductColumn = !filter.productId;
+    this.cdr.markForCheck();
 
     const observable = filter.productId
       ? this.balanceHistoryUseCase.refreshProductBalances(filter.productId, filter.request)
@@ -140,18 +139,8 @@ export class BalanceHistoryPage implements OnInit, OnDestroy, ViewWillEnter, Vie
           const errorMessage = error.isValidationError
             ? error.message
             : this.translationService.instant('products.balanceHistory.errors.load');
-          this.showToast(errorMessage, 'danger');
+          this.toast.show(errorMessage, 'error');
         }
       });
-  }
-
-  private async showToast(message: string, color: 'success' | 'danger' | 'warning' = 'success'): Promise<void> {
-    const toast = await this.toastController.create({
-      message,
-      duration: 3000,
-      position: 'bottom',
-      color
-    });
-    await toast.present();
   }
 }

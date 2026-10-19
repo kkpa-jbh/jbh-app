@@ -2,7 +2,6 @@ import { bootstrapApplication } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { RouteReuseStrategy, provideRouter, withPreloading, PreloadAllModules } from '@angular/router';
 import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalone';
-import { IonicModule } from '@ionic/angular';
 import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { importProvidersFrom } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
@@ -26,15 +25,13 @@ import { CategoryRepository } from './app/core/domain/repositories/category.repo
 import { CategoryRepositoryImpl } from './app/core/infrastructure/repositories/category.repository.impl';
 import { StatementRepository } from './app/core/domain/repositories/statement.repository';
 import { StatementRepositoryImpl } from './app/core/infrastructure/repositories/statement.repository.impl';
+import { DevicePlatform } from './app/core/infrastructure/platform/device-platform';
+import { IonicDevicePlatform } from '@design-system/platform';
 
 bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
     provideIonicAngular(),
-    // Temporary: the pages still import IonicModule, whose elements (ion-select, ion-input...) are only
-    // registered by forRoot(). The production build tree-shakes them away without it. Remove after the
-    // standalone migration.
-    importProvidersFrom(IonicModule.forRoot()),
     provideAnimations(),
     provideRouter(routes, withPreloading(PreloadAllModules)),
     provideHttpClient(withInterceptorsFromDi()),
@@ -62,5 +59,8 @@ bootstrapApplication(AppComponent, {
     { provide: BalanceHistoryRepository, useClass: BalanceHistoryRepositoryImpl },
     { provide: CategoryRepository, useClass: CategoryRepositoryImpl },
     { provide: StatementRepository, useClass: StatementRepositoryImpl },
+
+    // Device questions go through a port; the UI layer answers them with Ionic
+    { provide: DevicePlatform, useClass: IonicDevicePlatform },
   ],
 });

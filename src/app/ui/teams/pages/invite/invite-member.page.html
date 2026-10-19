@@ -1,125 +1,65 @@
-<app-header></app-header>
-<ion-content class="invite-member-content">
+<jbh-page (pageEnter)="onPageEnter()" (pageLeave)="onPageLeave()">
+  <app-header jbhPageHeader></app-header>
+
   <div class="jbh-container">
-    <div class="jbh-form-card">
+    <jbh-card variant="form">
+      <jbh-page-header
+        variant="form"
+        icon="mail-outline"
+        [title]="'teams.invite.formTitle' | translate"
+        [subtitle]="'teams.invite.formSubtitle' | translate"
+      />
 
-      <!-- Form Header -->
-      <div class="jbh-form-header">
-        <div class="jbh-form-icon">
-          <ion-icon name="mail-outline"></ion-icon>
-        </div>
-        <h1 class="jbh-form-title">{{ 'teams.invite.formTitle' | translate }}</h1>
-        <p class="jbh-form-subtitle">{{ 'teams.invite.formSubtitle' | translate }}</p>
-      </div>
+      <form [formGroup]="inviteForm" (ngSubmit)="onSubmit()">
 
-      <!-- Form -->
-      <form [formGroup]="inviteForm" (ngSubmit)="onSubmit()" class="jbh-form-animated">
-
-        <!-- Team Selection Field -->
-        <div class="jbh-form-field">
-          <label class="jbh-label">
-            {{ 'teams.invite.teamId.label' | translate }}
-            <span class="required-indicator">*</span>
-          </label>
-
-          <!-- Loading Skeleton -->
-          @if (isLoadingTeams) {
-            <div class="jbh-skeleton jbh-skeleton-select"></div>
+        <jbh-select
+          formControlName="teamId"
+          icon="people-outline"
+          requirement="required"
+          [loading]="isLoadingTeams"
+          [label]="'teams.invite.teamId.label' | translate"
+          [placeholder]="'teams.invite.teamId.placeholder' | translate"
+          [error]="hasError('teamId') ? getErrorMessage('teamId') : ''"
+        >
+          @for (team of teams; track team.id) {
+            <jbh-select-option [value]="team.id">{{ team.name }} ({{ team.shortName }})</jbh-select-option>
           }
+        </jbh-select>
 
-          <!-- Select Field -->
-          @if (!isLoadingTeams) {
-            <div class="jbh-ion-select-wrapper" [class.error]="hasError('teamId')">
-              <ion-icon name="people-outline" class="jbh-ion-select-icon"></ion-icon>
-              <ion-select
-                formControlName="teamId"
-                [placeholder]="'teams.invite.teamId.placeholder' | translate"
-                [interface]="selectInterface"
-                [interfaceOptions]="{ header: ('teams.invite.teamId.label' | translate) }"
-                class="jbh-ion-select"
-                [disabled]="isTeamDisabled"
-              >
-                @for (team of teams; track team.id) {
-                  <ion-select-option [value]="team.id">
-                    {{ team.name }} ({{ team.shortName }})
-                  </ion-select-option>
-                }
-              </ion-select>
-            </div>
+        <jbh-text-field
+          formControlName="emailOrUsername"
+          icon="person-outline"
+          requirement="required"
+          [label]="'teams.invite.emailOrUsername.label' | translate"
+          [placeholder]="'teams.invite.emailOrUsername.placeholder' | translate"
+          [hint]="!hasError('emailOrUsername') && userExists ? userCheckMessage : ''"
+          [error]="hasError('emailOrUsername')
+            ? getErrorMessage('emailOrUsername')
+            : (userExists === false ? userCheckMessage : '')"
+        >
+          @if (checkingUser) {
+            <jbh-spinner jbhFieldSuffix />
           }
-
-          <!-- Error Message -->
-          @if (hasError('teamId')) {
-            <div class="jbh-field-error">
-              <ion-icon name="information-circle"></ion-icon>
-              <span>{{ getErrorMessage('teamId') }}</span>
-            </div>
+          @if (!checkingUser && userExists === true) {
+            <jbh-icon jbhFieldSuffix class="invite-status invite-status--success" name="checkmark-circle-outline" />
           }
-        </div>
-
-        <!-- Email or Username Field -->
-        <div class="jbh-form-field">
-          <label class="jbh-label">
-            {{ 'teams.invite.emailOrUsername.label' | translate }}
-            <span class="required-indicator">*</span>
-          </label>
-          <div class="jbh-input-wrapper">
-            <ion-icon name="person-outline" class="jbh-input-icon left"></ion-icon>
-            <input
-              type="text"
-              class="jbh-input jbh-input-icon-left jbh-input-icon-right"
-              formControlName="emailOrUsername"
-              [placeholder]="'teams.invite.emailOrUsername.placeholder' | translate"
-              [class.error]="hasError('emailOrUsername') || userExists === false"
-              [class.success]="userExists === true"
-            />
-            <!-- Status Icon -->
-            @if (checkingUser) {
-              <ion-spinner name="crescent" class="jbh-input-status-icon"></ion-spinner>
-            }
-            @if (!checkingUser && userExists === true) {
-              <ion-icon name="checkmark-circle-outline" class="jbh-input-status-icon success"></ion-icon>
-            }
-            @if (!checkingUser && userExists === false) {
-              <ion-icon name="close-circle-outline" class="jbh-input-status-icon error"></ion-icon>
-            }
-          </div>
-
-          <!-- Error Message -->
-          @if (hasError('emailOrUsername')) {
-            <div class="jbh-field-error">
-              <ion-icon name="information-circle"></ion-icon>
-              <span>{{ getErrorMessage('emailOrUsername') }}</span>
-            </div>
+          @if (!checkingUser && userExists === false) {
+            <jbh-icon jbhFieldSuffix class="invite-status invite-status--error" name="close-circle-outline" />
           }
+        </jbh-text-field>
 
-          <!-- User Check Message -->
-          @if (!hasError('emailOrUsername') && userCheckMessage) {
-            <div [class]="userExists ? 'jbh-field-success' : 'jbh-field-error'">
-              <ion-icon [name]="userExists ? 'checkmark-circle-outline' : 'information-circle'"></ion-icon>
-              <span>{{ userCheckMessage }}</span>
-            </div>
-          }
-        </div>
-
-        <!-- Submit Button -->
         <button
           type="submit"
-          class="jbh-button-primary jbh-button-block"
+          jbhButton
+          block
+          icon="send-outline"
+          [loading]="isSubmitting"
           [disabled]="!canSubmit"
-          [class.jbh-button-loading]="isSubmitting"
         >
-          @if (isSubmitting) {
-            <ion-spinner name="crescent"></ion-spinner>
-            <span>{{ 'teams.invite.sending' | translate }}</span>
-          } @else {
-            <ion-icon name="send-outline" class="button-icon"></ion-icon>
-            <span>{{ 'teams.invite.sendButton' | translate }}</span>
-          }
+          {{ (isSubmitting ? 'teams.invite.sending' : 'teams.invite.sendButton') | translate }}
         </button>
 
       </form>
-
-    </div>
+    </jbh-card>
   </div>
-</ion-content>
+</jbh-page>

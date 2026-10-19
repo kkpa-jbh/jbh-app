@@ -2,7 +2,7 @@
   <div class="jbh-product-card-header">
     <div class="jbh-product-info">
       <div class="jbh-product-type-icon" [style.background]="product.getTypeColor()">
-        <ion-icon [name]="product.getTypeIcon()"></ion-icon>
+        <jbh-icon [name]="product.getTypeIcon()" />
       </div>
       <div class="jbh-product-details">
         <h3 class="jbh-product-name">{{ product.name }}</h3>
@@ -12,23 +12,21 @@
     <div class="jbh-product-header-actions">
       @if (product.isFullyWithdrawn) {
         <span class="jbh-withdrawn-badge">
-          <ion-icon name="checkmark-circle-outline"></ion-icon>
+          <jbh-icon name="checkmark-circle-outline" />
           {{ 'products.card.fullyWithdrawn' | translate }}
         </span>
       }
       @if (showActions) {
         <div class="jbh-status-toggle" [class.toggling]="isTogglingStatus">
-          <span class="jbh-status-label">
-            {{ (product.isActive ? 'products.card.status.active' : 'products.card.status.inactive') | translate }}
-          </span>
-          <ion-toggle
+          <jbh-toggle
+            [label]="(product.isActive ? 'products.card.status.active' : 'products.card.status.inactive') | translate"
             [checked]="product.isActive"
             [disabled]="isTogglingStatus"
-            (ionChange)="onStatusToggle($event)"
             [title]="'products.card.status.toggle' | translate"
-          ></ion-toggle>
+            (checkedChange)="onStatusToggle($event)"
+          />
           @if (isTogglingStatus) {
-            <ion-spinner name="crescent" class="jbh-toggle-spinner"></ion-spinner>
+            <jbh-spinner class="jbh-toggle-spinner" />
           }
         </div>
       }
@@ -36,30 +34,27 @@
         <div class="jbh-product-actions">
           @if (product.allowsMovements) {
             <button
-              class="jbh-icon-button jbh-icon-button-primary"
+              type="button"
+              jbhIconButton="primary"
+              icon="add-circle-outline"
+              [label]="'products.addMovement.title' | translate"
               (click)="onAddMovement($event)"
-              [title]="'products.addMovement.title' | translate"
-              [attr.aria-label]="'products.addMovement.title' | translate"
-            >
-              <ion-icon name="add-circle-outline"></ion-icon>
-            </button>
+            ></button>
           }
           <button
-            class="jbh-icon-button"
+            type="button"
+            jbhIconButton
+            icon="create-outline"
+            [label]="'common.edit' | translate"
             (click)="onEdit($event)"
-            [title]="'common.edit' | translate"
-            [attr.aria-label]="'common.edit' | translate"
-          >
-            <ion-icon name="create-outline"></ion-icon>
-          </button>
+          ></button>
           <button
-            class="jbh-icon-button jbh-icon-button-danger"
+            type="button"
+            jbhIconButton="danger"
+            icon="trash-outline"
+            [label]="'common.delete' | translate"
             (click)="onDelete($event)"
-            [title]="'common.delete' | translate"
-            [attr.aria-label]="'common.delete' | translate"
-          >
-            <ion-icon name="trash-outline"></ion-icon>
-          </button>
+          ></button>
         </div>
       }
     </div>
@@ -92,7 +87,7 @@
 
   <div class="jbh-product-card-footer">
     <div class="jbh-product-growth" [ngClass]="getGrowthRateClass()">
-      <ion-icon [name]="getGrowthIcon()"></ion-icon>
+      <jbh-icon [name]="getGrowthIcon()" />
       <span>{{ product.netGrowthRate | jbhGrowth }}</span>
     </div>
     <div class="jbh-product-footer-right">
@@ -102,11 +97,11 @@
         [title]="'products.balanceHistory.viewHistory' | translate"
         [attr.aria-label]="'products.balanceHistory.viewHistory' | translate"
       >
-        <ion-icon name="analytics-outline"></ion-icon>
+        <jbh-icon name="analytics-outline" />
         <span class="jbh-hide-mobile">{{ 'products.balanceHistory.viewHistory' | translate }}</span>
       </button>
       <div class="jbh-product-updated">
-        <ion-icon name="time-outline"></ion-icon>
+        <jbh-icon name="time-outline" />
         {{ product.updatedAt | jbhRelativeTime }}
       </div>
     </div>

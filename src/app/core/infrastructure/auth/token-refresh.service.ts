@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Platform } from '@ionic/angular';
 import { BehaviorSubject, Observable, Subject, from, of, firstValueFrom } from 'rxjs';
 import { take, map, catchError, tap } from 'rxjs/operators';
 import { TokenStorageService } from '../persistence/token-storage.service';
 import { AuthRepository } from '../../domain/repositories/auth.repository';
 import { LoggerService } from '../logging/logger.service';
+import { DevicePlatform } from '../platform/device-platform';
 
 @Injectable({ providedIn: 'root' })
 export class TokenRefreshService {
@@ -15,7 +15,7 @@ export class TokenRefreshService {
   constructor(
     private tokenStorage: TokenStorageService,
     private authRepository: AuthRepository,
-    private platform: Platform,
+    private devicePlatform: DevicePlatform,
     private router: Router,
     private logger: LoggerService
   ) {}
@@ -64,7 +64,7 @@ export class TokenRefreshService {
   }
 
   private async performRefresh(): Promise<boolean> {
-    const isMobile = this.platform.is('capacitor');
+    const isMobile = this.devicePlatform.isNativeApp();
     let refreshToken: string | undefined;
 
     if (isMobile) {

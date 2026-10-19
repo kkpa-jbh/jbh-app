@@ -1,29 +1,22 @@
+import { ChangeDetectionStrategy, Component, forwardRef, input } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
-  Component,
-  Input,
-  forwardRef,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { IonicModule } from '@ionic/angular';
-import { TranslateModule } from '@ngx-translate/core';
-import { addIcons } from 'ionicons';
-import { walletOutline, alertCircleOutline } from 'ionicons/icons';
+  ControlValueAccessor,
+  FormControl,
+  NG_VALUE_ACCESSOR,
+  ReactiveFormsModule,
+  TouchedChangeEvent
+} from '@angular/forms';
+import { filter } from 'rxjs';
 import { ProductListItem } from '@core/domain/features/products';
-import { SelectInterface } from '@core/infrastructure/viewport/viewport.service';
+import { JbhSelectComponent, JbhSelectOptionComponent } from '@design-system/components';
 
 @Component({
   selector: 'app-product-select',
   templateUrl: './product-select.component.html',
   styleUrls: ['./product-select.component.scss'],
   standalone: true,
-  imports: [
-    CommonModule,
-    IonicModule,
-    TranslateModule
-  ],
+  imports: [ReactiveFormsModule, JbhSelectComponent, JbhSelectOptionComponent],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -34,27 +27,34 @@ import { SelectInterface } from '@core/infrastructure/viewport/viewport.service'
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProductSelectComponent implements ControlValueAccessor {
+  readonly products = input<ProductListItem[]>([]);
+  readonly isLoading = input(false);
+  readonly placeholder = input('');
+  /** Marks the field invalid. The red frame and message show only when `errorMessage` is also set. */
+  readonly hasError = input(false);
+  /** Message under the select while `hasError` is true. Pages that show their own message leave it empty. */
+  readonly errorMessage = input<string | null>(null);
+  readonly emptyOption = input<{ label: string; value: string | null } | undefined>(undefined);
 
-  @Input() products: ProductListItem[] = [];
-  @Input() isLoading = false;
-  @Input() selectInterface: SelectInterface = 'action-sheet';
-  @Input() placeholder = '';
-  @Input() hasError = false;
-  @Input() emptyOption: { label: string; value: string | null } | undefined = undefined;
+  /** Inner form control that feeds `jbh-select`; this component forwards its changes to the outer form. */
+  protected readonly control = new FormControl<string | null>(null);
 
-  selectedValue: string | null = null;
-  isDisabled = false;
+  private onChange: (value: string | null) => void = () => undefined;
+  private onTouched: () => void = () => undefined;
 
-  private onChange: (value: string | null) => void = () => {};
-  private onTouched: () => void = () => {};
+  constructor() {
+    this.control.valueChanges.pipe(takeUntilDestroyed()).subscribe(value => this.onChange(value));
 
-  constructor(private cdr: ChangeDetectorRef) {
-    addIcons({ walletOutline, alertCircleOutline });
+    this.control.events
+      .pipe(
+        filter((event): event is TouchedChangeEvent => event instanceof TouchedChangeEvent && event.touched),
+        takeUntilDestroyed()
+      )
+      .subscribe(() => this.onTouched());
   }
 
   writeValue(value: string | null): void {
-    this.selectedValue = value;
-    this.cdr.markForCheck();
+    this.control.setValue(value, { emitEvent: false });
   }
 
   registerOnChange(fn: (value: string | null) => void): void {
@@ -66,15 +66,10 @@ export class ProductSelectComponent implements ControlValueAccessor {
   }
 
   setDisabledState(isDisabled: boolean): void {
-    this.isDisabled = isDisabled;
-    this.cdr.markForCheck();
-  }
-
-  onSelectionChange(event: CustomEvent): void {
-    const value = event.detail.value as string | null;
-    this.selectedValue = value;
-    this.onChange(value);
-    this.onTouched();
-    this.cdr.markForCheck();
+    if (isDisabled) {
+      this.control.disable({ emitEvent: false });
+    } else {
+      this.control.enable({ emitEvent: false });
+    }
   }
 }

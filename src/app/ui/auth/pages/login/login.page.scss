@@ -11,8 +11,8 @@
  */
 
 // Page background with gradient
-.login-content {
-  --background: var(--jbh-gradient-primary);
+jbh-page {
+  --jbh-page-background: var(--jbh-gradient-primary);
 }
 
 // Main container - full height, centered
@@ -93,6 +93,11 @@
 .logo-container {
   display: inline-flex;
   margin-bottom: var(--jbh-spacing-md);
+
+  jbh-icon {
+    font-size: 32px;
+    color: var(--jbh-text-on-color);
+  }
 }
 
 // ============================================

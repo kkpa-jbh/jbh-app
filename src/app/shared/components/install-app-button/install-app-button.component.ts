@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IonicModule, ModalController, ToastController } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { JbhNavItemComponent } from '@design-system/components';
+import { DialogService, ToastService } from '@design-system/platform';
 import { PwaInstallService } from '@core/infrastructure/pwa/pwa-install.service';
 import { IosInstallModalComponent } from '../ios-install-modal/ios-install-modal.component';
 import { TranslationService } from '@core/infrastructure/i18n/translation.service';
@@ -12,7 +13,7 @@ import { Subject, takeUntil } from 'rxjs';
   templateUrl: './install-app-button.component.html',
   styleUrls: ['./install-app-button.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, TranslateModule]
+  imports: [CommonModule, TranslateModule, JbhNavItemComponent]
 })
 export class InstallAppButtonComponent implements OnInit, OnDestroy {
   canInstall = false;
@@ -21,8 +22,8 @@ export class InstallAppButtonComponent implements OnInit, OnDestroy {
 
   constructor(
     private pwaInstallService: PwaInstallService,
-    private modalController: ModalController,
-    private toastController: ToastController,
+    private dialog: DialogService,
+    private toast: ToastService,
     private translationService: TranslationService
   ) {}
 
@@ -61,55 +62,22 @@ export class InstallAppButtonComponent implements OnInit, OnDestroy {
   }
 
   private async showIOSInstructions(): Promise<void> {
-    const modal = await this.modalController.create({
-      component: IosInstallModalComponent,
-      cssClass: 'ios-install-modal-wrapper',
-      breakpoints: [0, 0.5, 0.8, 1],
-      initialBreakpoint: 0.8
-    });
-
-    await modal.present();
+    await this.dialog.open(IosInstallModalComponent, { sheet: true, cssClass: 'ios-install-modal-wrapper' });
   }
 
   private async showNativePrompt(): Promise<void> {
     const result = await this.pwaInstallService.promptInstall();
 
     if (result === 'accepted') {
-      await this.showSuccessToast();
+      await this.toast.show(this.translationService.instant('pwa.installSuccess'), 'success');
     } else if (result === 'dismissed') {
-      await this.showDismissedToast();
+      await this.toast.show(this.translationService.instant('pwa.installDismissed'), 'info');
     } else {
       await this.showNotAvailableMessage();
     }
   }
 
-  private async showSuccessToast(): Promise<void> {
-    const toast = await this.toastController.create({
-      message: this.translationService.instant('pwa.installSuccess'),
-      duration: 3000,
-      color: 'success',
-      icon: 'checkmark-circle-outline'
-    });
-    await toast.present();
-  }
-
-  private async showDismissedToast(): Promise<void> {
-    const toast = await this.toastController.create({
-      message: this.translationService.instant('pwa.installDismissed'),
-      duration: 2000,
-      color: 'medium',
-      icon: 'information-circle-outline'
-    });
-    await toast.present();
-  }
-
   private async showNotAvailableMessage(): Promise<void> {
-    const toast = await this.toastController.create({
-      message: this.translationService.instant('pwa.installNotAvailable'),
-      duration: 3000,
-      color: 'warning',
-      icon: 'alert-circle-outline'
-    });
-    await toast.present();
+    await this.toast.show(this.translationService.instant('pwa.installNotAvailable'), 'warning');
   }
 }

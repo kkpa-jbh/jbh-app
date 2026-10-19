@@ -1,0 +1,10 @@
+<ion-item class="jbh-nav-item__row" [button]="true" [detail]="false" lines="none">
+  <jbh-icon class="jbh-nav-item__icon" slot="start" [name]="icon()" />
+  <ion-label class="jbh-nav-item__label"><ng-content /></ion-label>
+  <span class="jbh-nav-item__end" slot="end">
+    <ng-content select="[jbhNavItemEnd]" />
+    @if (expanded() !== null) {
+      <jbh-icon class="jbh-nav-item__chevron" [name]="chevron()" />
+    }
+  </span>
+</ion-item>

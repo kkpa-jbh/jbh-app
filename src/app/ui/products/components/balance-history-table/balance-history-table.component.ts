@@ -1,16 +1,36 @@
 import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { IonicModule } from '@ionic/angular';
+import { NgClass } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { BalanceHistoryEntryModel } from '@core/domain/features/balance-history';
 import { JbhCurrencyPipe, JbhDatePipe, JbhGrowthPipe, JbhProfitPipe } from '@shared/pipes';
+import {
+  JbhTableCardDirective,
+  JbhTableCellComponent,
+  JbhTableComponent,
+  JbhTableHeadDirective,
+  JbhTableRowComponent,
+  JbhTableRowDirective
+} from '@design-system/components';
 
 @Component({
   selector: 'app-balance-history-table',
   templateUrl: './balance-history-table.component.html',
   styleUrls: ['./balance-history-table.component.scss'],
   standalone: true,
-  imports: [CommonModule, IonicModule, TranslateModule, JbhDatePipe, JbhCurrencyPipe, JbhProfitPipe, JbhGrowthPipe],
+  imports: [
+    NgClass,
+    TranslateModule,
+    JbhDatePipe,
+    JbhCurrencyPipe,
+    JbhProfitPipe,
+    JbhGrowthPipe,
+    JbhTableCardDirective,
+    JbhTableCellComponent,
+    JbhTableComponent,
+    JbhTableHeadDirective,
+    JbhTableRowComponent,
+    JbhTableRowDirective
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BalanceHistoryTableComponent implements OnChanges {

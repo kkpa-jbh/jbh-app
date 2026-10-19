@@ -1,0 +1,14 @@
+<div class="jbh-page-header__content">
+  @if (icon(); as iconName) {
+    <div class="jbh-page-header__icon">
+      <jbh-icon [name]="iconName" />
+    </div>
+  }
+  <div class="jbh-page-header__text">
+    <h1 class="jbh-page-header__title">{{ title() }}</h1>
+    @if (subtitle()) {
+      <p class="jbh-page-header__subtitle">{{ subtitle() }}</p>
+    }
+  </div>
+</div>
+<div class="jbh-page-header__actions"><ng-content /></div>

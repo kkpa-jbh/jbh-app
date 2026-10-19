@@ -1,50 +1,50 @@
-.products-overview-content {
-  --padding-top: var(--jbh-spacing-md);
-  --padding-bottom: var(--jbh-spacing-md);
+jbh-page {
+  --jbh-page-padding-top: var(--jbh-spacing-md);
+  --jbh-page-padding-bottom: var(--jbh-spacing-md);
 }
 
-.jbh-products-list {
+.overview-products-list {
   display: flex;
   flex-direction: column;
   gap: var(--jbh-spacing-md);
 }
 
-.jbh-product-card-skeleton {
+.overview-card-skeleton {
   background: var(--jbh-background-white);
   border-radius: var(--jbh-radius-lg);
   padding: var(--jbh-spacing-md);
   box-shadow: var(--jbh-shadow-md);
 }
 
-.jbh-skeleton-product-header {
+.overview-skeleton-header {
   display: flex;
   align-items: center;
   gap: var(--jbh-spacing-sm);
   margin-bottom: var(--jbh-spacing-md);
 }
 
-.jbh-skeleton-product-icon {
+.overview-skeleton-icon {
   width: 48px;
   height: 48px;
   border-radius: var(--jbh-radius-md);
 }
 
-.jbh-skeleton-product-info {
+.overview-skeleton-info {
   flex: 1;
 }
 
-.jbh-skeleton-product-name {
+.overview-skeleton-name {
   height: 20px;
   width: 60%;
   margin-bottom: var(--jbh-spacing-xs);
 }
 
-.jbh-skeleton-product-type {
+.overview-skeleton-type {
   height: 14px;
   width: 40%;
 }
 
-.jbh-skeleton-product-balances {
+.overview-skeleton-balances {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: var(--jbh-spacing-sm);
@@ -54,11 +54,11 @@
   }
 }
 
-.jbh-skeleton-balance {
+.overview-skeleton-balance {
   height: 48px;
 }
 
-.jbh-skeleton-product-footer {
+.overview-skeleton-footer {
   height: 32px;
   margin-top: var(--jbh-spacing-md);
 }
