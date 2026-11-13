@@ -1,14 +1,15 @@
 /**
- * Domain Model for a statement movement with its suggested category
+ * Domain Model for a movement saved by a statement import, with its category
  *
  * Mapping Flow: API Response → Domain Model
  */
 
-import { CategorizedMovementResponse } from '../api/responses/categorized-movement.response';
+import { StatementImportMovementResponse } from '../api/responses/statement-import-movement.response';
 import { StatementMovementDirection } from '../types/statement.types';
 
-export class CategorizedMovement {
+export class StatementImportMovement {
   constructor(
+    public readonly movementId: string,
     public readonly date: string,
     public readonly description: string,
     public readonly amount: number,
@@ -16,19 +17,20 @@ export class CategorizedMovement {
     public readonly categoryAlias: string,
     public readonly categoryDisplayName: Record<string, string>,
     public readonly confidence: number,
-    public readonly lowConfidence: boolean,
+    public readonly needsReview: boolean,
   ) {}
 
-  static fromApiResponse(response: CategorizedMovementResponse): CategorizedMovement {
-    return new CategorizedMovement(
+  static fromApiResponse(response: StatementImportMovementResponse): StatementImportMovement {
+    return new StatementImportMovement(
+      response.movementId,
       response.date,
       response.description,
       response.amount,
       response.direction,
-      response.categoryAlias,
-      response.categoryDisplayName,
+      response.category.alias,
+      response.category.displayName,
       response.confidence,
-      response.lowConfidence
+      response.needsReview
     );
   }
 }

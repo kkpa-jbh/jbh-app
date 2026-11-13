@@ -60,6 +60,12 @@ export class ProductListItem {
     return movementAllowedTypes.includes(this.type);
   }
 
+  /** Mirrors the backend rule `ProductType.allowsStatementImport()`. */
+  get allowsStatementImport(): boolean {
+    const statementImportAllowedTypes: ProductTypeCode[] = ['SAVINGS', 'CREDIT_CARD'];
+    return statementImportAllowedTypes.includes(this.type);
+  }
+
   getTypeIcon(): string {
     const iconMap: Partial<Record<ProductTypeCode, string>> = {
       'SAVINGS': 'wallet-outline',

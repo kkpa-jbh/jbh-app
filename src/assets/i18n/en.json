@@ -735,26 +735,50 @@
       "directionDebit": "Money out",
       "emptyResult": "No movements found in this PDF.",
       "errors": {
-        "generic": "The statement could not be processed. Try again."
+        "alreadyImported": "This statement was already imported into this product.",
+        "generic": "The statement could not be processed. Try again.",
+        "loadProducts": "The products could not be loaded. Try again."
+      },
+      "failure": {
+        "generic": "The import failed. No movements were saved. Try again.",
+        "noMovements": "No movements were found in this PDF. Nothing was saved.",
+        "timedOut": "The import took too long and was stopped. Nothing was saved. Try again."
       },
       "fileLabel": "Bank statement (PDF)",
-      "intro": "Upload a bank statement. We read its movements and suggest a category for each one. Nothing is saved.",
+      "intro": "Choose a product and upload its bank statement. We read the movements, suggest a category for each one, and save them in the product.",
       "lowConfidence": "Check this category",
+      "notSavedTitle": "Not saved",
       "passwordHint": "Only for locked PDFs. It is not saved.",
       "passwordLabel": "PDF password",
-      "processing": "Reading the statement. This can take up to a minute.",
-      "submit": "Read statement",
+      "processing": "Importing the statement…",
+      "processingHint": "Reading and saving the movements. This can take a few minutes. If you leave this page, the import keeps running.",
+      "product": {
+        "hint": "Only savings accounts and credit cards.",
+        "label": "Product",
+        "noneAllowed": "You have no savings account or credit card. Create one first.",
+        "placeholder": "Choose a product",
+        "required": "Choose a product."
+      },
+      "savedTitle": "Saved movements",
+      "skipReasons": {
+        "FUTURE_DATE": "Future date",
+        "OTHER_CURRENCY": "Other currency"
+      },
+      "submit": "Import statement",
+      "success": "{{count}} movements saved.",
+      "summary": "Saved: {{saved}} · Not saved: {{skipped}} · To check: {{review}}",
       "table": {
         "amount": "Amount",
         "category": "Category",
         "confidence": "Confidence",
         "date": "Date",
         "description": "Description",
-        "direction": "Type"
+        "direction": "Type",
+        "reason": "Reason"
       },
       "title": "Import Statement",
-      "totalsMismatch": "The movements do not add up to the balance change on the statement. Some rows may be missing or wrong.",
-      "totalsNotAvailable": "The statement shows no balances, so the totals could not be checked."
+      "totalsMismatch": "The {{currency}} movements do not add up to the balance change on the statement. Some rows may be missing or wrong.",
+      "totalsNotAvailable": "The statement shows no {{currency}} balances, so the totals could not be checked."
     },
     "recordMovement": {
       "title": "Record Movement"
