@@ -4,6 +4,7 @@ import { Observable, throwError, TimeoutError } from 'rxjs';
 import { catchError, retry, timeout } from 'rxjs/operators';
 import { EnvironmentConfig } from '../config/environment.config';
 import { LoggerService } from '../logging/logger.service';
+import { JBHError } from '@core/domain/models/jbh-error.model';
 
 export interface HttpOptions {
   headers?: HttpHeaders | { [header: string]: string | string[] };
@@ -104,8 +105,8 @@ export class ApiBaseService {
    * @param error - HTTP error response
    */
   private handleError(error: HttpErrorResponse | TimeoutError | Error): Observable<never> {
-    // Check if error was already processed by ErrorInterceptor (e.g., 422 business errors)
-    if (error instanceof Error && (error as Error & { status?: number }).status === 422) {
+    // The ErrorInterceptor already wrapped it. Keep it, so callers can read the status (404, 409, 422, ...).
+    if (error instanceof JBHError) {
       return throwError(() => error);
     }
 

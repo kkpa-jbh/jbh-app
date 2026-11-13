@@ -13,7 +13,24 @@
 
       <form [formGroup]="statementForm" (ngSubmit)="onSubmit()">
 
-        <div class="import-statement-file-field">
+        <div class="import-statement-field">
+          <label class="jbh-label">{{ 'transactions.importStatement.product.label' | translate }}</label>
+          <app-product-select
+            formControlName="productId"
+            [products]="products"
+            [isLoading]="isLoadingProducts"
+            [placeholder]="'transactions.importStatement.product.placeholder' | translate"
+            [hasError]="hasError('productId')"
+            [errorMessage]="'transactions.importStatement.product.required' | translate"
+          ></app-product-select>
+          @if (!isLoadingProducts && products.length === 0) {
+            <p class="jbh-field-hint">{{ 'transactions.importStatement.product.noneAllowed' | translate }}</p>
+          } @else {
+            <p class="jbh-field-hint">{{ 'transactions.importStatement.product.hint' | translate }}</p>
+          }
+        </div>
+
+        <div class="import-statement-field">
           <label class="jbh-label" for="statementFile">{{ 'transactions.importStatement.fileLabel' | translate }}</label>
           <input
             #fileInput
@@ -50,72 +67,128 @@
           block
           icon="cloud-upload-outline"
           [loading]="isProcessing"
-          [disabled]="!selectedFile || isProcessing"
+          [disabled]="!selectedFile || isProcessing || isLoadingProducts"
         >
           {{ (isProcessing ? 'transactions.importStatement.processing' : 'transactions.importStatement.submit') | translate }}
         </button>
+
+        @if (isProcessing) {
+          <jbh-alert tone="info" class="import-statement-processing">
+            {{ 'transactions.importStatement.processingHint' | translate }}
+          </jbh-alert>
+        }
       </form>
     </jbh-card>
 
-    @if (result) {
+    @if (result && !result.isProcessing) {
       <jbh-card variant="form" class="import-statement-result">
 
-        @if (result.hasTotalsMismatch) {
-          <jbh-alert tone="warning">{{ 'transactions.importStatement.totalsMismatch' | translate }}</jbh-alert>
+        @if (result.failureMessageKey) {
+          <jbh-alert tone="error">{{ result.failureMessageKey | translate }}</jbh-alert>
         }
 
-        @if (result.totalsNotAvailable) {
-          <jbh-alert tone="info">{{ 'transactions.importStatement.totalsNotAvailable' | translate }}</jbh-alert>
+        @if (result.summary; as summary) {
+          <jbh-alert tone="success">
+            {{ 'transactions.importStatement.summary' | translate: { saved: summary.savedCount, skipped: summary.skippedCount, review: summary.needsReviewCount } }}
+          </jbh-alert>
+
+          @for (check of summary.totalsChecks; track check.currency) {
+            @if (check.isMismatch) {
+              <jbh-alert tone="warning">{{ 'transactions.importStatement.totalsMismatch' | translate: { currency: check.currency } }}</jbh-alert>
+            }
+            @if (check.isNotAvailable) {
+              <jbh-alert tone="info">{{ 'transactions.importStatement.totalsNotAvailable' | translate: { currency: check.currency } }}</jbh-alert>
+            }
+          }
         }
 
-        @if (result.movements.length === 0) {
-          <jbh-empty-state
-            icon="document-text-outline"
-            [title]="'transactions.importStatement.emptyResult' | translate"
-          />
-        } @else {
-          <div class="import-statement-table-scroll">
-            <jbh-table
-              class="import-statement-table"
-              [rows]="result.movements"
-              [label]="'transactions.importStatement.title' | translate"
-            >
-              <ng-template jbhTableHead>
-                <jbh-table-row>
-                  <jbh-table-cell header class="import-statement-cell-date">{{ 'transactions.importStatement.table.date' | translate }}</jbh-table-cell>
-                  <jbh-table-cell header class="import-statement-cell-description">{{ 'transactions.importStatement.table.description' | translate }}</jbh-table-cell>
-                  <jbh-table-cell header class="import-statement-cell-amount">{{ 'transactions.importStatement.table.amount' | translate }}</jbh-table-cell>
-                  <jbh-table-cell header class="import-statement-cell-direction">{{ 'transactions.importStatement.table.direction' | translate }}</jbh-table-cell>
-                  <jbh-table-cell header class="import-statement-cell-category">{{ 'transactions.importStatement.table.category' | translate }}</jbh-table-cell>
-                  <jbh-table-cell header class="import-statement-cell-confidence">{{ 'transactions.importStatement.table.confidence' | translate }}</jbh-table-cell>
-                </jbh-table-row>
-              </ng-template>
+        @if (result.isDone) {
+          <h2 class="jbh-title import-statement-section-title">{{ 'transactions.importStatement.savedTitle' | translate }}</h2>
 
-              <ng-template jbhTableRow let-movement>
-                <jbh-table-row [class.import-statement-row-review]="movement.lowConfidence">
-                  <jbh-table-cell class="import-statement-cell-date">{{ movement.date | date:'mediumDate' }}</jbh-table-cell>
-                  <jbh-table-cell class="import-statement-cell-description">{{ movement.description }}</jbh-table-cell>
-                  <jbh-table-cell class="import-statement-cell-amount">{{ movement.amount | jbhCurrency }}</jbh-table-cell>
-                  <jbh-table-cell class="import-statement-cell-direction">
-                    {{ (movement.direction === 'CREDIT' ? 'transactions.importStatement.directionCredit' : 'transactions.importStatement.directionDebit') | translate }}
-                  </jbh-table-cell>
-                  <jbh-table-cell class="import-statement-cell-category">
-                    <span>{{ movement.categoryDisplayName | jbhDisplayName: movement.categoryAlias }}</span>
-                    @if (movement.lowConfidence) {
-                      <span class="jbh-status-badge status-pending import-statement-badge">
-                        <jbh-icon
-                          name="warning-outline"
-                          [label]="'transactions.importStatement.lowConfidence' | translate"
-                        />
-                        {{ 'transactions.importStatement.lowConfidence' | translate }}
-                      </span>
-                    }
-                  </jbh-table-cell>
-                  <jbh-table-cell class="import-statement-cell-confidence">{{ movement.confidence | percent:'1.0-0' }}</jbh-table-cell>
-                </jbh-table-row>
-              </ng-template>
-            </jbh-table>
-          </div>
+          @if (result.movements.length === 0) {
+            <jbh-empty-state
+              icon="document-text-outline"
+              [title]="'transactions.importStatement.emptyResult' | translate"
+            />
+          } @else {
+            <div class="import-statement-table-scroll">
+              <jbh-table
+                class="import-statement-table"
+                [rows]="result.movements"
+                [label]="'transactions.importStatement.savedTitle' | translate"
+              >
+                <ng-template jbhTableHead>
+                  <jbh-table-row>
+                    <jbh-table-cell header class="import-statement-cell-date">{{ 'transactions.importStatement.table.date' | translate }}</jbh-table-cell>
+                    <jbh-table-cell header class="import-statement-cell-description">{{ 'transactions.importStatement.table.description' | translate }}</jbh-table-cell>
+                    <jbh-table-cell header class="import-statement-cell-amount">{{ 'transactions.importStatement.table.amount' | translate }}</jbh-table-cell>
+                    <jbh-table-cell header class="import-statement-cell-direction">{{ 'transactions.importStatement.table.direction' | translate }}</jbh-table-cell>
+                    <jbh-table-cell header class="import-statement-cell-category">{{ 'transactions.importStatement.table.category' | translate }}</jbh-table-cell>
+                    <jbh-table-cell header class="import-statement-cell-confidence">{{ 'transactions.importStatement.table.confidence' | translate }}</jbh-table-cell>
+                  </jbh-table-row>
+                </ng-template>
+
+                <ng-template jbhTableRow let-movement>
+                  <jbh-table-row [class.import-statement-row-review]="movement.needsReview">
+                    <jbh-table-cell class="import-statement-cell-date">{{ movement.date | date:'mediumDate' }}</jbh-table-cell>
+                    <jbh-table-cell class="import-statement-cell-description">{{ movement.description }}</jbh-table-cell>
+                    <jbh-table-cell class="import-statement-cell-amount">{{ movement.amount | jbhCurrency }}</jbh-table-cell>
+                    <jbh-table-cell class="import-statement-cell-direction">
+                      {{ (movement.direction === 'CREDIT' ? 'transactions.importStatement.directionCredit' : 'transactions.importStatement.directionDebit') | translate }}
+                    </jbh-table-cell>
+                    <jbh-table-cell class="import-statement-cell-category">
+                      <span>{{ movement.categoryDisplayName | jbhDisplayName: movement.categoryAlias }}</span>
+                      @if (movement.needsReview) {
+                        <span class="jbh-status-badge status-pending import-statement-badge">
+                          <jbh-icon
+                            name="warning-outline"
+                            [label]="'transactions.importStatement.lowConfidence' | translate"
+                          />
+                          {{ 'transactions.importStatement.lowConfidence' | translate }}
+                        </span>
+                      }
+                    </jbh-table-cell>
+                    <jbh-table-cell class="import-statement-cell-confidence">{{ movement.confidence | percent:'1.0-0' }}</jbh-table-cell>
+                  </jbh-table-row>
+                </ng-template>
+              </jbh-table>
+            </div>
+          }
+        }
+
+        @if (result.summary; as summary) {
+          @if (summary.notSavedMovements.length > 0) {
+            <h2 class="jbh-title import-statement-section-title">{{ 'transactions.importStatement.notSavedTitle' | translate }}</h2>
+            <div class="import-statement-table-scroll">
+              <jbh-table
+                class="import-statement-table"
+                [rows]="summary.notSavedMovements"
+                [label]="'transactions.importStatement.notSavedTitle' | translate"
+              >
+                <ng-template jbhTableHead>
+                  <jbh-table-row>
+                    <jbh-table-cell header class="import-statement-cell-date">{{ 'transactions.importStatement.table.date' | translate }}</jbh-table-cell>
+                    <jbh-table-cell header class="import-statement-cell-description">{{ 'transactions.importStatement.table.description' | translate }}</jbh-table-cell>
+                    <jbh-table-cell header class="import-statement-cell-amount">{{ 'transactions.importStatement.table.amount' | translate }}</jbh-table-cell>
+                    <jbh-table-cell header class="import-statement-cell-direction">{{ 'transactions.importStatement.table.direction' | translate }}</jbh-table-cell>
+                    <jbh-table-cell header class="import-statement-cell-category">{{ 'transactions.importStatement.table.reason' | translate }}</jbh-table-cell>
+                  </jbh-table-row>
+                </ng-template>
+
+                <ng-template jbhTableRow let-movement>
+                  <jbh-table-row>
+                    <jbh-table-cell class="import-statement-cell-date">{{ movement.date | date:'mediumDate' }}</jbh-table-cell>
+                    <jbh-table-cell class="import-statement-cell-description">{{ movement.description }}</jbh-table-cell>
+                    <jbh-table-cell class="import-statement-cell-amount">{{ movement.amount | jbhCurrency: movement.currency }}</jbh-table-cell>
+                    <jbh-table-cell class="import-statement-cell-direction">
+                      {{ (movement.direction === 'CREDIT' ? 'transactions.importStatement.directionCredit' : 'transactions.importStatement.directionDebit') | translate }}
+                    </jbh-table-cell>
+                    <jbh-table-cell class="import-statement-cell-category">{{ 'transactions.importStatement.skipReasons.' + movement.reason | translate }}</jbh-table-cell>
+                  </jbh-table-row>
+                </ng-template>
+              </jbh-table>
+            </div>
+          }
         }
       </jbh-card>
     }

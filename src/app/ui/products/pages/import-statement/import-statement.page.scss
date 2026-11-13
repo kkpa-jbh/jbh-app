@@ -2,8 +2,20 @@ jbh-page {
   --jbh-page-background: var(--jbh-background-light);
 }
 
-.import-statement-file-field {
+.import-statement-field {
   margin-bottom: var(--jbh-spacing-md);
+}
+
+.import-statement-processing {
+  margin-top: var(--jbh-spacing-sm);
+}
+
+.import-statement-section-title {
+  margin: var(--jbh-spacing-md) 0 var(--jbh-spacing-sm);
+}
+
+.import-statement-result jbh-alert + jbh-alert {
+  margin-top: var(--jbh-spacing-xs);
 }
 
 .import-statement-file-input {
