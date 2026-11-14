@@ -1,34 +1,59 @@
-# Builds the jbh-web image (production build of the app + Caddy) and pushes it to GHCR,
-# tagged with the git SHA. Then, when the repo variable AUTO_DEPLOY is "true", deploys that exact image
-# (jbh-deploy CI.md, "Auto-deploy").
+# Image: builds the jbh-web image and pushes it to GHCR (GitHub Container Registry).
+# jbh-web = the production build of the app, served by Caddy (see Dockerfile).
+# The image is tagged with the git SHA, and also with "latest".
+#
+# When it runs:
+# - after every push to main (a merged PR is a push to main),
+# - or by hand, with the "Run workflow" button in the Actions tab.
+#
+# Steps, in order:
+# 1. Job "image": install, check the UI boundary, build the app, build and push the image,
+#    then delete old images.
+# 2. Job "deploy" (auto-deploy): only when the repo variable AUTO_DEPLOY is "true".
+#    It asks jbh-deploy to deploy that exact image (jbh-deploy CI.md, "Auto-deploy").
+
+# The name shown in the GitHub "Actions" tab.
 name: Image
 
 on:
+  # Adds a "Run workflow" button in the Actions tab, to build by hand.
   workflow_dispatch:
+  # Runs on every push to main.
   push:
     branches: [ main ]
 
+# What the automatic GITHUB_TOKEN may do in this run. Every permission not listed is "none".
+# - contents: read   -> download the code.
+# - packages: write  -> push the image to GHCR and delete old image versions.
 permissions:
   contents: read
   packages: write
 
 # One run at a time, in push order, so an older image never deploys after a newer one.
+# - group: image               -> all runs of this workflow share one queue.
+# - cancel-in-progress: false  -> a running build is never stopped halfway.
 # A newer waiting run replaces an older waiting one. That is fine: the newer commit has the older changes too.
 concurrency:
   group: image
   cancel-in-progress: false
 
 jobs:
+  # "image" is the job id. Each job gets a fresh, empty Ubuntu VM that is deleted after.
   image:
     runs-on: ubuntu-latest
     steps:
+      # The VM starts empty. This step downloads the code of this commit into it.
       - uses: actions/checkout@v4
 
+      # Installs Node.js 22. "cache: npm" saves the npm download cache between runs,
+      # so npm does not download every package again each time. The cache key comes from package-lock.json.
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
           cache: npm
 
+      # npm ci: installs the exact versions in package-lock.json, from a clean node_modules.
+      # It fails if package.json and package-lock.json do not match.
       - name: Install dependencies
         run: npm ci
 
@@ -36,16 +61,27 @@ jobs:
       - name: Check UI boundary
         run: npm run lint:boundary
 
-      # Output goes to www/ (angular.json outputPath.base). environment.prod.ts uses the relative /jbh-api.
+      # Production build of the Angular app.
+      # --configuration production: uses environment.prod.ts (the relative baseUrl /jbh-api) and optimizes the output.
+      # Output goes to www/ (angular.json outputPath.base). The Dockerfile copies it into the image.
       - name: Build app
         run: npx ng build --configuration production
 
+      # Logs in to GHCR, so the next step can push the image.
+      # - username: github.actor     -> the user or bot that started this run.
+      # - password: GITHUB_TOKEN     -> GitHub creates this token for each run; it is not a secret you add by hand.
+      #                                 "packages: write" above lets it push.
       - uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      # Builds the image from the Dockerfile and pushes it.
+      # - context: .   -> the repo root is the build context (www/ from the step before is inside it).
+      # - push: true   -> upload the image to GHCR after the build.
+      # - tags         -> two tags on the same image: the git SHA (what a deploy uses) and "latest"
+      #                   (what the local Docker stack in jbh-deploy uses).
       - uses: docker/build-push-action@v6
         with:
           context: .
@@ -57,6 +93,8 @@ jobs:
             ghcr.io/kkpa-jbh/jbh-web:latest
 
       # GitHub Free: 500 MB for private packages. Keep the 2 newest images: the running one and one to roll back to.
+      # - package-name / package-type: the GHCR package to clean (the jbh-web container image).
+      # - min-versions-to-keep: 2     -> deletes every version except the 2 newest.
       - name: Delete old images
         uses: actions/delete-package-versions@v5
         with:
@@ -64,18 +102,31 @@ jobs:
           package-type: container
           min-versions-to-keep: 2
 
-  # Starts the Deploy workflow in jbh-deploy for the image of this commit. It does not wait for the result:
+  # Auto-deploy. Starts the Deploy workflow in jbh-deploy for the image of this commit. It does not wait for the result:
   # see jbh-deploy → Actions → Deploy. A deploy that is not healthy goes back to the image from before by itself.
   # Off until the repo variable AUTO_DEPLOY is "true". DEPLOY_DISPATCH_TOKEN can only start workflows in jbh-deploy.
   deploy:
+    # Waits for the job "image". If "image" fails, this job does not run.
     needs: image
+    # Runs only when both are true:
+    # - vars.AUTO_DEPLOY == 'true'          -> repo variable (Settings → Secrets and variables → Actions → Variables).
+    # - github.ref == 'refs/heads/main'     -> a "Run workflow" by hand on another branch never deploys.
     if: vars.AUTO_DEPLOY == 'true' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    # The GITHUB_TOKEN gets no permissions here: this job uses DEPLOY_DISPATCH_TOKEN instead.
     permissions: {}
     steps:
       - name: Start Deploy jbh-web
         env:
+          # The gh CLI reads its token from GH_TOKEN.
+          # DEPLOY_DISPATCH_TOKEN: a repo secret you add by hand. It may only start workflows in jbh-deploy.
           GH_TOKEN: ${{ secrets.DEPLOY_DISPATCH_TOKEN }}
+        # gh api --method POST .../dispatches: starts the workflow deploy.yml in jbh-deploy (a "workflow_dispatch" event).
+        # - -f ref=main                          -> run the deploy.yml that is on main in jbh-deploy.
+        # - -f 'inputs[action]=deploy'           -> deploy (the other action is rollback).
+        # - -f 'inputs[service]=jbh-web'         -> deploy only jbh-web.
+        # - -f "inputs[tag]=$GITHUB_SHA"         -> the image tag: the SHA of this commit, pushed by the job "image".
+        # The echo line adds a link to the deploy run on this run's summary page.
         run: |
           gh api --method POST repos/kkpa-jbh/jbh-deploy/actions/workflows/deploy.yml/dispatches \
             -f ref=main -f 'inputs[action]=deploy' -f 'inputs[service]=jbh-web' -f "inputs[tag]=$GITHUB_SHA"
