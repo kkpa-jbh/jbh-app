@@ -3,7 +3,7 @@ import { provideAnimations } from '@angular/platform-browser/animations';
 import { RouteReuseStrategy, provideRouter, withPreloading, PreloadAllModules } from '@angular/router';
 import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalone';
 import { provideHttpClient, withInterceptorsFromDi, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { importProvidersFrom } from '@angular/core';
+import { ErrorHandler, importProvidersFrom } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 
@@ -27,6 +27,11 @@ import { StatementRepository } from './app/core/domain/repositories/statement.re
 import { StatementRepositoryImpl } from './app/core/infrastructure/repositories/statement.repository.impl';
 import { DevicePlatform } from './app/core/infrastructure/platform/device-platform';
 import { IonicDevicePlatform } from '@design-system/platform';
+import { initFaro } from './app/core/infrastructure/observability/faro.init';
+import { FaroErrorHandler } from './app/core/infrastructure/observability/faro-error-handler';
+
+// First, so the first HTTP call is already traced. Does nothing when observability is disabled.
+initFaro();
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -62,5 +67,8 @@ bootstrapApplication(AppComponent, {
 
     // Device questions go through a port; the UI layer answers them with Ionic
     { provide: DevicePlatform, useClass: IonicDevicePlatform },
+
+    // Reports unhandled errors to Faro, then logs them to the console as before
+    { provide: ErrorHandler, useClass: FaroErrorHandler },
   ],
 });

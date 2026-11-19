@@ -19,6 +19,12 @@ export const environment = {
   features: {
     enableLogging: true,
     enableDebugMode: true
+  },
+  observability: {
+    enabled: true,
+    collectorUrl: 'http://localhost:12347/collect',
+    appName: 'jbh-web',
+    environment: 'local'
   }
 };
 

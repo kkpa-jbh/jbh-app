@@ -1,0 +1,418 @@
+{
+  "schema_version": 1,
+  "kind": "change",
+  "change": "app-add-faro-observability",
+  "module": "app",
+  "roadmap": null,
+  "request": "JBH-55 section 7 \u2014 jbh-app browser traces, errors and web vitals with Grafana Faro. Plan: /Users/cristianpena/cpena/sw/github/kkpa-jbh/kkpa/tickets/JBH-55/JBH-55.md (section 7). Ticket: JBH-83 (record as git.ticket). Start from up-to-date main on a feature branch.",
+  "status": "in-progress",
+  "rollup": {
+    "current": [
+      "4.3"
+    ],
+    "pending": [],
+    "blocked": [],
+    "done": [
+      "1.1",
+      "1.2",
+      "1.3",
+      "1.4",
+      "2.1",
+      "2.2",
+      "2.3",
+      "2.4",
+      "3.1",
+      "3.2",
+      "3.3",
+      "4.1",
+      "4.2"
+    ]
+  },
+  "created_at": "2026-11-19T22:35:23Z",
+  "updated_at": "2026-11-19T22:39:37Z",
+  "leader": {
+    "assistant": "Claude Code",
+    "model": "claude-opus-5-5"
+  },
+  "git": {
+    "strategy": "auto",
+    "branch": "ft/CH2-JBH-83-app-add-faro-observability",
+    "base": "3572adf9d106131f39e4d942f1d501eeff5090aa",
+    "ticket": "JBH-83",
+    "ticket_url": "https://linear.app/kkpa/issue/JBH-83/jbh-app-browser-traces-errors-and-web-vitals-with-grafana-faro",
+    "ticket_tracker": "linear",
+    "created_at": "2026-11-19T21:31:00Z"
+  },
+  "test_first": {
+    "status": "skipped",
+    "commit": null,
+    "tests": [],
+    "approved_at": null
+  },
+  "tasks": [
+    {
+      "id": "1.1",
+      "title": "[leader] npm install --save-exact Faro 2.14.0 packages",
+      "module": "app",
+      "depends_on": [],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "leader",
+      "model": "claude-opus-5-5",
+      "started_at": "2026-11-19T22:36:00Z",
+      "completed_at": "2026-11-19T22:36:21Z",
+      "duration_seconds": 21,
+      "notes": "Installed both packages at exact 2.14.0; lockfile +387 lines. npm audit: no Faro/OTel advisory (85 old ones). Verified by the build at 4.2.",
+      "budget": null
+    },
+    {
+      "id": "1.2",
+      "title": "observability block in the three environment files",
+      "module": "app",
+      "depends_on": [],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "app",
+      "model": "sonnet",
+      "started_at": "2026-11-19T22:36:46Z",
+      "completed_at": "2026-11-19T22:37:42Z",
+      "duration_seconds": 56,
+      "notes": "observability block in 3 env files, D2 values; other fields unchanged.",
+      "budget": null
+    },
+    {
+      "id": "1.3",
+      "title": "faro-url.ts: stripUrlQueries, toPathTemplate",
+      "module": "app",
+      "depends_on": [],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "app",
+      "model": "sonnet",
+      "started_at": "2026-11-19T22:36:46Z",
+      "completed_at": "2026-11-19T22:37:42Z",
+      "duration_seconds": 56,
+      "notes": "faro-url.ts: pure stripUrlQueries and toPathTemplate, no imports.",
+      "budget": null
+    },
+    {
+      "id": "1.4",
+      "title": "image.yml: --define JBH_GIT_SHA",
+      "module": "app",
+      "depends_on": [],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "app",
+      "model": "sonnet",
+      "started_at": "2026-11-19T22:36:46Z",
+      "completed_at": "2026-11-19T22:37:42Z",
+      "duration_seconds": 56,
+      "notes": "Build app step passes --define JBH_GIT_SHA='$GITHUB_SHA', with comments.",
+      "budget": null
+    },
+    {
+      "id": "2.1",
+      "title": "faro-privacy.ts: scrubTransportItem",
+      "module": "app",
+      "depends_on": [
+        "1.3"
+      ],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "app",
+      "model": "sonnet",
+      "started_at": "2026-11-19T22:36:46Z",
+      "completed_at": "2026-11-19T22:37:42Z",
+      "duration_seconds": 56,
+      "notes": "faro-privacy.ts: scrubs meta and payload by key and URL text, OTLP attributes; fail closed.",
+      "budget": null
+    },
+    {
+      "id": "2.2",
+      "title": "faro-reporter.service.ts",
+      "module": "app",
+      "depends_on": [
+        "1.2",
+        "1.3"
+      ],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "app",
+      "model": "sonnet",
+      "started_at": "2026-11-19T22:36:46Z",
+      "completed_at": "2026-11-19T22:37:42Z",
+      "duration_seconds": 56,
+      "notes": "FaroReporterService + isReportableStatus; guards and try/catch; skips JBHError.",
+      "budget": null
+    },
+    {
+      "id": "2.3",
+      "title": "faro.init.ts: initFaro",
+      "module": "app",
+      "depends_on": [
+        "1.2",
+        "2.1"
+      ],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "app",
+      "model": "sonnet",
+      "started_at": "2026-11-19T22:36:46Z",
+      "completed_at": "2026-11-19T22:37:42Z",
+      "duration_seconds": 56,
+      "notes": "faro.init.ts: only initializeFaro call, after enabled guard; no setUser.",
+      "budget": null
+    },
+    {
+      "id": "2.4",
+      "title": "faro-error-handler.ts",
+      "module": "app",
+      "depends_on": [
+        "2.2"
+      ],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "app",
+      "model": "sonnet",
+      "started_at": "2026-11-19T22:36:46Z",
+      "completed_at": "2026-11-19T22:37:42Z",
+      "duration_seconds": 56,
+      "notes": "FaroErrorHandler: report, then Angular default handler.",
+      "budget": null
+    },
+    {
+      "id": "3.1",
+      "title": "main.ts: initFaro + ErrorHandler provider",
+      "module": "app",
+      "depends_on": [
+        "2.3",
+        "2.4"
+      ],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "app",
+      "model": "sonnet",
+      "started_at": "2026-11-19T22:36:46Z",
+      "completed_at": "2026-11-19T22:37:42Z",
+      "duration_seconds": 56,
+      "notes": "initFaro() before bootstrapApplication; ErrorHandler bound to FaroErrorHandler.",
+      "budget": null
+    },
+    {
+      "id": "3.2",
+      "title": "error.interceptor.ts: reportApiFailure call",
+      "module": "app",
+      "depends_on": [
+        "2.2"
+      ],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "app",
+      "model": "sonnet",
+      "started_at": "2026-11-19T22:36:46Z",
+      "completed_at": "2026-11-19T22:37:42Z",
+      "duration_seconds": 56,
+      "notes": "Lazy faroReporter getter + one call in catchError; extractLocalizedMessage untouched.",
+      "budget": null
+    },
+    {
+      "id": "3.3",
+      "title": "Observability section in .claude/CLAUDE.md",
+      "module": "app",
+      "depends_on": [
+        "1.2"
+      ],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "app",
+      "model": "sonnet",
+      "started_at": "2026-11-19T22:36:46Z",
+      "completed_at": "2026-11-19T22:37:42Z",
+      "duration_seconds": 56,
+      "notes": "Observability (Faro) section (~33 lines) + Key files tree entry.",
+      "budget": null
+    },
+    {
+      "id": "4.1",
+      "title": "npx eslint on changed src files",
+      "module": "app",
+      "depends_on": [
+        "3.1",
+        "3.2"
+      ],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "app",
+      "model": "sonnet",
+      "started_at": "2026-11-19T22:36:46Z",
+      "completed_at": "2026-11-19T22:37:57Z",
+      "duration_seconds": 71,
+      "notes": "eslint: 0 errors in new code; 2 old prefer-inject errors in error.interceptor constructor.",
+      "budget": null
+    },
+    {
+      "id": "4.2",
+      "title": "[leader] run V1-V5b",
+      "module": "app",
+      "depends_on": [
+        "1.1",
+        "4.1"
+      ],
+      "parallel_ok": false,
+      "status": "done",
+      "agent": "leader",
+      "model": "claude-opus-5-5",
+      "started_at": "2026-11-19T22:38:20Z",
+      "completed_at": "2026-11-19T22:39:00Z",
+      "duration_seconds": 40,
+      "notes": "V1-V5b pass. Bundle initial 1.71 MB raw / 371 kB transfer vs base 1.48 MB / 308 kB (+63 kB). 5 new CommonJS warnings from Faro deps. Complexity: no new function >10.",
+      "budget": null
+    },
+    {
+      "id": "4.3",
+      "title": "[user] run M1-M8 in the browser",
+      "module": "app",
+      "depends_on": [
+        "4.2"
+      ],
+      "parallel_ok": false,
+      "status": "awaiting-user-verification",
+      "agent": "user",
+      "model": null,
+      "started_at": null,
+      "completed_at": null,
+      "duration_seconds": null,
+      "notes": "M1-M8 browser checks need the local stack (Alloy) and ionic serve; the user runs them.",
+      "budget": null
+    }
+  ],
+  "review": {
+    "status": "pending",
+    "agent": null,
+    "brief": null,
+    "rounds": []
+  },
+  "decisions": [
+    {
+      "id": "D1",
+      "at": "2026-11-19T22:35:23Z",
+      "scope": "change",
+      "made_by": "user",
+      "decision": "Complexity-Check = ESLint cyclomatic 10 (no sonarjs)",
+      "why": "Key was missing; cognitive check needs a new devDependency, out of scope.",
+      "covered_by": null
+    },
+    {
+      "id": "D2",
+      "at": "2026-11-19T22:35:23Z",
+      "scope": "change",
+      "made_by": "user",
+      "decision": "traceparent same-origin only: propagateTraceHeaderCorsUrls []",
+      "why": "No custom propagation code; no other host gets the header.",
+      "covered_by": null
+    },
+    {
+      "id": "D3",
+      "at": "2026-11-19T22:35:23Z",
+      "scope": "change",
+      "made_by": "user",
+      "decision": "App version = GITHUB_SHA via ng build --define, fallback dev",
+      "why": "No script or generated file needed.",
+      "covered_by": null
+    },
+    {
+      "id": "D4",
+      "at": "2026-11-19T22:35:23Z",
+      "scope": "change",
+      "made_by": "user",
+      "decision": "No console capture; beforeSend strips query and fragment from all URLs; no setUser",
+      "why": "Plan privacy rule; ErrorHandler covers errors.",
+      "covered_by": null
+    },
+    {
+      "id": "D5",
+      "at": "2026-11-19T22:35:23Z",
+      "scope": "change",
+      "made_by": "leader",
+      "decision": "test_first skipped; Test-First: off in dispatches",
+      "why": "Ticket plan excludes unit tests (user, 2026-11-15); repo forbids spec.ts outside design-system and core/formatting.",
+      "covered_by": null
+    },
+    {
+      "id": "D6",
+      "at": "2026-11-19T22:35:23Z",
+      "scope": "concurrency",
+      "made_by": "leader",
+      "decision": "No race risk found in any task",
+      "why": "Synchronous init before bootstrap; reporter and hook are stateless.",
+      "covered_by": null
+    },
+    {
+      "id": "D7",
+      "at": "2026-11-19T22:35:23Z",
+      "scope": "change",
+      "made_by": "user",
+      "decision": "Size cap exceeded (~1000 lines, 550 lockfile): accepted",
+      "why": "Without the lockfile it is under the cap.",
+      "covered_by": null
+    },
+    {
+      "id": "D8",
+      "at": "2026-11-19T22:35:23Z",
+      "scope": "change",
+      "made_by": "user",
+      "decision": "Trace id gap on api_request_failed accepted; check in M5",
+      "why": "Follow-up XHR hook only if the id is really missing.",
+      "covered_by": null
+    },
+    {
+      "id": "D9",
+      "at": "2026-11-19T22:35:23Z",
+      "scope": "change",
+      "made_by": "user",
+      "decision": "Report status 0, 403, 404, other 4xx, 5xx; skip 401 and 422; ErrorHandler skips JBHError",
+      "why": "401 is token refresh, 422 is form validation.",
+      "covered_by": null
+    },
+    {
+      "id": "D10",
+      "at": "2026-11-19T22:35:23Z",
+      "scope": "change",
+      "made_by": "leader",
+      "decision": "No grill for SRP or performance",
+      "why": "SRP split is clear (one file per job in design.md); no DB, no performance profile.",
+      "covered_by": null
+    },
+    {
+      "id": "D11",
+      "at": "2026-11-19T22:36:21Z",
+      "scope": "change",
+      "made_by": "leader",
+      "decision": "Tasks 1.2-3.3 and 4.1 batched into ONE serial worker dispatch (waves 1-3)",
+      "why": "Small files, chained deps; one dispatch reads the doc pack once. Parallel workers would re-read it and drain the bucket.",
+      "covered_by": null
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-11-19T22:35:23Z",
+      "agent": "leader",
+      "event": "artifacts committed 8ad659c; progress.json created"
+    },
+    {
+      "at": "2026-11-19T22:36:21Z",
+      "agent": "leader",
+      "event": "dispatched app worker (sonnet) for 1.2-3.3, 4.1; budget 5h=49% ctx=19% cost=3.468195300000001"
+    },
+    {
+      "at": "2026-11-19T22:39:00Z",
+      "agent": "leader",
+      "event": "verified by the leader (assistantRunsTests): npm run lint:boundary exit 0; eslint new files 0 errors; complexity check no new function >10; ng build --configuration production --define JBH_GIT_SHA='abc123' exit 0 (SHA in main bundle); ng build --configuration production exit 0"
+    },
+    {
+      "at": "2026-11-19T22:39:37Z",
+      "agent": "leader",
+      "event": "wave 1 reconciled (tasks 1.1-4.2 done; 4.3 awaits the user); budget 5h=53% ctx=21% cost=4.609232900000001"
+    }
+  ]
+}

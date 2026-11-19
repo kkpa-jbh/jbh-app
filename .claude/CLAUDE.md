@@ -54,6 +54,8 @@ src/app/core/infrastructure/
 ├── interceptors/
 │   ├── jwt.interceptor.ts       # Adds Authorization header, proactive refresh
 │   └── error.interceptor.ts     # Handles 401, 403, 422, any status errors.
+├── observability/               # Faro: faro.init.ts, faro-privacy.ts, faro-url.ts,
+│                                # faro-reporter.service.ts, faro-error-handler.ts
 ├── persistence/
 │   └── token-storage.service.ts # Secure token storage (Capacitor Preferences)
 └── repositories/
@@ -607,6 +609,40 @@ ionic cap run ios -l     # iOS live reload
 ionic cap run android -l # Android live reload
 ionic build --prod       # Production
 ```
+
+## Observability (Faro)
+
+Faro sends browser data to a collector. Code: `src/app/core/infrastructure/observability/`.
+
+**Signals**
+- Traces: browser spans linked to the gateway trace.
+- Errors: window errors, and Angular errors through `FaroErrorHandler`.
+- Web vitals and page timings.
+- Event `api_request_failed` with `status`, `method`, `path_template`. Sent for status 0, 403, 404, other 4xx and 5xx. Not for 401 and 422.
+
+**Config** (`observability` in each `src/environments/*.ts`)
+
+| File | enabled | environment |
+|---|---|---|
+| `environment.ts` | `true` (collector `http://localhost:12347/collect`) | `local` |
+| `environment.prod.ts` | `false` until JBH-84 | `prod` |
+| `environment.stg.ts` | `false`, empty URL | `stg` |
+
+**Rules**
+- `enabled: false` means no Faro call, no patch of `fetch` or `XMLHttpRequest`, no request.
+- `initFaro()` runs first in `src/main.ts`, before `bootstrapApplication`.
+- Only `FaroReporterService` and `faro.init.ts` call Faro. Every call is in `try/catch`.
+- Privacy: no `setUser`, no console capture, no email, token or `Authorization` in events.
+- The `beforeSend` hook removes `?query` and `#fragment` from every URL. If it fails, the event is dropped.
+- Do not put personal data in error messages. They are sent as written.
+- `traceparent` goes to the same origin only (`propagateTraceHeaderCorsUrls: []`). Do not add hosts.
+- App version is `JBH_GIT_SHA`, set by `--define` in `image.yml`. It is `dev` in local builds.
+- No Alloy running locally? Set `enabled: false` in `environment.ts`. Do not commit it.
+
+**Local check** (Alloy up, `ionic serve`)
+1. Header: in DevTools Network, every `/jbh-api/*` request has `traceparent`. `collect` and Google requests have none.
+2. Query: open `/?probe=SECRET1#frag1`, call the API. A `collect` payload has no `SECRET1`.
+3. Failure: stop the gateway, call the API. A `collect` payload has `api_request_failed` with `status` 0.
 
 ### Deploy
 

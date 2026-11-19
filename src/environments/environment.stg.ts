@@ -14,5 +14,11 @@ export const environment = {
   features: {
     enableLogging: true,
     enableDebugMode: true
+  },
+  observability: {
+    enabled: false,
+    collectorUrl: '',
+    appName: 'jbh-web',
+    environment: 'stg'
   }
 };

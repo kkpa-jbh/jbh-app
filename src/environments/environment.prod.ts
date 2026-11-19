@@ -15,5 +15,11 @@ export const environment = {
   features: {
     enableLogging: false,
     enableDebugMode: false
+  },
+  observability: {
+    enabled: false,
+    collectorUrl: 'https://faro-collector-prod-sa-east-1.grafana.net/collect/8f35433c4b772e526d0ec81d2532faf3',
+    appName: 'jbh-web',
+    environment: 'prod'
   }
 };
