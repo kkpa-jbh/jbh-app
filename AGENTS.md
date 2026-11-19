@@ -10,5 +10,8 @@ The project rules live in `.claude/CLAUDE.md`. Read it before you change code.
 - **Test-Execution-Policy:** `assistant MAY run eslint only (npx eslint <paths> or npx ng lint)
   — a static check that builds nothing. Never ng build, ng test, npm test, npm run build,
   ionic build or ionic serve: the user runs builds and tests and reports the results.`
+- **Complexity-Check:** `ESLINT_USE_FLAT_CONFIG=false npx eslint --no-eslintrc --parser @typescript-eslint/parser
+  --parser-options '{"ecmaVersion":2022,"sourceType":"module"}' --rule '{"complexity":["error",10]}' "src/**/*.ts"`
+  (cyclomatic only; cognitive complexity needs `eslint-plugin-sonarjs`, not installed)
 - **Design-Gates:** `database`
 - **Git-Strategy:** `auto`
