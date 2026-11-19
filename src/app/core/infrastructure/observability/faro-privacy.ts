@@ -1,5 +1,5 @@
 import { TransportItem } from '@grafana/faro-web-sdk';
-import { stripUrlQueries } from './faro-url';
+import { redactEmailSegments, stripUrlQueries } from './faro-url';
 
 // Values of these keys are removed.
 const DROP_KEYS: ReadonlySet<string> = new Set(['url.query', 'http.query']);
@@ -41,7 +41,7 @@ function scrubString(value: string, key?: string): string {
     return '';
   }
   const text = key !== undefined && CUT_KEYS.has(key) ? value.split(/[?#]/, 1)[0] : value;
-  return stripUrlQueries(text);
+  return redactEmailSegments(stripUrlQueries(text));
 }
 
 function scrubObject(obj: PlainObject, contextKey?: string): PlainObject {

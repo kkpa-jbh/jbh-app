@@ -610,6 +610,12 @@ ionic cap run android -l # Android live reload
 ionic build --prod       # Production
 ```
 
+### Deploy
+
+A merge into `main` builds the `jbh-web` image (`.github/workflows/image.yml`).
+When the repo variable `AUTO_DEPLOY` is `true`, that image then goes live by itself on jbh.usemagus.cloud.
+So merge only what works in the production build. Details: `../jbh-deploy/CI.md`, "Auto-deploy".
+
 ## Observability (Faro)
 
 Faro sends browser data to a collector. Code: `src/app/core/infrastructure/observability/`.
@@ -634,6 +640,7 @@ Faro sends browser data to a collector. Code: `src/app/core/infrastructure/obser
 - Only `FaroReporterService` and `faro.init.ts` call Faro. Every call is in `try/catch`.
 - Privacy: no `setUser`, no console capture, no email, token or `Authorization` in events.
 - The `beforeSend` hook removes `?query` and `#fragment` from every URL. If it fails, the event is dropped.
+- Path segments with an email (`@` or `%40`) become `{id}`, in every event and span.
 - Do not put personal data in error messages. They are sent as written.
 - `traceparent` goes to the same origin only (`propagateTraceHeaderCorsUrls: []`). Do not add hosts.
 - App version is `JBH_GIT_SHA`, set by `--define` in `image.yml`. It is `dev` in local builds.
@@ -643,12 +650,6 @@ Faro sends browser data to a collector. Code: `src/app/core/infrastructure/obser
 1. Header: in DevTools Network, every `/jbh-api/*` request has `traceparent`. `collect` and Google requests have none.
 2. Query: open `/?probe=SECRET1#frag1`, call the API. A `collect` payload has no `SECRET1`.
 3. Failure: stop the gateway, call the API. A `collect` payload has `api_request_failed` with `status` 0.
-
-### Deploy
-
-A merge into `main` builds the `jbh-web` image (`.github/workflows/image.yml`).
-When the repo variable `AUTO_DEPLOY` is `true`, that image then goes live by itself on jbh.usemagus.cloud.
-So merge only what works in the production build. Details: `../jbh-deploy/CI.md`, "Auto-deploy".
 
 ## Documentation
 

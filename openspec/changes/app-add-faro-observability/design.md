@@ -107,7 +107,7 @@ Faro adds the transport URL to the tracing `ignoreUrls` (checked in `TracingInst
   2. An OTLP attribute `{ key, value: { stringValue } }` is cleaned with its `key`. For any other object, the key of each property is used.
   3. Arrays are mapped. Numbers, booleans and `null` pass unchanged.
 - Fail closed: the hook runs in `try/catch` and returns `null` (drop the event) on any error. A missing event is better than a leaked query.
-- The path (`/products/<uuid>`) is kept. Only the query and the fragment are personal data risks (invitation tokens and similar). Paths use UUIDs, not names or emails.
+- The path (`/products/<uuid>`) is kept, except path segments that hold an email. `deleteMember` calls `teams/{teamId}/members/{email}`, so a segment with text on both sides of `@` or `%40` becomes `{id}`, in `toPathTemplate` and in every scrubbed string (review round 1, R1). The query and the fragment are removed (invitation tokens and similar).
 - Not covered: free text in an error message that the app itself writes (for example, a validation text with a name). Mitigation: `JBHError` is not reported by the handler (D10), and the docs tell developers not to put personal data in error messages.
 
 ### D10: ErrorHandler, error interceptor and reporter

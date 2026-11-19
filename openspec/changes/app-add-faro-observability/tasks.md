@@ -33,4 +33,9 @@ Rules for every task:
 - [ ] 4.2 [leader] Run V1, V2, V3, V4, V5a and V5b of design.md. Record the complexity result of the project's check for `FaroReporterService`, `scrubTransportItem` and its helpers. Depends on 1.1, 4.1.
 - [ ] 4.3 [user] Run M1 to M8 of design.md and report the results, including whether `api_request_failed` has a `trace` field (M5). Depends on 4.2 and on the local stack (Alloy) running.
 
+
+## 5. Review round 1 fixes
+
+- [x] 5.1 [leader] R1: path segments with an email (`@` or `%40`) become `{id}` in `toPathTemplate` and in the `beforeSend` scrub (`redactEmailSegments`). R2: move the "Observability (Faro)" section of `.claude/CLAUDE.md` after "Deploy". Depends on 4.2.
+
 Size estimate: 14 files, ~1000 changed lines (tests and docs included; about 550 of them are in `package-lock.json`)
