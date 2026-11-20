@@ -8,6 +8,7 @@ import { IS_PUBLIC_API } from './jwt.interceptor';
 import { LoggerService } from '../logging/logger.service';
 import { TranslationService } from '../i18n/translation.service';
 import { JBHError } from '@core/domain/models/jbh-error.model';
+import { FaroReporterService } from '../observability/faro-reporter.service';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
@@ -15,6 +16,7 @@ export class ErrorInterceptor implements HttpInterceptor {
   private _logger: LoggerService | null = null;
   private _translationService: TranslationService | null = null;
   private _tokenRefreshService: TokenRefreshService | null = null;
+  private _faroReporter: FaroReporterService | null = null;
 
   constructor(
     private tokenStorage: TokenStorageService,
@@ -42,9 +44,17 @@ export class ErrorInterceptor implements HttpInterceptor {
     return this._tokenRefreshService;
   }
 
+  private get faroReporter(): FaroReporterService {
+    if (!this._faroReporter) {
+      this._faroReporter = this.injector.get(FaroReporterService);
+    }
+    return this._faroReporter;
+  }
+
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
+        this.faroReporter.reportApiFailure(request, error.status);
         const isPublicApi = request.context.get(IS_PUBLIC_API);
 
         if (error.status === 422) {

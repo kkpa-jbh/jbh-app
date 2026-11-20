@@ -64,8 +64,11 @@ jobs:
       # Production build of the Angular app.
       # --configuration production: uses environment.prod.ts (the relative baseUrl /jbh-api) and optimizes the output.
       # Output goes to www/ (angular.json outputPath.base). The Dockerfile copies it into the image.
+      # --define JBH_GIT_SHA: the builder pastes this value into the code as the app version that Faro sends.
+      # It is the commit SHA, the same value as the image tag and the backend service.version.
+      # The inner single quotes are required: the builder pastes the value as code, so a string must be quoted.
       - name: Build app
-        run: npx ng build --configuration production
+        run: npx ng build --configuration production --define "JBH_GIT_SHA='$GITHUB_SHA'"
 
       # Logs in to GHCR, so the next step can push the image.
       # - username: github.actor     -> the user or bot that started this run.
