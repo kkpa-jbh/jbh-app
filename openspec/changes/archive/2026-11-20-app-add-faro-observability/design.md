@@ -123,7 +123,8 @@ Faro adds the transport URL to the tracing `ignoreUrls` (checked in `TracingInst
 ### D11: Fail safe
 
 - `internalLoggerLevel: InternalLoggerLevel.OFF`: Faro writes no line of its own, also when the collector is down.
-- `batching: { enabled: true, sendTimeout: 5000, itemLimit: 50 }`: with the collector down, there is at most one failed request every 5 seconds, not one every 250 ms (the default). Batches flush when the tab is hidden.
+- `batching: { enabled: true, sendTimeout: 5000, itemLimit: 50 }`: a batch goes out at most every 5 seconds, and only when it has data. The default is every 250 ms. Batches flush when the tab is hidden.
+- Retries stay on (user decision after M7). Faro's `FetchTransport` tries a failed batch up to 3 times, after about 1 s and 2 s. So with the collector down, each batch gives up to 3 failed requests. M7 measured 21 in 56 s. The retries keep data when the prod collector has a short problem.
 - Every call into Faro from app code is in `try/catch` (`initFaro`, reporter, hook).
 - Limit: the browser itself prints a red `net::ERR_CONNECTION_REFUSED` line in DevTools for each failed batch. No code can hide it. Local developers without Alloy can set `enabled: false`; the docs say so.
 
@@ -168,7 +169,7 @@ No unit tests. These are the checks and their expected results. The leader or th
 | M4 No personal data | Sign in with a test email. Search `collect` payloads for the email, `Authorization` and `Bearer` | 0 matches; the `meta` has no `user` object |
 | M5 API failure | Stop the gateway, trigger an API call | an `api_request_failed` event with `status=0`, the `method` and a `path_template` such as `/jbh-api/products/{id}`; the app shows its usual error. Note if the event has a `trace` field (D10 limit) |
 | M6 Error handler | Temporarily throw in a click handler (do not commit). Click it | one exception in Faro; the console still shows Angular's error line |
-| M7 Collector down | Stop Alloy, use the app for a minute | the app works; no `[Faro]` line in the console; failed `collect` requests come at most every 5 s |
+| M7 Collector down | Stop Alloy, use the app for a minute | the app works; no `[Faro]` line in the console; each batch (at most one every 5 s) gives at most 3 failed `collect` requests |
 | M8 Version | In the `collect` payload, read `meta.app.version` | `dev` with `ionic serve`; the SHA for the CI image |
 
 ## Responsibilities
@@ -204,7 +205,7 @@ Checked paths:
 
 - A Faro or OpenTelemetry upgrade may change the attribute names of spans. Mitigation: pinned version (D1), and the hook cleans by URL text too, not only by key.
 - Bundle size grows, also with Faro off (D3). Mitigation: the leader's production build checks the budget.
-- Trace id on `api_request_failed` may be missing (D10). Accepted for now; M5 checks it.
+- Trace id on `api_request_failed` is missing (D10). M5 confirmed it: the event is sent after the request ends, so no trace is active. The request's own span (`faro.tracing.xml-http-request`) has the `trace` field, with the same URL and almost the same time. Accepted.
 - Free text inside app-written error messages is not cleaned (D9). Accepted; documented.
 
 ## Database

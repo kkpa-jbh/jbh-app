@@ -4,12 +4,10 @@
   "change": "app-add-faro-observability",
   "module": "app",
   "roadmap": null,
-  "request": "JBH-55 section 7 \u2014 jbh-app browser traces, errors and web vitals with Grafana Faro. Plan: /Users/cristianpena/cpena/sw/github/kkpa-jbh/kkpa/tickets/JBH-55/JBH-55.md (section 7). Ticket: JBH-83 (record as git.ticket). Start from up-to-date main on a feature branch.",
-  "status": "changes-requested",
+  "request": "JBH-55 section 7 — jbh-app browser traces, errors and web vitals with Grafana Faro. Plan: /Users/cristianpena/cpena/sw/github/kkpa-jbh/kkpa/tickets/JBH-55/JBH-55.md (section 7). Ticket: JBH-83 (record as git.ticket). Start from up-to-date main on a feature branch.",
+  "status": "reviewer-approved",
   "rollup": {
-    "current": [
-      "4.3"
-    ],
+    "current": [],
     "pending": [],
     "blocked": [],
     "done": [
@@ -26,11 +24,12 @@
       "3.3",
       "4.1",
       "4.2",
-      "5.1"
+      "5.1",
+      "4.3"
     ]
   },
   "created_at": "2026-11-19T22:35:23Z",
-  "updated_at": "2026-11-19T22:43:51Z",
+  "updated_at": "2026-11-20T11:25:51Z",
   "leader": {
     "assistant": "Claude Code",
     "model": "claude-opus-5-5"
@@ -277,13 +276,13 @@
         "4.2"
       ],
       "parallel_ok": false,
-      "status": "awaiting-user-verification",
+      "status": "done",
       "agent": "user",
       "model": null,
-      "started_at": null,
-      "completed_at": null,
-      "duration_seconds": null,
-      "notes": "M1-M8 browser checks need the local stack (Alloy) and ionic serve; the user runs them.",
+      "started_at": "2026-11-20T02:30:00Z",
+      "completed_at": "2026-11-20T11:25:51Z",
+      "duration_seconds": 32151,
+      "notes": "All M1-M8 pass. User ran M2-M4; leader ran M1, M5-M8 with Playwright on the user's stack. M5: no trace field on api_request_failed. M7: 21 failed collect in 56 s (3 retries per batch), see D13.",
       "budget": null
     },
     {
@@ -305,7 +304,7 @@
     }
   ],
   "review": {
-    "status": "changes-requested",
+    "status": "approved",
     "agent": "app-reviewer",
     "brief": "JBH-55 s7 / JBH-83, Faro in jbh-app. Base 3572adf. User decisions (binding): traceparent same-origin only, propagateTraceHeaderCorsUrls []; version = GITHUB_SHA via ng build --define, fallback dev; no console capture; beforeSend strips query+fragment from all URLs, fail closed; no setUser; report status 0/403/404/other 4xx/5xx, skip 401/422, ErrorHandler skips JBHError; trace id gap on api_request_failed accepted (M5 checks); size cap accepted; no unit tests (plan + repo rule). Prod enabled:false until JBH-84. Check hard: (1) Faro fully off when enabled:false (no initializeFaro, no patching); (2) no traceparent to any other host; (3) privacy scrub covers every Faro item type incl. OTLP span attributes, page meta, resource timings, navigation/view events with relative URLs; (4) ErrorHandler keeps today's console behaviour; (5) interceptor behaviour unchanged; (6) image.yml comment style and --define quoting; (7) .claude/CLAUDE.md placement: new '## Observability (Faro)' sits before '### Deploy', breaking the heading tree. Signals: assistant-run by the leader: lint:boundary exit 0, eslint (only 2 old prefer-inject errors), complexity check (no new >10), 2 prod builds exit 0, SHA in bundle. Bundle +63 kB transfer (+230 kB raw), 5 new CommonJS warnings. Not run: M1-M8 browser checks (user, task 4.3). Security-Gate: skip (user decision D12).",
     "rounds": [
@@ -326,7 +325,7 @@
             "id": "R1",
             "lens": "risk",
             "severity": "major",
-            "status": "open",
+            "status": "fixed",
             "note": "faro-url.ts:20 toPathTemplate and faro-privacy.ts:41 scrubString: only numeric/UUID segments are templated, and span URL paths are never touched. DELETE teams/{teamId}/members/{email} (team.repository.impl.ts:56) puts the member email in the path. It reaches Faro in api_request_failed.path_template and in OTLP span http.url / http.target. Breaks the ticket rule 'no email in Faro events' and design.md:110 ('Paths use UUIDs, not names or emails') is wrong. Fix: also template segments with '@' or '%40' (and decide on other non-id segments), and apply the same segment redaction to URL-valued keys (url, url.full, http.url, http.target, name) in the beforeSend scrub. Re-check M4 for this call.",
             "triage": "accepted"
           },
@@ -334,11 +333,25 @@
             "id": "R2",
             "lens": "conventions",
             "severity": "minor",
-            "status": "open",
+            "status": "fixed",
             "note": ".claude/CLAUDE.md:613: new '## Observability (Faro)' sits before '### Deploy', so Deploy now becomes a child of Observability. Move the section after Deploy (before '## Documentation').",
             "triage": "accepted"
           }
         ]
+      },
+      {
+        "round": 2,
+        "at": "2026-11-19T23:10:00Z",
+        "reviewer": "app-reviewer",
+        "verdict": "approved",
+        "security": {
+          "status": "skipped",
+          "ran_at": "2026-11-19T23:10:00Z",
+          "scope": "git.base",
+          "findings": [],
+          "note": "Skipped by user decision D12 (Security-Gate: skip). Privacy reviewed under the risk lens."
+        },
+        "findings": []
       }
     ]
   },
@@ -450,6 +463,15 @@
       "decision": "Security-Gate: skip",
       "why": "User chose to skip /security-review (asked as Type A; leader recommended run because of new deps, CI step, privacy hook).",
       "covered_by": null
+    },
+    {
+      "id": "D13",
+      "at": "2026-11-20T11:25:51Z",
+      "scope": "task:4.3",
+      "made_by": "user",
+      "decision": "Keep Faro FetchTransport retries (3 attempts); fix D11 and M7 text in design.md only",
+      "why": "M7 showed up to 3 failed requests per batch, not 1 per 5 s. Retries keep data on short prod collector problems; load stays bounded.",
+      "covered_by": null
     }
   ],
   "events": [
@@ -492,6 +514,16 @@
       "at": "2026-11-19T22:43:51Z",
       "agent": "leader",
       "event": "round 1 triage: R1 accepted (confirmed: team.repository.impl.ts deleteMember puts the email in the path), R2 accepted; fixed by the leader. Checks: eslint observability exit 0, lint:boundary exit 0, complexity no new, ng build production --define exit 0"
+    },
+    {
+      "at": "2026-11-20T11:25:51Z",
+      "agent": "user",
+      "event": "task 4.3 browser checks M1-M8 reported pass (M2-M4 by the user, rest by the leader with Playwright on the user's stack)"
+    },
+    {
+      "at": "2026-11-20T11:25:51Z",
+      "agent": "leader",
+      "event": "design.md updated after review (docs only): D11 retry note, M7 expected result, M5 trace finding in Risks. No code change."
     }
   ]
 }

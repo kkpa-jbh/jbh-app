@@ -9,7 +9,7 @@ Rules for every task:
 
 ## 1. Wave 1 — Setup (1.1 to 1.4 run in parallel)
 
-- [ ] 1.1 [leader] Run `npm install --save-exact @grafana/faro-web-sdk@2.14.0 @grafana/faro-web-tracing@2.14.0`. `package.json` must show `"2.14.0"` for both, with no `^` or `~`, and `package-lock.json` must change (D1).
+- [x] 1.1 [leader] Run `npm install --save-exact @grafana/faro-web-sdk@2.14.0 @grafana/faro-web-tracing@2.14.0`. `package.json` must show `"2.14.0"` for both, with no `^` or `~`, and `package-lock.json` must change (D1).
 - [x] 1.2 Add the `observability` block to `src/environments/environment.ts`, `environment.prod.ts` and `environment.stg.ts` with the values of the D2 table. Do not change other fields.
 - [x] 1.3 Create `src/app/core/infrastructure/observability/faro-url.ts` with `stripUrlQueries(text: string): string` (removes `?...` and `#...` from every `http://` or `https://` URL inside the text) and `toPathTemplate(url: string): string` (path only, numeric and UUID segments become `{id}`, returns `/unknown` for a URL that does not parse) (D9, D10). Pure functions, no import.
 - [x] 1.4 Edit `.github/workflows/image.yml`: the `Build app` step runs `npx ng build --configuration production --define "JBH_GIT_SHA='$GITHUB_SHA'"`. Extend the step comment (what `--define` does, why the SHA, why the inner quotes) in the file's comment style (D8).
@@ -30,8 +30,8 @@ Rules for every task:
 ## 4. Wave 4 — Checks
 
 - [x] 4.1 `npx eslint` on every file created or changed in `src/`. Result: 0 errors in the new files, no new error in `error.interceptor.ts` (report any old `prefer-inject` error as old). Depends on 3.1, 3.2.
-- [ ] 4.2 [leader] Run V1, V2, V3, V4, V5a and V5b of design.md. Record the complexity result of the project's check for `FaroReporterService`, `scrubTransportItem` and its helpers. Depends on 1.1, 4.1.
-- [ ] 4.3 [user] Run M1 to M8 of design.md and report the results, including whether `api_request_failed` has a `trace` field (M5). Depends on 4.2 and on the local stack (Alloy) running.
+- [x] 4.2 [leader] Run V1, V2, V3, V4, V5a and V5b of design.md. Record the complexity result of the project's check for `FaroReporterService`, `scrubTransportItem` and its helpers. Depends on 1.1, 4.1.
+- [x] 4.3 [user] Run M1 to M8 of design.md and report the results, including whether `api_request_failed` has a `trace` field (M5). Depends on 4.2 and on the local stack (Alloy) running.
 
 
 ## 5. Review round 1 fixes
