@@ -1,5 +1,5 @@
 # Image: builds the jbh-web image for two CPU types (amd64 and arm64) and pushes both to GHCR
-# (GitHub Container Registry) under ONE tag: the git SHA, and also "latest".
+# (GitHub Container Registry) under ONE tag: the git SHA (and "latest", only for the newest commit on main).
 # jbh-web = the production build of the app, served by Caddy (see Dockerfile).
 #
 # When it runs:
@@ -29,11 +29,12 @@ on:
 # The automatic GITHUB_TOKEN gets no permission at the top. Each job asks only for what it needs.
 permissions: {}
 
-# One run at a time, in push order, so an older image never deploys after a newer one.
+# One run at a time for the whole repo. GitHub does not promise the order of waiting runs,
+# so "deploy" (below) runs only when the reusable workflow moved "latest" (the newest commit on main).
 # - group: image               -> all runs of this workflow share one queue.
 # - queue: max                 -> every waiting run stays in the queue (up to 100). The default (single) cancels a
 #                                 waiting run when a newer one arrives, and that commit would never get its image.
-#                                 So every merge gets an image (and, with AUTO_DEPLOY, a deploy), in order.
+#                                 So every merge gets an image. "deploy" still skips a commit that is no longer the newest.
 # - cancel-in-progress: false  -> a running build is never stopped halfway.
 concurrency:
   group: image
@@ -103,7 +104,7 @@ jobs:
     permissions:
       contents: read
       packages: write
-    uses: kkpa-jbh/jbh-deploy/.github/workflows/multi-arch-image.yml@b43ac11f520b62fbe5d90516669692316380d00c # JBH-86
+    uses: kkpa-jbh/jbh-deploy/.github/workflows/multi-arch-image.yml@8e2034e55480624e869863dbced9d10f04eb799c # JBH-86
     with:
       image: ghcr.io/kkpa-jbh/jbh-web
       package-name: jbh-web
@@ -121,8 +122,9 @@ jobs:
     needs: image
     # Runs only when both are true:
     # - vars.AUTO_DEPLOY == 'true'          -> repo variable (Settings → Secrets and variables → Actions → Variables).
-    # - github.ref == 'refs/heads/main'     -> a "Run workflow" by hand on another branch never deploys.
-    if: vars.AUTO_DEPLOY == 'true' && github.ref == 'refs/heads/main'
+    # - needs.image.outputs.moved-latest == 'true' -> this run moved "latest": its commit is the newest on main.
+    #   A "Run workflow" by hand on another branch, or an older run that GitHub started late, never deploys.
+    if: vars.AUTO_DEPLOY == 'true' && needs.image.outputs.moved-latest == 'true'
     runs-on: ubuntu-latest
     # One API call to start the Deploy workflow. It does not wait for the deploy itself.
     timeout-minutes: 5
