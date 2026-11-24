@@ -31,10 +31,13 @@ permissions: {}
 
 # One run at a time, in push order, so an older image never deploys after a newer one.
 # - group: image               -> all runs of this workflow share one queue.
+# - queue: max                 -> every waiting run stays in the queue (up to 100). The default (single) cancels a
+#                                 waiting run when a newer one arrives, and that commit would never get its image.
+#                                 So every merge gets an image (and, with AUTO_DEPLOY, a deploy), in order.
 # - cancel-in-progress: false  -> a running build is never stopped halfway.
-# A newer waiting run replaces an older waiting one. That is fine: the newer commit has the older changes too.
 concurrency:
   group: image
+  queue: max
   cancel-in-progress: false
 
 jobs:
