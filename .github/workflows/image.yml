@@ -1,16 +1,20 @@
-# Image: builds the jbh-web image and pushes it to GHCR (GitHub Container Registry).
+# Image: builds the jbh-web image for two CPU types (amd64 and arm64) and pushes both to GHCR
+# (GitHub Container Registry) under ONE tag: the git SHA (and "latest", only for the newest commit on main).
 # jbh-web = the production build of the app, served by Caddy (see Dockerfile).
-# The image is tagged with the git SHA, and also with "latest".
 #
 # When it runs:
 # - after every push to main (a merged PR is a push to main),
 # - or by hand, with the "Run workflow" button in the Actions tab.
 #
-# Steps, in order:
-# 1. Job "image": install, check the UI boundary, build the app, build and push the image,
-#    then delete old images.
-# 2. Job "deploy" (auto-deploy): only when the repo variable AUTO_DEPLOY is "true".
-#    It asks jbh-deploy to deploy that exact image (jbh-deploy CI.md, "Auto-deploy").
+# What it changes: the GHCR package ghcr.io/kkpa-jbh/jbh-web, and (with AUTO_DEPLOY) the live site.
+#
+# Jobs, in order:
+# 1. package - install, check the UI boundary, build the app once into www/ (it does not depend on the CPU type).
+# 2. image   - calls the reusable workflow jbh-deploy/.github/workflows/multi-arch-image.yml. It builds
+#              "Build image (amd64)" and "Build image (arm64)" on native runners, publishes one tag for both,
+#              and keeps the 10 newest tagged images. One file in jbh-deploy serves all 5 service repos.
+# 3. deploy  - auto-deploy: only when the repo variable AUTO_DEPLOY is "true".
+#              It asks jbh-deploy to deploy that exact image (jbh-deploy CI.md, "Auto-deploy").
 
 # The name shown in the GitHub "Actions" tab.
 name: Image
@@ -22,32 +26,42 @@ on:
   push:
     branches: [ main ]
 
-# What the automatic GITHUB_TOKEN may do in this run. Every permission not listed is "none".
-# - contents: read   -> download the code.
-# - packages: write  -> push the image to GHCR and delete old image versions.
-permissions:
-  contents: read
-  packages: write
+# The automatic GITHUB_TOKEN gets no permission at the top. Each job asks only for what it needs.
+permissions: {}
 
-# One run at a time, in push order, so an older image never deploys after a newer one.
+# One run at a time for the whole repo. GitHub does not promise the order of waiting runs,
+# so "deploy" (below) runs only when the reusable workflow moved "latest" (the newest commit on main).
 # - group: image               -> all runs of this workflow share one queue.
+# - queue: max                 -> every waiting run stays in the queue (up to 100). The default (single) cancels a
+#                                 waiting run when a newer one arrives, and that commit would never get its image.
+#                                 So every merge gets an image. "deploy" still skips a commit that is no longer the newest.
 # - cancel-in-progress: false  -> a running build is never stopped halfway.
-# A newer waiting run replaces an older waiting one. That is fine: the newer commit has the older changes too.
 concurrency:
   group: image
+  queue: max
   cancel-in-progress: false
 
 jobs:
-  # "image" is the job id. Each job gets a fresh, empty Ubuntu VM that is deleted after.
-  image:
+  # Builds the app once. Machine: a GitHub-hosted Ubuntu VM, deleted after the run.
+  # www/ is plain HTML, JS and CSS, so the same files go into the amd64 and the arm64 image.
+  package:
+    name: Check and build the app package
     runs-on: ubuntu-latest
+    # npm ci + the production build take about 4 minutes. 20 leaves room for a cold cache.
+    timeout-minutes: 20
+    permissions:
+      # Download the code. Nothing else.
+      contents: read
     steps:
       # The VM starts empty. This step downloads the code of this commit into it.
-      - uses: actions/checkout@v4
+      # Actions are pinned to a full commit SHA (the version is in the comment), so a moved tag cannot change them.
+      - name: Check out the code
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       # Installs Node.js 22. "cache: npm" saves the npm download cache between runs,
       # so npm does not download every package again each time. The cache key comes from package-lock.json.
-      - uses: actions/setup-node@v4
+      - name: Set up Node.js 22
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
         with:
           node-version: '22'
           cache: npm
@@ -70,52 +84,50 @@ jobs:
       - name: Build app
         run: npx ng build --configuration production --define "JBH_GIT_SHA='$GITHUB_SHA'"
 
-      # Logs in to GHCR, so the next step can push the image.
-      # - username: github.actor     -> the user or bot that started this run.
-      # - password: GITHUB_TOKEN     -> GitHub creates this token for each run; it is not a secret you add by hand.
-      #                                 "packages: write" above lets it push.
-      - uses: docker/login-action@v3
+      # Hands www/ to the image jobs (each job runs on its own VM, so files do not carry over).
+      # retention-days: 1 -> the artifact is only needed during this run.
+      - name: Upload the app package
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          name: app-package
+          path: www/
+          retention-days: 1
 
-      # Builds the image from the Dockerfile and pushes it.
-      # - context: .   -> the repo root is the build context (www/ from the step before is inside it).
-      # - push: true   -> upload the image to GHCR after the build.
-      # - tags         -> two tags on the same image: the git SHA (what a deploy uses) and "latest"
-      #                   (what the local Docker stack in jbh-deploy uses).
-      - uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          # One version per push. Build attestations would add untagged versions that use up the 2 kept slots.
-          provenance: false
-          tags: |
-            ghcr.io/kkpa-jbh/jbh-web:${{ github.sha }}
-            ghcr.io/kkpa-jbh/jbh-web:latest
-
-      # GitHub Free: 500 MB for private packages. Keep the 2 newest images: the running one and one to roll back to.
-      # - package-name / package-type: the GHCR package to clean (the jbh-web container image).
-      # - min-versions-to-keep: 2     -> deletes every version except the 2 newest.
-      - name: Delete old images
-        uses: actions/delete-package-versions@v5
-        with:
-          package-name: jbh-web
-          package-type: container
-          min-versions-to-keep: 2
+  # Builds, tags and cleans the image, through the reusable workflow in jbh-deploy.
+  # needs: package -> it waits for www/ (the artifact "app-package").
+  # Pinned to a jbh-deploy commit SHA, like an action: a change there reaches this repo only when you bump the SHA.
+  # In the Actions tab its jobs show as "Build and publish the image / Build image (amd64)", and so on.
+  image:
+    name: Build and publish the image
+    needs: package
+    # The most the called jobs may use: read the code, push and delete images in GHCR.
+    permissions:
+      contents: read
+      packages: write
+    uses: kkpa-jbh/jbh-deploy/.github/workflows/multi-arch-image.yml@8e2034e55480624e869863dbced9d10f04eb799c # JBH-86
+    with:
+      image: ghcr.io/kkpa-jbh/jbh-web
+      package-name: jbh-web
+      # The repo root holds the Dockerfile and deploy/Caddyfile.
+      context: .
+      # The Dockerfile copies www/.
+      app-package-path: www
 
   # Auto-deploy. Starts the Deploy workflow in jbh-deploy for the image of this commit. It does not wait for the result:
   # see jbh-deploy → Actions → Deploy. A deploy that is not healthy goes back to the image from before by itself.
   # Off until the repo variable AUTO_DEPLOY is "true". DEPLOY_DISPATCH_TOKEN can only start workflows in jbh-deploy.
   deploy:
-    # Waits for the job "image". If "image" fails, this job does not run.
+    # Waits for the job "image": it ends only after the multi-arch tag exists (and the cleanup ran).
+    # If "image" fails, this job does not run, so a deploy never asks for a tag that is missing.
     needs: image
     # Runs only when both are true:
     # - vars.AUTO_DEPLOY == 'true'          -> repo variable (Settings → Secrets and variables → Actions → Variables).
-    # - github.ref == 'refs/heads/main'     -> a "Run workflow" by hand on another branch never deploys.
-    if: vars.AUTO_DEPLOY == 'true' && github.ref == 'refs/heads/main'
+    # - needs.image.outputs.moved-latest == 'true' -> this run moved "latest": its commit is the newest on main.
+    #   A "Run workflow" by hand on another branch, or an older run that GitHub started late, never deploys.
+    if: vars.AUTO_DEPLOY == 'true' && needs.image.outputs.moved-latest == 'true'
     runs-on: ubuntu-latest
+    # One API call to start the Deploy workflow. It does not wait for the deploy itself.
+    timeout-minutes: 5
     # The GITHUB_TOKEN gets no permissions here: this job uses DEPLOY_DISPATCH_TOKEN instead.
     permissions: {}
     steps:
