@@ -38,6 +38,11 @@
                 "glob": "sw.js",
                 "input": "src",
                 "output": "/"
+              },
+              {
+                "glob": "runtime-config.js",
+                "input": "src",
+                "output": "/"
               }
             ],
             "styles": ["src/global.scss", "src/theme/variables.scss"],
@@ -146,6 +151,11 @@
               },
               {
                 "glob": "sw.js",
+                "input": "src",
+                "output": "/"
+              },
+              {
+                "glob": "runtime-config.js",
                 "input": "src",
                 "output": "/"
               }
