@@ -634,6 +634,10 @@ Faro sends browser data to a collector. Code: `src/app/core/infrastructure/obser
 | `environment.prod.ts` | `false` until JBH-84 | `prod` |
 | `environment.stg.ts` | `false`, empty URL | `stg` |
 
+`src/runtime-config.js` (served at the site root, loaded before the bundle) can override `enabled`, `collectorUrl` and `environment` at serve time.
+It is empty by default, so builds keep the values above. The local Kubernetes cluster mounts it with `enabled: true`.
+Read it only through `observabilityConfig()` in `runtime-config.ts`, never `environment.observability` directly.
+
 **Rules**
 - `enabled: false` means no Faro call, no patch of `fetch` or `XMLHttpRequest`, no request.
 - `initFaro()` runs first in `src/main.ts`, before `bootstrapApplication`.

@@ -4,16 +4,19 @@ import {
   initializeFaro
 } from '@grafana/faro-web-sdk';
 import { TracingInstrumentation } from '@grafana/faro-web-tracing';
-import { environment } from '@environments/environment';
 import { LoggerService } from '../logging/logger.service';
 import { scrubTransportItem } from './faro-privacy';
+import { observabilityConfig } from './runtime-config';
 
 // Set by "ng build --define". Missing in local builds, so it is read with typeof.
 declare const JBH_GIT_SHA: string | undefined;
 
-/** Starts Faro once, before bootstrapApplication, so the first HTTP call is traced. Does nothing when disabled. */
+/**
+ * Starts Faro once, before bootstrapApplication, so the first HTTP call is traced. Does nothing when disabled.
+ * Runtime values from runtime-config.js win over environment.ts.
+ */
 export function initFaro(): void {
-  const { enabled, collectorUrl, appName, environment: envName } = environment.observability;
+  const { enabled, collectorUrl, appName, environment: envName } = observabilityConfig();
   if (!enabled) {
     return;
   }

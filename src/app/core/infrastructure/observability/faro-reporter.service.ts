@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpRequest } from '@angular/common/http';
 import { faro } from '@grafana/faro-web-sdk';
-import { environment } from '@environments/environment';
 import { JBHError } from '@core/domain/models/jbh-error.model';
 import { toPathTemplate } from './faro-url';
+import { observabilityConfig } from './runtime-config';
 
 // 401 is the routine token refresh and 422 is normal form validation: both would be noise.
 export function isReportableStatus(status: number): boolean {
@@ -13,9 +13,11 @@ export function isReportableStatus(status: number): boolean {
 /** The only app code that calls faro.api. It never throws. */
 @Injectable({ providedIn: 'root' })
 export class FaroReporterService {
+  // Read once: the same value initFaro() used, so a report never goes to a Faro that was not started.
+  private readonly enabled = observabilityConfig().enabled;
 
   reportError(error: unknown): void {
-    if (!environment.observability.enabled || error instanceof JBHError) {
+    if (!this.enabled || error instanceof JBHError) {
       return;
     }
     try {
@@ -27,7 +29,7 @@ export class FaroReporterService {
   }
 
   reportApiFailure(request: HttpRequest<unknown>, status: number): void {
-    if (!environment.observability.enabled || !isReportableStatus(status)) {
+    if (!this.enabled || !isReportableStatus(status)) {
       return;
     }
     try {
